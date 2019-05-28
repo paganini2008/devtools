@@ -139,10 +139,8 @@ public class ThreadUtils {
 		return scheduleAtFixedRate(e, delay, timeUnit, interval, timeUnit);
 	}
 
-	public static Timer scheduleAtFixedRate(Executable e, long delay, TimeUnit delayTimeUnit, long interval,
-			TimeUnit intervalTimeUnit) {
-		return scheduleAtFixedRate(e, convertToMillis(delay, delayTimeUnit),
-				convertToMillis(interval, intervalTimeUnit));
+	public static Timer scheduleAtFixedRate(Executable e, long delay, TimeUnit delayTimeUnit, long interval, TimeUnit intervalTimeUnit) {
+		return scheduleAtFixedRate(e, convertToMillis(delay, delayTimeUnit), convertToMillis(interval, intervalTimeUnit));
 	}
 
 	public static Timer scheduleAtFixedRate(final Executable e, long delay, long interval) {
@@ -157,11 +155,11 @@ public class ThreadUtils {
 					result = e.execute();
 				} catch (Exception error) {
 					result = false;
-					e.whenOnError(error);
+					e.onError(error);
 				} finally {
 					if (!result) {
 						timer.cancel();
-						e.whenOnCancellation();
+						e.onCancellation();
 					}
 				}
 			}
@@ -186,8 +184,7 @@ public class ThreadUtils {
 
 	public static Timer scheduleWithFixedDelay(final Executable e, long delay, TimeUnit delayTimeUnit, long interval,
 			TimeUnit intervalTimeUnit) {
-		return scheduleWithFixedDelay(e, convertToMillis(delay, delayTimeUnit),
-				convertToMillis(interval, intervalTimeUnit));
+		return scheduleWithFixedDelay(e, convertToMillis(delay, delayTimeUnit), convertToMillis(interval, intervalTimeUnit));
 	}
 
 	public static Timer scheduleWithFixedDelay(final Executable e, long delay, long interval) {
@@ -199,11 +196,11 @@ public class ThreadUtils {
 					result = e.execute();
 				} catch (Exception error) {
 					result = false;
-					e.whenOnError(error);
+					e.onError(error);
 				} finally {
 					if (!result) {
 						timer.cancel();
-						e.whenOnCancellation();
+						e.onCancellation();
 					}
 				}
 			}

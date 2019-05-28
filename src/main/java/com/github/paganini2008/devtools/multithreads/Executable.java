@@ -11,11 +11,11 @@ public interface Executable {
 
 	boolean execute();
 	
-	default void whenOnError(Exception e) {
+	default void onError(Exception e) {
 		e.printStackTrace();
 	}
 	
-	default void whenOnCancellation() {
+	default void onCancellation() {
 	}
 
 }
