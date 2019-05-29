@@ -14,7 +14,7 @@ import com.github.paganini2008.devtools.Observer;
  */
 public abstract class EventBasedRefreshingProperties extends RefreshingProperties {
 
-	private static final long serialVersionUID = -7849110754875224092L;
+	private static final long serialVersionUID = 1L;
 
 	private final Observable observable = new Observable();
 

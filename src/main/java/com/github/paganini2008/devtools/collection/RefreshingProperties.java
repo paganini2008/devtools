@@ -25,7 +25,7 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
  */
 public abstract class RefreshingProperties extends ReadonlyProperties implements Executable {
 
-	private static final long serialVersionUID = 8720752151392135035L;
+	private static final long serialVersionUID = 1L;
 
 	private Properties delegate;
 
