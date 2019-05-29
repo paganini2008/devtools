@@ -1,10 +1,11 @@
 package com.github.paganini2008.devtools.converter;
 
 /**
+ * 
  * ConvertUtils
  * 
  * @author Fred Feng
- * @version 1.0
+ * @revised 2019-05
  */
 public class ConvertUtils {
 

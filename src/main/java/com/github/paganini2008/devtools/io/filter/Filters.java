@@ -34,7 +34,7 @@ public class Filters {
 	}
 
 	public static LogicalFileFilter hasSubfolders(int size, Operator operator) {
-		return new ChildFileSizeFileFilter(size, operator);
+		return new FileSizeFileFilter(size, operator);
 	}
 
 	public static LogicalFileFilter isFile() {

@@ -11,5 +11,5 @@ import java.io.FilenameFilter;
  * @version 1.0
  */
 public interface FileFilter extends java.io.FileFilter, FilenameFilter {
-
+	
 }

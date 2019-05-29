@@ -9,10 +9,11 @@ import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.collection.MapUtils;
 
 /**
+ * 
  * ToStringBuilder
  * 
  * @author Fred Feng
- * @version 1.0
+ * @created 2019-05
  */
 public class ToStringBuilder {
 
@@ -51,41 +52,40 @@ public class ToStringBuilder {
 	private ToStringBuilder() {
 	}
 
-	public static String toString(Object target) {
-		return toString(target, (PrintStyle) null);
+	public static String reflectionToString(Object target) {
+		return reflectionToString(target, (PrintStyle) null);
 	}
 
-	public static String toString(Object target, PrintStyle style) {
-		return toString(target, (PropertyFilter) null, style);
+	public static String reflectionToString(Object target, PrintStyle style) {
+		return reflectionToString(target, (PropertyFilter) null, style);
 	}
 
-	public static String toString(Object target, String[] excludedProperties) {
-		return toString(target, PropertyFilters.exclude(excludedProperties));
+	public static String reflectionToString(Object target, String[] excludedProperties) {
+		return reflectionToString(target, PropertyFilters.exclude(excludedProperties));
 	}
 
-	public static String toString(Object target, PropertyFilter filter) {
-		return toString(target, filter, (PrintStyle) null);
+	public static String reflectionToString(Object target, PropertyFilter filter) {
+		return reflectionToString(target, filter, (PrintStyle) null);
 	}
 
-	public static String toString(Object bean, PropertyFilter filter, PrintStyle style) {
+	public static String reflectionToString(Object bean, PropertyFilter filter, PrintStyle style) {
 		if (style == null) {
 			style = PrintStyle.DEFAULT;
 		}
-		return toString(bean, null, filter, style.getStyle());
+		return reflectionToString(bean, null, filter, style.getStyle());
 	}
 
-	public static String toString(Object bean, PropertyFilter filter, ToStringStyle style) {
-		return toString(bean, null, filter, style);
+	public static String reflectionToString(Object bean, PropertyFilter filter, ToStringStyle style) {
+		return reflectionToString(bean, null, filter, style);
 	}
 
-	public static String toString(Object bean, Class<?> stopClass, PropertyFilter filter, ToStringStyle style) {
+	public static String reflectionToString(Object bean, Class<?> stopClass, PropertyFilter filter, ToStringStyle style) {
 		Assert.isNull(bean, "Source object must not be null.");
 		PropertyFilter propertyFilter = new PublicPropertyFilter();
 		if (filter != null) {
 			propertyFilter = propertyFilter.and(filter);
 		}
-		Map<String, PropertyDescriptor> descriptors = PropertyUtils.getPropertyDescriptors(bean.getClass(), stopClass,
-				propertyFilter);
+		Map<String, PropertyDescriptor> descriptors = PropertyUtils.getPropertyDescriptors(bean.getClass(), stopClass, propertyFilter);
 		if (MapUtils.isEmpty(descriptors)) {
 			return "";
 		}

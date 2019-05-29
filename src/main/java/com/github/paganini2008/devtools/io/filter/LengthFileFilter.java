@@ -23,8 +23,8 @@ public class LengthFileFilter extends LogicalFileFilter {
 	}
 
 	public boolean accept(File file) {
-		long dest = SizeUnit.BYTES.convert(this.length, sizeUnit).longValue();
-		long src = file.length();
+		final long dest = SizeUnit.BYTES.convert(this.length, sizeUnit).longValue();
+		final long src = file.length();
 		switch (operator) {
 		case LT:
 			return src < dest;

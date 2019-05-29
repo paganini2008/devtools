@@ -1,6 +1,8 @@
 package com.github.paganini2008.devtools.multithreads;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ThreadFactory;
@@ -206,6 +208,35 @@ public class ThreadUtils {
 			}
 		}, delay, interval);
 		return timer;
+	}
+
+	/**
+	 * 
+	 * SerialExecutable
+	 * 
+	 * @author Fred Feng
+	 * @revised 2019-05
+	 */
+	public static class SerialExecutable implements Executable {
+
+		private final List<Executable> executables;
+
+		SerialExecutable(Executable... executables) {
+			this.executables = Arrays.asList(executables);
+		}
+
+		public boolean execute() {
+			boolean result = true;
+			for (Executable executable : executables) {
+				result &= executable.execute();
+			}
+			return result;
+		}
+
+		public static Executable create(Executable... executables) {
+			return new SerialExecutable(executables);
+		}
+
 	}
 
 	private static long convertToMillis(long interval, TimeUnit timeUnit) {

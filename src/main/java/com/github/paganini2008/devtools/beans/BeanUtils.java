@@ -1,9 +1,10 @@
 package com.github.paganini2008.devtools.beans;
 
 import com.github.paganini2008.devtools.converter.BaseConverter;
-import com.github.paganini2008.devtools.converter.StandardTypeConverter;
+import com.github.paganini2008.devtools.converter.ConvertUtils;
 import com.github.paganini2008.devtools.converter.TypeConverter;
 import com.github.paganini2008.devtools.reflection.ConstructorUtils;
+import com.github.paganini2008.devtools.reflection.FieldUtils;
 
 /**
  * BeanUtils
@@ -17,7 +18,7 @@ public class BeanUtils {
 	private BeanUtils() {
 	}
 
-	private static final TypeConverter typeConverter = new StandardTypeConverter();
+	private static final TypeConverter typeConverter = (TypeConverter) FieldUtils.readDeclaredStaticField(ConvertUtils.class, "INSTANCE");
 
 	public static <T> void registerConverter(Class<T> requiredType, BaseConverter<T> converter) {
 		typeConverter.register(requiredType, converter);
@@ -47,6 +48,10 @@ public class BeanUtils {
 
 	public static void setProperty(Object bean, String propertyName, Object value) {
 		PropertyUtils.setProperty(bean, propertyName, value, typeConverter);
+	}
+
+	public static Object getProperty(Object bean, String propertyName) {
+		return PropertyUtils.getProperty(bean, propertyName);
 	}
 
 	public static <T> T instantiate(String className) {

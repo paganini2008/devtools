@@ -102,7 +102,7 @@ public abstract class DirectoryWalker {
 	 * @revised 2019-05
 	 * @version 1.0
 	 */
-	static class FileInfo implements Serializable {
+	public static class FileInfo implements Serializable {
 
 		private static final long serialVersionUID = -1857113693945072546L;
 		final File directory;

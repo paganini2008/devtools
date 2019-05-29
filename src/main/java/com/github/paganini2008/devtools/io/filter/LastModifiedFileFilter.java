@@ -19,7 +19,7 @@ public class LastModifiedFileFilter extends LogicalFileFilter {
 	}
 
 	public boolean accept(File file) {
-		long l = file.lastModified();
+		final long l = file.lastModified();
 		switch (operator) {
 		case LT:
 			return l < lastModified;
@@ -35,6 +35,30 @@ public class LastModifiedFileFilter extends LogicalFileFilter {
 			return l!= lastModified;
 		}
 		throw new UnsupportedOperationException();
+	}
+	
+	public static LastModifiedFileFilter eq(long lastModified) {
+		return new LastModifiedFileFilter(lastModified, Operator.EQ);
+	}
+
+	public static LastModifiedFileFilter ne(long lastModified) {
+		return new LastModifiedFileFilter(lastModified, Operator.NE);
+	}
+
+	public static LastModifiedFileFilter gte(long lastModified) {
+		return new LastModifiedFileFilter(lastModified, Operator.GTE);
+	}
+
+	public static LastModifiedFileFilter gt(long lastModified) {
+		return new LastModifiedFileFilter(lastModified, Operator.GT);
+	}
+
+	public static LastModifiedFileFilter lte(long lastModified) {
+		return new LastModifiedFileFilter(lastModified, Operator.LTE);
+	}
+
+	public static LastModifiedFileFilter lt(long lastModified) {
+		return new LastModifiedFileFilter(lastModified, Operator.LT);
 	}
 
 }

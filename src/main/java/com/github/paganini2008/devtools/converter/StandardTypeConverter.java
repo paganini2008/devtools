@@ -11,8 +11,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-import com.github.paganini2008.devtools.ObjectUtils;
-
 /**
  * TypeConverter
  * 
@@ -118,9 +116,11 @@ public class StandardTypeConverter implements TypeConverter {
 		if (value == null) {
 			return defaultValue;
 		}
-		if (ObjectUtils.isInstance(value, requiredType)) {
-			return (T) value;
+		try {
+			return requiredType.cast(value);
+		} catch (ClassCastException e) {
 		}
+		
 		BaseConverter<T> converter = (BaseConverter<T>) lookup(requiredType);
 		if (converter != null) {
 			return converter.getValue(value, defaultValue);

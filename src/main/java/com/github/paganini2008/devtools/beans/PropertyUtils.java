@@ -6,7 +6,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -57,18 +57,18 @@ public class PropertyUtils {
 
 	public static Map<String, PropertyDescriptor> getPropertyDescriptors(Class<?> beanClass, Class<?> stopClass, PropertyFilter filter) {
 		Map<String, PropertyDescriptor> original = getPropertyDescriptors(beanClass, stopClass);
+		Map<String, PropertyDescriptor> destination = new LinkedHashMap<String, PropertyDescriptor>();
 		if (original != null) {
-			Map<String, PropertyDescriptor> destination = new LinkedHashMap<String, PropertyDescriptor>();
 			for (Map.Entry<String, PropertyDescriptor> e : original.entrySet()) {
 				if (filter == null || filter.accept(e.getKey(), e.getValue())) {
 					destination.put(e.getKey(), e.getValue());
 				}
 			}
-			return destination;
 		}
-		return null;
+		return destination;
 	}
 
+	@SuppressWarnings("unchecked")
 	private static Map<String, PropertyDescriptor> fetchPropertyDescriptors(Class<?> beanClass, Class<?> stopClass) {
 		BeanInfo info = null;
 		try {
@@ -79,13 +79,13 @@ public class PropertyUtils {
 		}
 		PropertyDescriptor[] descriptors = info.getPropertyDescriptors();
 		if (ArrayUtils.isNotEmpty(descriptors)) {
-			Map<String, PropertyDescriptor> data = new HashMap<String, PropertyDescriptor>(descriptors.length);
+			Map<String, PropertyDescriptor> data = new LinkedHashMap<String, PropertyDescriptor>(descriptors.length);
 			for (PropertyDescriptor descriptor : descriptors) {
 				data.put(descriptor.getName(), descriptor);
 			}
 			return data;
 		}
-		return null;
+		return Collections.EMPTY_MAP;
 	}
 
 	public static void populate(Object destination, Map<String, ?> map) {
@@ -134,24 +134,22 @@ public class PropertyUtils {
 
 	public static Map<String, PropertyDescriptor> getMappedPropertyDescriptors(Class<?> type, Class<?> stopClass, PropertyFilter filter) {
 		Map<String, PropertyDescriptor> descriptors = getPropertyDescriptors(type, stopClass, filter);
-		if (descriptors != null) {
-			Map<String, PropertyDescriptor> results = new LinkedHashMap<String, PropertyDescriptor>();
-			Class<?> propertyType;
-			for (Map.Entry<String, PropertyDescriptor> e : descriptors.entrySet()) {
-				propertyType = e.getValue().getPropertyType();
-				if (propertyType.isAnnotationPresent(Excluded.class)) {
-					continue;
-				}
-				Mapper m = type.getAnnotation(Mapper.class);
-				if (m == null) {
-					results.put(e.getKey(), e.getValue());
-				} else {
-					results.put(StringUtils.isBlank(m.value()) ? e.getKey() : m.value(), e.getValue());
-				}
+		Map<String, PropertyDescriptor> results = new LinkedHashMap<String, PropertyDescriptor>();
+		Class<?> propertyType;
+		Mapper mapper;
+		for (Map.Entry<String, PropertyDescriptor> e : descriptors.entrySet()) {
+			propertyType = e.getValue().getPropertyType();
+			if (propertyType.isAnnotationPresent(Excluded.class)) {
+				continue;
 			}
-			return results;
+			mapper = type.getAnnotation(Mapper.class);
+			if (mapper == null) {
+				results.put(e.getKey(), e.getValue());
+			} else {
+				results.put(StringUtils.isBlank(mapper.value()) ? e.getKey() : mapper.value(), e.getValue());
+			}
 		}
-		return null;
+		return results;
 	}
 
 	public static PropertyDescriptor getPropertyDescriptor(Class<?> beanClass, String propertyName) {

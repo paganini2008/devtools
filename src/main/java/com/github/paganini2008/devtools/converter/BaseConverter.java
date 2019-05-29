@@ -11,28 +11,31 @@ import java.util.Map;
  */
 public abstract class BaseConverter<T> implements Converter<Object, T>, ConverterManager<T> {
 
-	private static final Config defaultConfig = new Config();
-	private final Map<Class<?>, Converter<?, T>> convertRegistry = new HashMap<Class<?>, Converter<?, T>>();
-	protected Config config = defaultConfig;
+	private final Map<Class<?>, Converter<?, T>> converterRegistry = new HashMap<Class<?>, Converter<?, T>>();
+	protected Config config = new Config();
 
 	public void setConfig(Config config) {
 		this.config = config;
 	}
 
+	public Config getConfig() {
+		return config;
+	}
+
 	public void put(Class<?> requiredType, Converter<?, T> converter) {
-		convertRegistry.put(requiredType, converter);
+		converterRegistry.put(requiredType, converter);
 	}
 
 	public void remove(Class<?> requiredType) {
-		convertRegistry.remove(requiredType);
+		converterRegistry.remove(requiredType);
 	}
 
 	public Converter<?, T> lookup(Class<?> requiredType) {
-		return convertRegistry.get(requiredType);
+		return converterRegistry.get(requiredType);
 	}
 
 	public boolean contains(Class<?> requiredType) {
-		return convertRegistry.containsKey(requiredType);
+		return converterRegistry.containsKey(requiredType);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -40,7 +43,7 @@ public abstract class BaseConverter<T> implements Converter<Object, T>, Converte
 		if (value == null) {
 			return defaultValue;
 		}
-		Class<?> match = getAssignableClass(value.getClass());
+		final Class<?> match = getAssignableClass(value.getClass());
 		if (match != null) {
 			Converter<Object, T> converter = (Converter<Object, T>) lookup(match);
 			return converter.getValue(value, defaultValue);
@@ -48,9 +51,9 @@ public abstract class BaseConverter<T> implements Converter<Object, T>, Converte
 		return defaultValue;
 	}
 
-	protected Class<?> getAssignableClass(Class<?> src) {
-		for (Class<?> type : convertRegistry.keySet()) {
-			if (type.equals(src) || type.isAssignableFrom(src)) {
+	protected Class<?> getAssignableClass(Class<?> actual) {
+		for (Class<?> type : converterRegistry.keySet()) {
+			if (type.equals(actual) || type.isAssignableFrom(actual)) {
 				return type;
 			}
 		}

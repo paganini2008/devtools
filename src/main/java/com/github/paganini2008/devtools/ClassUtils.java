@@ -282,6 +282,16 @@ public class ClassUtils {
 		}
 	}
 
+	public static boolean isAssignable(Class<?>[] types, Class<?> actual) {
+		int length = types != null ? types.length : 0;
+		for (int i = 0; i < length; i++) {
+			if (isAssignable(types[i], actual)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static boolean isNotAssignable(Class<?>[] types, Class<?>[] toTypes) {
 		return !isAssignable(types, toTypes);
 	}

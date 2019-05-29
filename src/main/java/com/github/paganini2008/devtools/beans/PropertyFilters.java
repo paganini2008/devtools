@@ -3,6 +3,7 @@ package com.github.paganini2008.devtools.beans;
 import java.beans.PropertyDescriptor;
 
 import com.github.paganini2008.devtools.ArrayUtils;
+import com.github.paganini2008.devtools.ClassUtils;
 
 /**
  * PropertyFilters
@@ -15,10 +16,16 @@ public class PropertyFilters {
 	private PropertyFilters() {
 	}
 
-	public static <T> PropertyFilter isAssignableFrom(final Class<T> requiredType) {
+	public static PropertyFilter isAssignable(final Class<?>[] optional) {
+		return (name, descriptor) -> {
+			return ClassUtils.isAssignable(optional, descriptor.getPropertyType());
+		};
+	}
+
+	public static <T> PropertyFilter isAssignable(final Class<T> requiredType) {
 		return new PropertyFilter() {
 			public boolean accept(String name, PropertyDescriptor descriptor) {
-				return descriptor.getPropertyType().isAssignableFrom(requiredType);
+				return ClassUtils.isAssignable(requiredType, descriptor.getPropertyType());
 			}
 		};
 	}
@@ -68,6 +75,12 @@ public class PropertyFilters {
 			public boolean accept(String name, PropertyDescriptor descriptor) {
 				return name.contains(substr);
 			}
+		};
+	}
+
+	public static PropertyFilter contains(final Class<?>[] optional) {
+		return (name, descriptor) -> {
+			return ArrayUtils.contains(optional, descriptor.getPropertyType());
 		};
 	}
 
