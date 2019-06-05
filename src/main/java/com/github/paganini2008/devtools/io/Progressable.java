@@ -9,5 +9,7 @@ package com.github.paganini2008.devtools.io;
  * @version 1.0
  */
 public interface Progressable {
-	void progress(int fileCount, int folderCount, long length, long queueSize, String completedRatio, long elapsed);
+
+	void progress(String processing, int fileCount, int folderCount, long length, String completedRatio, long elapsed, String description);
+
 }

@@ -8,7 +8,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.github.paganini2008.devtools.RandomUtils;
 import com.github.paganini2008.devtools.Sequence;
@@ -26,22 +25,20 @@ public final class Producer<X, R> {
 	private final Executor executor;
 	private final Consumer<X, R> consumer;
 	private final long timeout;
-	private final Call call;
+	private final Caller caller;
 	private final Queue<X> waitQueue;
-	private final AtomicBoolean running = new AtomicBoolean(true);
 
-	public Producer(Executor executor, int maxPermits, float consumingRatio, boolean sorted, long queueTimeout,
-			int queueSize, Consumer<X, R> consumer) {
+	public Producer(Executor executor, int maxPermits, float consumingRatio, boolean sorted, long timeout, int queueSize,
+			Consumer<X, R> consumer) {
 		this.executor = executor;
-		this.timeout = queueTimeout;
-		this.call = new Call(sorted ? new PriorityBlockingQueue<X>() : new LinkedBlockingQueue<X>(), maxPermits,
-				consumingRatio);
+		this.timeout = timeout;
+		this.caller = new Caller(sorted ? new PriorityBlockingQueue<X>() : new LinkedBlockingQueue<X>(), maxPermits, consumingRatio);
 		this.waitQueue = new LinkedBlockingQueue<X>(queueSize);
 		this.consumer = consumer;
 	}
 
 	public boolean submit(X action) {
-		return submit(action, call.primary);
+		return submit(action, caller.primary);
 	}
 
 	private boolean submit(X action, Latch latch) {
@@ -59,28 +56,21 @@ public final class Producer<X, R> {
 	private boolean trySubmit(X action, Latch latch) {
 		boolean result;
 		if (result = latch.acquire(timeout, TimeUnit.MILLISECONDS)) {
-			call.workQueue.offer(action);
-			if (running.get()) {
-				try {
-					executor.execute(call);
-				} catch (Exception e) {
-					running.set(false);
-					e.printStackTrace();
-				}
-			}
+			caller.workQueue.offer(action);
+			executor.execute(caller);
 		}
 		return result;
 	}
 
 	private final Map<X, R> resultArea = new ConcurrentHashMap<X, R>();
 
-	class Call implements Runnable {
+	class Caller implements Runnable {
 
 		final Queue<X> workQueue;
 		final Latch primary;
 		final Latch secondary;
 
-		Call(Queue<X> queue, int maxPermits, float consumingRatio) {
+		Caller(Queue<X> queue, int maxPermits, float consumingRatio) {
 			this.workQueue = queue;
 			if (maxPermits < 2) {
 				maxPermits = 2;
@@ -138,7 +128,7 @@ public final class Producer<X, R> {
 	}
 
 	protected Latch getLatch(int maxPermits) {
-		return Latchs.semaphoreLatch(maxPermits);
+		return new CounterLatch(maxPermits);
 	}
 
 	public int getQueueSize() {
@@ -146,22 +136,14 @@ public final class Producer<X, R> {
 	}
 
 	public void join() {
-		doJoin();
-		while (!waitQueue.isEmpty()) {
-			;
+		while (caller.primary.isLocked() || caller.secondary.isLocked() || !waitQueue.isEmpty()) {
+			ThreadUtils.randomSleep(1000L);
 		}
-		doJoin();
-		running.set(false);
 		ExecutorUtils.gracefulShutdown(executor, 60000);
 	}
 
-	private void doJoin() {
-		call.primary.join();
-		call.secondary.join();
-	}
-
-	public long getPermits() {
-		return call.primary.getPermits() + call.secondary.getPermits();
+	public int availablePermits() {
+		return caller.primary.availablePermits() + caller.secondary.availablePermits();
 	}
 
 	/**
@@ -224,19 +206,18 @@ public final class Producer<X, R> {
 	}
 
 	public static void main(String[] args) throws Exception {
-		long time = Producer.executeBatch(10, 100, Sequence.forEach(1, 1000000).iterator(),
-				new Consumer<Integer, Long>() {
+		long time = Producer.executeBatch(10, 100, Sequence.forEach(1, 100).iterator(), new Consumer<Integer, Long>() {
 
-					public Long consume(Integer action) throws Exception {
-						return Long.valueOf(RandomUtils.randomInt(0, 1000000));
-					}
+			public Long consume(Integer action) throws Exception {
+				return Long.valueOf(RandomUtils.randomLong(10, 1000000000000L));
+			}
 
-					public void onSuccess(Long result, Integer action) {
-						// ThreadUtils.randomSleep(3000L);
-						System.out.println("Result: " + result);
-					}
+			public void onSuccess(Long result, Integer action) {
+				ThreadUtils.randomSleep(1000L);
+				System.out.println("Result: " + result);
+			}
 
-				});
+		});
 		System.out.println("Time: " + time);
 	}
 }

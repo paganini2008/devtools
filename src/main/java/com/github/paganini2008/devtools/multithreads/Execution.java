@@ -8,32 +8,23 @@ package com.github.paganini2008.devtools.multithreads;
  * @revised 2019-05
  * @version 1.0
  */
-public interface Execution extends Comparable<Execution> {
+public interface Execution<T> extends Comparable<Execution<T>> {
 
-	Object execute() throws Exception;
+	T execute() throws Exception;
 
-	default void onSuccess(Object result, ThreadPool threadPool) {
+	default void onSuccess(T result, AsyncThreadPool<T> threadPool) {
 	}
-
-	default void onFailure(Exception e, ThreadPool threadPool) {
+	
+	default void onFailure(T result, Exception e, AsyncThreadPool<T> threadPool) {
 		e.printStackTrace();
 	}
 
-	default int compareTo(Execution other) {
-		return 0;
+	default void onFailure(Exception e, AsyncThreadPool<T> threadPool) {
+		e.printStackTrace();
 	}
 
-	/**
-	 * 
-	 * RejectedExecutionHandler
-	 * 
-	 * @author Fred Feng
-	 * @revised 2019-05
-	 * @version 1.0
-	 */
-	public interface RejectedExecutionHandler {
-
-		void handleRejectedExecution(Execution execution, ThreadPool threadPool);
+	default int compareTo(Execution<T> other) {
+		return 0;
 	}
 
 }

@@ -7,12 +7,12 @@ import com.github.paganini2008.devtools.beans.Getter;
 
 /**
  * 
- * Aggregation
+ * AggregationFunction
  * 
  * @author Fred Feng
  *
  */
-public interface Aggregation<E> {
+public interface AggregationFunction<E> {
 
 	<T extends Comparable<T>> T max(Getter<E, T> getter);
 

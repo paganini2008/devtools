@@ -12,11 +12,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.github.paganini2008.devtools.multithreads.AsyncThreadPool;
 import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.Execution;
 import com.github.paganini2008.devtools.multithreads.Latch;
 import com.github.paganini2008.devtools.multithreads.Latchs;
-import com.github.paganini2008.devtools.multithreads.ThreadPool;
+import com.github.paganini2008.devtools.multithreads.ThreadPools;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 
 /**
@@ -27,21 +28,17 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
  * @revised 2019-05
  * @version 1.0
  */
-public abstract class DirectoryWalker {
+public abstract class DirectoryWalker2 {
 
-	public DirectoryWalker(int nThreads) {
-		threadPool = ThreadPool.buildThreadPool(nThreads);
+	public DirectoryWalker2(int nThreads) {
+		threadPool = ThreadPools.newAsyncPool(nThreads);
 	}
 
-	public DirectoryWalker(int nThreads, int maxPermits) {
-		threadPool = ThreadPool.buildThreadPool(nThreads, maxPermits);
-	}
-
-	public DirectoryWalker(ThreadPool threadPool) {
+	public DirectoryWalker2(AsyncThreadPool<FileInfo> threadPool) {
 		this.threadPool = threadPool;
 	}
 
-	private final ThreadPool threadPool;
+	private final AsyncThreadPool<FileInfo> threadPool;
 
 	/**
 	 * 
@@ -56,7 +53,7 @@ public abstract class DirectoryWalker {
 		private static final long serialVersionUID = 7955063976098275397L;
 		private static final NumberFormat nf = NumberFormat.getPercentInstance();
 
-		RootInfo(File directory, Progressable progressable, ThreadPool threadPool) {
+		RootInfo(File directory, Progressable progressable, AsyncThreadPool threadPool) {
 			super(directory);
 			this.progressable = progressable;
 			this.threadPool = threadPool;
@@ -67,14 +64,13 @@ public abstract class DirectoryWalker {
 		final long startTime;
 		final Progressable progressable;
 		final Latch latch = Latchs.atomicSyncLatch();
-		final ThreadPool threadPool;
+		final AsyncThreadPool threadPool;
 
 		public boolean execute() {
 			if (progressable == null) {
 				return false;
 			}
-			progressable.progress(getFileCount(), getFolderCount(), getLength(), threadPool.getQueueSize(),
-					getCompletedRatio(), getElapsed());
+			progressable.progress("", getFileCount(), getFolderCount(), getLength(), getCompletedRatio(), getElapsed(), "");
 			return latch.getPermits() > 0;
 		}
 
@@ -132,8 +128,8 @@ public abstract class DirectoryWalker {
 		}
 
 		public String toString() {
-			return "File: " + getDirectory() + ", FileCount: " + getFileCount() + ", FolderCount: " + getFolderCount()
-					+ ", Length: " + getLength();
+			return "File: " + getDirectory() + ", FileCount: " + getFileCount() + ", FolderCount: " + getFolderCount() + ", Length: "
+					+ getLength();
 		}
 
 	}
@@ -175,12 +171,12 @@ public abstract class DirectoryWalker {
 				throw new IllegalStateException("File '" + file + "' is not existed or not a directory.");
 			}
 
-			public void onFailure(Exception e, ThreadPool threadPool) {
+			public void onFailure(Exception e, AsyncThreadPool threadPool) {
 				e.printStackTrace();
 				rootInfo.latch.release();
 			}
 
-			public void onSuccess(Object result, ThreadPool threadPool) {
+			public void onSuccess(Object result, AsyncThreadPool threadPool) {
 				final FileInfo fileInfo = (FileInfo) result;
 				if (fileInfo != null) {
 					while (!fileInfo.directorys.isEmpty()) {
@@ -219,10 +215,10 @@ public abstract class DirectoryWalker {
 	protected void handleFileOnError(FileInfo fileInfo, File fileOrDir, Exception error) throws Exception {
 	}
 
-	public static List<File> searchFiles(final File directory, final int nThreads,
-			final FileFilter filter, final Progressable progressable) {
+	public static List<File> searchFiles(final File directory, final int nThreads, final FileFilter filter,
+			final Progressable progressable) {
 		List<File> results = new CopyOnWriteArrayList<File>();
-		DirectoryWalker directoryWalker = new DirectoryWalker(nThreads) {
+		DirectoryWalker2 directoryWalker = new DirectoryWalker2(nThreads) {
 
 			protected void handleFile(FileInfo fileInfo, File file) throws Exception {
 				if (filter.accept(file)) {

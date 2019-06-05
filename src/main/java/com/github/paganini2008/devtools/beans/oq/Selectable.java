@@ -7,7 +7,7 @@ package com.github.paganini2008.devtools.beans.oq;
  * @author Fred Feng
  *
  */
-public interface Selectable<E> extends Listable<E>, Countable<E>, Aggregation<E> {
+public interface Selectable<E> extends Listable<E>, CountFunction<E>, AggregationFunction<E> {
 
 	Selectable<E> filter(Expression<E> expression);
 
