@@ -27,7 +27,7 @@ public class JdkExecutorThreadPool implements ThreadPool, java.util.concurrent.R
 	private RejectedExecutionHandler rejectedExecutionHandler;
 
 	public JdkExecutorThreadPool(int maxPoolSize, long timeout, int queueSize) {
-		this.latch = new CounterLatch(maxPoolSize * 2);
+		this.latch = new CounterLatch(maxPoolSize * 16);
 		this.threads = new ThreadPoolExecutor(maxPoolSize, maxPoolSize, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(),
 				new PooledThreadFactory(), this) {
 
@@ -53,7 +53,8 @@ public class JdkExecutorThreadPool implements ThreadPool, java.util.concurrent.R
 	}
 
 	public boolean apply(Runnable r) {
-		if (latch.acquire(timeout, TimeUnit.MILLISECONDS)) {
+		boolean acquired = timeout > 0 ? latch.acquire(timeout, TimeUnit.MILLISECONDS) : latch.acquire();
+		if (acquired) {
 			threads.execute(r);
 			return true;
 		} else {
@@ -118,14 +119,14 @@ public class JdkExecutorThreadPool implements ThreadPool, java.util.concurrent.R
 			throw new IllegalStateException("Queue Full!");
 		}
 	}
-	
+
 	public String toString() {
 		return threads.toString();
 	}
 
 	public static void main(String[] args) throws IOException {
 		final AtomicInteger score = new AtomicInteger(0);
-		JdkExecutorThreadPool threadPool = new JdkExecutorThreadPool(10, 1000L, 10);
+		JdkExecutorThreadPool threadPool = new JdkExecutorThreadPool(10, 0L, 10);
 		for (int i : Sequence.forEach(0, 10000)) {
 			threadPool.apply(() -> {
 				// ThreadUtils.randomSleep(1000L);

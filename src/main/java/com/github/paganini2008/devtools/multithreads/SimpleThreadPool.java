@@ -122,7 +122,8 @@ public class SimpleThreadPool implements ThreadPool {
 		if (!running) {
 			throw new IllegalStateException("ThreadPool is shutdown.");
 		}
-		if (acquire()) {
+		boolean acquired = timeout > 0 ? sync.acquire(timeout) : sync.acquire();
+		if (acquired) {
 			workQueue.add(r);
 			WorkerThread workerThread = idleQueue.isEmpty() ? null : idleQueue.remove(0);
 			if (workerThread == null) {
@@ -146,10 +147,6 @@ public class SimpleThreadPool implements ThreadPool {
 			}
 			return false;
 		}
-	}
-
-	private boolean acquire() {
-		return timeout > 0 ? sync.acquire(timeout) : sync.acquire();
 	}
 
 	protected void beforeRun(Thread thread, Runnable r) {

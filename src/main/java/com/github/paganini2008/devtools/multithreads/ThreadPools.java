@@ -11,7 +11,7 @@ package com.github.paganini2008.devtools.multithreads;
 public abstract class ThreadPools {
 
 	public static ThreadPool newSimplePool(int maxPoolSize) {
-		return newSimplePool(maxPoolSize, 1000L, Integer.MAX_VALUE);
+		return newSimplePool(maxPoolSize, 0L, Integer.MAX_VALUE);
 	}
 
 	public static ThreadPool newSimplePool(int maxPoolSize, long timeout, int queueSize) {
@@ -19,7 +19,7 @@ public abstract class ThreadPools {
 	}
 
 	public static ThreadPool newCommonPool(int maxPoolSize) {
-		return newCommonPool(maxPoolSize, 1000L, Integer.MAX_VALUE);
+		return newCommonPool(maxPoolSize, 0L, Integer.MAX_VALUE);
 	}
 
 	public static ThreadPool newCommonPool(int maxPoolSize, long timeout, int queueSize) {
@@ -35,7 +35,7 @@ public abstract class ThreadPools {
 	}
 
 	public static <T> AsyncThreadPool<T> newAsyncPool(int maxPoolSize) {
-		return newAsyncPool(maxPoolSize, 1000L, Integer.MAX_VALUE);
+		return newAsyncPool(maxPoolSize, 0L, Integer.MAX_VALUE);
 	}
 
 }

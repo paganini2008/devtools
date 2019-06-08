@@ -207,7 +207,7 @@ public class AsyncThreadPoolImpl<T> implements AsyncThreadPool<T> {
 	}
 
 	public static void main(String[] args) throws IOException {
-		AsyncThreadPoolImpl<Integer> threadPool = new AsyncThreadPoolImpl<Integer>(new SimpleThreadPool(200, 0L, Integer.MAX_VALUE));
+		AsyncThreadPoolImpl<Integer> threadPool = new AsyncThreadPoolImpl<Integer>(new JdkExecutorThreadPool(200, 0L, Integer.MAX_VALUE));
 		final AtomicInteger score = new AtomicInteger(0);
 		for (final int i : Sequence.forEach(0, 100000)) {
 			threadPool.submit(new Execution<Integer>() {

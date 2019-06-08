@@ -30,7 +30,7 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 public abstract class DirectoryWalker {
 
 	public DirectoryWalker(int nThreads) {
-		threadPool = ThreadPools.newAsyncPool(ThreadPools.newCommonPool(nThreads));
+		threadPool = ThreadPools.newAsyncPool(nThreads);
 	}
 
 	public DirectoryWalker(AsyncThreadPool<DirectoryInfo> threadPool) {
