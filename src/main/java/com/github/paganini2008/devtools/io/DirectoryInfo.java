@@ -12,7 +12,7 @@ import java.io.File;
  */
 public interface DirectoryInfo {
 
-	File getDirectory();
+	File getFile();
 
 	int getFileCount();
 

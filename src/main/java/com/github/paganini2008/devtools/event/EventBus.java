@@ -74,12 +74,11 @@ public class EventBus implements EventPubSub {
 		final ConcurrentMap<Class<?>, EventGroup> eventGroups = new ConcurrentHashMap<Class<?>, EventGroup>();
 
 		EventHandler(int nThreads, int maxPermits, long timeout) {
-			this(ExecutorUtils.commonPool(nThreads), maxPermits, timeout);
+			this(ExecutorUtils.newCommonPool(nThreads), maxPermits, timeout);
 		}
 
 		EventHandler(Executor executor, int maxPermits, long timeout) {
-			this.producer = new Producer<Runnable, Object>(executor, maxPermits, 0.5F, false, timeout,
-					Integer.MAX_VALUE, this);
+			this.producer = new Producer<Runnable, Object>(executor, this);
 		}
 
 		public void publish(Event event) {

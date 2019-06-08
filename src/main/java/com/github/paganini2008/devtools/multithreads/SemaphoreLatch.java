@@ -37,6 +37,10 @@ public class SemaphoreLatch implements Latch {
 		return maxPermits - latch.availablePermits();
 	}
 
+	public boolean tryAcquire() {
+		return latch.tryAcquire();
+	}
+
 	public boolean acquire() {
 		boolean result = true;
 		try {
@@ -76,7 +80,7 @@ public class SemaphoreLatch implements Latch {
 
 	public static void main(String[] args) throws IOException {
 		SemaphoreLatch latch = new SemaphoreLatch();
-		ExecutorService threads = ExecutorUtils.commonPool(10);
+		ExecutorService threads = ExecutorUtils.newCommonPool(10);
 		final AtomicInteger score = new AtomicInteger();
 		for (int i : Sequence.forEach(0, 100000)) {
 			threads.execute(() -> {

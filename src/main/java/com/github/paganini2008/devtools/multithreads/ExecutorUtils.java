@@ -12,11 +12,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ExecutorUtils {
 
-	public static ExecutorService commonPool() {
-		return commonPool(Runtime.getRuntime().availableProcessors());
-	}
-
-	public static ExecutorService commonPool(int nThreads) {
+	public static ExecutorService newCommonPool(int nThreads) {
 		return new ThreadPoolBuilder(nThreads).build();
 	}
 

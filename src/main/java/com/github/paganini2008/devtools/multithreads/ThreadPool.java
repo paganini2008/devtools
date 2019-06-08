@@ -28,6 +28,8 @@ public interface ThreadPool extends Executor {
 	int getActiveThreadSize();
 
 	int getIdleThreadSize();
+	
+	long getCompletedTaskCount();
 
 	boolean isShutdown();
 

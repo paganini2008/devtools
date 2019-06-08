@@ -22,12 +22,12 @@ import com.github.paganini2008.devtools.Sequence;
  * @created 2016-12
  * @version 1.0
  */
-public class AsyncThreadPoolmpl<T> implements AsyncThreadPool<T> {
+public class AsyncThreadPoolImpl<T> implements AsyncThreadPool<T> {
 
 	private final ThreadPool delegate;
 	private final Caller caller;
 
-	AsyncThreadPoolmpl(ThreadPool delegate) {
+	AsyncThreadPoolImpl(ThreadPool delegate) {
 		this.delegate = delegate;
 		this.caller = new Caller();
 	}
@@ -97,6 +97,9 @@ public class AsyncThreadPoolmpl<T> implements AsyncThreadPool<T> {
 	public int getQueueSize() {
 		return delegate.getQueueSize();
 	}
+	public long getCompletedTaskCount() {
+		return delegate.getCompletedTaskCount();
+	}
 
 	public boolean isShutdown() {
 		return delegate.isShutdown();
@@ -118,12 +121,12 @@ public class AsyncThreadPoolmpl<T> implements AsyncThreadPool<T> {
 			if (resultArea.containsKey(action)) {
 				result = resultArea.remove(action);
 				try {
-					action.onSuccess(result, AsyncThreadPoolmpl.this);
+					action.onSuccess(result, AsyncThreadPoolImpl.this);
 				} catch (Exception e) {
 					error = e;
 				} finally {
 					if (error != null) {
-						action.onFailure(result, error, AsyncThreadPoolmpl.this);
+						action.onFailure(result, error, AsyncThreadPoolImpl.this);
 					}
 				}
 			} else {
@@ -133,7 +136,7 @@ public class AsyncThreadPoolmpl<T> implements AsyncThreadPool<T> {
 					error = e;
 				} finally {
 					if (error != null) {
-						action.onFailure(error, AsyncThreadPoolmpl.this);
+						action.onFailure(error, AsyncThreadPoolImpl.this);
 					} else if (result != null) {
 						resultArea.put(action, result);
 						submit(action);
@@ -204,10 +207,10 @@ public class AsyncThreadPoolmpl<T> implements AsyncThreadPool<T> {
 	}
 
 	public static void main(String[] args) throws IOException {
-		AsyncThreadPoolmpl<Integer> threadPool = new AsyncThreadPoolmpl<Integer>(new Jdk5ExecutorThreadPool(10, 1000L, 1000));
+		AsyncThreadPoolImpl<Integer> threadPool = new AsyncThreadPoolImpl<Integer>(new SimpleThreadPool(200, 0L, Integer.MAX_VALUE));
 		final AtomicInteger score = new AtomicInteger(0);
-		for (final int i : Sequence.forEach(0, 1000)) {
-			Promise<Integer> answer = threadPool.submitAndWait(new Execution<Integer>() {
+		for (final int i : Sequence.forEach(0, 100000)) {
+			threadPool.submit(new Execution<Integer>() {
 				public Integer execute() throws Exception {
 					System.out.println(ThreadUtils.currentThreadName() + ": " + i);
 					return i;
@@ -215,13 +218,13 @@ public class AsyncThreadPoolmpl<T> implements AsyncThreadPool<T> {
 
 				public void onSuccess(Integer result, AsyncThreadPool<Integer> threadPool) {
 					System.out.println(
-							ThreadUtils.currentThreadName() + ": " + result + ", getActiveThreadSize: " + threadPool.getActiveThreadSize());
+							ThreadUtils.currentThreadName() + ": " + result + ", getQueueSize: " + threadPool.getQueueSize());
 					score.incrementAndGet();
 				}
 
 			});
 
-			System.out.println("Answer: " + answer.get());
+			// System.out.println("Answer: " + answer.get());
 		}
 		System.in.read();
 		threadPool.shutdown();

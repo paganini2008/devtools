@@ -6,8 +6,6 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.PriorityBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 import com.github.paganini2008.devtools.RandomUtils;
 import com.github.paganini2008.devtools.Sequence;
@@ -17,70 +15,37 @@ import com.github.paganini2008.devtools.Sequence;
  * Producer
  * 
  * @author Fred Feng
- * @created 2019-05
+ * @revised 2019-05
  * @version 1.0
  */
 public final class Producer<X, R> {
 
 	private final Executor executor;
-	private final Consumer<X, R> consumer;
-	private final long timeout;
 	private final Caller caller;
-	private final Queue<X> waitQueue;
 
-	public Producer(Executor executor, int maxPermits, float consumingRatio, boolean sorted, long timeout, int queueSize,
-			Consumer<X, R> consumer) {
+	public Producer(Executor executor, Consumer<X, R> consumer) {
+		this(executor, new LinkedBlockingQueue<X>(), consumer);
+	}
+
+	public Producer(Executor executor, Queue<X> workQueue, Consumer<X, R> consumer) {
 		this.executor = executor;
-		this.timeout = timeout;
-		this.caller = new Caller(sorted ? new PriorityBlockingQueue<X>() : new LinkedBlockingQueue<X>(), maxPermits, consumingRatio);
-		this.waitQueue = new LinkedBlockingQueue<X>(queueSize);
-		this.consumer = consumer;
+		this.caller = new Caller(workQueue, consumer);
 	}
 
-	public boolean submit(X action) {
-		return submit(action, caller.primary);
+	public void submit(X action) {
+		caller.workQueue.offer(action);
+		executor.execute(caller);
 	}
-
-	private boolean submit(X action, Latch latch) {
-		boolean result = trySubmit(action, latch);
-		if (!result) {
-			try {
-				waitQueue.add(action);
-			} catch (RuntimeException e) {
-				consumer.onRejection(action);
-			}
-		}
-		return result;
-	}
-
-	private boolean trySubmit(X action, Latch latch) {
-		boolean result;
-		if (result = latch.acquire(timeout, TimeUnit.MILLISECONDS)) {
-			caller.workQueue.offer(action);
-			executor.execute(caller);
-		}
-		return result;
-	}
-
-	private final Map<X, R> resultArea = new ConcurrentHashMap<X, R>();
 
 	class Caller implements Runnable {
 
+		final Map<X, R> resultArea = new ConcurrentHashMap<X, R>();
 		final Queue<X> workQueue;
-		final Latch primary;
-		final Latch secondary;
+		final Consumer<X, R> consumer;
 
-		Caller(Queue<X> queue, int maxPermits, float consumingRatio) {
-			this.workQueue = queue;
-			if (maxPermits < 2) {
-				maxPermits = 2;
-			}
-			if (consumingRatio < 0.5F || consumingRatio >= 1F) {
-				throw new IllegalArgumentException("ConsumingRatio must be in (0.5 ~ 1).");
-			}
-			final int halfPermits = (int) (maxPermits * consumingRatio);
-			this.primary = getLatch(maxPermits - halfPermits);
-			this.secondary = getLatch(halfPermits);
+		Caller(Queue<X> workQueue, Consumer<X, R> consumer) {
+			this.workQueue = workQueue;
+			this.consumer = consumer;
 		}
 
 		public void run() {
@@ -97,8 +62,6 @@ public final class Producer<X, R> {
 					if (error != null) {
 						consumer.onFailure(result, action, error);
 					}
-					secondary.release();
-					submitAgain();
 				}
 			} else {
 				try {
@@ -110,40 +73,19 @@ public final class Producer<X, R> {
 						consumer.onFailure(action, error);
 					} else if (consumer.callback(result)) {
 						resultArea.put(action, result);
-						submit(action, secondary);
+						submit(action);
 					}
-					primary.release();
-					submitAgain();
 				}
 			}
 		}
-
-		private void submitAgain() {
-			final X action = waitQueue.poll();
-			if (action != null) {
-				Latch latch = resultArea.containsKey(action) ? secondary : primary;
-				submit(action, latch);
-			}
-		}
-	}
-
-	protected Latch getLatch(int maxPermits) {
-		return new CounterLatch(maxPermits);
-	}
-
-	public int getQueueSize() {
-		return waitQueue.size();
 	}
 
 	public void join() {
-		while (caller.primary.isLocked() || caller.secondary.isLocked() || !waitQueue.isEmpty()) {
-			ThreadUtils.randomSleep(1000L);
+		if (executor instanceof ThreadPool) {
+			((ThreadPool) executor).shutdown();
+		} else {
+			ExecutorUtils.gracefulShutdown(executor, 60000);
 		}
-		ExecutorUtils.gracefulShutdown(executor, 60000);
-	}
-
-	public int availablePermits() {
-		return caller.primary.availablePermits() + caller.secondary.availablePermits();
 	}
 
 	/**
@@ -151,7 +93,7 @@ public final class Producer<X, R> {
 	 * Consumer
 	 * 
 	 * @author Fred Feng
-	 * @created 2019-05
+	 * @revised 2019-05
 	 * @version 1.0
 	 */
 	public static interface Consumer<X, R> {
@@ -162,14 +104,11 @@ public final class Producer<X, R> {
 			return result != null;
 		}
 
-		default void onRejection(X action) {
-		}
-
 		default void onFailure(X action, Exception error) {
 			error.printStackTrace();
 		}
 
-		default void onFailure(Object result, X action, Exception error) {
+		default void onFailure(R result, X action, Exception error) {
 			error.printStackTrace();
 		}
 
@@ -179,25 +118,12 @@ public final class Producer<X, R> {
 	}
 
 	public static <X, R> Producer<X, R> common(int nThreads, Consumer<X, R> consumer) {
-		return common(nThreads, 1000L, consumer);
-	}
-
-	public static <X, R> Producer<X, R> common(int nThreads, long timeout, Consumer<X, R> consumer) {
-		return common(nThreads, Integer.MAX_VALUE, timeout, consumer);
-	}
-
-	public static <X, R> Producer<X, R> common(int nThreads, int maxPermits, long timeout, Consumer<X, R> consumer) {
-		Executor executor = ExecutorUtils.commonPool(nThreads);
-		return new Producer<X, R>(executor, maxPermits, 0.5F, false, timeout, Integer.MAX_VALUE, consumer);
+		return new Producer<X, R>(ExecutorUtils.newCommonPool(nThreads), consumer);
 	}
 
 	public static <X, R> long executeBatch(int nThreads, Iterator<X> batch, Consumer<X, R> consumer) {
-		return executeBatch(nThreads, Integer.MAX_VALUE, batch, consumer);
-	}
-
-	public static <X, R> long executeBatch(int nThreads, int maxPermits, Iterator<X> batch, Consumer<X, R> consumer) {
 		long start = System.currentTimeMillis();
-		Producer<X, R> producer = common(nThreads, maxPermits, 1000L, consumer);
+		Producer<X, R> producer = common(nThreads, consumer);
 		while (batch.hasNext()) {
 			producer.submit(batch.next());
 		}
@@ -206,14 +132,13 @@ public final class Producer<X, R> {
 	}
 
 	public static void main(String[] args) throws Exception {
-		long time = Producer.executeBatch(10, 100, Sequence.forEach(1, 100).iterator(), new Consumer<Integer, Long>() {
+		long time = Producer.executeBatch(10, Sequence.forEach(1, 100).iterator(), new Consumer<Integer, Long>() {
 
 			public Long consume(Integer action) throws Exception {
 				return Long.valueOf(RandomUtils.randomLong(10, 1000000000000L));
 			}
 
 			public void onSuccess(Long result, Integer action) {
-				ThreadUtils.randomSleep(1000L);
 				System.out.println("Result: " + result);
 			}
 

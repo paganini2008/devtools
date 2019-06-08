@@ -98,7 +98,7 @@ public abstract class RecursiveDirectoryWalker {
 			this.directory = directory;
 		}
 
-		public File getDirectory() {
+		public File getFile() {
 			return directory;
 		}
 
@@ -139,7 +139,7 @@ public abstract class RecursiveDirectoryWalker {
 		}
 
 		public String toString() {
-			return "File: " + getDirectory() + ", FileCount: " + getFileCount() + ", FolderCount: " + getFolderCount() + ", Length: "
+			return "File: " + getFile() + ", FileCount: " + getFileCount() + ", FolderCount: " + getFolderCount() + ", Length: "
 					+ getLength();
 		}
 
@@ -171,7 +171,7 @@ public abstract class RecursiveDirectoryWalker {
 		}
 
 		protected DirectoryInfo compute() {
-			final File directory = fileInfo.getDirectory();
+			final File directory = fileInfo.getFile();
 			try {
 				enterDirectory(directory, depth, rootInfo);
 				File[] childFiles = fileFilter != null ? directory.listFiles(fileFilter) : directory.listFiles();

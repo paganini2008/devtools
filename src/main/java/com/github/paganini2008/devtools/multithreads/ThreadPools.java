@@ -23,11 +23,11 @@ public abstract class ThreadPools {
 	}
 
 	public static ThreadPool newCommonPool(int maxPoolSize, long timeout, int queueSize) {
-		return new Jdk5ExecutorThreadPool(maxPoolSize, timeout, queueSize);
+		return new JdkExecutorThreadPool(maxPoolSize, timeout, queueSize);
 	}
 
 	public static <T> AsyncThreadPool<T> newAsyncPool(ThreadPool delegate) {
-		return new AsyncThreadPoolmpl<T>(delegate);
+		return new AsyncThreadPoolImpl<T>(delegate);
 	}
 
 	public static <T> AsyncThreadPool<T> newAsyncPool(int maxPoolSize, long timeout, int queueSize) {

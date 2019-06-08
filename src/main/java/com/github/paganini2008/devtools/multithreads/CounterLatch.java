@@ -19,8 +19,8 @@ public class CounterLatch implements Latch {
 
 	private final AtomicLong counter = new AtomicLong(0);
 	private final long maxPermits;
-	private final Lock lock = new ReentrantLock();
-	private final Condition condition = lock.newCondition();
+	private final Lock lock;
+	private final Condition condition;
 	private final long startTime;
 
 	public CounterLatch() {
@@ -28,12 +28,29 @@ public class CounterLatch implements Latch {
 	}
 
 	public CounterLatch(long maxPermits) {
+		this(maxPermits, new ReentrantLock());
+	}
+
+	public CounterLatch(long maxPermits, Lock lock) {
 		this.maxPermits = maxPermits;
+		this.lock = lock;
+		this.condition = lock.newCondition();
 		this.startTime = System.currentTimeMillis();
 	}
 
 	public long availablePermits() {
 		return maxPermits - counter.get();
+	}
+
+	public boolean tryAcquire() {
+		boolean result = false;
+		lock.lock();
+		if (counter.get() < maxPermits) {
+			counter.incrementAndGet();
+			result = true;
+		}
+		lock.unlock();
+		return result;
 	}
 
 	public boolean acquire() {
@@ -72,6 +89,7 @@ public class CounterLatch implements Latch {
 						try {
 							condition.awaitNanos(nanosTimeout);
 						} catch (InterruptedException e) {
+							break;
 						}
 						elapsed = (System.nanoTime() - begin);
 						nanosTimeout -= elapsed;

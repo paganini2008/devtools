@@ -18,6 +18,7 @@ import com.github.paganini2008.devtools.Sequence;
  * @revised 2019-05
  * @created 2012-01
  * @version 1.0
+ * @since JDK 1.4
  */
 public class SimpleThreadPool implements ThreadPool {
 
@@ -32,6 +33,7 @@ public class SimpleThreadPool implements ThreadPool {
 	private final long timeout;
 	private volatile int poolSize = 0;
 	private volatile boolean running = true;
+	private volatile long completedCount = 0;
 	private Timer timer;
 	private int maxIdleSize = 1;
 	private RejectedExecutionHandler rejectedExecutionHandler;
@@ -72,6 +74,10 @@ public class SimpleThreadPool implements ThreadPool {
 
 	public int getMaxPoolSize() {
 		return maxPoolSize;
+	}
+
+	public long getCompletedTaskCount() {
+		return completedCount;
 	}
 
 	public void setRejectedExecutionHandler(RejectedExecutionHandler rejectedExecutionHandler) {
@@ -116,7 +122,7 @@ public class SimpleThreadPool implements ThreadPool {
 		if (!running) {
 			throw new IllegalStateException("ThreadPool is shutdown.");
 		}
-		if (sync.acquire(timeout)) {
+		if (acquire()) {
 			workQueue.add(r);
 			WorkerThread workerThread = idleQueue.isEmpty() ? null : idleQueue.remove(0);
 			if (workerThread == null) {
@@ -142,6 +148,10 @@ public class SimpleThreadPool implements ThreadPool {
 		}
 	}
 
+	private boolean acquire() {
+		return timeout > 0 ? sync.acquire(timeout) : sync.acquire();
+	}
+
 	protected void beforeRun(Thread thread, Runnable r) {
 	}
 
@@ -149,7 +159,7 @@ public class SimpleThreadPool implements ThreadPool {
 	}
 
 	public boolean isShutdown() {
-		return running;
+		return !running;
 	}
 
 	/**
@@ -283,6 +293,10 @@ public class SimpleThreadPool implements ThreadPool {
 				idle = true;
 				sync.release();
 
+				completedCount++;
+
+				executeAgain();
+
 				afterRun(r, cause);
 			}
 			return true;
@@ -295,7 +309,6 @@ public class SimpleThreadPool implements ThreadPool {
 						runWhenIdle();
 					} else {
 						runWhenBusy();
-						executeAgain();
 					}
 				}
 			}
@@ -359,8 +372,19 @@ public class SimpleThreadPool implements ThreadPool {
 		running = false;
 	}
 
+	public String toString() {
+		StringBuilder str = new StringBuilder();
+		str.append("[ThreadPool]: ").append("poolSize=").append(getPoolSize());
+		str.append(", maxPoolSize=").append(getMaxPoolSize());
+		str.append(", activeThreadSize=").append(getActiveThreadSize());
+		str.append(", idleThreadSize=").append(getIdleThreadSize());
+		str.append(", completedTaskCount=").append(getCompletedTaskCount());
+		str.append(", queueSize=").append(getQueueSize());
+		return str.toString();
+	}
+
 	public static void main(String[] args) throws IOException {
-		SimpleThreadPool threadPool = new SimpleThreadPool(10, 1000L, Integer.MAX_VALUE);
+		SimpleThreadPool threadPool = new SimpleThreadPool(10, 0L, Integer.MAX_VALUE);
 		final AtomicInteger score = new AtomicInteger(0);
 		for (final int i : Sequence.forEach(0, 100000)) {
 			threadPool.apply(new Runnable() {
