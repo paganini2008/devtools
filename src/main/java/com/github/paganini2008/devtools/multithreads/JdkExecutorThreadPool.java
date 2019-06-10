@@ -27,7 +27,7 @@ public class JdkExecutorThreadPool implements ThreadPool, java.util.concurrent.R
 	private RejectedExecutionHandler rejectedExecutionHandler;
 
 	public JdkExecutorThreadPool(int maxPoolSize, long timeout, int queueSize) {
-		this.latch = new CounterLatch(maxPoolSize * 16);
+		this.latch = new RecursiveLatch(maxPoolSize);
 		this.threads = new ThreadPoolExecutor(maxPoolSize, maxPoolSize, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(),
 				new PooledThreadFactory(), this) {
 

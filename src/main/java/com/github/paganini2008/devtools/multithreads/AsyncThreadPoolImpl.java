@@ -97,6 +97,7 @@ public class AsyncThreadPoolImpl<T> implements AsyncThreadPool<T> {
 	public int getQueueSize() {
 		return delegate.getQueueSize();
 	}
+
 	public long getCompletedTaskCount() {
 		return delegate.getCompletedTaskCount();
 	}
@@ -207,7 +208,7 @@ public class AsyncThreadPoolImpl<T> implements AsyncThreadPool<T> {
 	}
 
 	public static void main(String[] args) throws IOException {
-		AsyncThreadPoolImpl<Integer> threadPool = new AsyncThreadPoolImpl<Integer>(new JdkExecutorThreadPool(200, 0L, Integer.MAX_VALUE));
+		AsyncThreadPoolImpl<Integer> threadPool = new AsyncThreadPoolImpl<Integer>(new JdkExecutorThreadPool(10, 0L, Integer.MAX_VALUE));
 		final AtomicInteger score = new AtomicInteger(0);
 		for (final int i : Sequence.forEach(0, 100000)) {
 			threadPool.submit(new Execution<Integer>() {
@@ -217,8 +218,7 @@ public class AsyncThreadPoolImpl<T> implements AsyncThreadPool<T> {
 				}
 
 				public void onSuccess(Integer result, AsyncThreadPool<Integer> threadPool) {
-					System.out.println(
-							ThreadUtils.currentThreadName() + ": " + result + ", getQueueSize: " + threadPool.getQueueSize());
+					System.out.println(ThreadUtils.currentThreadName() + ": " + result + ", getQueueSize: " + threadPool.getQueueSize());
 					score.incrementAndGet();
 				}
 

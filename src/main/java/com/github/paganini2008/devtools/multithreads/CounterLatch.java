@@ -42,17 +42,6 @@ public class CounterLatch implements Latch {
 		return maxPermits - counter.get();
 	}
 
-	public boolean tryAcquire() {
-		boolean result = false;
-		lock.lock();
-		if (counter.get() < maxPermits) {
-			counter.incrementAndGet();
-			result = true;
-		}
-		lock.unlock();
-		return result;
-	}
-
 	public boolean acquire() {
 		while (true) {
 			lock.lock();

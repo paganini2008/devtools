@@ -15,8 +15,6 @@ public interface Latch {
 
 	long availablePermits();
 
-	boolean tryAcquire();
-
 	boolean acquire();
 
 	boolean acquire(long timeout, TimeUnit timeUnit);

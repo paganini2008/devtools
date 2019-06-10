@@ -37,10 +37,6 @@ public class SemaphoreLatch implements Latch {
 		return maxPermits - latch.availablePermits();
 	}
 
-	public boolean tryAcquire() {
-		return latch.tryAcquire();
-	}
-
 	public boolean acquire() {
 		boolean result = true;
 		try {
