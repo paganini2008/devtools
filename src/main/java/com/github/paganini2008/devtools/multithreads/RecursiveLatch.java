@@ -52,7 +52,7 @@ public class RecursiveLatch implements Latch {
 				acquired = delegate.acquire();
 			}
 			if (acquired) {
-				threads.incrementAndGet();
+				System.out.println("A: "+threads.incrementAndGet());
 				return true;
 			} else {
 				return false;
@@ -71,7 +71,7 @@ public class RecursiveLatch implements Latch {
 				acquired = delegate.acquire(timeout, timeUnit);
 			}
 			if (acquired) {
-				threads.incrementAndGet();
+				System.out.println("A: "+threads.incrementAndGet());
 				return true;
 			} else {
 				return false;
@@ -104,19 +104,21 @@ public class RecursiveLatch implements Latch {
 	public long join() {
 		return delegate.join();
 	}
-	
+
 	public static void main(String[] args) throws IOException {
 		RecursiveLatch latch = new RecursiveLatch();
-		ExecutorService threads = ExecutorUtils.newCommonPool(10);
+		ThreadPool threads = ThreadUtils.newCommonPool(10);
 		final AtomicInteger score = new AtomicInteger();
-		for (int i : Sequence.forEach(0, 100000)) {
-			threads.execute(() -> {
-				if (latch.acquire(1, TimeUnit.SECONDS)) {
+		for (int i : Sequence.forEach(0, 10000)) {
+			if (latch.acquire(1, TimeUnit.SECONDS)) {
+				threads.execute(() -> {
+
+					//ThreadUtils.randomSleep(500L);
 					System.out.println(ThreadUtils.currentThreadName() + ": " + i);
 					score.incrementAndGet();
 					latch.release();
-				}
-			});
+				});
+			}
 		}
 		latch.join();
 		threads.shutdown();

@@ -1,7 +1,6 @@
 package com.github.paganini2008.devtools.multithreads;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -76,7 +75,7 @@ public class SemaphoreLatch implements Latch {
 
 	public static void main(String[] args) throws IOException {
 		SemaphoreLatch latch = new SemaphoreLatch();
-		ExecutorService threads = ExecutorUtils.newCommonPool(10);
+		ThreadPool threads = ThreadUtils.newCommonPool(10);
 		final AtomicInteger score = new AtomicInteger();
 		for (int i : Sequence.forEach(0, 100000)) {
 			threads.execute(() -> {

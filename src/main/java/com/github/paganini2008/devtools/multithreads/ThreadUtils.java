@@ -243,12 +243,32 @@ public class ThreadUtils {
 		return timeUnit != TimeUnit.MILLISECONDS ? TimeUnit.MILLISECONDS.convert(interval, timeUnit) : interval;
 	}
 
-	public static ThreadFactory defaultThreadFactory(String prefix) {
-		return new DefaultThreadFactory(prefix);
+	public static ThreadPool newSimplePool(int maxPoolSize) {
+		return newSimplePool(maxPoolSize, 0L, Integer.MAX_VALUE);
 	}
 
-	public static ThreadFactory pooledThreadFactory(String prefix) {
-		return new PooledThreadFactory(prefix);
+	public static ThreadPool newSimplePool(int maxPoolSize, long timeout, int queueSize) {
+		return new SimpleThreadPool(maxPoolSize, Integer.MAX_VALUE, timeout, queueSize);
+	}
+
+	public static ThreadPool newCommonPool(int maxPoolSize) {
+		return newCommonPool(maxPoolSize, 0L, Integer.MAX_VALUE);
+	}
+
+	public static ThreadPool newCommonPool(int maxPoolSize, long timeout, int queueSize) {
+		return new JdkThreadPool(maxPoolSize, Integer.MAX_VALUE, timeout, queueSize, new PooledThreadFactory());
+	}
+
+	public static <T> AsyncThreadPool<T> newAsyncPool(ThreadPool delegate) {
+		return new AsyncThreadPoolImpl<T>(delegate);
+	}
+
+	public static <T> AsyncThreadPool<T> newAsyncPool(int maxPoolSize, long timeout, int queueSize) {
+		return newAsyncPool(newCommonPool(maxPoolSize, timeout, queueSize));
+	}
+
+	public static <T> AsyncThreadPool<T> newAsyncPool(int maxPoolSize) {
+		return newAsyncPool(maxPoolSize, 0L, Integer.MAX_VALUE);
 	}
 
 	private ThreadUtils() {

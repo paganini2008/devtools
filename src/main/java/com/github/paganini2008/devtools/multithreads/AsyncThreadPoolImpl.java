@@ -32,6 +32,10 @@ public class AsyncThreadPoolImpl<T> implements AsyncThreadPool<T> {
 		this.caller = new Caller();
 	}
 
+	public void execute(Runnable command) {
+		delegate.execute(command);
+	}
+
 	public boolean apply(Runnable r) {
 		return delegate.apply(r);
 	}
@@ -208,9 +212,9 @@ public class AsyncThreadPoolImpl<T> implements AsyncThreadPool<T> {
 	}
 
 	public static void main(String[] args) throws IOException {
-		AsyncThreadPoolImpl<Integer> threadPool = new AsyncThreadPoolImpl<Integer>(new JdkExecutorThreadPool(10, 0L, Integer.MAX_VALUE));
+		AsyncThreadPoolImpl<Integer> threadPool = new AsyncThreadPoolImpl<Integer>(ThreadUtils.newSimplePool(10,1000,Integer.MAX_VALUE));
 		final AtomicInteger score = new AtomicInteger(0);
-		for (final int i : Sequence.forEach(0, 100000)) {
+		for (final int i : Sequence.forEach(0, 1000)) {
 			threadPool.submit(new Execution<Integer>() {
 				public Integer execute() throws Exception {
 					System.out.println(ThreadUtils.currentThreadName() + ": " + i);
@@ -226,7 +230,7 @@ public class AsyncThreadPoolImpl<T> implements AsyncThreadPool<T> {
 
 			// System.out.println("Answer: " + answer.get());
 		}
-		System.in.read();
+		//System.in.read();
 		threadPool.shutdown();
 		System.out.println(score);
 	}

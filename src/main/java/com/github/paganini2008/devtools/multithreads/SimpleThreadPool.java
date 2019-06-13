@@ -18,7 +18,6 @@ import com.github.paganini2008.devtools.Sequence;
  * @revised 2019-05
  * @created 2012-01
  * @version 1.0
- * @since JDK 1.4
  */
 public class SimpleThreadPool implements ThreadPool {
 
@@ -38,10 +37,10 @@ public class SimpleThreadPool implements ThreadPool {
 	private int maxIdleSize = 1;
 	private RejectedExecutionHandler rejectedExecutionHandler;
 
-	public SimpleThreadPool(int maxPoolSize, long timeout, int queueSize) {
+	public SimpleThreadPool(int maxPoolSize, int maxPermits, long timeout, int queueSize) {
 		this.maxPoolSize = maxPoolSize;
+		this.sync = new Sync(maxPermits);
 		this.timeout = timeout;
-		this.sync = new Sync(maxPoolSize);
 		this.maxQueueSize = queueSize;
 	}
 
@@ -54,6 +53,10 @@ public class SimpleThreadPool implements ThreadPool {
 		if (checkInterval >= 3) {
 			this.timer = ThreadUtils.scheduleAtFixedRate(new IdleQueueKeeper(), checkInterval, TimeUnit.SECONDS);
 		}
+	}
+
+	public void execute(Runnable command) {
+		apply(command);
 	}
 
 	public int getActiveThreadSize() {
@@ -131,21 +134,30 @@ public class SimpleThreadPool implements ThreadPool {
 					workerThread = new WorkerThread();
 					workerThread.active();
 					poolSize++;
+				} else {
+					System.out.println("11111111111");
+					waitForExecuting(r);
+					return false;
 				}
 			} else {
 				workerThread.active();
 			}
 			return true;
 		} else {
-			waitQueue.add(r);
-			if (waitQueue.size() > maxQueueSize) {
-				if (rejectedExecutionHandler != null) {
-					rejectedExecutionHandler.handleRejectedExecution(r, this);
-				} else {
-					throw new IllegalStateException("Queue Full!");
-				}
-			}
+			System.out.println("22222222222222222");
+			waitForExecuting(r);
 			return false;
+		}
+	}
+
+	private void waitForExecuting(Runnable r) {
+		waitQueue.add(r);
+		if (waitQueue.size() > maxQueueSize) {
+			if (rejectedExecutionHandler != null) {
+				rejectedExecutionHandler.handleRejectedExecution(r, this);
+			} else {
+				throw new IllegalStateException("WaitQueue Full!");
+			}
 		}
 	}
 
@@ -353,6 +365,7 @@ public class SimpleThreadPool implements ThreadPool {
 	}
 
 	public synchronized void shutdown() {
+		System.out.println("waitQueue.size()： " + waitQueue.size());
 		while (!busyQueue.isEmpty() || !waitQueue.isEmpty()) {
 			ThreadUtils.randomSleep(1000L);
 		}
@@ -371,7 +384,7 @@ public class SimpleThreadPool implements ThreadPool {
 
 	public String toString() {
 		StringBuilder str = new StringBuilder();
-		str.append("[ThreadPool]: ").append("poolSize=").append(getPoolSize());
+		str.append("[SimpleThreadPool]: ").append("poolSize=").append(getPoolSize());
 		str.append(", maxPoolSize=").append(getMaxPoolSize());
 		str.append(", activeThreadSize=").append(getActiveThreadSize());
 		str.append(", idleThreadSize=").append(getIdleThreadSize());
@@ -381,9 +394,9 @@ public class SimpleThreadPool implements ThreadPool {
 	}
 
 	public static void main(String[] args) throws IOException {
-		SimpleThreadPool threadPool = new SimpleThreadPool(10, 0L, Integer.MAX_VALUE);
+		SimpleThreadPool threadPool = new SimpleThreadPool(10, 1000, 1000L, Integer.MAX_VALUE);
 		final AtomicInteger score = new AtomicInteger(0);
-		for (final int i : Sequence.forEach(0, 100000)) {
+		for (final int i : Sequence.forEach(0, 10000)) {
 			threadPool.apply(new Runnable() {
 				public void run() {
 					// ThreadUtils.randomSleep(1000L);
@@ -410,6 +423,7 @@ public class SimpleThreadPool implements ThreadPool {
 		// });
 		// }
 		System.out.println("SimpleThreadPool.main(): " + score);
+		System.in.read();
 		threadPool.shutdown();
 		System.out.println("SimpleThreadPool.main()2: " + score);
 	}

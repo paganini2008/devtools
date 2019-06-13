@@ -437,6 +437,6 @@ public enum SizeUnit {
 	public abstract BigDecimal convert(long size, SizeUnit sizeUnit);
 
 	public static void main(String[] args) {
-		System.out.println(SizeUnit.MB.convert(104857600 , SizeUnit.BYTES));
+		System.out.println(SizeUnit.MB.convert(8665871 , SizeUnit.BYTES));
 	}
 }

@@ -13,10 +13,6 @@ import java.util.concurrent.Executor;
  */
 public interface ThreadPool extends Executor {
 
-	default void execute(Runnable command) {
-		apply(command);
-	}
-
 	boolean apply(Runnable r);
 
 	int getPoolSize();

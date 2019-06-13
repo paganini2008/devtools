@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.github.paganini2008.devtools.RandomUtils;
@@ -20,21 +19,21 @@ import com.github.paganini2008.devtools.Sequence;
  */
 public final class Producer<X, R> {
 
-	private final Executor executor;
+	private final ThreadPool threadPool;
 	private final Caller caller;
 
-	public Producer(Executor executor, Consumer<X, R> consumer) {
-		this(executor, new LinkedBlockingQueue<X>(), consumer);
+	public Producer(ThreadPool threadPool, Consumer<X, R> consumer) {
+		this(threadPool, new LinkedBlockingQueue<X>(), consumer);
 	}
 
-	public Producer(Executor executor, Queue<X> workQueue, Consumer<X, R> consumer) {
-		this.executor = executor;
+	public Producer(ThreadPool threadPool, Queue<X> workQueue, Consumer<X, R> consumer) {
+		this.threadPool = threadPool;
 		this.caller = new Caller(workQueue, consumer);
 	}
 
 	public void submit(X action) {
 		caller.workQueue.offer(action);
-		executor.execute(caller);
+		threadPool.execute(caller);
 	}
 
 	class Caller implements Runnable {
@@ -81,11 +80,7 @@ public final class Producer<X, R> {
 	}
 
 	public void join() {
-		if (executor instanceof ThreadPool) {
-			((ThreadPool) executor).shutdown();
-		} else {
-			ExecutorUtils.gracefulShutdown(executor, 60000);
-		}
+		threadPool.shutdown();
 	}
 
 	/**
@@ -118,7 +113,7 @@ public final class Producer<X, R> {
 	}
 
 	public static <X, R> Producer<X, R> common(int nThreads, Consumer<X, R> consumer) {
-		return new Producer<X, R>(ExecutorUtils.newCommonPool(nThreads), consumer);
+		return new Producer<X, R>(ThreadUtils.newCommonPool(nThreads), consumer);
 	}
 
 	public static <X, R> long executeBatch(int nThreads, Iterator<X> batch, Consumer<X, R> consumer) {

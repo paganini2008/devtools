@@ -12,10 +12,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class ExecutorUtils {
 
-	public static ExecutorService newCommonPool(int nThreads) {
-		return new ThreadPoolBuilder(nThreads).build();
-	}
-
 	public static boolean isTerminated(Executor executor) {
 		if (executor instanceof ExecutorService) {
 			if (((ExecutorService) executor).isTerminated()) {
