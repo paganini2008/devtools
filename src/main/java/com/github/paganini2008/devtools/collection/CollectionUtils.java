@@ -8,11 +8,11 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
+import java.util.function.Function;
 
 import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.ObjectUtils;
 import com.github.paganini2008.devtools.StringUtils;
-import com.github.paganini2008.devtools.beans.Getter;
 
 /**
  * CollectionUtils
@@ -205,10 +205,6 @@ public class CollectionUtils {
 			public T next() {
 				return array[index++];
 			}
-
-			public void remove() {
-				throw new UnsupportedOperationException("remove");
-			}
 		};
 	}
 
@@ -221,10 +217,6 @@ public class CollectionUtils {
 
 			public T next() {
 				return en.nextElement();
-			}
-
-			public void remove() {
-				throw new UnsupportedOperationException("remove");
 			}
 		};
 	}
@@ -268,7 +260,7 @@ public class CollectionUtils {
 		return list;
 	}
 
-	public static <E, T> Iterator<T> iterator(final Enumeration<E> delegate, final Getter<E, T> getter) {
+	public static <E, T> Iterator<T> iterator(final Enumeration<E> delegate, final Function<E, T> getter) {
 		return new Iterator<T>() {
 
 			public boolean hasNext() {
@@ -285,7 +277,7 @@ public class CollectionUtils {
 		};
 	}
 
-	public static <E, T> Iterator<T> iterator(final Iterator<E> delegate, final Getter<E, T> getter) {
+	public static <E, T> Iterator<T> iterator(final Iterator<E> delegate, final Function<E, T> getter) {
 		return new Iterator<T>() {
 
 			public boolean hasNext() {
@@ -400,8 +392,7 @@ public class CollectionUtils {
 		}
 		StringBuilder content = new StringBuilder();
 		while (true) {
-			content.append(ObjectUtils.toString(left.next())).append(conjunction)
-					.append(ObjectUtils.toString(right.next()));
+			content.append(ObjectUtils.toString(left.next())).append(conjunction).append(ObjectUtils.toString(right.next()));
 			if (left.hasNext() && right.hasNext()) {
 				content.append(delimiter);
 			} else {
@@ -452,8 +443,7 @@ public class CollectionUtils {
 		}
 		StringBuilder content = new StringBuilder();
 		while (true) {
-			content.append(ObjectUtils.toString(left.nextElement())).append(conjunction)
-					.append(ObjectUtils.toString(right.nextElement()));
+			content.append(ObjectUtils.toString(left.nextElement())).append(conjunction).append(ObjectUtils.toString(right.nextElement()));
 			if (left.hasMoreElements() && right.hasMoreElements()) {
 				content.append(delimiter);
 			} else {
@@ -494,17 +484,17 @@ public class CollectionUtils {
 	public static boolean isNotQueue(Object obj) {
 		return !isQueue(obj);
 	}
-	
+
 	public static void main(String[] args) {
 		List<String> a = new ArrayList<String>();
 		List<String> b = new ArrayList<String>();
-		
+
 		a.add("1");
 		a.add("2");
-		
-		//b.add("2");
+
+		// b.add("2");
 		b.add("1");
-		
+
 		System.out.println(deepEquals(a, b));
 	}
 

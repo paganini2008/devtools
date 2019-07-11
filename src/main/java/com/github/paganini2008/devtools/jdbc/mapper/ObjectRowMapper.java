@@ -25,15 +25,14 @@ public class ObjectRowMapper<T> extends BasicRowMapper<T> {
 
 	protected T createObject(int columnCount) {
 		try {
-			return ConstructorUtils.invokeConstructor(objectClass, null);
+			return ConstructorUtils.invokeConstructor(objectClass, (Object[]) null);
 		} catch (Exception e) {
 			throw new RowMapperException(e);
 		}
 	}
 
-	protected void setValue(T object, int columnIndex, String columnName, String columnDisplayName, JdbcType jdbcType,
-			Object columnValue) {
-		PropertyUtils.setProperty(object, columnName, columnValue, typeConverter);
+	protected void setValue(T object, int columnIndex, String columnName, String columnDisplayName, JdbcType jdbcType, Object columnValue) {
+		PropertyUtils.setProperty(object, columnName, columnValue);
 	}
 
 }

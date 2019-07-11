@@ -7,6 +7,14 @@ import java.util.Map;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.MapUtils;
+import com.github.paganini2008.devtools.primitives.Booleans;
+import com.github.paganini2008.devtools.primitives.Bytes;
+import com.github.paganini2008.devtools.primitives.Chars;
+import com.github.paganini2008.devtools.primitives.Doubles;
+import com.github.paganini2008.devtools.primitives.Floats;
+import com.github.paganini2008.devtools.primitives.Ints;
+import com.github.paganini2008.devtools.primitives.Longs;
+import com.github.paganini2008.devtools.primitives.Shorts;
 
 /**
  * ObjectUtils
@@ -17,14 +25,6 @@ import com.github.paganini2008.devtools.collection.MapUtils;
 public class ObjectUtils {
 
 	private ObjectUtils() {
-	}
-
-	public static <T> T nullOrMax(T leftValue, T rightValue) {
-		return leftValue == null ? rightValue : leftValue;
-	}
-
-	public static <T> T nullOrMin(T leftValue, T rightValue) {
-		return leftValue == null ? leftValue : rightValue;
 	}
 
 	public static String toString(Object other) {

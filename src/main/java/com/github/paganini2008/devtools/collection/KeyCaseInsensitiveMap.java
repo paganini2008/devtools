@@ -2,6 +2,8 @@ package com.github.paganini2008.devtools.collection;
 
 import java.util.Map;
 
+import com.github.paganini2008.devtools.Case;
+
 /**
  * 
  * KeyCaseInsensitiveMap
@@ -9,18 +11,32 @@ import java.util.Map;
  * @author Fred Feng
  * @created 2018-03
  */
-public abstract class KeyCaseInsensitiveMap<V> extends KeyInsensitiveMap<String, String, V> {
+public class KeyCaseInsensitiveMap<V> extends KeyInsensitiveMap<V> {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -1990983691300106507L;
+	private static final String NULL = "NULL";
 
-	protected KeyCaseInsensitiveMap() {
+	public KeyCaseInsensitiveMap(Case format) {
 		super();
+		this.format = format;
 	}
 
-	protected KeyCaseInsensitiveMap(Map<String, V> delegate) {
-		super(delegate);
+	public KeyCaseInsensitiveMap(Map<String, V> m, Case format) {
+		super(m);
+		this.format = format;
 	}
 
-	protected abstract String convertKey(Object key);
+	private final Case format;
+
+	protected String convertKey(Object key) {
+		if (key != null) {
+			return format.toCase(key.toString());
+		}
+		return NULL;
+	}
+
+	public Case getCase() {
+		return format;
+	}
 
 }

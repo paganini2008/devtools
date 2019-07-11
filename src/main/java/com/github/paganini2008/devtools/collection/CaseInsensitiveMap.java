@@ -12,7 +12,7 @@ import com.github.paganini2008.devtools.Cases;
  * @author Fred Feng
  * @created 2018-03
  */
-public class CaseInsensitiveMap<V> extends CaseFormatInsensitiveMap<V> {
+public class CaseInsensitiveMap<V> extends KeyCaseInsensitiveMap<V> {
 
 	private static final long serialVersionUID = -7106695869199920528L;
 	private static final Case DEFUALT_CASE = Cases.LOWER;

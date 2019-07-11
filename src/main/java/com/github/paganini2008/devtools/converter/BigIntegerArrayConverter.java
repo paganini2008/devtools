@@ -2,7 +2,7 @@ package com.github.paganini2008.devtools.converter;
 
 import java.math.BigInteger;
 
-import com.github.paganini2008.devtools.math.BigIntegers;
+import com.github.paganini2008.devtools.math.BigIntegerUtils;
 
 /**
  * BigIntegerArrayConverter
@@ -17,7 +17,7 @@ public class BigIntegerArrayConverter extends BaseConverter<BigInteger[]> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return BigIntegers.valuesOf(source);
+			return BigIntegerUtils.valuesOf(source);
 		}
 	};
 
@@ -26,7 +26,7 @@ public class BigIntegerArrayConverter extends BaseConverter<BigInteger[]> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return BigIntegers.valuesOf(source);
+			return BigIntegerUtils.valuesOf(source);
 		}
 	};
 
@@ -35,7 +35,7 @@ public class BigIntegerArrayConverter extends BaseConverter<BigInteger[]> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return BigIntegers.valuesOf(source);
+			return BigIntegerUtils.valuesOf(source);
 		}
 	};
 
@@ -44,7 +44,7 @@ public class BigIntegerArrayConverter extends BaseConverter<BigInteger[]> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return BigIntegers.valuesOf(source);
+			return BigIntegerUtils.valuesOf(source);
 		}
 	};
 
@@ -53,7 +53,7 @@ public class BigIntegerArrayConverter extends BaseConverter<BigInteger[]> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return BigIntegers.valuesOf(source);
+			return BigIntegerUtils.valuesOf(source);
 		}
 	};
 
@@ -62,7 +62,7 @@ public class BigIntegerArrayConverter extends BaseConverter<BigInteger[]> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return BigIntegers.valuesOf(source);
+			return BigIntegerUtils.valuesOf(source);
 		}
 	};
 

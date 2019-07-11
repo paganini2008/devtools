@@ -1,24 +1,44 @@
 package com.github.paganini2008.devtools.beans;
 
-import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
 
 import com.github.paganini2008.devtools.ArrayUtils;
 import com.github.paganini2008.devtools.ClassUtils;
+import com.github.paganini2008.devtools.MatchMode;
 
 /**
+ * 
  * PropertyFilters
  * 
  * @author Fred Feng
+ * @revised 2019-07
+ * @created 2013-03
  * @version 1.0
  */
-public class PropertyFilters {
+public abstract class PropertyFilters {
 
-	private PropertyFilters() {
+	public static PropertyFilter isAnnotationPresent(final Class<? extends Annotation>[] annotationClasses) {
+		return (name, descriptor) -> {
+			for (Class<? extends Annotation> annotationClass : annotationClasses) {
+				if (descriptor.getWriteMethod().isAnnotationPresent(annotationClass)
+						|| descriptor.getReadMethod().isAnnotationPresent(annotationClass)) {
+					return true;
+				}
+			}
+			return false;
+		};
 	}
 
-	public static PropertyFilter isAssignable(final Class<?>[] optional) {
+	public static PropertyFilter isAnnotationPresent(final Class<? extends Annotation> annotationClass) {
 		return (name, descriptor) -> {
-			return ClassUtils.isAssignable(optional, descriptor.getPropertyType());
+			return descriptor.getWriteMethod().isAnnotationPresent(annotationClass)
+					|| descriptor.getReadMethod().isAnnotationPresent(annotationClass);
+		};
+	}
+
+	public static PropertyFilter isAssignable(final Class<?>[] requiredTypes) {
+		return (name, descriptor) -> {
+			return ClassUtils.isAssignable(requiredTypes, descriptor.getPropertyType());
 		};
 	}
 
@@ -40,33 +60,13 @@ public class PropertyFilters {
 		};
 	}
 
-	public static PropertyFilter matches(final String regex) {
+	public static PropertyFilter matches(final String substr, final MatchMode matchMode) {
 		return (name, descriptor) -> {
-			return name.matches(regex);
+			return matchMode.matches(name, substr);
 		};
 	}
 
-	public static PropertyFilter startsWith(final String prefix) {
-		return new PropertyFilter() {
-			public boolean accept(String name, PropertyDescriptor descriptor) {
-				return name.startsWith(prefix);
-			}
-		};
-	}
-
-	public static PropertyFilter endsWith(final String suffix) {
-		return (name, descriptor) -> {
-			return name.endsWith(suffix);
-		};
-	}
-
-	public static PropertyFilter substr(final String substr) {
-		return (name, descriptor) -> {
-			return name.contains(substr);
-		};
-	}
-
-	public static PropertyFilter contains(final Class<?>[] optional) {
+	public static PropertyFilter propertyTypeContains(final Class<?>[] optional) {
 		return (name, descriptor) -> {
 			return ArrayUtils.contains(optional, descriptor.getPropertyType());
 		};

@@ -14,6 +14,18 @@ public interface PropertyFilter {
 
 	boolean accept(String name, PropertyDescriptor descriptor);
 
+	static PropertyFilter disjunction() {
+		return (name, descriptor) -> {
+			return false;
+		};
+	}
+
+	static PropertyFilter conjunction() {
+		return (name, descriptor) -> {
+			return true;
+		};
+	}
+
 	default PropertyFilter and(PropertyFilter filter) {
 		return (name, descriptor) -> {
 			return accept(name, descriptor) && filter.accept(name, descriptor);

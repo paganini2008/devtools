@@ -18,20 +18,20 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.github.paganini2008.devtools.ArrayUtils;
-import com.github.paganini2008.devtools.Booleans;
 import com.github.paganini2008.devtools.CharsetUtils;
-import com.github.paganini2008.devtools.Doubles;
-import com.github.paganini2008.devtools.Floats;
-import com.github.paganini2008.devtools.Ints;
-import com.github.paganini2008.devtools.Longs;
 import com.github.paganini2008.devtools.NumberUtils;
-import com.github.paganini2008.devtools.Shorts;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.MapUtils;
 import com.github.paganini2008.devtools.date.CalendarUtils;
 import com.github.paganini2008.devtools.date.DateUtils;
 import com.github.paganini2008.devtools.io.IOUtils;
 import com.github.paganini2008.devtools.net.UrlUtils;
+import com.github.paganini2008.devtools.primitives.Booleans;
+import com.github.paganini2008.devtools.primitives.Doubles;
+import com.github.paganini2008.devtools.primitives.Floats;
+import com.github.paganini2008.devtools.primitives.Ints;
+import com.github.paganini2008.devtools.primitives.Longs;
+import com.github.paganini2008.devtools.primitives.Shorts;
 
 /**
  * StringConverter

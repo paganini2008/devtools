@@ -2,10 +2,15 @@ package com.github.paganini2008.devtools.reflection;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+
+import javax.swing.AbstractAction;
 
 import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.ClassUtils;
+import com.github.paganini2008.devtools.collection.CollectionUtils;
 
 /**
  * 
@@ -13,6 +18,7 @@ import com.github.paganini2008.devtools.ClassUtils;
  * 
  * @author Fred Feng
  * @revised 2019-05
+ * @created 2012-01
  * @version 1.0
  */
 public class FieldUtils {
@@ -107,14 +113,22 @@ public class FieldUtils {
 		writeStaticField(field, value);
 	}
 
-	public static Field getField(Class<?> type, String fieldName) {
-		Assert.isNull(type, "The class must not be null.");
+	public static Field getFieldIfAbsent(Class<?> cls, String fieldName) {
+		try {
+			return getField(cls, fieldName);
+		} catch (RuntimeException e) {
+			return null;
+		}
+	}
+
+	public static Field getField(Class<?> cls, String fieldName) {
+		Assert.isNull(cls, "The class must not be null.");
 		Assert.hasNoText(fieldName, "The field name must not be null.");
 		try {
-			return type.getDeclaredField(fieldName);
+			return cls.getDeclaredField(fieldName);
 		} catch (NoSuchFieldException e) {
 		}
-		return searchField(type, fieldName);
+		return searchField(cls, fieldName);
 	}
 
 	private static Field searchField(Class<?> type, String fieldName) {
@@ -144,8 +158,67 @@ public class FieldUtils {
 		}
 	}
 
-	public static Iterator<Field> fieldIterator(Class<?> type) {
-		return new FieldIterator(type);
+	public static List<Field> getDeclaredFields(Class<?> cls, FieldFilter fieldFilter) {
+		List<Field> fields = new ArrayList<Field>();
+		for (Field field : CollectionUtils.forEach(new DeclaredFieldIterator(cls))) {
+			if (fieldFilter == null || fieldFilter.accept(field.getName(), field)) {
+				fields.add(field);
+			}
+		}
+		return fields;
+	}
+
+	public static List<Field> getFields(Class<?> cls, FieldFilter fieldFilter) {
+		List<Field> fields = new ArrayList<Field>();
+		for (Field field : CollectionUtils.forEach(new FieldIterator(cls))) {
+			if (fieldFilter == null || fieldFilter.accept(field.getName(), field)) {
+				fields.add(field);
+			}
+		}
+		return fields;
+	}
+
+	public static void main(String[] args) {
+		Iterator<Field> iterator = new FieldIterator(AbstractAction.class);
+		while (iterator.hasNext()) {
+			System.out.println(iterator.next());
+		}
+	}
+
+	/**
+	 * 
+	 * DeclaredFieldIterator
+	 * 
+	 * @author Fred Feng
+	 * @revised 2019-07
+	 * @version 1.0
+	 */
+	public static class DeclaredFieldIterator implements Iterator<Field> {
+
+		DeclaredFieldIterator(Class<?> type) {
+			this.fields = CollectionUtils.iterator(type.getDeclaredFields());
+			this.interfaces = CollectionUtils.iterator(type.getInterfaces());
+		}
+
+		private Iterator<Class<?>> interfaces;
+		private Iterator<Field> fields;
+
+		public boolean hasNext() {
+			boolean next;
+			if (!(next = canContinue())) {
+				fields = interfaces.hasNext() ? CollectionUtils.iterator(interfaces.next().getDeclaredFields()) : null;
+				next = canContinue();
+			}
+			return next;
+		}
+
+		private boolean canContinue() {
+			return fields != null && fields.hasNext();
+		}
+
+		public Field next() {
+			return fields.next();
+		}
 	}
 
 	/**
@@ -158,54 +231,29 @@ public class FieldUtils {
 	 */
 	public static class FieldIterator implements Iterator<Field> {
 
-		private final Class<?> rootType;
-		private Class<?> type;
-		private Iterator<Class<?>> interfaces;
-		private Field[] fields;
-		private int offset;
+		private final Iterator<Class<?>> superClassesAndInterfaces;
+		private Iterator<Field> fields;
 
 		FieldIterator(Class<?> type) {
-			this.rootType = type;
-			reset(type);
-		}
-
-		public void reset() {
-			reset(rootType);
-		}
-
-		private void reset(Class<?> type) {
-			this.type = type;
-			this.fields = type.getDeclaredFields();
-			this.offset = 0;
+			this.fields = new DeclaredFieldIterator(type);
+			this.superClassesAndInterfaces = ClassUtils.getAllSuperClassesAndInterfaces(type).iterator();
 		}
 
 		public boolean hasNext() {
-			if (offset == fields.length) {
-				if (interfaces != null) {
-					if (interfaces.hasNext()) {
-						reset(interfaces.next());
-					}
-				} else {
-					Class<?> parentType = type.getSuperclass();
-					if (parentType != null && parentType != Object.class) {
-						reset(parentType);
-					} else if (interfaces == null) {
-						interfaces = ClassUtils.getAllInterfaces(type).iterator();
-						if (interfaces.hasNext()) {
-							reset(interfaces.next());
-						}
-					}
-				}
+			boolean next;
+			if (!(next = canContinue())) {
+				fields = superClassesAndInterfaces.hasNext() ? new DeclaredFieldIterator(superClassesAndInterfaces.next()) : null;
+				next = canContinue();
 			}
-			return (offset++) < fields.length;
+			return next;
+		}
+
+		private boolean canContinue() {
+			return fields != null && fields.hasNext();
 		}
 
 		public Field next() {
-			return fields[offset - 1];
-		}
-
-		public void remove() {
-			throw new UnsupportedOperationException();
+			return fields.next();
 		}
 
 	}

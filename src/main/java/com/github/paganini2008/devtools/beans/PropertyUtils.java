@@ -4,6 +4,7 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Collections;
@@ -14,7 +15,8 @@ import com.github.paganini2008.devtools.ArrayUtils;
 import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.LruMap;
-import com.github.paganini2008.devtools.converter.TypeConverter;
+import com.github.paganini2008.devtools.converter.ConvertUtils;
+import com.github.paganini2008.devtools.reflection.FieldUtils;
 import com.github.paganini2008.devtools.reflection.MethodUtils;
 
 /**
@@ -96,107 +98,102 @@ public class PropertyUtils {
 		populate(destination, map, filter, true);
 	}
 
-	public static void populate(Object destination, Map<String, ?> map, PropertyFilter filter, boolean overwrite) {
-		populate(destination, map, filter, overwrite, null);
+	public static void populate(Object destination, Map<String, ?> map, PropertyFilter filter, boolean overwrited) {
+		populate(destination, null, map, filter, overwrited);
 	}
 
-	public static void populate(Object destination, Map<String, ?> map, PropertyFilter filter, boolean overwrite,
-			TypeConverter typeConverter) {
-		populate(destination, null, map, filter, overwrite, typeConverter);
-	}
-
-	public static void populate(Object destination, Class<?> stopClass, Map<String, ?> map, PropertyFilter filter, boolean overwrite,
-			TypeConverter typeConverter) {
+	public static void populate(Object destination, Class<?> stopClass, Map<String, ?> map, PropertyFilter filter, boolean overwrited) {
 		Assert.isNull(destination, "Destination instance must not be null.");
-		Map<String, PropertyDescriptor> destMap = getMappedPropertyDescriptors(destination.getClass(), stopClass, filter);
-		PropertyDescriptor desc;
+		Map<String, PropertyDescriptor> dest = getPropertyDescriptors(destination.getClass(), stopClass, filter);
+		PropertyDescriptor descriptor;
 		String propertyName;
-		Method method;
-		for (Map.Entry<String, ?> e : map.entrySet()) {
-			propertyName = e.getKey();
-			if (null != (desc = destMap.get(propertyName))) {
-				if (overwrite) {
-					method = desc.getReadMethod();
-					if (method != null) {
-						Object oldValue = callGetter(destination, method);
-						if (oldValue != null) {
-							continue;
-						}
+		for (Map.Entry<String, ?> entry : map.entrySet()) {
+			propertyName = entry.getKey();
+			descriptor = dest.get(propertyName);
+			if (descriptor != null) {
+				if (!overwrited) {
+					Object current = getProperty(destination, descriptor);
+					if (current != null) {
+						continue;
 					}
 				}
-				method = desc.getWriteMethod();
-				if (method != null) {
-					setProperty(destination, method, desc.getPropertyType(), e.getValue(), typeConverter);
-				}
+				setProperty(destination, descriptor, entry.getValue());
 			}
 		}
 	}
 
-	public static Map<String, PropertyDescriptor> getMappedPropertyDescriptors(Class<?> type, Class<?> stopClass, PropertyFilter filter) {
-		Map<String, PropertyDescriptor> descriptors = getPropertyDescriptors(type, stopClass, filter);
-		Map<String, PropertyDescriptor> results = new LinkedHashMap<String, PropertyDescriptor>();
-		Class<?> propertyType;
-		Mapper mapper;
+	private static Map<String, PropertyDescriptor> getMappingPropertyDescriptors(Class<?> type) {
+		Map<String, PropertyDescriptor> descriptors = getPropertyDescriptors(type);
+		Map<String, PropertyDescriptor> results = new LinkedHashMap<String, PropertyDescriptor>(descriptors);
+		String propertyName;
+		PropertyDescriptor descriptor;
+		Method method;
+		Field field;
+		Mapping mapping;
 		for (Map.Entry<String, PropertyDescriptor> e : descriptors.entrySet()) {
-			propertyType = e.getValue().getPropertyType();
-			if (propertyType.isAnnotationPresent(Excluded.class)) {
-				continue;
+			propertyName = e.getKey();
+			descriptor = e.getValue();
+			field = FieldUtils.getFieldIfAbsent(type, propertyName);
+			if (field != null) {
+				if (field.isAnnotationPresent(Excluding.class)) {
+					results.remove(propertyName);
+				} else if (field.isAnnotationPresent(Mapping.class)) {
+					mapping = field.getAnnotation(Mapping.class);
+					results.put(StringUtils.isBlank(mapping.value()) ? e.getKey() : mapping.value(), descriptor);
+				}
 			}
-			mapper = type.getAnnotation(Mapper.class);
-			if (mapper == null) {
-				results.put(e.getKey(), e.getValue());
-			} else {
-				results.put(StringUtils.isBlank(mapper.value()) ? e.getKey() : mapper.value(), e.getValue());
+			method = descriptor.getWriteMethod();
+			if (method != null && method.isAnnotationPresent(Mapping.class)) {
+				mapping = method.getAnnotation(Mapping.class);
+				results.put(StringUtils.isBlank(mapping.value()) ? e.getKey() : mapping.value(), descriptor);
 			}
 		}
 		return results;
 	}
 
 	public static PropertyDescriptor getPropertyDescriptor(Class<?> beanClass, String propertyName) {
-		final Map<String, PropertyDescriptor> descMap = getPropertyDescriptors(beanClass, null);
-		return descMap.get(propertyName);
+		final Map<String, PropertyDescriptor> dest = getPropertyDescriptors(beanClass, null);
+		return dest.get(propertyName);
 	}
 
 	public static boolean hasProperty(Class<?> beanClass, String propertyName) {
-		final Map<String, PropertyDescriptor> descMap = getPropertyDescriptors(beanClass, null);
-		return descMap.containsKey(propertyName);
+		final Map<String, PropertyDescriptor> dest = getPropertyDescriptors(beanClass, null);
+		return dest.containsKey(propertyName);
 	}
 
-	public static boolean setProperty(Object bean, PropertyDescriptor descriptor, Object value, TypeConverter typeConverter) {
+	public static boolean setProperty(Object bean, PropertyDescriptor descriptor, Object value) {
 		Assert.isNull(bean, "Source instance must not be null.");
 		Assert.isNull(descriptor, "Property descriptor must not be null.");
 		Method method = descriptor.getWriteMethod();
 		Assert.isNull(method, "Cannot find the setter of '" + descriptor.getName() + "'.");
-		return setProperty(bean, method, descriptor.getPropertyType(), value, typeConverter);
+		return setProperty(bean, method, descriptor.getPropertyType(), value);
 	}
 
-	private static boolean setProperty(Object bean, Method method, Class<?> propertyType, Object value, TypeConverter typeConverter) {
-		Object realValue = value;
-		if (typeConverter != null) {
-			realValue = typeConverter.convert(value, propertyType, null);
+	private static boolean setProperty(Object bean, Method method, Class<?> propertyType, Object value) {
+		Object realValue;
+		try {
+			realValue = propertyType.cast(value);
+		} catch (RuntimeException e) {
+			realValue = ConvertUtils.convertValue(value, propertyType);
 		}
 		if (realValue == null && propertyType.isPrimitive()) {
 			return false;
 		}
-		callSetter(bean, method, realValue);
+		invokeSetter(bean, method, realValue);
 		return true;
 	}
 
-	public static boolean setProperty(Object bean, String property, Object value, TypeConverter typeConverter) {
-		final int index = property.indexOf(".");
-		if (index != -1) {
-			bean = getProperty(bean, property.substring(0, index));
-			return setPropertyNested(bean, property.substring(index + 1), value, typeConverter);
+	public static boolean setProperty(Object bean, String propertyName, Object value) {
+		final int index = propertyName.indexOf('.');
+		if (index > 0) {
+			bean = getProperty(bean, propertyName.substring(0, index));
+			return setProperty(bean, propertyName.substring(index + 1), value);
 		} else {
-			return setPropertyNested(bean, property, value, typeConverter);
+			Assert.isNull(bean, "Source instance must not be null.");
+			PropertyDescriptor descriptor = getPropertyDescriptor(bean.getClass(), propertyName);
+			Assert.isNull(descriptor, "Property '" + propertyName + "' is not found in class '" + bean.getClass().getName() + "'.");
+			return setProperty(bean, descriptor, value);
 		}
-	}
-
-	private static boolean setPropertyNested(Object bean, String property, Object value, TypeConverter typeConverter) {
-		Assert.isNull(bean, "Source instance must not be null.");
-		PropertyDescriptor descriptor = getPropertyDescriptor(bean.getClass(), property);
-		Assert.isNull(descriptor, "Property '" + property + "' is not found in class '" + bean.getClass().getName() + "'.");
-		return setProperty(bean, descriptor, value, typeConverter);
 	}
 
 	public static Object getProperty(Object bean, PropertyDescriptor descriptor) {
@@ -204,25 +201,21 @@ public class PropertyUtils {
 		Assert.isNull(descriptor, "Property descriptor must not be null.");
 		Method method = descriptor.getReadMethod();
 		Assert.isNull(method, "Cannot find the getter of '" + descriptor.getName() + "'.");
-		return callGetter(bean, method);
+		return invokeGetter(bean, method);
 	}
 
 	public static Object getProperty(Object bean, String propertyName) {
+		Assert.isNull(bean, "Source instance must not be null.");
 		Assert.hasNoText(propertyName, "PropertyName must not be null or empty.");
-		final int index = propertyName.indexOf(".");
-		if (index != -1) {
-			bean = getPropertyNested(bean, propertyName.substring(0, index));
+		final int index = propertyName.indexOf('.');
+		if (index > 0) {
+			bean = getProperty(bean, propertyName.substring(0, index));
 			return getProperty(bean, propertyName.substring(index + 1));
 		} else {
-			return getPropertyNested(bean, propertyName);
+			PropertyDescriptor descriptor = getPropertyDescriptor(bean.getClass(), propertyName);
+			Assert.isNull(descriptor, "Property '" + propertyName + "' is not found in class '" + bean.getClass().getName() + "'.");
+			return getProperty(bean, descriptor);
 		}
-	}
-
-	private static Object getPropertyNested(Object bean, String property) {
-		Assert.isNull(bean, "Source instance must not be null.");
-		PropertyDescriptor descriptor = getPropertyDescriptor(bean.getClass(), property);
-		Assert.isNull(descriptor, "Property '" + property + "' is not found in class '" + bean.getClass().getName() + "'.");
-		return getProperty(bean, descriptor);
 	}
 
 	public static void copyProperties(Object original, Object destination) {
@@ -233,51 +226,44 @@ public class PropertyUtils {
 		copyProperties(original, destination, filter, true);
 	}
 
-	public static void copyProperties(Object original, Object destination, PropertyFilter filter, boolean overwrite) {
-		copyProperties(original, destination, filter, overwrite, null);
+	public static void copyProperties(Object original, Object destination, PropertyFilter filter, boolean overwrited) {
+		copyProperties(original, null, destination, filter, overwrited);
 	}
 
-	public static void copyProperties(Object original, Object destination, PropertyFilter filter, boolean overwrite,
-			TypeConverter typeConverter) {
-		copyProperties(original, null, destination, filter, overwrite, typeConverter);
+	public static void copyProperties(Object original, Class<?> stopClass, Object destination, PropertyFilter filter, boolean overwrited) {
+		copyProperties(original, stopClass, destination, filter, overwrited, false);
 	}
 
-	public static void copyProperties(Object original, Class<?> stopClass, Object destination, PropertyFilter filter, boolean overwrite,
-			TypeConverter typeConverter) {
+	public static void copyProperties(Object original, Class<?> stopClass, Object destination, PropertyFilter filter, boolean overwrited,
+			boolean mappingProperty) {
 		Assert.isNull(original, "Source instance must not be null.");
 		Assert.isNull(destination, "Destination instance must not be null.");
-		Map<String, PropertyDescriptor> srcMap = getPropertyDescriptors(original.getClass(), stopClass, filter);
-		Map<String, PropertyDescriptor> destMap = getMappedPropertyDescriptors(destination.getClass(), null, null);
-		doCopyProperties(original, srcMap, destination, destMap, overwrite, typeConverter);
+		Map<String, PropertyDescriptor> orig = getPropertyDescriptors(original.getClass(), stopClass, filter);
+		Map<String, PropertyDescriptor> dest = mappingProperty ? getMappingPropertyDescriptors(destination.getClass())
+				: getPropertyDescriptors(destination.getClass());
+		proceedCopyProperties(original, orig, destination, dest, overwrited);
 	}
 
-	private static void doCopyProperties(Object original, Map<String, PropertyDescriptor> srcMap, Object destination,
-			Map<String, PropertyDescriptor> destMap, boolean overwrite, TypeConverter typeConverter) {
-		PropertyDescriptor desc;
-		String propertyName;
+	private static void proceedCopyProperties(Object original, Map<String, PropertyDescriptor> orig, Object destination,
+			Map<String, PropertyDescriptor> dest, boolean overwrited) {
+		PropertyDescriptor descriptor;
+		String path;
 		Object value;
-		Method method;
-		for (Map.Entry<String, PropertyDescriptor> e : srcMap.entrySet()) {
-			propertyName = e.getKey();
-			if (null != (desc = destMap.get(propertyName))) {
-				method = e.getValue().getReadMethod();
-				if (method != null) {
-					value = callGetter(original, method);
-					if (overwrite) {
-						method = desc.getReadMethod();
-						if (method != null) {
-							Object oldValue = callGetter(destination, method);
-							if (oldValue != null) {
-								continue;
-							}
-						}
-					}
-					method = desc.getWriteMethod();
-					if (method != null) {
-						setProperty(destination, method, desc.getPropertyType(), value, typeConverter);
-					}
+		for (Map.Entry<String, PropertyDescriptor> entry : dest.entrySet()) {
+			path = entry.getKey();
+			descriptor = entry.getValue();
+			if (!overwrited) {
+				Object current = getProperty(destination, descriptor);
+				if (current != null) {
+					continue;
 				}
 			}
+			try {
+				value = getProperty(original, path);
+			} catch (RuntimeException ignored) {
+				value = null;
+			}
+			setProperty(destination, descriptor, value);
 		}
 	}
 
@@ -291,23 +277,17 @@ public class PropertyUtils {
 
 	public static Map<String, Object> convertToMap(Object bean, Class<?> stopClass, PropertyFilter filter) {
 		Assert.isNull(bean, "Source instance must not be null.");
-		Map<String, PropertyDescriptor> descMap = getPropertyDescriptors(bean.getClass(), stopClass, filter);
+		Map<String, PropertyDescriptor> dest = getPropertyDescriptors(bean.getClass(), stopClass, filter);
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		PropertyDescriptor descriptor = null;
-		Method method = null;
-		Object value = null;
-		for (Map.Entry<String, PropertyDescriptor> entry : descMap.entrySet()) {
+		PropertyDescriptor descriptor;
+		for (Map.Entry<String, PropertyDescriptor> entry : dest.entrySet()) {
 			descriptor = entry.getValue();
-			method = descriptor.getReadMethod();
-			if (method != null) {
-				value = callGetter(bean, method);
-			}
-			map.put(entry.getKey(), value);
+			map.put(entry.getKey(), getProperty(bean, descriptor));
 		}
 		return map;
 	}
 
-	private static Object callSetter(Object bean, Method method, Object value) {
+	private static Object invokeSetter(Object bean, Method method, Object value) {
 		try {
 			return MethodUtils.invokeMethod(bean, method, value);
 		} catch (Exception e) {
@@ -316,7 +296,7 @@ public class PropertyUtils {
 		}
 	}
 
-	private static Object callGetter(Object bean, Method method) {
+	private static Object invokeGetter(Object bean, Method method) {
 		try {
 			return MethodUtils.invokeMethod(bean, method);
 		} catch (Exception e) {

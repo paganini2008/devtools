@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Executor;
 import java.util.concurrent.PriorityBlockingQueue;
 
 import com.github.paganini2008.devtools.ClassUtils;
-import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
 import com.github.paganini2008.devtools.multithreads.Producer;
 import com.github.paganini2008.devtools.multithreads.Producer.Consumer;
+import com.github.paganini2008.devtools.multithreads.ThreadPool;
+import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 
 /**
  * 
@@ -37,8 +37,8 @@ public class EventBus implements EventPubSub {
 		this.delegate = new EventHandler(nThreads, queueLength, timeout);
 	}
 
-	public EventBus(Executor executor, int maxPermits, long timeout) {
-		this.delegate = new EventHandler(executor, maxPermits, timeout);
+	public EventBus(ThreadPool threadPool, int maxPermits, long timeout) {
+		this.delegate = new EventHandler(threadPool, maxPermits, timeout);
 	}
 
 	private EventHandler delegate;
@@ -74,11 +74,11 @@ public class EventBus implements EventPubSub {
 		final ConcurrentMap<Class<?>, EventGroup> eventGroups = new ConcurrentHashMap<Class<?>, EventGroup>();
 
 		EventHandler(int nThreads, int maxPermits, long timeout) {
-			this(ExecutorUtils.newCommonPool(nThreads), maxPermits, timeout);
+			this(ThreadUtils.newCommonPool(nThreads), maxPermits, timeout);
 		}
 
-		EventHandler(Executor executor, int maxPermits, long timeout) {
-			this.producer = new Producer<Runnable, Object>(executor, this);
+		EventHandler(ThreadPool threadPool, int maxPermits, long timeout) {
+			this.producer = new Producer<Runnable, Object>(threadPool, this);
 		}
 
 		public void publish(Event event) {

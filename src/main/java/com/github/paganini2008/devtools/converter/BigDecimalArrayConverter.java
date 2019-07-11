@@ -2,7 +2,7 @@ package com.github.paganini2008.devtools.converter;
 
 import java.math.BigDecimal;
 
-import com.github.paganini2008.devtools.math.BigDecimals;
+import com.github.paganini2008.devtools.math.BigDecimalUtils;
 
 /**
  * BigDecimalArrayConverter
@@ -17,7 +17,7 @@ public class BigDecimalArrayConverter extends BaseConverter<BigDecimal[]> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return BigDecimals.valuesOf(source);
+			return BigDecimalUtils.valuesOf(source);
 		}
 	};
 
@@ -26,7 +26,7 @@ public class BigDecimalArrayConverter extends BaseConverter<BigDecimal[]> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return BigDecimals.valuesOf(source);
+			return BigDecimalUtils.valuesOf(source);
 		}
 	};
 
@@ -35,7 +35,7 @@ public class BigDecimalArrayConverter extends BaseConverter<BigDecimal[]> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return BigDecimals.valuesOf(source);
+			return BigDecimalUtils.valuesOf(source);
 		}
 	};
 
@@ -44,7 +44,7 @@ public class BigDecimalArrayConverter extends BaseConverter<BigDecimal[]> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return BigDecimals.valuesOf(source);
+			return BigDecimalUtils.valuesOf(source);
 		}
 	};
 
@@ -53,7 +53,7 @@ public class BigDecimalArrayConverter extends BaseConverter<BigDecimal[]> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return BigDecimals.valuesOf(source);
+			return BigDecimalUtils.valuesOf(source);
 		}
 	};
 
@@ -62,7 +62,7 @@ public class BigDecimalArrayConverter extends BaseConverter<BigDecimal[]> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return BigDecimals.valuesOf(source);
+			return BigDecimalUtils.valuesOf(source);
 		}
 	};
 
@@ -71,7 +71,7 @@ public class BigDecimalArrayConverter extends BaseConverter<BigDecimal[]> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return BigDecimals.valuesOf(source);
+			return BigDecimalUtils.valuesOf(source);
 		}
 	};
 
@@ -80,7 +80,7 @@ public class BigDecimalArrayConverter extends BaseConverter<BigDecimal[]> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return BigDecimals.valuesOf(source);
+			return BigDecimalUtils.valuesOf(source);
 		}
 	};
 

@@ -3,6 +3,11 @@ package com.github.paganini2008.devtools;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.github.paganini2008.devtools.primitives.Doubles;
+import com.github.paganini2008.devtools.primitives.Floats;
+import com.github.paganini2008.devtools.primitives.Ints;
+import com.github.paganini2008.devtools.primitives.Longs;
+
 /**
  * RandomUtils
  * 
@@ -118,6 +123,11 @@ public class RandomUtils {
 		return (float) randomDouble(from, to);
 	}
 
+	public static float randomFloat(long from, long to, int scale) {
+		float f = randomFloat(from, to);
+		return Floats.toFixed(f, 2);
+	}
+
 	public static float[] randomFloats(int length, long from, long to) {
 		float[] results = new float[length];
 		float a;
@@ -162,8 +172,11 @@ public class RandomUtils {
 		return results;
 	}
 
+	public static boolean randomBoolean() {
+		return randomInt(0, 2) == 1;
+	}
+
 	public static void main(String[] args) throws Exception {
-		System.out.println(Doubles.toString(randomDoubles(10, 0, 1000)));
 	}
 
 }

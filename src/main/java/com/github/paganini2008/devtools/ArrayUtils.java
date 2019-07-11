@@ -3,6 +3,14 @@ package com.github.paganini2008.devtools;
 import java.lang.reflect.Array;
 import java.util.Comparator;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
+import com.github.paganini2008.devtools.primitives.Chars;
+import com.github.paganini2008.devtools.primitives.Doubles;
+import com.github.paganini2008.devtools.primitives.Floats;
+import com.github.paganini2008.devtools.primitives.Ints;
+import com.github.paganini2008.devtools.primitives.Longs;
+import com.github.paganini2008.devtools.primitives.Shorts;
 
 /**
  * ArrayUtils
@@ -18,11 +26,9 @@ public class ArrayUtils {
 
 	public static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
 
-	static final int INDEX_NOT_FOUND = -1;
+	public static final int INDEX_NOT_FOUND = -1;
 
-	static final int MERGE_SORT_THRESHOLD = 10;
-
-	static final Random rn = new Random(System.currentTimeMillis());
+	public static final int MERGE_SORT_THRESHOLD = 10;
 
 	public static boolean isNotSameLength(Object[] left, Object[] right) {
 		return !isSameLength(left, right);
@@ -473,24 +479,6 @@ public class ArrayUtils {
 		return array;
 	}
 
-	public static <T extends Comparable<T>> T max(T[] values) {
-		Assert.isTrue(isEmpty(values), "Empty array.");
-		T m = null;
-		for (T t : values) {
-			m = Comparables.max(t, m);
-		}
-		return m;
-	}
-
-	public static <T extends Comparable<T>> T min(T[] values) {
-		Assert.isTrue(isEmpty(values), "Empty array.");
-		T m = null;
-		for (T t : values) {
-			m = Comparables.min(t, m);
-		}
-		return m;
-	}
-
 	public static boolean isSubarray(Object[] left, Object[] right) {
 		if (isEmpty(left) || isEmpty(right) || left.length < right.length) {
 			return false;
@@ -593,7 +581,7 @@ public class ArrayUtils {
 	}
 
 	public static void shuffle(Object[] src) {
-		shuffle(src, rn);
+		shuffle(src, ThreadLocalRandom.current());
 	}
 
 	public static void shuffle(Object[] src, Random rn) {

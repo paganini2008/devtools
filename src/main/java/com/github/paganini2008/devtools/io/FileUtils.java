@@ -29,7 +29,7 @@ import java.util.List;
 import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.CharsetUtils;
 import com.github.paganini2008.devtools.StringUtils;
-import com.github.paganini2008.devtools.math.BigDecimals;
+import com.github.paganini2008.devtools.math.BigDecimalUtils;
 
 /**
  * FileUtils
@@ -286,24 +286,24 @@ public class FileUtils {
 		Assert.isNull(size, "Size must not be null.");
 		BigDecimal tmp;
 		String displaySize;
-		if ((tmp = BigDecimals.divide(size, YB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
+		if ((tmp = BigDecimalUtils.divide(size, YB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
 			displaySize = String.valueOf(tmp) + " YB";
-		} else if ((tmp = BigDecimals.divide(size, ZB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
+		} else if ((tmp = BigDecimalUtils.divide(size, ZB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
 			displaySize = String.valueOf(tmp) + " ZB";
-		} else if ((tmp = BigDecimals.divide(size, EB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
+		} else if ((tmp = BigDecimalUtils.divide(size, EB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
 			displaySize = String.valueOf(tmp) + " EB";
-		} else if ((tmp = BigDecimals.divide(size, PB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
+		} else if ((tmp = BigDecimalUtils.divide(size, PB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
 			displaySize = String.valueOf(tmp) + " PB";
-		} else if ((tmp = BigDecimals.divide(size, TB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
+		} else if ((tmp = BigDecimalUtils.divide(size, TB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
 			displaySize = String.valueOf(tmp) + " TB";
-		} else if ((tmp = BigDecimals.divide(size, GB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
+		} else if ((tmp = BigDecimalUtils.divide(size, GB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
 			displaySize = String.valueOf(tmp) + " GB";
-		} else if ((tmp = BigDecimals.divide(size, MB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
+		} else if ((tmp = BigDecimalUtils.divide(size, MB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
 			displaySize = String.valueOf(tmp) + " MB";
-		} else if ((tmp = BigDecimals.divide(size, KB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
+		} else if ((tmp = BigDecimalUtils.divide(size, KB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
 			displaySize = String.valueOf(tmp) + " KB";
 		} else {
-			tmp = BigDecimals.setScale(size, scale, RoundingMode.HALF_UP);
+			tmp = BigDecimalUtils.setScale(size, scale, RoundingMode.HALF_UP);
 			displaySize = String.valueOf(tmp) + " bytes";
 		}
 		return displaySize;

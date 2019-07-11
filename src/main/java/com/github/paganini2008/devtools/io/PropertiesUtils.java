@@ -3,8 +3,8 @@ package com.github.paganini2008.devtools.io;
 import java.io.IOException;
 import java.util.Properties;
 
+import com.github.paganini2008.devtools.MatchMode;
 import com.github.paganini2008.devtools.collection.LruMap;
-import com.github.paganini2008.devtools.collection.MatchMode;
 
 /**
  * PropertiesUtils

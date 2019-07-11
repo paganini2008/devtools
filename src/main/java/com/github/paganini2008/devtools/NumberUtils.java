@@ -5,7 +5,7 @@ import java.math.BigInteger;
 import java.text.DecimalFormat;
 
 import com.github.paganini2008.devtools.collection.LruMap;
-import com.github.paganini2008.devtools.math.BigDecimals;
+import com.github.paganini2008.devtools.math.BigDecimalUtils;
 
 /**
  * NumberUtils
@@ -27,7 +27,7 @@ public class NumberUtils {
 	}
 
 	public static String toPlainString(Number n, String defaultValue) {
-		return BigDecimals.toPlainString(n, defaultValue);
+		return BigDecimalUtils.toPlainString(n, defaultValue);
 	}
 
 	public static boolean isInteger(String str) {

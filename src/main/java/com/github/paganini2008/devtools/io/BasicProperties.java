@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import com.github.paganini2008.devtools.MatchMode;
 import com.github.paganini2008.devtools.collection.ListUtils;
 import com.github.paganini2008.devtools.collection.MapUtils;
-import com.github.paganini2008.devtools.collection.MatchMode;
 
 /**
  * 

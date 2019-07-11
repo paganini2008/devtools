@@ -9,7 +9,7 @@ package com.github.paganini2008.devtools.converter;
  */
 public class ConvertUtils {
 
-	private static final TypeConverter INSTANCE = new StandardTypeConverter();
+	static final TypeConverter INSTANCE = new StandardTypeConverter();
 
 	public static <T> void registerConverter(Class<T> requiredType, BaseConverter<T> converter) {
 		INSTANCE.register(requiredType, converter);

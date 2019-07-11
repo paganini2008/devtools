@@ -3,7 +3,7 @@ package com.github.paganini2008.devtools;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import com.github.paganini2008.devtools.math.BigDecimals;
+import com.github.paganini2008.devtools.math.BigDecimalUtils;
 
 public class Numeric extends Number {
 
@@ -27,7 +27,7 @@ public class Numeric extends Number {
 	}
 
 	public Numeric(String str) {
-		this.value = BigDecimals.parse(str);
+		this.value = BigDecimalUtils.parse(str);
 	}
 
 	public int intValue() {

@@ -9,9 +9,9 @@ import java.util.Locale;
 
 import com.github.paganini2008.devtools.ArrayUtils;
 import com.github.paganini2008.devtools.Assert;
-import com.github.paganini2008.devtools.Longs;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.LruMap;
+import com.github.paganini2008.devtools.primitives.Longs;
 
 /**
  * DateUtils

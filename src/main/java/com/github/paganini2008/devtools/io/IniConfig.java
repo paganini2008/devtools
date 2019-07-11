@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
-import com.github.paganini2008.devtools.collection.MatchMode;
+import com.github.paganini2008.devtools.MatchMode;
 
 /**
  * 

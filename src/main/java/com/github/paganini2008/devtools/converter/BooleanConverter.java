@@ -1,6 +1,6 @@
 package com.github.paganini2008.devtools.converter;
 
-import com.github.paganini2008.devtools.Booleans;
+import com.github.paganini2008.devtools.primitives.Booleans;
 
 /**
  * BooleanConverter

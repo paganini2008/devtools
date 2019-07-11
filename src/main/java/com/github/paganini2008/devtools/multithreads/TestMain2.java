@@ -3,7 +3,7 @@ package com.github.paganini2008.devtools.multithreads;
 public class TestMain2 {
 
 	public static void main(String[] args) throws Exception {
-		AsyncThreadPool<Long> tp = ThreadPools.newAsyncPool(ThreadPools.newSimplePool(100));
+		AsyncThreadPool<Long> tp = ThreadUtils.newAsyncPool(ThreadUtils.newSimplePool(100));
 		Promise<Long> p = tp.submitAndWait(getIt(6L));
 		System.out.println("No. " + p.get());
 		System.in.read();

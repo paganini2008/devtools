@@ -8,58 +8,31 @@ import java.math.BigInteger;
  * @author Fred Feng
  * @version 1.0
  */
-public class NumberRange {
+public abstract class NumberRange {
 
-	private static final BigInteger BYTE_MIN = BigInteger.valueOf(Byte.MIN_VALUE);
-	private static final BigInteger BYTE_MAX = BigInteger.valueOf(Byte.MAX_VALUE);
-	private static final BigInteger SHORT_MIN = BigInteger.valueOf(Short.MIN_VALUE);
-	private static final BigInteger SHORT_MAX = BigInteger.valueOf(Short.MAX_VALUE);
-	private static final BigInteger INTEGER_MIN = BigInteger.valueOf(Integer.MIN_VALUE);
-	private static final BigInteger INTEGER_MAX = BigInteger.valueOf(Integer.MAX_VALUE);
-	private static final BigInteger LONG_MIN = BigInteger.valueOf(Long.MIN_VALUE);
-	private static final BigInteger LONG_MAX = BigInteger.valueOf(Long.MAX_VALUE);
+	private static final BigInteger MIN_BYTE = BigInteger.valueOf(Byte.MIN_VALUE);
+	private static final BigInteger MAX_BYTE = BigInteger.valueOf(Byte.MAX_VALUE);
+	private static final BigInteger MIN_SHORT = BigInteger.valueOf(Short.MIN_VALUE);
+	private static final BigInteger MAX_SHORT = BigInteger.valueOf(Short.MAX_VALUE);
+	private static final BigInteger MIN_INTEGER = BigInteger.valueOf(Integer.MIN_VALUE);
+	private static final BigInteger MAX_INTEGER = BigInteger.valueOf(Integer.MAX_VALUE);
+	private static final BigInteger MIN_LONG = BigInteger.valueOf(Long.MIN_VALUE);
+	private static final BigInteger MAX_LONG = BigInteger.valueOf(Long.MAX_VALUE);
 
-	public static int checkByte(BigInteger value) {
-		if (value.compareTo(BYTE_MIN) < 0) {
-			return -1;
-		}
-		if (value.compareTo(BYTE_MAX) > 0) {
-			return 1;
-		}
-		return 0;
+	public static boolean checkByte(BigInteger value) {
+		return CompareUtils.between(value, MIN_BYTE, MAX_BYTE);
 	}
 
-	public static int checkShort(BigInteger value) {
-		if (value.compareTo(SHORT_MIN) < 0) {
-			return -1;
-		}
-		if (value.compareTo(SHORT_MAX) > 0) {
-			return 1;
-		}
-		return 0;
+	public static boolean checkShort(BigInteger value) {
+		return CompareUtils.between(value, MIN_SHORT, MAX_SHORT);
 	}
 
-	public static int checkInteger(BigInteger value) {
-		if (value.compareTo(INTEGER_MIN) < 0) {
-			return -1;
-		}
-		if (value.compareTo(INTEGER_MAX) > 0) {
-			return 1;
-		}
-		return 0;
+	public static boolean checkInteger(BigInteger value) {
+		return CompareUtils.between(value, MIN_INTEGER, MAX_INTEGER);
 	}
 
-	public static int checkLong(BigInteger value) {
-		if (value.compareTo(LONG_MIN) < 0) {
-			return -1;
-		}
-		if (value.compareTo(LONG_MAX) > 0) {
-			return 1;
-		}
-		return 0;
-	}
-
-	private NumberRange() {
+	public static boolean checkLong(BigInteger value) {
+		return CompareUtils.between(value, MIN_LONG, MAX_LONG);
 	}
 
 }

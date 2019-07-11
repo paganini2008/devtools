@@ -14,10 +14,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.github.paganini2008.devtools.MatchMode;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.ListUtils;
 import com.github.paganini2008.devtools.collection.MapUtils;
-import com.github.paganini2008.devtools.collection.MatchMode;
 import com.github.paganini2008.devtools.collection.MultiMapMap;
 
 /**
@@ -146,7 +146,7 @@ public class BasicIniConfig implements IniConfig, Serializable {
 	}
 
 	public Byte getByte(String section, String name, Byte defaultValue) {
-		return MapUtils.getByte(config.get(section), name, defaultValue);
+		return MapUtils.get(config.get(section), name, Byte.class, defaultValue);
 	}
 
 	public Short getShort(String section, String name) {
@@ -154,7 +154,7 @@ public class BasicIniConfig implements IniConfig, Serializable {
 	}
 
 	public Short getShort(String section, String name, Short defaultValue) {
-		return MapUtils.getShort(config.get(section), name, defaultValue);
+		return MapUtils.get(config.get(section), name, Short.class, defaultValue);
 	}
 
 	public Integer getInteger(String section, String name) {
@@ -162,7 +162,7 @@ public class BasicIniConfig implements IniConfig, Serializable {
 	}
 
 	public Integer getInteger(String section, String name, Integer defaultValue) {
-		return MapUtils.getInteger(config.get(section), name, defaultValue);
+		return MapUtils.get(config.get(section), name, Integer.class, defaultValue);
 	}
 
 	public Long getLong(String section, String name) {
@@ -170,7 +170,7 @@ public class BasicIniConfig implements IniConfig, Serializable {
 	}
 
 	public Long getLong(String section, String name, Long defaultValue) {
-		return MapUtils.getLong(config.get(section), name, defaultValue);
+		return MapUtils.get(config.get(section), name, Long.class, defaultValue);
 	}
 
 	public Float getFloat(String section, String name) {
@@ -178,7 +178,7 @@ public class BasicIniConfig implements IniConfig, Serializable {
 	}
 
 	public Float getFloat(String section, String name, Float defaultValue) {
-		return MapUtils.getFloat(config.get(section), name, defaultValue);
+		return MapUtils.get(config.get(section), name, Float.class, defaultValue);
 	}
 
 	public Double getDouble(String section, String name) {
@@ -186,7 +186,7 @@ public class BasicIniConfig implements IniConfig, Serializable {
 	}
 
 	public Double getDouble(String section, String name, Double defaultValue) {
-		return MapUtils.getDouble(config.get(section), name, defaultValue);
+		return MapUtils.get(config.get(section), name, Double.class, defaultValue);
 	}
 
 	public Boolean getBoolean(String section, String name) {
@@ -194,7 +194,7 @@ public class BasicIniConfig implements IniConfig, Serializable {
 	}
 
 	public Boolean getBoolean(String section, String name, Boolean defaultValue) {
-		return MapUtils.getBoolean(config.get(section), name, defaultValue);
+		return MapUtils.get(config.get(section), name, Boolean.class, defaultValue);
 	}
 
 	public Map<String, Map<String, String>> toMap() {

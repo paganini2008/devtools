@@ -1,6 +1,6 @@
 package com.github.paganini2008.devtools.converter;
 
-import com.github.paganini2008.devtools.Chars;
+import com.github.paganini2008.devtools.primitives.Chars;
 
 /**
  * CharacterObjectArrayConverter

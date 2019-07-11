@@ -1,6 +1,6 @@
 package com.github.paganini2008.devtools.converter;
 
-import com.github.paganini2008.devtools.Floats;
+import com.github.paganini2008.devtools.primitives.Floats;
 
 /**
  * FloatConverter

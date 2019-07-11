@@ -1,5 +1,13 @@
 package com.github.paganini2008.devtools;
 
+import com.github.paganini2008.devtools.primitives.Booleans;
+import com.github.paganini2008.devtools.primitives.Bytes;
+import com.github.paganini2008.devtools.primitives.Doubles;
+import com.github.paganini2008.devtools.primitives.Floats;
+import com.github.paganini2008.devtools.primitives.Ints;
+import com.github.paganini2008.devtools.primitives.Longs;
+import com.github.paganini2008.devtools.primitives.Shorts;
+
 /**
  * SystemPropertyUtils
  * 

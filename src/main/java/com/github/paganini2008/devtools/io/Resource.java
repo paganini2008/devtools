@@ -2,7 +2,7 @@ package com.github.paganini2008.devtools.io;
 
 import java.util.Map;
 
-import com.github.paganini2008.devtools.collection.MatchMode;
+import com.github.paganini2008.devtools.MatchMode;
 
 /**
  * 

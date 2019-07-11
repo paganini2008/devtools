@@ -3,6 +3,8 @@ package com.github.paganini2008.devtools;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.paganini2008.devtools.primitives.Chars;
+
 /**
  * RandomStringUtils
  * 
@@ -47,13 +49,13 @@ public class RandomStringUtils {
 		digitsLetters.addAll(letters);
 		digitsLetters.addAll(digits);
 
-		LETTERS_LOWER = Chars.toCharArray(lettersLower);
-		LETTERS_UPPER = Chars.toCharArray(lettersUpper);
-		LETTERS = Chars.toCharArray(letters);
-		DIGITS = Chars.toCharArray(digits);
-		DIGITS_LETTERS_LOWER = Chars.toCharArray(digitsLettersLower);
-		DIGITS_LETTERS_UPPER = Chars.toCharArray(digitsLettersUpper);
-		DIGITS_LETTERS = Chars.toCharArray(digitsLetters);
+		LETTERS_LOWER = Chars.toArray(lettersLower);
+		LETTERS_UPPER = Chars.toArray(lettersUpper);
+		LETTERS = Chars.toArray(letters);
+		DIGITS = Chars.toArray(digits);
+		DIGITS_LETTERS_LOWER = Chars.toArray(digitsLettersLower);
+		DIGITS_LETTERS_UPPER = Chars.toArray(digitsLettersUpper);
+		DIGITS_LETTERS = Chars.toArray(digitsLetters);
 	}
 
 	public static void main(String[] args) throws Exception {

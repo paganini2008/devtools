@@ -1,5 +1,7 @@
 package com.github.paganini2008.devtools;
 
+import com.github.paganini2008.devtools.primitives.Chars;
+
 /**
  * 
  * BitUtils

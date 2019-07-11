@@ -11,6 +11,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import com.github.paganini2008.devtools.ClassUtils;
+
 /**
  * TypeConverter
  * 
@@ -90,6 +92,8 @@ public class StandardTypeConverter implements TypeConverter {
 		}
 	};
 
+	public static final TypeConverter DEFALT = new StandardTypeConverter();
+
 	private final Map<Type, BaseConverter<?>> converters;
 
 	public StandardTypeConverter() {
@@ -116,11 +120,13 @@ public class StandardTypeConverter implements TypeConverter {
 		if (value == null) {
 			return defaultValue;
 		}
+		if (requiredType.isPrimitive()) {
+			requiredType = (Class<T>) ClassUtils.toWrapper(requiredType);
+		}
 		try {
 			return requiredType.cast(value);
-		} catch (ClassCastException e) {
+		} catch (RuntimeException e) {
 		}
-		
 		BaseConverter<T> converter = (BaseConverter<T>) lookup(requiredType);
 		if (converter != null) {
 			return converter.getValue(value, defaultValue);

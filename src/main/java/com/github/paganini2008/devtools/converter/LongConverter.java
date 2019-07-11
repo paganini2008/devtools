@@ -3,9 +3,9 @@ package com.github.paganini2008.devtools.converter;
 import java.util.Calendar;
 import java.util.Date;
 
-import com.github.paganini2008.devtools.Longs;
 import com.github.paganini2008.devtools.date.CalendarUtils;
 import com.github.paganini2008.devtools.date.DateUtils;
+import com.github.paganini2008.devtools.primitives.Longs;
 
 /**
  * LongConverter

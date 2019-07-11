@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import com.github.paganini2008.devtools.collection.LruMap;
+import com.github.paganini2008.devtools.primitives.Chars;
 
 /**
  * StringUtils

@@ -6,8 +6,8 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.github.paganini2008.devtools.MatchMode;
 import com.github.paganini2008.devtools.collection.MapUtils;
-import com.github.paganini2008.devtools.collection.MatchMode;
 
 /**
  * 

@@ -7,10 +7,10 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.sql.Blob;
 
-import com.github.paganini2008.devtools.Bytes;
 import com.github.paganini2008.devtools.CharsetUtils;
 import com.github.paganini2008.devtools.io.IOUtils;
 import com.github.paganini2008.devtools.net.UrlUtils;
+import com.github.paganini2008.devtools.primitives.Bytes;
 
 /**
  * ByteArrayConverter

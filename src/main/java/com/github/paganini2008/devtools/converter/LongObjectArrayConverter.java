@@ -4,10 +4,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import com.github.paganini2008.devtools.Longs;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.date.CalendarUtils;
 import com.github.paganini2008.devtools.date.DateUtils;
+import com.github.paganini2008.devtools.primitives.Longs;
 
 /**
  * LongObjectArrayConverter

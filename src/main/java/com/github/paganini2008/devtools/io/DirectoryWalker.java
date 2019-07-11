@@ -16,7 +16,6 @@ import com.github.paganini2008.devtools.multithreads.AsyncThreadPool;
 import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.Execution;
 import com.github.paganini2008.devtools.multithreads.Promise;
-import com.github.paganini2008.devtools.multithreads.ThreadPools;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 
 /**
@@ -30,7 +29,7 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 public abstract class DirectoryWalker {
 
 	public DirectoryWalker(int nThreads) {
-		threadPool = ThreadPools.newAsyncPool(nThreads);
+		threadPool = ThreadUtils.newAsyncPool(nThreads);
 	}
 
 	public DirectoryWalker(AsyncThreadPool<DirectoryInfo> threadPool) {

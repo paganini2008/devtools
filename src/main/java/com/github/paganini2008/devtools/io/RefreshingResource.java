@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import com.github.paganini2008.devtools.MatchMode;
 import com.github.paganini2008.devtools.collection.MapUtils;
-import com.github.paganini2008.devtools.collection.MatchMode;
 import com.github.paganini2008.devtools.date.DateUtils;
 
 /**
@@ -63,7 +63,7 @@ public abstract class RefreshingResource implements Resource, Serializable {
 	}
 
 	public String getString(String name, String defaultValue) {
-		return MapUtils.getString(config, name, defaultValue);
+		return MapUtils.get(config, name, String.class, defaultValue);
 	}
 
 	public Byte getByte(String name) {
@@ -71,7 +71,7 @@ public abstract class RefreshingResource implements Resource, Serializable {
 	}
 
 	public Byte getByte(String name, Byte defaultValue) {
-		return MapUtils.getByte(config, name, defaultValue);
+		return MapUtils.get(config, name, Byte.class, defaultValue);
 	}
 
 	public Short getShort(String name) {
@@ -79,7 +79,7 @@ public abstract class RefreshingResource implements Resource, Serializable {
 	}
 
 	public Short getShort(String name, Short defaultValue) {
-		return MapUtils.getShort(config, name, defaultValue);
+		return MapUtils.get(config, name, Short.class, defaultValue);
 	}
 
 	public Integer getInteger(String name) {
@@ -87,7 +87,7 @@ public abstract class RefreshingResource implements Resource, Serializable {
 	}
 
 	public Integer getInteger(String name, Integer defaultValue) {
-		return MapUtils.getInteger(config, name, defaultValue);
+		return MapUtils.get(config, name, Integer.class, defaultValue);
 	}
 
 	public Long getLong(String name) {
@@ -95,7 +95,7 @@ public abstract class RefreshingResource implements Resource, Serializable {
 	}
 
 	public Long getLong(String name, Long defaultValue) {
-		return MapUtils.getLong(config, name, defaultValue);
+		return MapUtils.get(config, name, Long.class, defaultValue);
 	}
 
 	public Float getFloat(String name) {
@@ -103,7 +103,7 @@ public abstract class RefreshingResource implements Resource, Serializable {
 	}
 
 	public Float getFloat(String name, Float defaultValue) {
-		return MapUtils.getFloat(config, name, defaultValue);
+		return MapUtils.get(config, name, Float.class, defaultValue);
 	}
 
 	public Double getDouble(String name) {
@@ -111,7 +111,7 @@ public abstract class RefreshingResource implements Resource, Serializable {
 	}
 
 	public Double getDouble(String name, Double defaultValue) {
-		return MapUtils.getDouble(config, name, defaultValue);
+		return MapUtils.get(config, name, Double.class, defaultValue);
 	}
 
 	public Boolean getBoolean(String name) {
@@ -119,7 +119,7 @@ public abstract class RefreshingResource implements Resource, Serializable {
 	}
 
 	public Boolean getBoolean(String name, Boolean defaultValue) {
-		return MapUtils.getBoolean(config, name, defaultValue);
+		return MapUtils.get(config, name, Boolean.class, defaultValue);
 	}
 
 	public Map<String, String> toMap() {

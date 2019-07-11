@@ -1,15 +1,20 @@
 package com.github.paganini2008.devtools.reflection;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.github.paganini2008.devtools.ArrayUtils;
 import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.ClassUtils;
 
 /**
+ * 
  * ConstructorUtils
  * 
  * @author Fred Feng
+ * @revised 2019-07
+ * @created 2012-01
  * @version 1.0
  */
 public class ConstructorUtils {
@@ -45,31 +50,69 @@ public class ConstructorUtils {
 		}
 	}
 
+	public static <T> Constructor<T> getConstructorIfAbsent(Class<T> type, Class<?>... parameterTypes) {
+		try {
+			return getConstructor(type, parameterTypes);
+		} catch (RuntimeException e) {
+			return null;
+		}
+	}
+
 	public static <T> Constructor<T> getConstructor(Class<T> type, Class<?>... parameterTypes) {
 		Assert.isNull(type, "Class must not be null.");
 		if (parameterTypes == null) {
 			parameterTypes = ClassUtils.EMPTY_ARRAY;
 		}
+		Throwable cause;
 		try {
 			return type.getDeclaredConstructor(parameterTypes);
-		} catch (NoSuchMethodException e) {
+		} catch (Exception e) {
+			cause = e;
+		}
+		if (cause instanceof NoSuchMethodException) {
+			try {
+				return searchConstructor(type, type.getDeclaredConstructors(), parameterTypes);
+			} catch (NoSuchMethodException e) {
+				cause = e;
+			}
 		}
 		try {
-			return searchDeclaredConstructor(type, parameterTypes);
-		} catch (NoSuchMethodException e) {
+			type.getConstructor(parameterTypes);
+		} catch (Exception e) {
+			cause = e;
 		}
-		throw new ReflectionException("No such accessible constructor on object: " + type.getName());
+		if (cause instanceof NoSuchMethodException) {
+			try {
+				return searchConstructor(type, type.getConstructors(), parameterTypes);
+			} catch (NoSuchMethodException e) {
+				cause = e;
+			}
+		}
+		throw new ReflectionException(cause);
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T> Constructor<T> searchDeclaredConstructor(Class<T> cl, Class<?>[] parameterTypes) throws NoSuchMethodException {
-		Constructor<?>[] methods = cl.getDeclaredConstructors();
-		for (Constructor<?> method : methods) {
-			if (ClassUtils.isAssignable(method.getParameterTypes(), parameterTypes)) {
-				return (Constructor<T>) method;
+	private static <T> Constructor<T> searchConstructor(Class<T> cls, Constructor<?>[] methods, Class<?>[] parameterTypes)
+			throws NoSuchMethodException {
+		if (methods != null) {
+			List<Constructor<T>> candidates = new ArrayList<Constructor<T>>();
+			for (Constructor<?> constructor : methods) {
+				if (ClassUtils.isAssignable(constructor.getParameterTypes(), parameterTypes)) {
+					candidates.add((Constructor<T>) constructor);
+				}
+			}
+			if (!candidates.isEmpty()) {
+				Constructor<T> bestMatch = candidates.get(0);
+				for (Constructor<T> constructor : candidates) {
+					if (ClassUtils.equals(constructor.getParameterTypes(), parameterTypes)) {
+						bestMatch = constructor;
+					}
+				}
+				return bestMatch;
 			}
 		}
-		throw new NoSuchMethodException("No such accessible constructor on object: " + cl.getName());
+		throw new NoSuchMethodException("No matched constructor: " + cls.getSimpleName() + "(" + ArrayUtils.toString(parameterTypes)
+				+ ") on class: " + cls.getName());
 	}
 
 }

@@ -1,35 +1,29 @@
 package com.github.paganini2008.devtools.beans;
 
-import com.github.paganini2008.devtools.converter.BaseConverter;
 import com.github.paganini2008.devtools.converter.ConvertUtils;
-import com.github.paganini2008.devtools.converter.TypeConverter;
 import com.github.paganini2008.devtools.reflection.ConstructorUtils;
-import com.github.paganini2008.devtools.reflection.FieldUtils;
 
 /**
+ * 
  * BeanUtils
  * 
  * @author Fred Feng
+ * @revised 2019-07
+ * @created 2012-01
  * @version 1.0
  */
-@SuppressWarnings("unchecked")
 public class BeanUtils {
 
 	private BeanUtils() {
 	}
 
-	private static final TypeConverter typeConverter = (TypeConverter) FieldUtils.readDeclaredStaticField(ConvertUtils.class, "INSTANCE");
-
-	public static <T> void registerConverter(Class<T> requiredType, BaseConverter<T> converter) {
-		typeConverter.register(requiredType, converter);
-	}
-
-	public static Object copy(Object original) {
+	public static <T> T copy(Object original) {
 		return copy(original, (PropertyFilter) null);
 	}
 
-	public static Object copy(Object original, PropertyFilter propertyFilter) {
-		return copy(original, original.getClass(), propertyFilter);
+	@SuppressWarnings("unchecked")
+	public static <T> T copy(Object original, PropertyFilter propertyFilter) {
+		return (T) copy(original, original.getClass(), propertyFilter);
 	}
 
 	public static <T> T copy(Object original, Class<T> requiredType, PropertyFilter propertyFilter) {
@@ -43,15 +37,28 @@ public class BeanUtils {
 	}
 
 	public static void copyProperties(Object original, Object destination, PropertyFilter propertyFilter) {
-		PropertyUtils.copyProperties(original, destination, propertyFilter, true, typeConverter);
+		PropertyUtils.copyProperties(original, destination, propertyFilter);
 	}
 
 	public static void setProperty(Object bean, String propertyName, Object value) {
-		PropertyUtils.setProperty(bean, propertyName, value, typeConverter);
+		PropertyUtils.setProperty(bean, propertyName, value);
 	}
 
-	public static Object getProperty(Object bean, String propertyName) {
-		return PropertyUtils.getProperty(bean, propertyName);
+	public static <T> T getProperty(Object bean, String propertyName, Class<T> requiredType) {
+		return getProperty(bean, propertyName, requiredType, null);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T getProperty(Object bean, String propertyName, Class<T> requiredType, T defaultValue) {
+		Object rawValue = PropertyUtils.getProperty(bean, propertyName);
+		if (requiredType != null) {
+			try {
+				return requiredType.cast(rawValue);
+			} catch (RuntimeException e) {
+				return ConvertUtils.convertValue(rawValue, requiredType, defaultValue);
+			}
+		}
+		return (T) rawValue;
 	}
 
 	public static <T> T instantiate(String className) {
@@ -62,6 +69,7 @@ public class BeanUtils {
 		return instantiate(className, Thread.currentThread().getContextClassLoader(), arguments);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static <T> T instantiate(String className, ClassLoader classLoader, Object... arguments) {
 		Class<?> requiredType;
 		try {

@@ -1,7 +1,6 @@
 package com.github.paganini2008.devtools.multithreads;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
@@ -52,7 +51,7 @@ public class RecursiveLatch implements Latch {
 				acquired = delegate.acquire();
 			}
 			if (acquired) {
-				System.out.println("A: "+threads.incrementAndGet());
+				threads.incrementAndGet();
 				return true;
 			} else {
 				return false;
@@ -71,7 +70,7 @@ public class RecursiveLatch implements Latch {
 				acquired = delegate.acquire(timeout, timeUnit);
 			}
 			if (acquired) {
-				System.out.println("A: "+threads.incrementAndGet());
+				threads.incrementAndGet();
 				return true;
 			} else {
 				return false;
@@ -106,14 +105,14 @@ public class RecursiveLatch implements Latch {
 	}
 
 	public static void main(String[] args) throws IOException {
-		RecursiveLatch latch = new RecursiveLatch();
+		RecursiveLatch latch = new RecursiveLatch(2);
 		ThreadPool threads = ThreadUtils.newCommonPool(10);
 		final AtomicInteger score = new AtomicInteger();
 		for (int i : Sequence.forEach(0, 10000)) {
 			if (latch.acquire(1, TimeUnit.SECONDS)) {
 				threads.execute(() -> {
 
-					//ThreadUtils.randomSleep(500L);
+					ThreadUtils.randomSleep(500L);
 					System.out.println(ThreadUtils.currentThreadName() + ": " + i);
 					score.incrementAndGet();
 					latch.release();

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import com.github.paganini2008.devtools.collection.MapUtils;
 
@@ -226,17 +227,6 @@ public class ClassUtils {
 		return type != null ? type.isArray() ? type.getComponentType() : type : null;
 	}
 
-	public static List<Class<?>> getAllSuperClasses(Class<?> cls) {
-		Assert.isNull(cls, " Class object can not be null.");
-		List<Class<?>> classes = new ArrayList<Class<?>>();
-		Class<?> superclass = cls.getSuperclass();
-		while (superclass != null) {
-			classes.add(superclass);
-			superclass = superclass.getSuperclass();
-		}
-		return classes;
-	}
-
 	public static List<ParameterizedType> getAllParameterizedTypes(Class<?> objectClass) {
 		Assert.isNull(objectClass, " Class object can not be null.");
 		List<ParameterizedType> parameterizedTypesFound = new ArrayList<ParameterizedType>();
@@ -282,6 +272,45 @@ public class ClassUtils {
 		}
 	}
 
+	public static List<Class<?>> getAllSuperClasses(Class<?> cls) {
+		Assert.isNull(cls, " Class object can not be null.");
+		List<Class<?>> superClassesFound = new ArrayList<Class<?>>();
+		getAllSuperClasses(cls.getSuperclass(), superClassesFound);
+		return superClassesFound;
+	}
+
+	private static void getAllSuperClasses(Class<?> cls, List<Class<?>> superClassesFound) {
+		while (cls != null && cls != Object.class) {
+			if (!superClassesFound.contains(cls)) {
+				superClassesFound.add(cls);
+			}
+			cls = cls.getSuperclass();
+		}
+	}
+
+	public static List<Class<?>> getAllSuperClassesAndInterfaces(Class<?> cls) {
+		Assert.isNull(cls, " Class object can not be null.");
+		List<Class<?>> found = new ArrayList<Class<?>>();
+		getAllSuperClassesAndInterfaces(cls, found);
+		return found;
+	}
+
+	private static void getAllSuperClassesAndInterfaces(Class<?> cls, List<Class<?>> found) {
+		if (cls != null && cls != Object.class) {
+			Class<?> superClass = cls.getSuperclass();
+			if (superClass != Object.class && !found.contains(superClass)) {
+				found.add(superClass);
+			}
+			Class<?>[] interfaces = cls.getInterfaces();
+			for (Class<?> interfaceClass : interfaces) {
+				if (!found.contains(interfaceClass)) {
+					found.add(interfaceClass);
+				}
+			}
+			getAllSuperClassesAndInterfaces(superClass, found);
+		}
+	}
+
 	public static boolean isAssignable(Class<?>[] types, Class<?> actual) {
 		int length = types != null ? types.length : 0;
 		for (int i = 0; i < length; i++) {
@@ -308,6 +337,18 @@ public class ClassUtils {
 		return true;
 	}
 
+	public static boolean equals(Class<?>[] types, Class<?>[] toTypes) {
+		if (ArrayUtils.isNotSameLength(types, toTypes)) {
+			return false;
+		}
+		for (int i = 0; i < types.length; i++) {
+			if (ObjectUtils.notEquals(types[i], toTypes[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public static boolean isNotAssignable(Class<?> original, Class<?> actual) {
 		return !isAssignable(original, actual);
 	}
@@ -328,7 +369,7 @@ public class ClassUtils {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(isNotAssignable(CharSequence.class, String.class));
+		System.out.println(getAllSuperClassesAndInterfaces(ThreadPoolExecutor.class));
 	}
 
 }

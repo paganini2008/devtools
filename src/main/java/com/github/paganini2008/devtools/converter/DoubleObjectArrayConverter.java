@@ -2,8 +2,8 @@ package com.github.paganini2008.devtools.converter;
 
 import java.util.List;
 
-import com.github.paganini2008.devtools.Doubles;
 import com.github.paganini2008.devtools.StringUtils;
+import com.github.paganini2008.devtools.primitives.Doubles;
 
 /**
  * DoubleObjectArrayConverter

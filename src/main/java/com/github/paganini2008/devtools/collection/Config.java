@@ -2,14 +2,14 @@ package com.github.paganini2008.devtools.collection;
 
 import java.util.Properties;
 
-import com.github.paganini2008.devtools.Booleans;
-import com.github.paganini2008.devtools.Bytes;
-import com.github.paganini2008.devtools.Chars;
-import com.github.paganini2008.devtools.Doubles;
-import com.github.paganini2008.devtools.Floats;
-import com.github.paganini2008.devtools.Ints;
-import com.github.paganini2008.devtools.Longs;
-import com.github.paganini2008.devtools.Shorts;
+import com.github.paganini2008.devtools.primitives.Booleans;
+import com.github.paganini2008.devtools.primitives.Bytes;
+import com.github.paganini2008.devtools.primitives.Chars;
+import com.github.paganini2008.devtools.primitives.Doubles;
+import com.github.paganini2008.devtools.primitives.Floats;
+import com.github.paganini2008.devtools.primitives.Ints;
+import com.github.paganini2008.devtools.primitives.Longs;
+import com.github.paganini2008.devtools.primitives.Shorts;
 
 public class Config extends Properties {
 

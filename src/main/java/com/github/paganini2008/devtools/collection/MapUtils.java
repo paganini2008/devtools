@@ -1,7 +1,5 @@
 package com.github.paganini2008.devtools.collection;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -11,15 +9,14 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import com.github.paganini2008.devtools.ArrayUtils;
 import com.github.paganini2008.devtools.Assert;
+import com.github.paganini2008.devtools.MatchMode;
 import com.github.paganini2008.devtools.ObjectUtils;
 import com.github.paganini2008.devtools.converter.ConvertUtils;
-
-import java.util.Properties;
 
 /**
  * MapUtils
@@ -41,163 +38,22 @@ public class MapUtils {
 		return !isMap(obj);
 	}
 
-	public static <K, V> Byte getByte(Map<K, V> map, K key) {
-		return getByte(map, key, null);
-	}
-
-	public static <K, V> Byte getByte(Map<K, V> map, K key, Byte defaultValue) {
-		if (map != null) {
-			V value = map.get(key);
-			if (value != null) {
-				return ConvertUtils.convertValue(value, Byte.class, defaultValue);
-			}
-		}
-		return defaultValue;
-	}
-
-	public static <K, V> Character getCharacter(Map<K, V> map, K key) {
-		return getCharacter(map, key, null);
-	}
-
-	public static <K, V> Character getCharacter(Map<K, V> map, K key, Character defaultValue) {
-		if (map != null) {
-			V value = map.get(key);
-			if (value != null) {
-				return ConvertUtils.convertValue(value, Character.class, defaultValue);
-			}
-		}
-		return defaultValue;
-	}
-
-	public static <K, V> Short getShort(Map<K, V> map, K key) {
-		return getShort(map, key, null);
-	}
-
-	public static <K, V> Short getShort(Map<K, V> map, K key, Short defaultValue) {
-		if (map != null) {
-			V value = map.get(key);
-			if (value != null) {
-				return ConvertUtils.convertValue(value, Short.class, defaultValue);
-			}
-		}
-		return defaultValue;
-	}
-
-	public static <K, V> Integer getInteger(Map<K, V> map, K key) {
-		return getInteger(map, key, null);
-	}
-
-	public static <K, V> Integer getInteger(Map<K, V> map, K key, Integer defaultValue) {
-		if (map != null) {
-			V value = map.get(key);
-			if (value != null) {
-				return ConvertUtils.convertValue(value, Integer.class, defaultValue);
-			}
-		}
-		return defaultValue;
-	}
-
-	public static <K, V> Long getLong(Map<K, V> map, K key) {
-		return getLong(map, key, null);
-	}
-
-	public static <K, V> Long getLong(Map<K, V> map, K key, Long defaultValue) {
-		if (map != null) {
-			V value = map.get(key);
-			if (value != null) {
-				return ConvertUtils.convertValue(value, Long.class, defaultValue);
-			}
-		}
-		return defaultValue;
-	}
-
-	public static <K, V> Float getFloat(Map<K, V> map, K key) {
-		return getFloat(map, key, null);
-	}
-
-	public static <K, V> Float getFloat(Map<K, V> map, K key, Float defaultValue) {
-		if (map != null) {
-			V value = map.get(key);
-			if (value != null) {
-				return ConvertUtils.convertValue(value, Float.class, defaultValue);
-			}
-		}
-		return defaultValue;
-	}
-
-	public static <K, V> Double getDouble(Map<K, V> map, K key) {
-		return getDouble(map, key, null);
-	}
-
-	public static <K, V> Double getDouble(Map<K, V> map, K key, Double defaultValue) {
-		if (map != null) {
-			V value = map.get(key);
-			if (value != null) {
-				return ConvertUtils.convertValue(value, Double.class, defaultValue);
-			}
-		}
-		return defaultValue;
-	}
-
-	public static <K, V> BigInteger getBigInteger(Map<K, V> map, K key) {
-		return getBigInteger(map, key, null);
-	}
-
-	public static <K, V> BigInteger getBigInteger(Map<K, V> map, K key, BigInteger defaultValue) {
-		if (map != null) {
-			V value = map.get(key);
-			if (value != null) {
-				return ConvertUtils.convertValue(value, BigInteger.class, defaultValue);
-			}
-		}
-		return defaultValue;
-	}
-
-	public static <K, V> BigDecimal getBigDecimal(Map<K, V> map, K key) {
-		return getBigDecimal(map, key, null);
-	}
-
-	public static <K, V> BigDecimal getBigDecimal(Map<K, V> map, K key, BigDecimal defaultValue) {
-		if (map != null) {
-			V value = map.get(key);
-			if (value != null) {
-				return ConvertUtils.convertValue(value, BigDecimal.class, defaultValue);
-			}
-		}
-		return defaultValue;
-	}
-
-	public static <K, V> String getString(Map<K, V> map, K key) {
-		return getString(map, key, null);
-	}
-
-	public static <K, V> String getString(Map<K, V> map, K key, String defaultValue) {
-		if (map != null) {
-			V value = map.get(key);
-			return value != null ? value.toString() : defaultValue;
-		}
-		return defaultValue;
-	}
-
-	public static <K, V> Boolean getBoolean(Map<K, V> map, K key) {
-		return getBoolean(map, key, null);
-	}
-
-	public static <K, V> Boolean getBoolean(Map<K, V> map, K key, Boolean defaultValue) {
-		if (map != null) {
-			V value = map.get(key);
-			if (value != null) {
-				return ConvertUtils.convertValue(value, Boolean.class, defaultValue);
-			}
-		}
-		return defaultValue;
-	}
-
 	public static <K, V> V get(Map<K, V> map, K key) {
-		return get(map, key, null);
+		return getOrDefault(map, key, (V) null);
 	}
 
-	public static <K, V> V get(Map<K, V> map, K key, V defaultValue) {
+	public static <K, V> V getOrThrown(Map<K, V> map, K key, RuntimeException e) {
+		V value = null;
+		if (map != null) {
+			value = map.get(key);
+		}
+		if (value == null) {
+			throw e;
+		}
+		return value;
+	}
+
+	public static <K, V> V getOrDefault(Map<K, V> map, K key, V defaultValue) {
 		if (map != null) {
 			V value;
 			if ((value = map.get(key)) == null) {
@@ -211,7 +67,7 @@ public class MapUtils {
 	public static <E> List<E> toList(Map<E, E> map) {
 		if (map != null) {
 			List<E> list = new ArrayList<E>();
-			for (Map.Entry<E, E> e : toEntries(map)) {
+			for (Map.Entry<E, E> e : map.entrySet()) {
 				list.add(e.getKey());
 				list.add(e.getValue());
 			}
@@ -263,6 +119,15 @@ public class MapUtils {
 			it.next();
 		}
 		return it.hasNext() ? it.next() : null;
+	}
+
+	public static <T> T get(Map<String, ?> map, String key, Class<T> requiredType, T defaultValue) {
+		Object object = map.get(key);
+		try {
+			return requiredType.cast(object);
+		} catch (RuntimeException e) {
+			return ConvertUtils.convertValue(object, requiredType);
+		}
 	}
 
 	public static <K, V> void putAll(Map<K, V> map, Collection<Entry<K, V>> entries) {
