@@ -77,13 +77,27 @@ public class ThreadUtils {
 	}
 
 	public static Thread runAsThread(Runnable runnable) {
+		return runAsThread(runnable, (t, e) -> {
+			e.printStackTrace();
+		});
+	}
+
+	public static Thread runAsThread(Runnable runnable, Thread.UncaughtExceptionHandler exceptionHandler) {
 		Thread t = new Thread(runnable);
+		t.setUncaughtExceptionHandler(exceptionHandler);
 		t.start();
 		return t;
 	}
 
 	public static Thread runAsThread(String name, Runnable runnable) {
 		Thread t = new Thread(runnable, name);
+		t.start();
+		return t;
+	}
+
+	public static Thread runAsThread(String name, Runnable runnable, Thread.UncaughtExceptionHandler exceptionHandler) {
+		Thread t = new Thread(runnable, name);
+		t.setUncaughtExceptionHandler(exceptionHandler);
 		t.start();
 		return t;
 	}
@@ -248,7 +262,7 @@ public class ThreadUtils {
 	}
 
 	public static ThreadPool newSimplePool(int maxPoolSize, long timeout, int queueSize) {
-		return new SimpleThreadPool(maxPoolSize, Integer.MAX_VALUE, timeout, queueSize);
+		return new SimpleThreadPool(maxPoolSize, timeout, queueSize);
 	}
 
 	public static ThreadPool newCommonPool(int maxPoolSize) {
