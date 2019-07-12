@@ -311,7 +311,7 @@ public class GenericObjectPool implements ObjectPool {
 		this.maxIdleSize = maxIdleSize;
 	}
 
-	public void setPhaseListener(PhaseListener phaseListener) {
+	public void setPhaseListener(LifeCycleListener phaseListener) {
 		this.objectFactory.setPhaseListener(phaseListener);
 	}
 
@@ -752,13 +752,13 @@ public class GenericObjectPool implements ObjectPool {
 		private final ObjectFactory delegate;
 		private long createdCount;
 		private long destroyedCount;
-		private PhaseListener phaseListener;
+		private LifeCycleListener phaseListener;
 
 		DelegatedObjectFactory(ObjectFactory delegate) {
 			this.delegate = delegate;
 		}
 
-		public void setPhaseListener(PhaseListener phaseListener) {
+		public void setPhaseListener(LifeCycleListener phaseListener) {
 			this.phaseListener = phaseListener;
 		}
 

@@ -258,7 +258,7 @@ public class ThreadUtils {
 	}
 
 	public static ThreadPool newSimplePool(int maxPoolSize) {
-		return newSimplePool(maxPoolSize, 0L, Integer.MAX_VALUE);
+		return newSimplePool(maxPoolSize, -1L, Integer.MAX_VALUE);
 	}
 
 	public static ThreadPool newSimplePool(int maxPoolSize, long timeout, int queueSize) {

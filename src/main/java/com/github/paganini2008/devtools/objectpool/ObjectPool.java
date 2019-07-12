@@ -9,6 +9,14 @@ package com.github.paganini2008.devtools.objectpool;
 public interface ObjectPool {
 
 	/**
+	 * Get object's detail
+	 * 
+	 * @param object
+	 * @return
+	 */
+	ObjectDetail getDetail(Object object);
+
+	/**
 	 * Borrow it until it's available.
 	 * 
 	 * @return
@@ -23,7 +31,7 @@ public interface ObjectPool {
 	 * @return
 	 * @throws Exception
 	 */
-	Object borrowObject(int time) throws Exception;
+	Object borrowObject(long timeout) throws Exception;
 
 	/**
 	 * Please give back the pooled object on each calling.

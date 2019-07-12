@@ -2,7 +2,7 @@ package com.github.paganini2008.devtools.objectpool;
 
 /**
  * Implement this interface to build your object factory. To manage the objects
- * on different stage.
+ * in it.
  * 
  * @author Fred Feng
  * @version 1.0
@@ -10,8 +10,7 @@ package com.github.paganini2008.devtools.objectpool;
 public interface ObjectFactory {
 
 	/**
-	 * Create some objects by parameter 'perNewSize' when the pool is
-	 * initializing or the idleSize is 0.
+	 * Create object if unavaliable
 	 * 
 	 * @return
 	 * @throws Exception
@@ -25,7 +24,9 @@ public interface ObjectFactory {
 	 * @return
 	 * @throws Exception
 	 */
-	boolean validateObject(Object o) throws Exception;
+	default boolean testObject(Object o) throws Exception {
+		return true;
+	}
 
 	/**
 	 * Close/Release a object and remove it from the pool.

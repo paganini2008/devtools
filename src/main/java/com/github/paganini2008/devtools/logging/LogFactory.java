@@ -20,7 +20,7 @@ public final class LogFactory {
 		final int size = SystemPropertyUtils.getInteger("lazycat.logging.cacheSize", 1024);
 		cache = new LruMap<String, Log>(size);
 
-		ServiceLoader.lookupPath("META-INF/spi/lazycat/logging");
+		ServiceLoader.lookupPath("META-INF/spi/com/github/paganini2008/devtools/logging");
 
 		initialize(new LoggerFactoryBuilder() {
 			public LoggerFactory getFactory() {
