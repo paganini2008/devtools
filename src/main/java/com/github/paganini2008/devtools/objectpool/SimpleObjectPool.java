@@ -57,6 +57,7 @@ public class SimpleObjectPool implements ObjectPool {
 	 * 
 	 * @author Fred Feng
 	 * @revised 2019-07
+	 * @created 2012-02
 	 * @version 1.0
 	 */
 	static class PooledObject implements ObjectDetail {
@@ -428,6 +429,9 @@ public class SimpleObjectPool implements ObjectPool {
 		synchronized (lock) {
 			PooledObject pooledObject = pooledObjects.get(object);
 			if (pooledObject != null) {
+				if (log.isDebugEnabled()) {
+					log.debug("Giveback object: " + object);
+				}
 				if (pooledObject.getUses() == maxUses) {
 					discardObject(pooledObject.getObject());
 				} else {
@@ -447,6 +451,9 @@ public class SimpleObjectPool implements ObjectPool {
 		synchronized (lock) {
 			PooledObject pooledObject = pooledObjects.remove(object);
 			if (pooledObject != null) {
+				if (log.isDebugEnabled()) {
+					log.debug("Destroy object: " + object);
+				}
 				busyQueue.remove(pooledObject.getObject());
 				try {
 					objectFactory.destroyObject(pooledObject.getObject());

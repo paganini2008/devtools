@@ -103,6 +103,48 @@ public class CollectionUtils {
 		}
 	}
 
+	public static <T> T get(Iterator<T> it, int index) {
+		return get(it, index, null);
+	}
+
+	public static <T> T get(Iterator<T> it, int index, T defaultValue) {
+		if (it == null || !it.hasNext()) {
+			return defaultValue;
+		}
+		int i = 0;
+		T find;
+		while (true) {
+			find = it.next();
+			if (i++ == index) {
+				return find;
+			} else if (!it.hasNext()) {
+				break;
+			}
+		}
+		return null;
+	}
+	
+	public static <T> T get(Enumeration<T> en, int index) {
+		return get(en, index, null);
+	}
+
+	public static <T> T get(Enumeration<T> en, int index, T defaultValue) {
+		if (en == null || !en.hasMoreElements()) {
+			return defaultValue;
+		}
+		int i = 0;
+		T find;
+		while (true) {
+			find = en.nextElement();
+			if (i++ == index) {
+				return find;
+			} else if (!en.hasMoreElements()) {
+				break;
+			}
+		}
+		return null;
+	}
+
 	public static <T> T getFirst(Enumeration<T> en) {
 		return getFirst(en, null);
 	}

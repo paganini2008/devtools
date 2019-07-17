@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * AtomicPositiveInteger
  * 
  * @author Fred Feng
+ * @created 2014-03
  * @version 1.0
  */
 public class AtomicPositiveInteger extends Number {

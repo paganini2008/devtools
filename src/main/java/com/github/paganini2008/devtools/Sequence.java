@@ -1,23 +1,24 @@
 package com.github.paganini2008.devtools;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+
+import com.github.paganini2008.devtools.multithreads.AtomicPositiveInteger;
 
 /**
  * 
  * Sequence
  * 
  * @author Fred Feng
- * @revised 2019-05
+ * @revised 2019-06
+ * @created 2018-05
  * @version 1.0
  */
-public class Sequence {
-
-	private Sequence() {
-	}
+public abstract class Sequence {
 
 	public static Iterable<Integer> forEach(int from, int to) {
 		return forEach(from, to, 1);
@@ -65,6 +66,26 @@ public class Sequence {
 			range.add(l);
 		}
 		return range;
+	}
+
+	static class Tester<T> implements Iterator<T> {
+
+		private final AtomicPositiveInteger integer;
+		private final List<T> elements;
+
+		Tester(List<T> elements) {
+			this.elements = elements;
+			this.integer = new AtomicPositiveInteger(0, elements.size());
+		}
+
+		public boolean hasNext() {
+			return true;
+		}
+
+		public T next() {
+			return elements.get(integer.getAndIncrement());
+		}
+
 	}
 
 	static class LongSequence implements Iterator<Long> {

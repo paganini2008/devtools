@@ -426,4 +426,18 @@ public class DateUtils {
 		return ArrayUtils.ensureCapacity(result, i);
 	}
 
+	public static int getYear() {
+		return getYear(Calendar.getInstance());
+	}
+
+	public static int getYear(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		return getYear(calendar);
+	}
+
+	public static int getYear(Calendar calendar) {
+		return calendar.get(Calendar.YEAR);
+	}
+
 }
