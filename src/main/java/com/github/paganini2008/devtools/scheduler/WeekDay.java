@@ -9,29 +9,29 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
 
 /**
  * 
- * SingleDay
+ * WeekDay
  *
  * @author Fred Feng
  * @revised 2019-07
  * @created 2019-07
  * @version 1.0
  */
-public class SingleDay implements ConcreteDay {
+public class WeekDay implements ConcreteDay {
 
 	private final TreeMap<Integer, Calendar> siblings;
-	private Month month;
+	private Week week;
 	private int index;
 	private Calendar calendar;
 
-	SingleDay(Month month, int day) {
-		this.month = month;
+	WeekDay(Week week, int day) {
+		this.week = week;
 		siblings = new TreeMap<Integer, Calendar>();
-		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH, day);
+		Calendar calendar = CalendarUtils.setField(week.getTime(), Calendar.DAY_OF_WEEK, day);
 		siblings.put(day, calendar);
 	}
 
-	public SingleDay and(int day) {
-		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH, day);
+	public WeekDay and(int day) {
+		Calendar calendar = CalendarUtils.setField(week.getTime(), Calendar.DAY_OF_WEEK, day);
 		siblings.put(day, calendar);
 		return this;
 	}
@@ -59,7 +59,7 @@ public class SingleDay implements ConcreteDay {
 	public int getWeekDay() {
 		return calendar.get(Calendar.DAY_OF_WEEK);
 	}
-
+	
 	public int getDayOfYear() {
 		return calendar.get(Calendar.DAY_OF_YEAR);
 	}
@@ -75,8 +75,8 @@ public class SingleDay implements ConcreteDay {
 	public boolean hasNext() {
 		boolean next = index < siblings.size();
 		if (!next) {
-			if (month.hasNext()) {
-				month = month.next();
+			if (week.hasNext()) {
+				week = week.next();
 				index = 0;
 				next = true;
 			}
@@ -86,8 +86,10 @@ public class SingleDay implements ConcreteDay {
 
 	public Day next() {
 		calendar = CollectionUtils.get(siblings.values().iterator(), index++);
-		calendar.set(Calendar.YEAR, month.getYear());
-		calendar.set(Calendar.MONTH, month.getMonth());
+		calendar.set(Calendar.YEAR, week.getYear());
+		calendar.set(Calendar.MONTH, week.getMonth());
+		calendar.set(Calendar.WEEK_OF_MONTH, week.getWeek());
 		return this;
 	}
+
 }

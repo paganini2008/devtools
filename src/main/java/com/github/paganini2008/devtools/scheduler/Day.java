@@ -19,6 +19,10 @@ public interface Day extends Iterator<Day>, CurrentTime {
 	int getMonth();
 
 	int getDay();
+	
+	int getWeekDay();
+	
+	int getDayOfYear();
 
 	default Hour everyHour(int interval) {
 		return everyHour(0, 23, interval);

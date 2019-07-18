@@ -9,30 +9,30 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
 
 /**
  * 
- * SingleDay
+ * SingleWeek
  *
  * @author Fred Feng
  * @revised 2019-07
  * @created 2019-07
  * @version 1.0
  */
-public class SingleDay implements ConcreteDay {
+public class SingleWeek implements ConcreteWeek {
 
 	private final TreeMap<Integer, Calendar> siblings;
 	private Month month;
 	private int index;
 	private Calendar calendar;
 
-	SingleDay(Month month, int day) {
+	SingleWeek(Month month, int week) {
 		this.month = month;
 		siblings = new TreeMap<Integer, Calendar>();
-		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH, day);
-		siblings.put(day, calendar);
+		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.WEEK_OF_MONTH, week);
+		siblings.put(week, calendar);
 	}
 
-	public SingleDay and(int day) {
-		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH, day);
-		siblings.put(day, calendar);
+	public SingleWeek and(int week) {
+		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.WEEK_OF_MONTH, week);
+		siblings.put(week, calendar);
 		return this;
 	}
 
@@ -52,24 +52,16 @@ public class SingleDay implements ConcreteDay {
 		return calendar.get(Calendar.MONTH);
 	}
 
-	public int getDay() {
-		return calendar.get(Calendar.DAY_OF_MONTH);
+	public int getWeek() {
+		return calendar.get(Calendar.WEEK_OF_MONTH);
 	}
 
-	public int getWeekDay() {
-		return calendar.get(Calendar.DAY_OF_WEEK);
+	public ConcreteDay weekday(int day) {
+		return new WeekDay(CollectionUtils.getFirst(this), day);
 	}
 
-	public int getDayOfYear() {
-		return calendar.get(Calendar.DAY_OF_YEAR);
-	}
-
-	public ConcreteHour hour(int hour) {
-		return new SingleHour(CollectionUtils.getFirst(this), hour);
-	}
-
-	public Hour everyHour(Function<Day, Integer> from, Function<Day, Integer> to, int interval) {
-		return new EveryHour(CollectionUtils.getFirst(this), from, to, interval);
+	public Day everyDay(Function<Week, Integer> from, Function<Week, Integer> to, int interval) {
+		return new EveryWeekDay(CollectionUtils.getFirst(this), from, to, interval);
 	}
 
 	public boolean hasNext() {
@@ -84,10 +76,11 @@ public class SingleDay implements ConcreteDay {
 		return next;
 	}
 
-	public Day next() {
+	public Week next() {
 		calendar = CollectionUtils.get(siblings.values().iterator(), index++);
 		calendar.set(Calendar.YEAR, month.getYear());
 		calendar.set(Calendar.MONTH, month.getMonth());
 		return this;
 	}
+
 }

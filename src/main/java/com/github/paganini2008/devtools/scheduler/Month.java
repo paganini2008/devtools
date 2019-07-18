@@ -17,7 +17,7 @@ public interface Month extends Iterator<Month>, CurrentTime {
 	int getYear();
 
 	int getMonth();
-	
+
 	int getLasyDay();
 
 	default Day everyDay(int interval) {
@@ -27,8 +27,16 @@ public interface Month extends Iterator<Month>, CurrentTime {
 	default Day everyDay(int from, int to, int interval) {
 		return everyDay(m -> from, m -> to, interval);
 	}
-	
+
 	ConcreteDay day(int day);
+
+	default ConcreteDay firstDay() {
+		return day(1);
+	}
+
+	default ConcreteDay lastDay() {
+		return day(getLasyDay());
+	}
 
 	Day everyDay(Function<Month, Integer> from, Function<Month, Integer> to, int interval);
 

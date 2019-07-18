@@ -35,7 +35,7 @@ public class EveryHour implements Hour {
 	}
 
 	public boolean hasNext() {
-		boolean next = hour.get(Calendar.HOUR_OF_DAY) + interval <= toHour;
+		boolean next = state || hour.get(Calendar.HOUR_OF_DAY) + interval <= toHour;
 		if (!next) {
 			if (day.hasNext()) {
 				day = day.next();

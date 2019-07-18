@@ -5,20 +5,19 @@ import java.util.Date;
 import java.util.function.Function;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
-import com.github.paganini2008.devtools.date.DateUtils;
 
 /**
  * 
- * EveryDay
+ * EveryWeekDay
  *
  * @author Fred Feng
  * @revised 2019-07
  * @created 2019-07
  * @version 1.0
  */
-public class EveryDay implements Day {
+public class EveryWeekDay implements Day {
 
-	private Month month;
+	private Week week;
 	private final Calendar day;
 	private final int fromDay;
 	private final int toDay;
@@ -26,11 +25,11 @@ public class EveryDay implements Day {
 	private boolean state;
 	private boolean flag = true;
 
-	EveryDay(Month month, Function<Month, Integer> from, Function<Month, Integer> to, int interval) {
-		this.month = month;
-		this.fromDay = from.apply(month);
-		this.day = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH, fromDay);
-		this.toDay = to.apply(month);
+	EveryWeekDay(Week week, Function<Week, Integer> from, Function<Week, Integer> to, int interval) {
+		this.week = week;
+		this.fromDay = from.apply(week);
+		this.day = CalendarUtils.setField(week.getTime(), Calendar.DAY_OF_WEEK, fromDay);
+		this.toDay = to.apply(week);
 		this.interval = interval;
 		this.state = true;
 	}
@@ -38,11 +37,12 @@ public class EveryDay implements Day {
 	public boolean hasNext() {
 		boolean next = state || day.get(Calendar.DAY_OF_MONTH) + interval <= toDay;
 		if (!next) {
-			if (month.hasNext()) {
-				month = month.next();
-				day.set(Calendar.YEAR, month.getYear());
-				day.set(Calendar.MONTH, month.getMonth());
-				day.set(Calendar.DAY_OF_MONTH, fromDay);
+			if (week.hasNext()) {
+				week = week.next();
+				day.set(Calendar.YEAR, week.getYear());
+				day.set(Calendar.MONTH, week.getMonth());
+				day.set(Calendar.WEEK_OF_MONTH, week.getWeek());
+				day.set(Calendar.DAY_OF_WEEK, fromDay);
 				flag = false;
 				next = true;
 			}
@@ -55,7 +55,7 @@ public class EveryDay implements Day {
 			state = false;
 		} else {
 			if (flag) {
-				day.add(Calendar.DAY_OF_MONTH, interval);
+				day.add(Calendar.DAY_OF_WEEK, interval);
 			} else {
 				flag = true;
 			}
@@ -98,15 +98,4 @@ public class EveryDay implements Day {
 	public Hour everyHour(Function<Day, Integer> from, Function<Day, Integer> to, int interval) {
 		return new EveryHour(CollectionUtils.getFirst(this), from, to, interval);
 	}
-
-	public static void main(String[] args) {
-		Year everyYear = new EveryYear(2019, 2030, 3);
-		Month everyMonth = everyYear.everyMonth(5, 10, 2);
-		Day everyDay = everyMonth.everyDay(1, 15, 3);
-		while (everyDay.hasNext()) {
-			Day day = everyDay.next();
-			System.out.println(DateUtils.format(day.getTime()));
-		}
-	}
-
 }

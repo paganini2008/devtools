@@ -44,7 +44,7 @@ public class EverySecond implements Second {
 	}
 
 	public boolean hasNext() {
-		boolean next = second.get(Calendar.SECOND) + interval <= toSecond;
+		boolean next = state || second.get(Calendar.SECOND) + interval <= toSecond;
 		if (!next) {
 			if (minute.hasNext()) {
 				minute = minute.next();

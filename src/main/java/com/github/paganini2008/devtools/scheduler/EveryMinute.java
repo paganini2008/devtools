@@ -35,7 +35,7 @@ public class EveryMinute implements Minute {
 	}
 
 	public boolean hasNext() {
-		boolean next = minute.get(Calendar.MINUTE) + interval <= toMinute;
+		boolean next = state || minute.get(Calendar.MINUTE) + interval <= toMinute;
 		if (!next) {
 			if (hour.hasNext()) {
 				hour = hour.next();
