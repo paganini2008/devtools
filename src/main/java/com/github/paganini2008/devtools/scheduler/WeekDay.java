@@ -16,23 +16,36 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * @created 2019-07
  * @version 1.0
  */
-public class WeekDay implements ConcreteDay {
+public class WeekDay implements ConcreteWeekDay {
 
 	private final TreeMap<Integer, Calendar> siblings;
 	private Week week;
 	private int index;
 	private Calendar calendar;
+	private int lastDay;
 
 	WeekDay(Week week, int day) {
+		CalendarAssert.checkWeekDay(day);
 		this.week = week;
 		siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(week.getTime(), Calendar.DAY_OF_WEEK, day);
 		siblings.put(day, calendar);
+		this.lastDay = day;
 	}
 
-	public WeekDay and(int day) {
+	public ConcreteWeekDay andDay(int day) {
+		CalendarAssert.checkWeekDay(day);
 		Calendar calendar = CalendarUtils.setField(week.getTime(), Calendar.DAY_OF_WEEK, day);
 		siblings.put(day, calendar);
+		this.lastDay = day;
+		return this;
+	}
+
+	public ConcreteWeekDay toDay(int day, int interval) {
+		CalendarAssert.checkWeekDay(day);
+		for (int i = lastDay + interval; i <= day; i += interval) {
+			andDay(i);
+		}
 		return this;
 	}
 
@@ -59,7 +72,7 @@ public class WeekDay implements ConcreteDay {
 	public int getWeekDay() {
 		return calendar.get(Calendar.DAY_OF_WEEK);
 	}
-	
+
 	public int getDayOfYear() {
 		return calendar.get(Calendar.DAY_OF_YEAR);
 	}

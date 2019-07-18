@@ -11,5 +11,11 @@ package com.github.paganini2008.devtools.scheduler;
  */
 public interface ConcreteWeek extends Week {
 
-	ConcreteWeek and(int week);
+	ConcreteWeek andWeek(int week);
+	
+	default ConcreteWeek toWeek(int week) {
+		return toWeek(week, 1);
+	}
+
+	ConcreteWeek toWeek(int week, int interval);
 }

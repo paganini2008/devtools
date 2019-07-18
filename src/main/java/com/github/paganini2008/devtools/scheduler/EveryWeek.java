@@ -86,7 +86,7 @@ public class EveryWeek implements Week {
 		return week.getTimeInMillis();
 	}
 
-	public ConcreteDay weekday(int day) {
+	public ConcreteWeekDay weekday(int day) {
 		return new WeekDay(CollectionUtils.getFirst(this), day);
 	}
 

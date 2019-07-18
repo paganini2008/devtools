@@ -30,7 +30,7 @@ public class SingleMinute implements ConcreteMinute {
 		siblings.put(minute, calendar);
 	}
 
-	public SingleMinute and(int minute) {
+	public SingleMinute andMinute(int minute) {
 		Calendar calendar = CalendarUtils.setField(hour.getTime(), Calendar.HOUR_OF_DAY, minute);
 		siblings.put(minute, calendar);
 		return this;

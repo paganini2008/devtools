@@ -11,6 +11,18 @@ package com.github.paganini2008.devtools.scheduler;
  */
 public interface ConcreteYear extends Year {
 
-	ConcreteYear and(int year);
+	ConcreteYear andYear(int year);
+
+	default ConcreteYear andNextYear() {
+		return andNextYears(1);
+	}
+
+	ConcreteYear andNextYears(int years);
+
+	default ConcreteYear toYear(int year) {
+		return toYear(year, 1);
+	}
+
+	ConcreteYear toYear(int year, int interval);
 
 }

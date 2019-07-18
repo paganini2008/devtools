@@ -10,7 +10,19 @@ package com.github.paganini2008.devtools.scheduler;
  * @version 1.0
  */
 public interface ConcreteDay extends Day {
+
+	ConcreteDay andDay(int day);
 	
-	ConcreteDay and(int day);
+	default ConcreteDay andNextDay() {
+		return andNextDays(1);
+	}
 	
+	ConcreteDay andNextDays(int days);
+
+	default ConcreteDay toDay(int day) {
+		return toDay(day, 1);
+	}
+
+	ConcreteDay toDay(int day, int interval);
+
 }

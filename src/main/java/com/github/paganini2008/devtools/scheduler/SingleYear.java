@@ -22,16 +22,34 @@ public class SingleYear implements ConcreteYear {
 	private final TreeMap<Integer, Calendar> siblings;
 	private Calendar calendar;
 	private int index;
+	private int lastYear;
 
 	SingleYear(int year) {
 		siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(new Date(), Calendar.YEAR, year);
 		siblings.put(year, calendar);
+		this.lastYear = year;
 	}
 
-	public ConcreteYear and(int year) {
+	public ConcreteYear andYear(int year) {
 		Calendar calendar = CalendarUtils.setField(new Date(), Calendar.YEAR, year);
 		siblings.put(year, calendar);
+		this.lastYear = year;
+		return this;
+	}
+
+	public ConcreteYear andNextYears(int years) {
+		Calendar calendar = CalendarUtils.setField(new Date(), Calendar.YEAR, lastYear + years);
+		int year = calendar.get(Calendar.YEAR);
+		siblings.put(year, calendar);
+		this.lastYear = year;
+		return this;
+	}
+
+	public ConcreteYear toYear(int year, int interval) {
+		for (int i = lastYear + interval; i <= year; i += interval) {
+			andYear(i);
+		}
 		return this;
 	}
 
@@ -66,7 +84,7 @@ public class SingleYear implements ConcreteYear {
 
 	public static void main(String[] args) {
 		ConcreteYear singleYear = new SingleYear(2019);
-		singleYear = singleYear.and(2028).and(2024);
+		singleYear = singleYear.andYear(2028).andYear(2024).andNextYear().toYear(2035);
 		Month everyMonth = singleYear.everyMonth(2);
 		while (everyMonth.hasNext()) {
 			Month month = everyMonth.next();

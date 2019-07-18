@@ -450,6 +450,14 @@ public class DateUtils {
 		return getField(date, Calendar.DAY_OF_MONTH);
 	}
 
+	public static int getWeekOfMonth() {
+		return getWeekOfMonth(new Date());
+	}
+
+	public static int getWeekOfMonth(Date date) {
+		return getField(date, Calendar.WEEK_OF_MONTH);
+	}
+
 	public static int getField(Date date, int calendarField) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);

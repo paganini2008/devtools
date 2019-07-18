@@ -11,6 +11,6 @@ package com.github.paganini2008.devtools.scheduler;
  */
 public interface ConcreteHour extends Hour {
 
-	ConcreteHour and(int hour);
+	ConcreteHour andHour(int hour);
 
 }

@@ -11,6 +11,6 @@ package com.github.paganini2008.devtools.scheduler;
  */
 public interface ConcreteSecond extends Second {
 
-	ConcreteSecond and(int second);
+	ConcreteSecond andSecond(int second);
 	
 }

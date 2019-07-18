@@ -30,7 +30,7 @@ public class SingleHour implements ConcreteHour {
 		siblings.put(hour, calendar);
 	}
 
-	public SingleHour and(int hour) {
+	public SingleHour andHour(int hour) {
 		Calendar calendar = CalendarUtils.setField(day.getTime(), Calendar.HOUR_OF_DAY, hour);
 		siblings.put(hour, calendar);
 		return this;

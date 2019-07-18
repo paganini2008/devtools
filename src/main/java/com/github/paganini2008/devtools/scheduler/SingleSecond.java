@@ -29,7 +29,7 @@ public class SingleSecond implements ConcreteSecond {
 		siblings.put(second, calendar);
 	}
 
-	public SingleSecond and(int second) {
+	public SingleSecond andSecond(int second) {
 		Calendar calendar = CalendarUtils.setField(minute.getTime(), Calendar.SECOND, second);
 		siblings.put(second, calendar);
 		return this;

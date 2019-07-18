@@ -11,6 +11,6 @@ package com.github.paganini2008.devtools.scheduler;
  */
 public interface ConcreteMinute extends Minute {
 
-	ConcreteMinute and(int minute);
+	ConcreteMinute andMinute(int minute);
 	
 }

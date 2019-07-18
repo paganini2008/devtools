@@ -74,6 +74,10 @@ public class EveryMonth implements Month {
 		return month.getActualMaximum(Calendar.DAY_OF_MONTH);
 	}
 
+	public int getWeekCount() {
+		return month.getActualMaximum(Calendar.WEEK_OF_MONTH);
+	}
+
 	public Date getTime() {
 		return month.getTime();
 	}
@@ -90,9 +94,16 @@ public class EveryMonth implements Month {
 		return new EveryDay(CollectionUtils.getFirst(this), from, to, interval);
 	}
 
+	public ConcreteWeek week(int week) {
+		return new SingleWeek(CollectionUtils.getFirst(this), week);
+	}
+
+	public Week everyWeek(Function<Month, Integer> from, Function<Month, Integer> to, int interval) {
+		return new EveryWeek(CollectionUtils.getFirst(this), from, to, interval);
+	}
+
 	public static void main(String[] args) {
-		Year everyYear = new EveryYear(2019, 2030, 3);
-		Month everyMonth = everyYear.everyMonth(5, 10, 2);
+		Month everyMonth = Crons.thisYear().andNextYear().everyMonth(5, 10, 2);
 		while (everyMonth.hasNext()) {
 			Month month = everyMonth.next();
 			System.out.println(DateUtils.format(month.getTime()));

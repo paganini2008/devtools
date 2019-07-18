@@ -22,18 +22,31 @@ public class SingleWeek implements ConcreteWeek {
 	private Month month;
 	private int index;
 	private Calendar calendar;
+	private int lastWeek;
 
 	SingleWeek(Month month, int week) {
+		CalendarAssert.checkWeekOfMonth(month, week);
 		this.month = month;
 		siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.WEEK_OF_MONTH, week);
 		siblings.put(week, calendar);
+		this.lastWeek = week;
 	}
 
-	public SingleWeek and(int week) {
+	public SingleWeek andWeek(int week) {
+		CalendarAssert.checkWeekOfMonth(month, week);
 		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.WEEK_OF_MONTH, week);
 		siblings.put(week, calendar);
+		this.lastWeek = week;
 		return this;
+	}
+
+	public ConcreteWeek toWeek(int week, int interval) {
+		CalendarAssert.checkWeekOfMonth(month, week);
+		for (int i = lastWeek + interval; i < week; i += interval) {
+			andWeek(i);
+		}
+		return null;
 	}
 
 	public Date getTime() {
@@ -60,7 +73,7 @@ public class SingleWeek implements ConcreteWeek {
 		return calendar.get(Calendar.WEEK_OF_YEAR);
 	}
 
-	public ConcreteDay weekday(int day) {
+	public ConcreteWeekDay weekday(int day) {
 		return new WeekDay(CollectionUtils.getFirst(this), day);
 	}
 

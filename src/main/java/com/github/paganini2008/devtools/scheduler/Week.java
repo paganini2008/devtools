@@ -20,7 +20,7 @@ public interface Week extends Iterator<Week>, CurrentTime {
 	int getMonth();
 
 	int getWeek();
-	
+
 	int getWeekOfYear();
 
 	default Day everyDay(int interval) {
@@ -33,41 +33,33 @@ public interface Week extends Iterator<Week>, CurrentTime {
 
 	Day everyDay(Function<Week, Integer> from, Function<Week, Integer> to, int interval);
 
-	ConcreteDay weekday(int day);
+	ConcreteWeekDay weekday(int day);
 
-	default ConcreteDay workdays() {
-		ConcreteDay days = Mon();
-		for (int i = Calendar.TUESDAY; i <= Calendar.FRIDAY; i++) {
-			days = days.and(i);
-		}
-		return days;
-	}
-
-	default ConcreteDay Sun() {
+	default ConcreteWeekDay Sun() {
 		return weekday(Calendar.SUNDAY);
 	}
 
-	default ConcreteDay Mon() {
+	default ConcreteWeekDay Mon() {
 		return weekday(Calendar.MONDAY);
 	}
 
-	default ConcreteDay Tues() {
+	default ConcreteWeekDay Tues() {
 		return weekday(Calendar.TUESDAY);
 	}
 
-	default ConcreteDay Wed() {
+	default ConcreteWeekDay Wed() {
 		return weekday(Calendar.WEDNESDAY);
 	}
 
-	default ConcreteDay Thur() {
+	default ConcreteWeekDay Thur() {
 		return weekday(Calendar.THURSDAY);
 	}
 
-	default ConcreteDay Fri() {
+	default ConcreteWeekDay Fri() {
 		return weekday(Calendar.FRIDAY);
 	}
 
-	default ConcreteDay Sat() {
+	default ConcreteWeekDay Sat() {
 		return weekday(Calendar.SATURDAY);
 	}
 

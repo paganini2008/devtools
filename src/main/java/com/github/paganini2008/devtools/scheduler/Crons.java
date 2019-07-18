@@ -33,6 +33,14 @@ public abstract class Crons {
 		return year(year).month(month);
 	}
 
+	public static ConcreteWeek thisWeek() {
+		return thisMonth().week(DateUtils.getWeekOfMonth());
+	}
+
+	public static ConcreteWeek week(int year, int month, int week) {
+		return month(year, month).week(week);
+	}
+
 	public static ConcreteDay today() {
 		return thisMonth().day(DateUtils.getDate());
 	}
@@ -63,6 +71,20 @@ public abstract class Crons {
 
 	public static Month everyMonth(int fromMonth, int toMonth, int interval) {
 		return everyYear().everyMonth(fromMonth, toMonth, interval);
+	}
+	
+	public static Week everyWeek() {
+		return everyWeek(1);
+	}
+
+	public static Week everyWeek(int interval) {
+		return everyMonth().everyWeek(m -> 1, m -> {
+			return m.getWeekCount();
+		}, interval);
+	}
+
+	public static Week everyWeek(int fromWeek, int toWeek, int interval) {
+		return everyMonth().everyWeek(fromWeek, toWeek, interval);
 	}
 
 	public static Day everyDay() {

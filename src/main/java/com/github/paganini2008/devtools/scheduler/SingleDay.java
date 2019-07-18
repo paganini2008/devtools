@@ -22,17 +22,39 @@ public class SingleDay implements ConcreteDay {
 	private Month month;
 	private int index;
 	private Calendar calendar;
+	private int lastDay;
 
 	SingleDay(Month month, int day) {
+		CalendarAssert.checkDayOfMonth(month, day);
 		this.month = month;
 		siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH, day);
 		siblings.put(day, calendar);
+		this.lastDay = day;
 	}
 
-	public SingleDay and(int day) {
+	public ConcreteDay andDay(int day) {
+		CalendarAssert.checkDayOfMonth(month, day);
 		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH, day);
 		siblings.put(day, calendar);
+		this.lastDay = day;
+		return this;
+	}
+
+	public ConcreteDay andNextDays(int days) {
+		CalendarAssert.checkDayOfMonth(month, lastDay + days);
+		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH, lastDay + days);
+		int day = calendar.get(Calendar.DAY_OF_MONTH);
+		siblings.put(day, calendar);
+		this.lastDay = day;
+		return this;
+	}
+
+	public ConcreteDay toDay(int day, int interval) {
+		CalendarAssert.checkDayOfMonth(month, day);
+		for (int i = lastDay + interval; i <= day; i += interval) {
+			andDay(i);
+		}
 		return this;
 	}
 
