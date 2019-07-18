@@ -427,17 +427,33 @@ public class DateUtils {
 	}
 
 	public static int getYear() {
-		return getYear(Calendar.getInstance());
+		return getYear(new Date());
 	}
 
 	public static int getYear(Date date) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		return getYear(calendar);
+		return getField(date, Calendar.YEAR);
 	}
 
-	public static int getYear(Calendar calendar) {
-		return calendar.get(Calendar.YEAR);
+	public static int getMonth() {
+		return getMonth(new Date());
+	}
+
+	public static int getMonth(Date date) {
+		return getField(date, Calendar.MONTH);
+	}
+
+	public static int getDate() {
+		return getDate(new Date());
+	}
+
+	public static int getDate(Date date) {
+		return getField(date, Calendar.DAY_OF_MONTH);
+	}
+
+	public static int getField(Date date, int calendarField) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		return calendar.get(calendarField);
 	}
 
 }

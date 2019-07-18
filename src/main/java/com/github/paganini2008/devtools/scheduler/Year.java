@@ -22,6 +22,10 @@ public interface Year extends Iterator<Year>, CurrentTime {
 		GregorianCalendar calendar = new GregorianCalendar();
 		return calendar.isLeapYear(getYear());
 	}
+	
+	default Month everyMonth() {
+		return everyMonth(1);
+	}
 
 	default Month everyMonth(int interval) {
 		return everyMonth(Calendar.JANUARY, Calendar.DECEMBER, interval);

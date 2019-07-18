@@ -20,8 +20,14 @@ public interface Month extends Iterator<Month>, CurrentTime {
 
 	int getLasyDay();
 
+	default Day everyDay() {
+		return everyDay(1);
+	}
+
 	default Day everyDay(int interval) {
-		return everyDay(1, 31, interval);
+		return everyDay(m -> 1, m -> {
+			return m.getLasyDay();
+		}, interval);
 	}
 
 	default Day everyDay(int from, int to, int interval) {

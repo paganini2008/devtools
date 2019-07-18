@@ -23,6 +23,10 @@ public interface Day extends Iterator<Day>, CurrentTime {
 	int getWeekDay();
 	
 	int getDayOfYear();
+	
+	default Hour everyHour() {
+		return everyHour(1);
+	}
 
 	default Hour everyHour(int interval) {
 		return everyHour(0, 23, interval);

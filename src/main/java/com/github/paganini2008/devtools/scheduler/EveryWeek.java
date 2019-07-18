@@ -73,6 +73,10 @@ public class EveryWeek implements Week {
 	public int getWeek() {
 		return week.get(Calendar.WEEK_OF_MONTH);
 	}
+	
+	public int getWeekOfYear() {
+		return week.get(Calendar.WEEK_OF_YEAR);
+	}
 
 	public Date getTime() {
 		return week.getTime();

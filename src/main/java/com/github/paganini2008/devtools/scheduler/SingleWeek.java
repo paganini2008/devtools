@@ -56,6 +56,10 @@ public class SingleWeek implements ConcreteWeek {
 		return calendar.get(Calendar.WEEK_OF_MONTH);
 	}
 
+	public int getWeekOfYear() {
+		return calendar.get(Calendar.WEEK_OF_YEAR);
+	}
+
 	public ConcreteDay weekday(int day) {
 		return new WeekDay(CollectionUtils.getFirst(this), day);
 	}
