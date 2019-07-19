@@ -13,4 +13,10 @@ public interface ConcreteSecond extends Second {
 
 	ConcreteSecond andSecond(int second);
 	
+	default ConcreteSecond toSecond(int second) {
+		return toSecond(second, 1);
+	}
+	
+	ConcreteSecond toSecond(int second, int interval);
+	
 }

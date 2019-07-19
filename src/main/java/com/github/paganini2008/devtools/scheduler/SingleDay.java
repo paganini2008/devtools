@@ -1,5 +1,6 @@
 package com.github.paganini2008.devtools.scheduler;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TreeMap;
@@ -16,8 +17,9 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * @created 2019-07
  * @version 1.0
  */
-public class SingleDay implements ConcreteDay {
+public class SingleDay implements ConcreteDay, Serializable {
 
+	private static final long serialVersionUID = -6007054113405112202L;
 	private final TreeMap<Integer, Calendar> siblings;
 	private Month month;
 	private int index;

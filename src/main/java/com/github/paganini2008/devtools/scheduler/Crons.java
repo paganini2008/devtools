@@ -58,7 +58,7 @@ public abstract class Crons {
 	}
 
 	public static Year everyYear(int fromYear, int toYear, int interval) {
-		return new EveryYear(fromYear, toYear, interval);
+		return new EveryYear(fromYear, y -> toYear, interval);
 	}
 
 	public static Month everyMonth() {
@@ -72,7 +72,7 @@ public abstract class Crons {
 	public static Month everyMonth(int fromMonth, int toMonth, int interval) {
 		return everyYear().everyMonth(fromMonth, toMonth, interval);
 	}
-	
+
 	public static Week everyWeek() {
 		return everyWeek(1);
 	}

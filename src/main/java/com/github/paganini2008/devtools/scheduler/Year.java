@@ -18,11 +18,15 @@ public interface Year extends Iterator<Year>, CurrentTime {
 
 	int getYear();
 
+	int getWeekCount();
+
+	ConcreteWeek week(int week);
+
 	default boolean isLeapYear() {
 		GregorianCalendar calendar = new GregorianCalendar();
 		return calendar.isLeapYear(getYear());
 	}
-	
+
 	default Month everyMonth() {
 		return everyMonth(1);
 	}
@@ -74,7 +78,7 @@ public interface Year extends Iterator<Year>, CurrentTime {
 	default ConcreteMonth Sept() {
 		return month(Calendar.SEPTEMBER);
 	}
-	
+
 	default ConcreteMonth Oct() {
 		return month(Calendar.OCTOBER);
 	}

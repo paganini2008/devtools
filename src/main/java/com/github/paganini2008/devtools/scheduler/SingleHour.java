@@ -1,5 +1,6 @@
 package com.github.paganini2008.devtools.scheduler;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TreeMap;
@@ -16,23 +17,37 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * @created 2019-07
  * @version 1.0
  */
-public class SingleHour implements ConcreteHour {
+public class SingleHour implements ConcreteHour , Serializable{
 
+	private static final long serialVersionUID = 8124589572544886753L;
 	private final TreeMap<Integer, Calendar> siblings;
 	private Day day;
 	private int index;
 	private Calendar calendar;
+	private int lastHour;
 
 	SingleHour(Day day, int hour) {
+		CalendarAssert.checkHourOfDay(hour);
 		this.day = day;
 		siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(day.getTime(), Calendar.HOUR_OF_DAY, hour);
 		siblings.put(hour, calendar);
+		this.lastHour = hour;
 	}
 
 	public SingleHour andHour(int hour) {
+		CalendarAssert.checkHourOfDay(hour);
 		Calendar calendar = CalendarUtils.setField(day.getTime(), Calendar.HOUR_OF_DAY, hour);
 		siblings.put(hour, calendar);
+		this.lastHour = hour;
+		return this;
+	}
+
+	public ConcreteHour toHour(int hour, int interval) {
+		CalendarAssert.checkHourOfDay(hour);
+		for (int i = lastHour + interval; i < hour; i += interval) {
+			andHour(i);
+		}
 		return this;
 	}
 

@@ -1,5 +1,6 @@
 package com.github.paganini2008.devtools.scheduler;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.function.Function;
@@ -16,23 +17,26 @@ import com.github.paganini2008.devtools.date.DateUtils;
  * @created 2019-07
  * @version 1.0
  */
-public class EveryDay implements Day {
+public class EveryDay implements Day, Serializable {
 
+	private static final long serialVersionUID = -2114922383566430661L;
 	private Month month;
 	private final Calendar day;
 	private final int fromDay;
 	private final int toDay;
 	private final int interval;
 	private boolean state;
-	private boolean flag = true;
+	private boolean forward = true;
 
 	EveryDay(Month month, Function<Month, Integer> from, Function<Month, Integer> to, int interval) {
 		this.month = month;
 		this.fromDay = from.apply(month);
+		CalendarAssert.checkDayOfMonth(month, fromDay);
 		this.day = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH, fromDay);
-		this.toDay = to.apply(month);
 		this.interval = interval;
 		this.state = true;
+		this.toDay = to.apply(month);
+		CalendarAssert.checkDayOfMonth(month, toDay);
 	}
 
 	public boolean hasNext() {
@@ -43,7 +47,7 @@ public class EveryDay implements Day {
 				day.set(Calendar.YEAR, month.getYear());
 				day.set(Calendar.MONTH, month.getMonth());
 				day.set(Calendar.DAY_OF_MONTH, fromDay);
-				flag = false;
+				forward = false;
 				next = true;
 			}
 		}
@@ -54,10 +58,10 @@ public class EveryDay implements Day {
 		if (state) {
 			state = false;
 		} else {
-			if (flag) {
+			if (forward) {
 				day.add(Calendar.DAY_OF_MONTH, interval);
 			} else {
-				flag = true;
+				forward = true;
 			}
 		}
 		return this;
@@ -100,9 +104,7 @@ public class EveryDay implements Day {
 	}
 
 	public static void main(String[] args) {
-		Year everyYear = new EveryYear(2019, 2030, 3);
-		Month everyMonth = everyYear.everyMonth(5, 10, 2);
-		Day everyDay = everyMonth.everyDay(1, 15, 3);
+		Day everyDay = Crons.everyYear(2019, 2030, 3).everyMonth(5, 10, 2).everyDay(1, 15, 3);
 		while (everyDay.hasNext()) {
 			Day day = everyDay.next();
 			System.out.println(DateUtils.format(day.getTime()));

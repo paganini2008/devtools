@@ -1,5 +1,6 @@
 package com.github.paganini2008.devtools.scheduler;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.function.Function;
@@ -15,27 +16,31 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * @created 2019-07
  * @version 1.0
  */
-public class EveryWeekDay implements Day {
+public class EveryWeekDay implements Day, Serializable {
 
+	private static final long serialVersionUID = 7871249122497937952L;
 	private Week week;
 	private final Calendar day;
 	private final int fromDay;
 	private final int toDay;
 	private final int interval;
 	private boolean state;
-	private boolean flag = true;
+	private boolean forward = true;
 
 	EveryWeekDay(Week week, Function<Week, Integer> from, Function<Week, Integer> to, int interval) {
 		this.week = week;
 		this.fromDay = from.apply(week);
-		this.day = CalendarUtils.setField(week.getTime(), Calendar.DAY_OF_WEEK, fromDay);
-		this.toDay = to.apply(week);
+		CalendarAssert.checkDayOfWeek(fromDay);
+		Calendar calendar = CalendarUtils.setField(week.getTime(), Calendar.DAY_OF_WEEK, fromDay);
+		this.day = calendar;
 		this.interval = interval;
 		this.state = true;
+		this.toDay = to.apply(week);
+		CalendarAssert.checkDayOfWeek(toDay);
 	}
 
 	public boolean hasNext() {
-		boolean next = state || day.get(Calendar.DAY_OF_MONTH) + interval <= toDay;
+		boolean next = state || day.get(Calendar.DAY_OF_WEEK) + interval <= toDay;
 		if (!next) {
 			if (week.hasNext()) {
 				week = week.next();
@@ -43,7 +48,7 @@ public class EveryWeekDay implements Day {
 				day.set(Calendar.MONTH, week.getMonth());
 				day.set(Calendar.WEEK_OF_MONTH, week.getWeek());
 				day.set(Calendar.DAY_OF_WEEK, fromDay);
-				flag = false;
+				forward = false;
 				next = true;
 			}
 		}
@@ -54,10 +59,10 @@ public class EveryWeekDay implements Day {
 		if (state) {
 			state = false;
 		} else {
-			if (flag) {
+			if (forward) {
 				day.add(Calendar.DAY_OF_WEEK, interval);
 			} else {
-				flag = true;
+				forward = true;
 			}
 		}
 		return this;

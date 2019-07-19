@@ -1,5 +1,6 @@
 package com.github.paganini2008.devtools.scheduler;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TreeMap;
@@ -15,23 +16,37 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * @created 2019-07
  * @version 1.0
  */
-public class SingleSecond implements ConcreteSecond {
+public class SingleSecond implements ConcreteSecond, Serializable{
 
+	private static final long serialVersionUID = 6264419114715870528L;
 	private final TreeMap<Integer, Calendar> siblings;
 	private Minute minute;
 	private int index;
 	private Calendar calendar;
+	private int lastSecond;
 
 	SingleSecond(Minute minute, int second) {
+		CalendarAssert.checkSecond(second);
 		this.minute = minute;
 		siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(minute.getTime(), Calendar.SECOND, second);
 		siblings.put(second, calendar);
+		this.lastSecond = second;
 	}
 
 	public SingleSecond andSecond(int second) {
+		CalendarAssert.checkSecond(second);
 		Calendar calendar = CalendarUtils.setField(minute.getTime(), Calendar.SECOND, second);
 		siblings.put(second, calendar);
+		this.lastSecond = second;
+		return this;
+	}
+
+	public ConcreteSecond toSecond(int second, int interval) {
+		CalendarAssert.checkSecond(second);
+		for (int i = lastSecond + interval; i < second; i += interval) {
+			andSecond(i);
+		}
 		return this;
 	}
 

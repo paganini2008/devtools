@@ -348,10 +348,6 @@ public class DateUtils {
 		return formatDuration(ms, DurationType.DAY, pattern);
 	}
 
-	public static void main(String[] args) throws Exception {
-		System.out.println(formatDurationAsDay(1234567781L));
-	}
-
 	public static String formatDuration(long ms, DurationType type, String pattern) {
 		long[] args = type.toArray(ms);
 		Long[] array = Longs.toWrappers(args);
@@ -462,6 +458,10 @@ public class DateUtils {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
 		return calendar.get(calendarField);
+	}
+	
+	public static void main(String[] args) throws Exception {
+		System.out.println(getWeekOfMonth());
 	}
 
 }

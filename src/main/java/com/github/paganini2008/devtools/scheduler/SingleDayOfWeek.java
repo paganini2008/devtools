@@ -1,5 +1,6 @@
 package com.github.paganini2008.devtools.scheduler;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TreeMap;
@@ -9,32 +10,33 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
 
 /**
  * 
- * WeekDay
+ * SingleDayOfWeek
  *
  * @author Fred Feng
  * @revised 2019-07
  * @created 2019-07
  * @version 1.0
  */
-public class WeekDay implements ConcreteWeekDay {
+public class SingleDayOfWeek implements ConcreteWeekDay, Serializable {
 
+	private static final long serialVersionUID = -5353496894925284106L;
 	private final TreeMap<Integer, Calendar> siblings;
 	private Week week;
 	private int index;
 	private Calendar calendar;
 	private int lastDay;
 
-	WeekDay(Week week, int day) {
-		CalendarAssert.checkWeekDay(day);
+	SingleDayOfWeek(Week week, int day) {
+		CalendarAssert.checkDayOfWeek(day);
 		this.week = week;
-		siblings = new TreeMap<Integer, Calendar>();
+		this.siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(week.getTime(), Calendar.DAY_OF_WEEK, day);
 		siblings.put(day, calendar);
 		this.lastDay = day;
 	}
 
 	public ConcreteWeekDay andDay(int day) {
-		CalendarAssert.checkWeekDay(day);
+		CalendarAssert.checkDayOfWeek(day);
 		Calendar calendar = CalendarUtils.setField(week.getTime(), Calendar.DAY_OF_WEEK, day);
 		siblings.put(day, calendar);
 		this.lastDay = day;
@@ -42,7 +44,7 @@ public class WeekDay implements ConcreteWeekDay {
 	}
 
 	public ConcreteWeekDay toDay(int day, int interval) {
-		CalendarAssert.checkWeekDay(day);
+		CalendarAssert.checkDayOfWeek(day);
 		for (int i = lastDay + interval; i <= day; i += interval) {
 			andDay(i);
 		}

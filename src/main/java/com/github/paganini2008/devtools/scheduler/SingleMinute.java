@@ -1,5 +1,6 @@
 package com.github.paganini2008.devtools.scheduler;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TreeMap;
@@ -16,23 +17,37 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * @created 2019-07
  * @version 1.0
  */
-public class SingleMinute implements ConcreteMinute {
+public class SingleMinute implements ConcreteMinute, Serializable {
 
+	private static final long serialVersionUID = 7090607807516357598L;
 	private final TreeMap<Integer, Calendar> siblings;
 	private Hour hour;
 	private int index;
 	private Calendar calendar;
+	private int lastMinute;
 
 	SingleMinute(Hour hour, int minute) {
+		CalendarAssert.checkMinute(minute);
 		this.hour = hour;
 		siblings = new TreeMap<Integer, Calendar>();
-		Calendar calendar = CalendarUtils.setField(hour.getTime(), Calendar.HOUR_OF_DAY, minute);
+		Calendar calendar = CalendarUtils.setField(hour.getTime(), Calendar.MINUTE, minute);
 		siblings.put(minute, calendar);
+		this.lastMinute = minute;
 	}
 
 	public SingleMinute andMinute(int minute) {
-		Calendar calendar = CalendarUtils.setField(hour.getTime(), Calendar.HOUR_OF_DAY, minute);
+		CalendarAssert.checkMinute(minute);
+		Calendar calendar = CalendarUtils.setField(hour.getTime(), Calendar.MINUTE, minute);
 		siblings.put(minute, calendar);
+		this.lastMinute = minute;
+		return this;
+	}
+
+	public ConcreteMinute toMinute(int minute, int interval) {
+		CalendarAssert.checkMinute(minute);
+		for (int i = lastMinute + interval; i < minute; i += interval) {
+			andMinute(i);
+		}
 		return this;
 	}
 
@@ -63,7 +78,7 @@ public class SingleMinute implements ConcreteMinute {
 	public int getMinute() {
 		return calendar.get(Calendar.MINUTE);
 	}
-	
+
 	public ConcreteSecond second(int second) {
 		return new SingleSecond(CollectionUtils.getFirst(this), second);
 	}

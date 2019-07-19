@@ -1,5 +1,6 @@
 package com.github.paganini2008.devtools.scheduler;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.function.Function;
@@ -16,13 +17,16 @@ import com.github.paganini2008.devtools.date.DateUtils;
  * @created 2019-07
  * @version 1.0
  */
-public class EveryYear implements Year {
+public class EveryYear implements Year, Serializable {
 
-	EveryYear(int fromYear, int toYear, int interval) {
+	private static final long serialVersionUID = 1487831872493410360L;
+
+	EveryYear(int fromYear, Function<Year, Integer> to, int interval) {
+		CalendarAssert.checkYear(fromYear);
 		this.year = CalendarUtils.setField(new Date(), Calendar.YEAR, fromYear);
-		this.toYear = toYear;
 		this.interval = interval;
 		this.state = true;
+		this.toYear = to.apply(this);
 	}
 
 	private final Calendar year;
@@ -32,6 +36,10 @@ public class EveryYear implements Year {
 
 	public int getYear() {
 		return year.get(Calendar.YEAR);
+	}
+
+	public int getWeekCount() {
+		return year.getActualMaximum(Calendar.WEEK_OF_YEAR);
 	}
 
 	public Date getTime() {
@@ -59,14 +67,18 @@ public class EveryYear implements Year {
 		return new EveryMonth(CollectionUtils.getFirst(this), from, to, interval);
 	}
 
+	public ConcreteWeek week(int week) {
+		return new SingleWeekOfYear(CollectionUtils.getFirst(this), week);
+	}
+
 	public ConcreteMonth month(int month) {
 		return new SingleMonth(CollectionUtils.getFirst(this), month);
 	}
-	
+
 	public static void main(String[] args) {
-		Year everyYear = new EveryYear(2019, 2030, 3);
-		while (everyYear.hasNext()) {
-			Year time = everyYear.next();
+		Day every = Crons.thisYear().andNextYears(2).week(41).everyDay();
+		while (every.hasNext()) {
+			Day time = every.next();
 			System.out.println(DateUtils.format(time.getTime()));
 		}
 	}

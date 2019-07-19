@@ -27,6 +27,46 @@ public interface ConcreteMonth extends Month {
 
 	ConcreteMonth toMonth(int andMonth, int interval);
 
+	default ConcreteMonth toMar() {
+		return toMonth(Calendar.MARCH);
+	}
+
+	default ConcreteMonth toApr() {
+		return toMonth(Calendar.APRIL);
+	}
+
+	default ConcreteMonth toMay() {
+		return toMonth(Calendar.MAY);
+	}
+
+	default ConcreteMonth toJune() {
+		return toMonth(Calendar.JUNE);
+	}
+
+	default ConcreteMonth toJuly() {
+		return toMonth(Calendar.JULY);
+	}
+
+	default ConcreteMonth toAug() {
+		return toMonth(Calendar.AUGUST);
+	}
+
+	default ConcreteMonth toSept() {
+		return toMonth(Calendar.SEPTEMBER);
+	}
+
+	default ConcreteMonth toOct() {
+		return toMonth(Calendar.OCTOBER);
+	}
+
+	default ConcreteMonth toNov() {
+		return toMonth(Calendar.NOVEMBER);
+	}
+
+	default ConcreteMonth toDec() {
+		return toMonth(Calendar.DECEMBER);
+	}
+
 	default ConcreteMonth andJan() {
 		return andMonth(Calendar.JANUARY);
 	}

@@ -1,5 +1,6 @@
 package com.github.paganini2008.devtools.scheduler;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.function.Function;
@@ -15,23 +16,26 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * @created 2019-07
  * @version 1.0
  */
-public class EveryHour implements Hour {
+public class EveryHour implements Hour, Serializable {
 
+	private static final long serialVersionUID = -5459905273757712271L;
 	private Day day;
 	private final Calendar hour;
 	private final int fromHour;
 	private final int toHour;
 	private final int interval;
 	private boolean state;
-	private boolean flag = true;
+	private boolean forward = true;
 
 	EveryHour(Day day, Function<Day, Integer> from, Function<Day, Integer> to, int interval) {
 		this.day = day;
 		this.fromHour = from.apply(day);
+		CalendarAssert.checkHourOfDay(fromHour);
 		this.hour = CalendarUtils.setField(day.getTime(), Calendar.HOUR_OF_DAY, fromHour);
-		this.toHour = to.apply(day);
 		this.interval = interval;
 		this.state = true;
+		this.toHour = to.apply(day);
+		CalendarAssert.checkHourOfDay(toHour);
 	}
 
 	public boolean hasNext() {
@@ -43,7 +47,7 @@ public class EveryHour implements Hour {
 				hour.set(Calendar.MONTH, day.getMonth());
 				hour.set(Calendar.DAY_OF_MONTH, day.getDay());
 				hour.set(Calendar.HOUR_OF_DAY, fromHour);
-				flag = false;
+				forward = false;
 				next = true;
 			}
 		}
@@ -54,10 +58,10 @@ public class EveryHour implements Hour {
 		if (state) {
 			state = false;
 		} else {
-			if (flag) {
+			if (forward) {
 				hour.add(Calendar.HOUR_OF_DAY, interval);
 			} else {
-				flag = true;
+				forward = true;
 			}
 		}
 		return this;

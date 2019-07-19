@@ -33,6 +33,7 @@ public class Unit {
 	
 	public static void main(String[] args) {
 		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.MONTH, 5);
 		System.out.println(cal.getActualMaximum(Calendar.WEEK_OF_MONTH));
 	}
 

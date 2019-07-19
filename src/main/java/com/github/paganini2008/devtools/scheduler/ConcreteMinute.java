@@ -12,5 +12,11 @@ package com.github.paganini2008.devtools.scheduler;
 public interface ConcreteMinute extends Minute {
 
 	ConcreteMinute andMinute(int minute);
-	
+
+	default ConcreteMinute toMinute(int minute) {
+		return toMinute(minute, 1);
+	}
+
+	ConcreteMinute toMinute(int minute, int interval);
+
 }

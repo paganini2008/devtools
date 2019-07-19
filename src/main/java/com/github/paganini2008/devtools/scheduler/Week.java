@@ -23,6 +23,10 @@ public interface Week extends Iterator<Week>, CurrentTime {
 
 	int getWeekOfYear();
 
+	default Day everyDay() {
+		return everyDay(1);
+	}
+
 	default Day everyDay(int interval) {
 		return everyDay(Calendar.SUNDAY, Calendar.SATURDAY, interval);
 	}

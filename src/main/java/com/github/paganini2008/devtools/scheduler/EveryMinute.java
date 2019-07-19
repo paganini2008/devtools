@@ -1,5 +1,6 @@
 package com.github.paganini2008.devtools.scheduler;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.function.Function;
@@ -15,23 +16,26 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * @created 2019-07
  * @version 1.0
  */
-public class EveryMinute implements Minute {
+public class EveryMinute implements Minute, Serializable {
 
+	private static final long serialVersionUID = -7939881133025374416L;
 	private Hour hour;
 	private final Calendar minute;
 	private final int fromMinute;
 	private final int toMinute;
 	private final int interval;
 	private boolean state;
-	private boolean flag = true;
+	private boolean forward = true;
 
 	EveryMinute(Hour hour, Function<Hour, Integer> from, Function<Hour, Integer> to, int interval) {
 		this.hour = hour;
-		this.fromMinute = Math.max(0, from.apply(hour));
+		this.fromMinute = from.apply(hour);
 		this.minute = CalendarUtils.setField(hour.getTime(), Calendar.MINUTE, fromMinute);
-		this.toMinute = Math.min(59, to.apply(hour));
+		CalendarAssert.checkMinute(fromMinute);
 		this.interval = interval;
 		this.state = true;
+		this.toMinute = to.apply(hour);
+		CalendarAssert.checkMinute(toMinute);
 	}
 
 	public boolean hasNext() {
@@ -44,7 +48,7 @@ public class EveryMinute implements Minute {
 				minute.set(Calendar.DAY_OF_MONTH, hour.getDay());
 				minute.set(Calendar.HOUR_OF_DAY, hour.getHour());
 				minute.set(Calendar.MINUTE, fromMinute);
-				flag = false;
+				forward = false;
 				next = true;
 			}
 		}
@@ -55,10 +59,10 @@ public class EveryMinute implements Minute {
 		if (state) {
 			state = false;
 		} else {
-			if (flag) {
+			if (forward) {
 				minute.add(Calendar.MINUTE, interval);
 			} else {
-				flag = true;
+				forward = true;
 			}
 		}
 		return this;
@@ -91,7 +95,7 @@ public class EveryMinute implements Minute {
 	public long getTimeInMillis() {
 		return minute.getTimeInMillis();
 	}
-	
+
 	public ConcreteSecond second(int second) {
 		return new SingleSecond(CollectionUtils.getFirst(this), second);
 	}

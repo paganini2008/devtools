@@ -10,41 +10,41 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
 
 /**
  * 
- * SingleWeek
+ * SingleWeekOfYear
  *
  * @author Fred Feng
  * @revised 2019-07
  * @created 2019-07
  * @version 1.0
  */
-public class SingleWeek implements ConcreteWeek, Serializable {
+public class SingleWeekOfYear implements ConcreteWeek, Serializable {
 
-	private static final long serialVersionUID = -4563991137870265612L;
+	private static final long serialVersionUID = -3294283555586718358L;
 	private final TreeMap<Integer, Calendar> siblings;
-	private Month month;
+	private Year year;
 	private int index;
 	private Calendar calendar;
 	private int lastWeek;
 
-	SingleWeek(Month month, int week) {
-		CalendarAssert.checkWeekOfMonth(month, week);
-		this.month = month;
+	SingleWeekOfYear(Year year, int week) {
+		CalendarAssert.checkWeekOfYear(year, week);
+		this.year = year;
 		siblings = new TreeMap<Integer, Calendar>();
-		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.WEEK_OF_MONTH, week);
+		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.WEEK_OF_YEAR, week);
 		siblings.put(week, calendar);
 		this.lastWeek = week;
 	}
 
-	public SingleWeek andWeek(int week) {
-		CalendarAssert.checkWeekOfMonth(month, week);
-		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.WEEK_OF_MONTH, week);
+	public ConcreteWeek andWeek(int week) {
+		CalendarAssert.checkWeekOfYear(year, week);
+		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.WEEK_OF_YEAR, week);
 		siblings.put(week, calendar);
 		this.lastWeek = week;
 		return this;
 	}
 
 	public ConcreteWeek toWeek(int week, int interval) {
-		CalendarAssert.checkWeekOfMonth(month, week);
+		CalendarAssert.checkWeekOfYear(year, week);
 		for (int i = lastWeek + interval; i < week; i += interval) {
 			andWeek(i);
 		}
@@ -86,8 +86,8 @@ public class SingleWeek implements ConcreteWeek, Serializable {
 	public boolean hasNext() {
 		boolean next = index < siblings.size();
 		if (!next) {
-			if (month.hasNext()) {
-				month = month.next();
+			if (year.hasNext()) {
+				year = year.next();
 				index = 0;
 				next = true;
 			}
@@ -97,9 +97,7 @@ public class SingleWeek implements ConcreteWeek, Serializable {
 
 	public Week next() {
 		calendar = CollectionUtils.get(siblings.values().iterator(), index++);
-		calendar.set(Calendar.YEAR, month.getYear());
-		calendar.set(Calendar.MONTH, month.getMonth());
+		calendar.set(Calendar.YEAR, year.getYear());
 		return this;
 	}
-
 }

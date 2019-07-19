@@ -13,4 +13,10 @@ public interface ConcreteHour extends Hour {
 
 	ConcreteHour andHour(int hour);
 
+	default ConcreteHour toHour(int hour) {
+		return toHour(hour, 1);
+	}
+
+	ConcreteHour toHour(int hour, int interval);
+
 }

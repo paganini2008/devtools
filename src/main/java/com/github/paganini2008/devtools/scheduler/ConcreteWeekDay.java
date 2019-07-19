@@ -21,10 +21,6 @@ public interface ConcreteWeekDay extends Day {
 
 	ConcreteWeekDay toDay(int day, int interval);
 
-	default ConcreteWeekDay toMon() {
-		return toDay(Calendar.MONDAY);
-	}
-
 	default ConcreteWeekDay toTues() {
 		return toDay(Calendar.TUESDAY);
 	}
