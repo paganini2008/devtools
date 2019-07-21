@@ -103,6 +103,9 @@ public class ThreadPoolTaskExecutor implements TaskExecutor {
 	}
 
 	public void close() {
+		for (TaskFuture taskFuture : taskFutures.values()) {
+			taskFuture.cancel();
+		}
 		ExecutorUtils.gracefulShutdown(executor, 60000L);
 	}
 
@@ -143,10 +146,9 @@ public class ThreadPoolTaskExecutor implements TaskExecutor {
 			} finally {
 				taskDetail.running.set(false);
 				if (result) {
-					removeSchedule(task);
 					ScheduledFuture<?> scheduledFuture = executor.schedule(this, taskDetail.nextExecuted - System.currentTimeMillis(),
 							TimeUnit.MILLISECONDS);
-					taskFutures.put(task, new TaskFutureImpl(taskDetail, scheduledFuture));
+					((TaskFutureImpl) taskFutures.get(task)).scheduledFuture = scheduledFuture;
 				} else {
 					removeSchedule(task);
 					task.onCancellation();

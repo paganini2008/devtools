@@ -126,7 +126,7 @@ public class SimpleTaskExecutor implements TaskExecutor {
 	static class TaskFutureImpl implements TaskFuture {
 
 		private final DefaultTaskDetail taskDetail;
-		private TimerTask timerTask;
+		volatile TimerTask timerTask;
 		private boolean cancelled;
 		volatile boolean done;
 
@@ -191,8 +191,9 @@ public class SimpleTaskExecutor implements TaskExecutor {
 			} finally {
 				taskDetail.running.set(false);
 				if (result) {
-					removeSchedule(task);
-					timer.schedule(new CronTask(task, taskDetail), taskDetail.nextExecuted - System.currentTimeMillis());
+					CronTask nextTask = new CronTask(task, taskDetail);
+					timer.schedule(nextTask, taskDetail.nextExecuted - System.currentTimeMillis());
+					((TaskFutureImpl) taskFutures.get(task)).timerTask = nextTask;
 				} else {
 					removeSchedule(task);
 					task.onCancellation();
