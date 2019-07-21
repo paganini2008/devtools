@@ -16,7 +16,7 @@ public abstract class EventBasedRefreshingProperties extends RefreshingPropertie
 
 	private static final long serialVersionUID = 1L;
 
-	private final Observable observable = new Observable();
+	private final Observable observable = Observable.repeatable();
 
 	public void addEventListener(final PropertyChangeListener<Properties> listener) {
 		observable.addObserver(new Observer() {

@@ -8,12 +8,12 @@ import java.util.concurrent.Executor;
  * 
  * @author Fred Feng
  * @revised 2019-05
- * @created 2012-01
+ * @created 2015-01
  * @version 1.0
  */
 public interface ThreadPool extends Executor {
 
-	boolean apply(Runnable r);
+	boolean apply(Runnable task);
 
 	int getPoolSize();
 

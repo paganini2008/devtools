@@ -224,7 +224,7 @@ public class SqlRunner {
 	static class LazyCloseable extends Observable {
 
 		LazyCloseable() {
-			setRepeated(false);
+			super(false);
 		}
 
 		public void finish() {

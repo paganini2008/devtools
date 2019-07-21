@@ -195,7 +195,7 @@ public class DBUtils {
 	public static Iterator<Map<String, Object>> executeQuery(Connection connection, String sql) throws SQLException {
 		Statement sm = null;
 		ResultSet rs = null;
-		Observable observable = new Observable();
+		Observable observable = Observable.unrepeatable();
 		try {
 			sm = connection.createStatement();
 			rs = sm.executeQuery(sql);
@@ -208,7 +208,7 @@ public class DBUtils {
 	public static Iterator<Map<String, Object>> executeQuery(Connection connection, String sql, Object[] args) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		Observable observable = new Observable();
+		Observable observable = Observable.unrepeatable();
 		try {
 			ps = connection.prepareStatement(sql);
 			setValues(ps, args);

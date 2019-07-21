@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import com.github.paganini2008.devtools.ArrayUtils;
 import com.github.paganini2008.devtools.Assert;
@@ -454,12 +455,44 @@ public class DateUtils {
 		return getField(date, Calendar.WEEK_OF_MONTH);
 	}
 
+	public static int getHourOfDay() {
+		return getHourOfDay(new Date());
+	}
+
+	public static int getHourOfDay(Date date) {
+		return getField(date, Calendar.HOUR_OF_DAY);
+	}
+
+	public static int getMinute() {
+		return getMinute(new Date());
+	}
+
+	public static int getMinute(Date date) {
+		return getField(date, Calendar.MINUTE);
+	}
+
+	public static int getSecond() {
+		return getSecond(new Date());
+	}
+
+	public static int getSecond(Date date) {
+		return getField(date, Calendar.SECOND);
+	}
+
 	public static int getField(Date date, int calendarField) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
 		return calendar.get(calendarField);
 	}
-	
+
+	public static long converToSecond(long interval, TimeUnit timeUnit) {
+		return timeUnit != TimeUnit.SECONDS ? TimeUnit.SECONDS.convert(interval, timeUnit) : interval;
+	}
+
+	public static long convertToMillis(long interval, TimeUnit timeUnit) {
+		return timeUnit != TimeUnit.MILLISECONDS ? TimeUnit.MILLISECONDS.convert(interval, timeUnit) : interval;
+	}
+
 	public static void main(String[] args) throws Exception {
 		System.out.println(getWeekOfMonth());
 	}

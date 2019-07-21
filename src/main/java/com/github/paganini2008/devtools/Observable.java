@@ -18,9 +18,10 @@ public class Observable {
 
 	private static final String DEFAULT_TOPIC = "default";
 	private final ConcurrentMap<String, Observers> groups = new ConcurrentHashMap<String, Observers>();
-	private boolean repeated = true;
+	private final boolean repeated;
 
-	public Observable() {
+	protected Observable(boolean repeated) {
+		this.repeated = repeated;
 	}
 
 	static class Observers implements Observer {
@@ -66,10 +67,6 @@ public class Observable {
 			}
 		}
 
-	}
-
-	public void setRepeated(boolean repeated) {
-		this.repeated = repeated;
 	}
 
 	public void addObserver(Observer ob) {
@@ -136,14 +133,10 @@ public class Observable {
 	}
 
 	public static Observable repeatable() {
-		Observable o = new Observable();
-		o.setRepeated(true);
-		return o;
+		return new Observable(true);
 	}
 
 	public static Observable unrepeatable() {
-		Observable o = new Observable();
-		o.setRepeated(false);
-		return o;
+		return new Observable(false);
 	}
 }
