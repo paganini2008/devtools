@@ -13,7 +13,7 @@ import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
 import com.github.paganini2008.devtools.multithreads.PooledThreadFactory;
 import com.github.paganini2008.devtools.scheduler.cron.CronExpression;
-import com.github.paganini2008.devtools.scheduler.cron.Crons;
+import com.github.paganini2008.devtools.scheduler.cron.CronUtils;
 
 /**
  * 
@@ -226,7 +226,7 @@ public class ThreadPoolTaskExecutor implements TaskExecutor {
 	}
 
 	public static void main(String[] args) throws Exception {
-		CronExpression expression = Crons.everySecond();
+		CronExpression expression = CronUtils.everySecond();
 		ThreadPoolTaskExecutor es = new ThreadPoolTaskExecutor(2, null);
 		final TaskFuture taskFuture = es.schedule(new Executable() {
 			int n = 0;
