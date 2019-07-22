@@ -450,7 +450,7 @@ public class GenericObjectPool implements ObjectPool {
 		return running.get();
 	}
 
-	private final Comparator<Object> idleListSorter = new Comparator<Object>() {
+	private final Comparator<Object> idleQueueSorter = new Comparator<Object>() {
 		public int compare(Object left, Object right) {
 			PooledObject leftDetail = pooledObjects.get(left);
 			PooledObject rightDetail = pooledObjects.get(right);
@@ -500,7 +500,7 @@ public class GenericObjectPool implements ObjectPool {
 			try {
 				if (idleQueue.size() > maxIdleSize) {
 					List<Object> queue = new ArrayList<Object>(idleQueue);
-					Collections.sort(queue, idleListSorter);
+					Collections.sort(queue, idleQueueSorter);
 					final int destroyedSize = queue.size() - maxIdleSize;
 					for (int i = 0; i < destroyedSize; i++) {
 						Object object = queue.get(i);

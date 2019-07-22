@@ -76,6 +76,10 @@ public class SimpleThreadPool implements ThreadPool {
 		return completedCount;
 	}
 
+	public long getFailedTaskCount() {
+		return failedCount;
+	}
+
 	public void setRejectedExecutionHandler(RejectedExecutionHandler rejectedExecutionHandler) {
 		this.rejectedExecutionHandler = rejectedExecutionHandler;
 	}
@@ -90,6 +94,7 @@ public class SimpleThreadPool implements ThreadPool {
 	 * 
 	 * @author Fred Feng
 	 * @revised 2019-05
+	 * @created 2019-05
 	 * @version 1.0
 	 */
 	class IdleQueueKeeper implements Executable {
@@ -107,36 +112,31 @@ public class SimpleThreadPool implements ThreadPool {
 
 	}
 
-	public boolean apply(Runnable r) {
-		return apply0(r);
-	}
-
-	private boolean apply0(Runnable r) {
+	public boolean apply(Runnable runnable) {
 		if (!running) {
-			throw new IllegalStateException("ThreadPool is shutdown.");
+			throw new IllegalStateException("ThreadPool is shutdown now.");
 		}
 		boolean acquired = timeout > 0 ? sync.acquire(timeout) : timeout < 0 ? sync.tryAcquire() : sync.acquire();
 		if (acquired) {
 			WorkerThread workerThread = poolManager.borrow();
 			if (workerThread != null) {
-				workerThread.run(r);
+				workerThread.runTask(runnable);
 				return true;
 			} else {
-				waitForExecuting(r);
+				waitForNextExecuting(runnable);
 			}
 		} else {
-			System.out.println("222222222222222");
-			waitForExecuting(r);
+			waitForNextExecuting(runnable);
 		}
 		return false;
 	}
 
-	private void waitForExecuting(Runnable r) {
+	private void waitForNextExecuting(Runnable runnable) {
 		synchronized (waitQueue) {
-			waitQueue.add(r);
+			waitQueue.add(runnable);
 			if (waitQueue.size() > maxQueueSize) {
 				if (rejectedExecutionHandler != null) {
-					rejectedExecutionHandler.handleRejectedExecution(r, this);
+					rejectedExecutionHandler.handleRejectedExecution(runnable, this);
 				} else {
 					throw new IllegalStateException("WaitQueue Full!");
 				}
@@ -245,9 +245,17 @@ public class SimpleThreadPool implements ThreadPool {
 
 	}
 
+	/**
+	 * 
+	 * PoolManager
+	 *
+	 * @author Fred Feng
+	 * @revised 2019-07
+	 * @created 2012-01
+	 * @version 1.0
+	 */
 	class PoolManager {
 
-		final Object lock = new Object();
 		final LinkedList<WorkerThread> idleQueue = new LinkedList<WorkerThread>();
 		final LinkedList<WorkerThread> busyQueue = new LinkedList<WorkerThread>();
 		final int maxPoolSize;
@@ -304,9 +312,10 @@ public class SimpleThreadPool implements ThreadPool {
 	/**
 	 * 
 	 * WorkerThread
-	 * 
+	 *
 	 * @author Fred Feng
-	 * @revised 2019-05
+	 * @created 2019-07
+	 * @created 2012-01
 	 * @version 1.0
 	 */
 	class WorkerThread implements Runnable {
@@ -319,8 +328,8 @@ public class SimpleThreadPool implements ThreadPool {
 		Runnable task;
 
 		WorkerThread() {
-			alive = true;
-			idle = true;
+			this.alive = true;
+			this.idle = true;
 			this.thread = ThreadUtils.runAsThread(getThreadName(), this);
 		}
 
@@ -357,7 +366,7 @@ public class SimpleThreadPool implements ThreadPool {
 				completedCount++;
 				submitAgainIfPresent();
 				idle = true;
-				
+
 				poolManager.giveback(this);
 				sync.release();
 
@@ -379,7 +388,7 @@ public class SimpleThreadPool implements ThreadPool {
 			}
 		}
 
-		void run(Runnable task) {
+		void runTask(Runnable task) {
 			synchronized (lock) {
 				if (alive) {
 					if (idle) {
@@ -412,27 +421,27 @@ public class SimpleThreadPool implements ThreadPool {
 
 	void submitAgainIfPresent() {
 
-		Runnable r;
+		Runnable runnable;
 		synchronized (waitQueue) {
-			r = waitQueue.pollFirst();
+			runnable = waitQueue.pollFirst();
 		}
-		if (r != null) {
-			apply0(r);
+		if (runnable != null) {
+			apply(runnable);
 		}
 
 	}
 
 	public synchronized void shutdown() {
-		System.out.println("waitQueue.size()： " + waitQueue.size());
-		System.out.println("idle.size()： " + poolManager.idleQueue.size());
-		while (!waitQueue.isEmpty()) {
-			ThreadUtils.randomSleep(1000L);
-		}
-		poolManager.destroy();
+		running = false;
 		if (timer != null) {
 			timer.cancel();
 		}
-		running = false;
+		synchronized (waitQueue) {
+			while (!waitQueue.isEmpty()) {
+				ThreadUtils.randomSleep(1000L);
+			}
+		}
+		poolManager.destroy();
 	}
 
 	public String toString() {
@@ -447,7 +456,7 @@ public class SimpleThreadPool implements ThreadPool {
 	}
 
 	public static void main(String[] args) throws IOException {
-		SimpleThreadPool threadPool = new SimpleThreadPool(10, 0L, Integer.MAX_VALUE);
+		GenericThreadPool threadPool = new GenericThreadPool(10, 100, 0L, Integer.MAX_VALUE, new PooledThreadFactory());
 		final AtomicInteger score = new AtomicInteger(0);
 		for (final int i : Sequence.forEach(0, 100000)) {
 			threadPool.apply(new Runnable() {
@@ -456,26 +465,12 @@ public class SimpleThreadPool implements ThreadPool {
 					System.out.println(Thread.currentThread().getName() + ": " + i + ", PoolSize: " + threadPool.getPoolSize()
 							+ ", waitSize: " + threadPool.getQueueSize() + ", idleSize: " + threadPool.getIdleThreadSize());
 					if (i % 3 == 0) {
-						throw new IllegalStateException("111111111111111111-->3");
+						//throw new IllegalStateException("111111111111111111-->3");
 					}
 					score.incrementAndGet();
 				}
 			});
 		}
-		// System.in.read();
-		// for (final int i : Sequence.forEach(0, 100000)) {
-		// threadPool.apply(new Runnable() {
-		// public void run() {
-		// // ThreadUtils.randomSleep(1000L);
-		// System.out.println(Thread.currentThread().getName() + ": " + i + ", PoolSize:
-		// " + threadPool.getPoolSize());
-		// if (i % 3 == 0) {
-		// throw new IllegalStateException("111111111111111111-->3");
-		// }
-		// score.incrementAndGet();
-		// }
-		// });
-		// }
 		System.out.println("SimpleThreadPool.main(): " + score);
 		System.in.read();
 		threadPool.shutdown();

@@ -170,8 +170,7 @@ public class ThreadUtils {
 				try {
 					result = e.execute();
 				} catch (Exception error) {
-					result = false;
-					e.onError(error);
+					result = e.onError(error);
 				} finally {
 					if (!result) {
 						timer.cancel();
@@ -211,8 +210,7 @@ public class ThreadUtils {
 				try {
 					result = e.execute();
 				} catch (Exception error) {
-					result = false;
-					e.onError(error);
+					result = e.onError(error);
 				} finally {
 					if (!result) {
 						timer.cancel();
@@ -270,7 +268,7 @@ public class ThreadUtils {
 	}
 
 	public static ThreadPool newCommonPool(int maxPoolSize, long timeout, int queueSize) {
-		return new JdkThreadPool(maxPoolSize, Integer.MAX_VALUE, timeout, queueSize, new PooledThreadFactory());
+		return new GenericThreadPool(maxPoolSize, Integer.MAX_VALUE, timeout, queueSize, new PooledThreadFactory());
 	}
 
 	public static <T> AsyncThreadPool<T> newAsyncPool(ThreadPool delegate) {

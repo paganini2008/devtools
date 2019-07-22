@@ -8,7 +8,7 @@ import java.util.concurrent.Executor;
  * 
  * @author Fred Feng
  * @revised 2019-05
- * @created 2015-01
+ * @created 2012-01
  * @version 1.0
  */
 public interface ThreadPool extends Executor {
@@ -26,6 +26,8 @@ public interface ThreadPool extends Executor {
 	int getIdleThreadSize();
 	
 	long getCompletedTaskCount();
+	
+	long getFailedTaskCount();
 
 	boolean isShutdown();
 

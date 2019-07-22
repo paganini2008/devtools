@@ -5,18 +5,19 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 
- * JdkThreadPool
+ * GenericThreadPool
  * 
  * @author Fred Feng
  * @revised 2019-05
  * @version 1.0
  */
-public class JdkThreadPool extends ThreadPoolExecutor implements ThreadPool {
+public class GenericThreadPool extends ThreadPoolExecutor implements ThreadPool {
 
-	protected JdkThreadPool(int poolSize, int maxPermits, long acquiredTimeout, int queueSize, ThreadFactory threadFactory) {
+	public GenericThreadPool(int poolSize, int maxPermits, long acquiredTimeout, int queueSize, ThreadFactory threadFactory) {
 		super(poolSize, poolSize, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), threadFactory,
 				new ThreadPoolExecutor.AbortPolicy());
 		this.latch = new CounterLatch(maxPermits);
@@ -27,18 +28,19 @@ public class JdkThreadPool extends ThreadPoolExecutor implements ThreadPool {
 	private final Latch latch;
 	private final long acquiredTimeout;
 	private final Queue<Runnable> waitQueue;
+	private final AtomicInteger failedCount = new AtomicInteger(0);
 	private RejectedExecutionHandler rejectedExecutionHandler;
 
-	public boolean apply(Runnable r) {
+	public boolean apply(Runnable task) {
 		boolean acquired = acquiredTimeout > 0 ? latch.acquire(acquiredTimeout, TimeUnit.MILLISECONDS) : latch.acquire();
 		if (acquired) {
-			super.execute(r);
+			super.execute(task);
 		} else {
 			try {
-				waitQueue.add(r);
+				waitQueue.add(task);
 			} catch (RuntimeException e) {
 				if (rejectedExecutionHandler != null) {
-					rejectedExecutionHandler.handleRejectedExecution(r, this);
+					rejectedExecutionHandler.handleRejectedExecution(task, this);
 				} else {
 					throw new IllegalStateException("WaitQueue Full!");
 				}
@@ -63,6 +65,10 @@ public class JdkThreadPool extends ThreadPoolExecutor implements ThreadPool {
 		return getMaxPoolSize() - getActiveThreadSize();
 	}
 
+	public long getFailedTaskCount() {
+		return failedCount.get();
+	}
+
 	public void setRejectedExecutionHandler(RejectedExecutionHandler rejectedExecutionHandler) {
 		this.rejectedExecutionHandler = rejectedExecutionHandler;
 	}
@@ -71,10 +77,12 @@ public class JdkThreadPool extends ThreadPoolExecutor implements ThreadPool {
 		apply(command);
 	}
 
-	protected final void afterExecute(Runnable r, Throwable t) {
-		super.afterExecute(r, t);
+	protected final void afterExecute(Runnable r, Throwable e) {
+		super.afterExecute(r, e);
 		latch.release();
-
+		if (e != null) {
+			failedCount.incrementAndGet();
+		}
 		Runnable prev = waitQueue.poll();
 		if (prev != null) {
 			execute(prev);
@@ -88,7 +96,7 @@ public class JdkThreadPool extends ThreadPoolExecutor implements ThreadPool {
 
 	public String toString() {
 		StringBuilder str = new StringBuilder();
-		str.append("[JdkThreadPool]: ").append("poolSize=").append(getPoolSize());
+		str.append("[GenericThreadPool]: ").append("poolSize=").append(getPoolSize());
 		str.append(", maxPoolSize=").append(getMaxPoolSize());
 		str.append(", activeThreadSize=").append(getActiveThreadSize());
 		str.append(", idleThreadSize=").append(getIdleThreadSize());

@@ -105,6 +105,10 @@ public class AsyncThreadPoolImpl<T> implements AsyncThreadPool<T> {
 	public long getCompletedTaskCount() {
 		return delegate.getCompletedTaskCount();
 	}
+	
+	public long getFailedTaskCount() {
+		return delegate.getFailedTaskCount();
+	}
 
 	public boolean isShutdown() {
 		return delegate.isShutdown();

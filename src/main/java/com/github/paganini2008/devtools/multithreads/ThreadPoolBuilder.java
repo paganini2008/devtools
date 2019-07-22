@@ -59,7 +59,7 @@ public class ThreadPoolBuilder {
 	}
 
 	public ThreadPool build() {
-		return new JdkThreadPool(poolSize, Integer.MAX_VALUE, acquiredTimeout, queueSize, threadFactory);
+		return new GenericThreadPool(poolSize, Integer.MAX_VALUE, acquiredTimeout, queueSize, threadFactory);
 	}
 
 }
