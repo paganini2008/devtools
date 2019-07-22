@@ -493,6 +493,10 @@ public class DateUtils {
 		return timeUnit != TimeUnit.MILLISECONDS ? TimeUnit.MILLISECONDS.convert(interval, timeUnit) : interval;
 	}
 
+	public static long convertToNanos(long interval, TimeUnit timeUnit) {
+		return timeUnit != TimeUnit.NANOSECONDS ? TimeUnit.NANOSECONDS.convert(interval, timeUnit) : interval;
+	}
+
 	public static void main(String[] args) throws Exception {
 		System.out.println(getWeekOfMonth());
 	}

@@ -1,5 +1,7 @@
 package com.github.paganini2008.devtools.objectpool;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,21 +45,23 @@ public class TestPool {
 	}
 
 	public static void main(String[] args) throws Exception {
-		SimpleObjectPool objectPool = new SimpleObjectPool(10, new ResourceFactory());
+		GenericObjectPool objectPool = new GenericObjectPool(10, new ResourceFactory());
 		objectPool.setMaxIdleSize(3);
 		Executor executor = Executors.newFixedThreadPool(50);
 		AtomicInteger score = new AtomicInteger();
+		List<Throwable> errors = new ArrayList<>();
 		for (final int i : Sequence.forEach(0, 10000)) {
 			executor.execute(() -> {
 				score.incrementAndGet();
 				Resource resource = null;
 				try {
 					resource = (Resource) objectPool.borrowObject();
-					ThreadUtils.randomSleep(1000L);
+					//ThreadUtils.randomSleep(1000L);
 					System.out.println(
 							resource.say(i) + " :: busySize: " + objectPool.getBusySize() + ", idleSize: " + objectPool.getIdleSize());
 				} catch (Exception e) {
 					e.printStackTrace();
+					errors.add(e);
 				} finally {
 					try {
 						objectPool.givebackObject(resource);
@@ -71,6 +75,9 @@ public class TestPool {
 		System.out.println(score);
 		objectPool.close();
 		ExecutorUtils.gracefulShutdown(executor, 60000);
+		if(errors.size()>0) {
+			System.out.println(errors);
+		}
 		System.out.println("TestMain.main()");
 	}
 

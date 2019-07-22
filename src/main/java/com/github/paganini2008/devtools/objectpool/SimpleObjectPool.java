@@ -124,81 +124,6 @@ public class SimpleObjectPool implements ObjectPool {
 
 	}
 
-	class TestWhileIdleTask extends TimerTask {
-
-		@Override
-		public void run() {
-			synchronized (lock) {
-				if (idleQueue.size() > minIdleSize) {
-					List<Object> invalidObjects = new ArrayList<Object>();
-					for (Object idleObject : idleQueue) {
-						try {
-							testWhileIdle(idleObject);
-						} catch (Exception e) {
-							invalidObjects.add(idleObject);
-							log.error(e.getMessage(), e);
-						}
-					}
-					if (invalidObjects.size() > 0) {
-						for (Object invalidObject : invalidObjects) {
-							try {
-								discardObject(invalidObject);
-								log.warn("Discard invalid object: " + invalidObject);
-							} catch (Exception e) {
-								log.error(e.getMessage(), e);
-							}
-						}
-					}
-				}
-			}
-		}
-
-	}
-
-	class CheckIdleSizeTask extends TimerTask {
-
-		@Override
-		public void run() {
-			synchronized (lock) {
-				if (idleQueue.size() > maxIdleSize) {
-					int destroyedSize = idleQueue.size() - maxIdleSize;
-					for (int i = 0; i < destroyedSize; i++) {
-						Object object = idleQueue.pollFirst();
-						try {
-							discardObject(object);
-							log.warn("Discard redundant object: " + object);
-						} catch (Exception e) {
-							log.error(e.getMessage(), e);
-						}
-					}
-				}
-			}
-		}
-
-	}
-
-	class CheckObjectExpiredTask extends TimerTask {
-
-		@Override
-		public void run() {
-			synchronized (lock) {
-				PooledObject pooledObject;
-				for (Object busyObject : busyQueue) {
-					pooledObject = pooledObjects.get(busyObject);
-					if (System.currentTimeMillis() - pooledObject.getLastBorrowed() > maxWaitTimeForExpiration) {
-						try {
-							discardObject(busyObject);
-							log.warn("Discard expired object: " + busyObject);
-						} catch (Exception e) {
-							log.error(e.getMessage(), e);
-						}
-					}
-				}
-			}
-		}
-
-	}
-
 	public int getMaxPoolSize() {
 		return maxPoolSize;
 	}
@@ -495,6 +420,81 @@ public class SimpleObjectPool implements ObjectPool {
 
 	public boolean isRunning() {
 		return running;
+	}
+
+	class TestWhileIdleTask extends TimerTask {
+
+		@Override
+		public void run() {
+			synchronized (lock) {
+				if (idleQueue.size() > minIdleSize) {
+					List<Object> invalidObjects = new ArrayList<Object>();
+					for (Object idleObject : idleQueue) {
+						try {
+							testWhileIdle(idleObject);
+						} catch (Exception e) {
+							invalidObjects.add(idleObject);
+							log.error(e.getMessage(), e);
+						}
+					}
+					if (invalidObjects.size() > 0) {
+						for (Object invalidObject : invalidObjects) {
+							try {
+								discardObject(invalidObject);
+								log.warn("Discard invalid object: " + invalidObject);
+							} catch (Exception e) {
+								log.error(e.getMessage(), e);
+							}
+						}
+					}
+				}
+			}
+		}
+
+	}
+
+	class CheckIdleSizeTask extends TimerTask {
+
+		@Override
+		public void run() {
+			synchronized (lock) {
+				if (idleQueue.size() > maxIdleSize) {
+					int destroyedSize = idleQueue.size() - maxIdleSize;
+					for (int i = 0; i < destroyedSize; i++) {
+						Object object = idleQueue.pollFirst();
+						try {
+							discardObject(object);
+							log.warn("Discard redundant object: " + object);
+						} catch (Exception e) {
+							log.error(e.getMessage(), e);
+						}
+					}
+				}
+			}
+		}
+
+	}
+
+	class CheckObjectExpiredTask extends TimerTask {
+
+		@Override
+		public void run() {
+			synchronized (lock) {
+				PooledObject pooledObject;
+				for (Object busyObject : busyQueue) {
+					pooledObject = pooledObjects.get(busyObject);
+					if (System.currentTimeMillis() - pooledObject.getLastBorrowed() > maxWaitTimeForExpiration) {
+						try {
+							discardObject(busyObject);
+							log.warn("Discard expired object: " + busyObject);
+						} catch (Exception e) {
+							log.error(e.getMessage(), e);
+						}
+					}
+				}
+			}
+		}
+
 	}
 
 }

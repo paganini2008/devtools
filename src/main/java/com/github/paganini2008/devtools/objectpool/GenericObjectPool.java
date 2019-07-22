@@ -3,248 +3,175 @@ package com.github.paganini2008.devtools.objectpool;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.IdentityHashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.github.paganini2008.devtools.collection.MapUtils;
+import com.github.paganini2008.devtools.beans.ToStringBuilder;
 import com.github.paganini2008.devtools.date.DateUtils;
 import com.github.paganini2008.devtools.logging.Log;
 import com.github.paganini2008.devtools.logging.LogFactory;
-import com.github.paganini2008.devtools.multithreads.AtomicPositiveInteger;
-import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 
 /**
- * GenericObjectPool
  * 
+ * GenericObjectPool
+ *
  * @author Fred Feng
+ * @revised 2019-07
+ * @created 2014-03
  * @version 1.0
  */
 public class GenericObjectPool implements ObjectPool {
 
-	private static final Log logger = LogFactory.getLog(GenericObjectPool.class);
+	private static final Log log = LogFactory.getLog(GenericObjectPool.class);
+	private final Lock lock = new ReentrantLock();
+	private final Condition condition = lock.newCondition();
+	private final LinkedList<Object> busyQueue = new LinkedList<Object>();
+	private final LinkedList<Object> idleQueue = new LinkedList<Object>();
+	private final IdentityHashMap<Object, PooledObject> pooledObjects = new IdentityHashMap<Object, PooledObject>();
+	private final int maxPoolSize;
+	private int minIdleSize = 1;
+	private int maxIdleSize;
+	private int maxUses = -1;
+	private long checkIdleSizeInterval = 60L * 1000;
+	private int maxTestTimes = 3;
+	private volatile int poolSize;
+	private boolean testWhileIdle;
+	private long testWhileIdleInterval = 3L * 1000;
+	private boolean checkObjectExpired;
+	private long checkObjectExpiredInterval = 60L * 1000;
+	private long testWhileExpiredInterval = 60L * 1000;
+	private long maxWaitTimeForExpiration = 60L * 1000;
+	private final AtomicBoolean running;
+	private ScheduledExecutorService timer;
+	private final ObjectFactory objectFactory;
 
-	private static final AtomicPositiveInteger serialNumber = new AtomicPositiveInteger(0);
-
-	public GenericObjectPool(ObjectFactory objectFactory) {
-		this.objectFactory = new DelegatedObjectFactory(objectFactory);
+	public GenericObjectPool(int maxPoolSize, ObjectFactory objectFactory) {
+		this.maxPoolSize = maxPoolSize;
+		this.objectFactory = objectFactory;
+		this.timer = Executors.newScheduledThreadPool(3);
+		this.running = new AtomicBoolean(true);
 	}
 
 	/**
-	 * Card. Like a 'Library card'. To describe the borrowed object's status.
+	 * 
+	 * PooledObject
 	 * 
 	 * @author Fred Feng
+	 * @revised 2019-07
+	 * @created 2012-02
 	 * @version 1.0
 	 */
-	static class Card {
+	static class PooledObject implements ObjectDetail {
 
-		Card(int id, String className) {
-			this.id = id;
-			this.className = className;
-			this.createdTimestamp = System.currentTimeMillis();
+		private final long created;
+		private final Object object;
+		private long lastBorrowed;
+		private long lastReturned;
+		private long lastTested;
+		private int uses;
+
+		PooledObject(Object object) {
+			this.created = System.currentTimeMillis();
+			this.object = object;
 		}
 
-		final int id;
-		final String className;
-		final long createdTimestamp;
-		long lastBorrowedTimestamp;
-		long lastGivebackTimestamp;
-		int age;
-		boolean idle = true;
-
-		public int getId() {
-			return id;
+		public long getCreated() {
+			return created;
 		}
 
-		public boolean isIdle() {
-			return idle;
+		public Object getObject() {
+			return object;
 		}
 
-		public long getCreatedTimestamp() {
-			return createdTimestamp;
+		public long getLastBorrowed() {
+			return lastBorrowed;
 		}
 
-		public long getLastBorrowedTimestamp() {
-			return lastBorrowedTimestamp;
+		public void setLastBorrowed(long lastBorrowed) {
+			this.lastBorrowed = lastBorrowed;
 		}
 
-		public long getLastGivebackTimestamp() {
-			return lastGivebackTimestamp;
+		public long getLastReturned() {
+			return lastReturned;
 		}
 
-		public int getAge() {
-			return age;
+		public void setLastReturned(long lastReturned) {
+			this.lastReturned = lastReturned;
 		}
 
-		/**
-		 * Take a picture
-		 * 
-		 * @return
-		 */
-		public Map<String, Object> toSnapshot() {
-			Map<String, Object> m = new HashMap<String, Object>();
-			m.put("id", id);
-			m.put("className", className);
-			m.put("createdTimestamp", createdTimestamp);
-			m.put("lastBorrowedTimestamp", lastBorrowedTimestamp);
-			m.put("lastGivebackTimestamp", lastGivebackTimestamp);
-			m.put("age", age);
-			m.put("idle", idle);
-			return m;
+		public long getLastTested() {
+			return lastTested;
+		}
+
+		public void setLastTested(long lastTested) {
+			this.lastTested = lastTested;
+		}
+
+		public int getUses() {
+			return uses;
+		}
+
+		public void setUses(int uses) {
+			this.uses = uses;
+		}
+
+		public static PooledObject of(Object object) {
+			return new PooledObject(object);
 		}
 
 		public String toString() {
-			return MapUtils.toString(toSnapshot());
+			return ToStringBuilder.reflectionToString(this);
 		}
 
 	}
 
-	/**
-	 * Idle objects, wait for using.
-	 */
-	private final LinkedList<Object> idleList = new LinkedList<Object>();
-
-	/**
-	 * Active objects
-	 */
-	private final List<Object> activeList = new ArrayList<Object>();
-	private final Map<Object, Card> cards = new IdentityHashMap<Object, Card>();
-	private final DelegatedObjectFactory objectFactory;
-	private final Lock lock = new ReentrantLock();
-
-	private Semaphore semaphore;
-	private int initSize;
-	private int perNewSize = 2;
-	private int maxIdleSize;
-	private int maxSize = 1 << 5;
-	private int maxAge;
-	private boolean testOnCreate = false;
-	private int maxTestTimesOnCreate = 3;
-
-	private boolean testOnBorrow = true;
-	private int maxTestTimesOnBorrow = 3;
-
-	private boolean testOnGiveback = true;
-	private int maxTestTimesOnGiveback = 3;
-
-	private boolean testWhileIdle = false;
-	private int maxTestTimesWhileIdle = 3;
-	private int testWhileIdleInterval = 5;
-
-	private int checkExpiredInterval = 5;
-	private int maxWaitTimeForExpiration;
-
-	private volatile State state = State.INITIALIZED;
-
-	/**
-	 * ObjectPool's State
-	 * 
-	 * @author Fred Feng
-	 * @version 1.0
-	 */
-	static enum State {
-
-		/**
-		 * ObjectPool is running
-		 */
-		RUNNING,
-
-		/**
-		 * ObjectPool is paused
-		 */
-		SUSPENDED,
-
-		/**
-		 * ObjectPool is started and need to initialize
-		 */
-		INITIALIZED,
-
-		/**
-		 * ObjectPool is destroyed
-		 */
-		CLOSED;
+	public int getMaxPoolSize() {
+		return maxPoolSize;
 	}
 
-	public int getMaxTestTimesOnCreate() {
-		return maxTestTimesOnCreate;
+	public int getMaxIdleSize() {
+		return maxIdleSize;
 	}
 
-	public void setMaxTestTimesOnCreate(int maxTestTimesOnCreate) {
-		this.maxTestTimesOnCreate = maxTestTimesOnCreate;
+	public int getMinIdleSize() {
+		return minIdleSize;
 	}
 
-	public boolean isTestOnCreate() {
-		return testOnCreate;
+	public void setMinIdleSize(int minIdleSize) {
+		this.minIdleSize = minIdleSize;
 	}
 
-	public void setTestOnCreate(boolean testOnCreate) {
-		this.testOnCreate = testOnCreate;
+	public int getIdleSize() {
+		return idleQueue.size();
 	}
 
-	public boolean isTestOnGiveback() {
-		return testOnGiveback;
+	public int getBusySize() {
+		return busyQueue.size();
 	}
 
-	public void setTestOnGiveback(boolean testOnGiveback) {
-		this.testOnGiveback = testOnGiveback;
+	public void setMaxIdleSize(int maxIdleSize) {
+		if (maxIdleSize > 0) {
+			this.maxIdleSize = maxIdleSize;
+			timer.scheduleAtFixedRate(new CheckIdleSizeTask(), checkIdleSizeInterval, checkIdleSizeInterval, TimeUnit.MILLISECONDS);
+		}
 	}
 
-	public int getTestWhileIdleInterval() {
-		return testWhileIdleInterval;
+	public long getCheckIdleSizeInterval() {
+		return checkIdleSizeInterval;
 	}
 
-	public void setTestWhileIdleInterval(int testWhileIdleInterval) {
-		this.testWhileIdleInterval = testWhileIdleInterval;
-	}
-
-	public int getCheckExpiredInterval() {
-		return checkExpiredInterval;
-	}
-
-	public void setCheckExpiredInterval(int checkExpiredInterval) {
-		this.checkExpiredInterval = checkExpiredInterval;
-	}
-
-	public State getState() {
-		return state;
-	}
-
-	public int getMaxTestTimesOnBorrow() {
-		return maxTestTimesOnBorrow;
-	}
-
-	public void setMaxTestTimesOnBorrow(int maxTestTimesOnBorrow) {
-		this.maxTestTimesOnBorrow = maxTestTimesOnBorrow;
-	}
-
-	public int getMaxTestTimesOnGiveback() {
-		return maxTestTimesOnGiveback;
-	}
-
-	public void setMaxTestTimesOnGiveback(int maxTestTimesOnGiveback) {
-		this.maxTestTimesOnGiveback = maxTestTimesOnGiveback;
-	}
-
-	public int getMaxTestTimesWhileIdle() {
-		return maxTestTimesWhileIdle;
-	}
-
-	public void setMaxTestTimesWhileIdle(int maxTestTimesWhileIdle) {
-		this.maxTestTimesWhileIdle = maxTestTimesWhileIdle;
+	public void setCheckIdleSizeInterval(long checkIdleSizeInterval) {
+		this.checkIdleSizeInterval = checkIdleSizeInterval;
 	}
 
 	public boolean isTestWhileIdle() {
@@ -253,579 +180,368 @@ public class GenericObjectPool implements ObjectPool {
 
 	public void setTestWhileIdle(boolean testWhileIdle) {
 		this.testWhileIdle = testWhileIdle;
+		if (testWhileIdle) {
+			timer.scheduleAtFixedRate(new TestWhileIdleTask(), testWhileIdleInterval, testWhileIdleInterval, TimeUnit.MILLISECONDS);
+		}
 	}
 
-	public boolean isTestOnBorrow() {
-		return testOnBorrow;
+	public long getTestWhileIdleInterval() {
+		return testWhileIdleInterval;
 	}
 
-	public void setTestOnBorrow(boolean testOnBorrow) {
-		this.testOnBorrow = testOnBorrow;
+	public void setTestWhileIdleInterval(long testWhileIdleInterval) {
+		this.testWhileIdleInterval = testWhileIdleInterval;
 	}
 
-	public int getMaxAge() {
-		return maxAge;
+	public long getTestWhileExpiredInterval() {
+		return testWhileExpiredInterval;
 	}
 
-	public void setMaxAge(int maxAge) {
-		this.maxAge = maxAge;
+	public void setTestWhileExpiredInterval(long testWhileExpiredInterval) {
+		this.testWhileExpiredInterval = testWhileExpiredInterval;
 	}
 
-	public int getMaxWaitTimeForExpiration() {
+	public boolean isCheckObjectExpired() {
+		return checkObjectExpired;
+	}
+
+	public void setCheckObjectExpired(boolean checkObjectExpired) {
+		this.checkObjectExpired = checkObjectExpired;
+		if (checkObjectExpired) {
+			timer.scheduleAtFixedRate(new CheckObjectExpiredTask(), checkObjectExpiredInterval, checkObjectExpiredInterval,
+					TimeUnit.MILLISECONDS);
+		}
+	}
+
+	public long getMaxWaitTimeForExpiration() {
 		return maxWaitTimeForExpiration;
 	}
 
-	public void setMaxWaitTimeForExpiration(int maxWaitTimeForExpiration) {
+	public void setMaxWaitTimeForExpiration(long maxWaitTimeForExpiration) {
 		this.maxWaitTimeForExpiration = maxWaitTimeForExpiration;
 	}
 
-	public int getInitSize() {
-		return initSize;
+	public int getMaxTestTimes() {
+		return maxTestTimes;
 	}
 
-	public void setInitSize(int initSize) {
-		this.initSize = initSize;
+	public void setMaxTestTimes(int maxTestTimes) {
+		this.maxTestTimes = maxTestTimes;
 	}
 
-	public int getPerNewSize() {
-		return perNewSize;
+	public int getPoolSize() {
+		return poolSize;
 	}
 
-	public void setPerNewSize(int perNewSize) {
-		this.perNewSize = perNewSize;
+	public int getMaxUses() {
+		return maxUses;
 	}
 
-	public int getMaxSize() {
-		return maxSize;
+	public void setMaxUses(int maxUses) {
+		this.maxUses = maxUses;
 	}
 
-	public void setMaxSize(int maxSize) {
-		this.maxSize = maxSize;
+	public long getCheckObjectExpiredInterval() {
+		return checkObjectExpiredInterval;
 	}
 
-	public int getMaxIdleSize() {
-		return maxIdleSize;
+	public void setCheckObjectExpiredInterval(long checkObjectExpiredInterval) {
+		this.checkObjectExpiredInterval = checkObjectExpiredInterval;
 	}
 
-	public void setMaxIdleSize(int maxIdleSize) {
-		this.maxIdleSize = maxIdleSize;
+	@Override
+	public ObjectDetail getDetail(Object object) {
+		return pooledObjects.get(object);
 	}
 
-	public void setPhaseListener(LifeCycleListener phaseListener) {
-		this.objectFactory.setPhaseListener(phaseListener);
-	}
-
-	private Scheduler scheduler;
-
-	/**
-	 * Initialize the object pool on the first time.
-	 * 
-	 * @throws Exception
-	 */
-	private void initialize() throws Exception {
-		if (semaphore == null) {
-			semaphore = new Semaphore(maxSize);
-		}
-		Object createdObject;
-		for (int i = 0; i < initSize; i++) {
-			createdObject = objectFactory.createObject();
-
-			if (testOnCreate && !test(createdObject, maxTestTimesOnCreate)) {
-				try {
-					objectFactory.destroyObject(createdObject);
-					if (logger.isDebugEnabled()) {
-						logger.debug("Destroy the object: " + createdObject);
-					}
-				} catch (Exception e) {
-					logger.error(e.getMessage(), e);
-				}
-
-			} else {
-				idleList.addLast(createdObject);
-				cards.put(createdObject, new Card(serialNumber.incrementAndGet(), createdObject.getClass().getName()));
-				if (logger.isDebugEnabled()) {
-					logger.debug("Create the object: " + createdObject);
-				}
-			}
-		}
-
-		scheduler = new Scheduler();
-		// Default enable DiscardExpiredObjectHandler. In order to avoid keeping
-		// resource in pool for long time
-		scheduler.schedule(new DiscardExpiredObjectHandler(), checkExpiredInterval);
-		if (testWhileIdle) {
-			scheduler.schedule(new DiscardUselessObjectHandler(), testWhileIdleInterval);
-		}
-		if (logger.isInfoEnabled()) {
-			logger.info("ObjectPool is initialized on {}", DateUtils.format(System.currentTimeMillis()));
-		}
-	}
-
-	// External threads operation
-	public synchronized void suspend() {
-		if (state != State.RUNNING) {
-			throw new IllegalStateException("ObjectPool is not running.");
-		}
-		state = State.SUSPENDED;
-	}
-
-	// External threads operation
-	public synchronized void resume() {
-		if (state != State.SUSPENDED) {
-			throw new IllegalStateException("ObjectPool is in a illegal state.");
-		}
-		state = State.RUNNING;
-	}
-
+	@Override
 	public Object borrowObject() throws Exception {
-		return borrowObject(0);
-	}
-
-	public Object borrowObject(int timeout) throws Exception {
-		if (state == State.CLOSED) {
-			throw new IllegalStateException("ObjectPool is closed.");
-		}
-		if (state == State.SUSPENDED) {
-			throw new IllegalStateException("ObjectPool has been suspended and it is not available at present.");
-		}
-		if (state == State.INITIALIZED) {
+		while (running.get()) {
 			lock.lock();
 			try {
-				if (state == State.INITIALIZED) {
-					initialize();
-					state = State.RUNNING;
+				Object availableObject = idleQueue.pollFirst();
+				if (availableObject != null) {
+					return testWhileBorrow(availableObject);
+				}
+				if (poolSize < maxPoolSize) {
+					Object newObject = objectFactory.createObject();
+					if (log.isDebugEnabled()) {
+						log.debug("Create new object: " + newObject);
+					}
+					availableObject = testWhileBorrow(newObject);
+					busyQueue.add(availableObject);
+					poolSize++;
+				}
+				if (availableObject != null) {
+					return availableObject;
+				} else {
+					try {
+						condition.await(1000L, TimeUnit.MILLISECONDS);
+					} catch (InterruptedException ignored) {
+						break;
+					}
 				}
 			} finally {
 				lock.unlock();
 			}
 		}
-		try {
-			if (timeout > 0) {
-				semaphore.tryAcquire(timeout, TimeUnit.SECONDS);
-			} else {
-				semaphore.acquire();
-			}
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-		}
-		lock.lock();
-		try {
-			int idleSize = idleList.size();
-			boolean testOnBorrow = this.testOnBorrow;
-			if (idleSize == 0) {
-				// No idle objects and create some.
-				Object createdObject;
-				for (int i = 0; i < perNewSize && (idleList.size() + activeList.size()) < maxSize; i++) {
-					createdObject = objectFactory.createObject();
-
-					if (testOnCreate && !test(createdObject, maxTestTimesOnCreate)) {
-						try {
-							objectFactory.destroyObject(createdObject);
-							if (logger.isDebugEnabled()) {
-								logger.debug("Destroy the object: " + createdObject);
-							}
-						} catch (Exception e) {
-							logger.error(e.getMessage(), e);
-						}
-
-					} else {
-						idleList.addLast(createdObject);
-						cards.put(createdObject,
-								new Card(serialNumber.incrementAndGet(), createdObject.getClass().getName()));
-						if (logger.isDebugEnabled()) {
-							logger.debug("Create the object: " + createdObject);
-						}
-					}
-				}
-				idleSize = idleList.size();
-				testOnBorrow &= !testOnCreate;
-			}
-			if (idleSize > 0) {
-				Object target = idleList.pollFirst();
-				if (testOnBorrow && !test(target, maxTestTimesOnBorrow)) {
-					try {
-						objectFactory.destroyObject(target);
-						if (logger.isDebugEnabled()) {
-							logger.debug("Destroy the object: " + target);
-						}
-					} catch (Exception e) {
-						logger.error(e.getMessage(), e);
-					}
-					cards.remove(target);
-
-					throw new IllegalStateException("Can not borrow a valid object.");
-				}
-				activeList.add(target);
-				Card card = cards.get(target);
-				card.lastBorrowedTimestamp = System.currentTimeMillis();
-				card.idle = false;
-				return target;
-			}
-		} finally {
-			lock.unlock();
-		}
-		throw new IllegalStateException("Can not borrow a extra object.");
+		throw new IllegalStateException("Can not borrow any object now.");
 	}
 
-	public void givebackObject(Object other) throws Exception {
-		if (state == State.INITIALIZED || state == State.CLOSED) {
-			throw new IllegalStateException("ObjectPool is not running.");
+	public Object borrowObject(long timeout, TimeUnit timeUnit) throws Exception {
+		return borrowObject(DateUtils.convertToMillis(timeout, timeUnit));
+	}
+
+	@Override
+	public Object borrowObject(long timeout) throws Exception {
+		final long begin = System.nanoTime();
+		long elapsed;
+		long m = DateUtils.convertToNanos(timeout, TimeUnit.MILLISECONDS);
+		while (running.get()) {
+			lock.lock();
+			try {
+				Object availableObject = idleQueue.pollFirst();
+				if (availableObject != null) {
+					return testWhileBorrow(availableObject);
+				}
+				if (poolSize < maxPoolSize) {
+					Object newObject = objectFactory.createObject();
+					if (log.isDebugEnabled()) {
+						log.debug("Create new object: " + newObject);
+					}
+					availableObject = testWhileBorrow(newObject);
+					busyQueue.add(availableObject);
+					poolSize++;
+				}
+				if (availableObject != null) {
+					return availableObject;
+				} else {
+					if (m > 0) {
+						try {
+							condition.awaitNanos(m);
+						} catch (InterruptedException ignored) {
+							break;
+						}
+						elapsed = (System.nanoTime() - begin);
+						m -= elapsed;
+					} else {
+						break;
+					}
+				}
+			} finally {
+				lock.unlock();
+			}
 		}
+		throw new IllegalStateException("Can not borrow any object now.");
+	}
+
+	private Object testWhileIdle(Object object) {
+		int i = 0;
+		Exception cause = null;
+		do {
+			try {
+				if (objectFactory.testObject(object)) {
+					PooledObject pooledObject = pooledObjects.get(object);
+					pooledObject.setLastTested(System.currentTimeMillis());
+					return object;
+				}
+			} catch (Exception e) {
+				cause = e;
+			}
+		} while (i++ < maxTestTimes);
+		throw new IllegalStateException("Can not borrow any object now.", cause);
+	}
+
+	private Object testWhileBorrow(Object object) {
+		int i = 0;
+		Exception cause = null;
+		do {
+			try {
+				if (objectFactory.testObject(object)) {
+					PooledObject pooledObject = pooledObjects.get(object);
+					if (pooledObject == null) {
+						pooledObjects.put(object, PooledObject.of(object));
+						pooledObject = pooledObjects.get(object);
+					}
+					pooledObject.setLastBorrowed(System.currentTimeMillis());
+					pooledObject.setUses(pooledObject.getUses() + 1);
+					return object;
+				}
+			} catch (Exception e) {
+				cause = e;
+			}
+		} while (i++ < maxTestTimes);
+		throw new IllegalStateException("Can not borrow any object now.", cause);
+	}
+
+	@Override
+	public void givebackObject(Object object) throws Exception {
 		lock.lock();
 		try {
-			Card card = cards.get(other);
-			if (card == null) {
-				throw new IllegalStateException("Unpooled object or deleted object.");
-			}
-			if (card.isIdle()) {
-				throw new IllegalStateException("Don't giveback the object again.");
-			} else {
-				activeList.remove(other);
-			}
-			boolean destroy;
-			if (testOnGiveback && !test(other, maxTestTimesOnGiveback)) {
-				destroy = true;
-			} else {
-				card.lastGivebackTimestamp = System.currentTimeMillis();
-				card.age += 1;
-				card.idle = true;
-				if (maxAge > 0 && card.getAge() > maxAge) {
-					destroy = true;
+			PooledObject pooledObject = pooledObjects.get(object);
+			if (pooledObject != null) {
+				if (log.isDebugEnabled()) {
+					log.debug("Giveback object: " + object);
+				}
+				if (pooledObject.getUses() == maxUses) {
+					discardObject(pooledObject.getObject());
 				} else {
-					destroy = false;
+					busyQueue.remove(pooledObject.getObject());
+					idleQueue.add(pooledObject.getObject());
+					pooledObject.setLastReturned(System.currentTimeMillis());
+					condition.signalAll();
 				}
-			}
-			if (destroy) {
-				try {
-					objectFactory.destroyObject(other);
-					if (logger.isDebugEnabled()) {
-						logger.debug("Destroy the object: " + other);
-					}
-				} catch (Exception e) {
-					logger.error(e.getMessage(), e);
-				}
-				cards.remove(other);
 			} else {
-				idleList.addLast(other);
+				throw new IllegalStateException("Unpooled object!");
 			}
-			ensureInMaxIdleSize();
 		} finally {
 			lock.unlock();
 		}
-		semaphore.release();
+	}
+
+	@Override
+	public void discardObject(Object object) throws Exception {
+		lock.lock();
+		try {
+			PooledObject pooledObject = pooledObjects.remove(object);
+			if (pooledObject != null) {
+				if (log.isDebugEnabled()) {
+					log.debug("Destroy object: " + object);
+				}
+				busyQueue.remove(pooledObject.getObject());
+				try {
+					objectFactory.destroyObject(pooledObject.getObject());
+				} finally {
+					poolSize--;
+					condition.signalAll();
+				}
+			}
+		} finally {
+			lock.unlock();
+		}
+	}
+
+	@Override
+	public void close() throws Exception {
+		running.set(false);
+		ExecutorUtils.gracefulShutdown(timer, 60000L);
+
+		lock.lock();
+		try {
+			while (!busyQueue.isEmpty()) {
+				ThreadUtils.randomSleep(1000L);
+			}
+			while (!idleQueue.isEmpty()) {
+				Object idleObject = idleQueue.pollLast();
+				try {
+					objectFactory.destroyObject(idleObject);
+				} catch (Exception ignored) {
+				}
+				pooledObjects.remove(idleObject);
+				poolSize--;
+			}
+		} finally {
+			lock.unlock();
+		}
+
+	}
+
+	public boolean isRunning() {
+		return running.get();
 	}
 
 	private final Comparator<Object> idleListSorter = new Comparator<Object>() {
 		public int compare(Object left, Object right) {
-			long now = System.currentTimeMillis();
-			Card leftCard = cards.get(left);
-			Card rightCard = cards.get(right);
-			long result = (now - leftCard.getLastGivebackTimestamp()) - (now - rightCard.getLastGivebackTimestamp());
-			if (result > 0) {
-				return -1;
-			}
-			if (result < 0) {
-				return 1;
-			}
-			return 0;
+			PooledObject leftDetail = pooledObjects.get(left);
+			PooledObject rightDetail = pooledObjects.get(right);
+			return rightDetail.getUses() - leftDetail.getUses();
 		}
 	};
 
-	/**
-	 * Be sure to keep a standard with a defined size in pool
-	 */
-	private void ensureInMaxIdleSize() {
-		if (maxIdleSize > 0 && idleList.size() > maxIdleSize) {
-			Collections.sort(idleList, idleListSorter);
-			Object idleObject;
-			for (int i = 0, l = idleList.size() - maxIdleSize; i < l; i++) {
-				idleObject = idleList.pollFirst();
-				try {
-					objectFactory.destroyObject(idleObject);
-					if (logger.isDebugEnabled()) {
-						logger.debug("Destroy the object: " + idleObject);
-					}
-				} catch (Exception e) {
-					logger.error(e.getMessage(), e);
-				}
-			}
-		}
-	}
+	class TestWhileIdleTask implements Runnable {
 
-	public void discardObject(Object other) throws Exception {
-		if (state == State.INITIALIZED || state == State.CLOSED) {
-			throw new IllegalStateException("ObjectPool is not running.");
-		}
-		lock.lock();
-		try {
-			Card card = cards.remove(other);
-			if (card == null) {
-				throw new IllegalStateException("Unpooled object or deleted object.");
-			}
-			if (!card.isIdle()) {
-				activeList.remove(other);
-			}
+		@Override
+		public void run() {
+			lock.lock();
 			try {
-				objectFactory.destroyObject(other);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Destroy the object: " + other);
-				}
-			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
-			}
-		} finally {
-			lock.unlock();
-		}
-		semaphore.release();
-	}
-
-	// Test
-	private boolean test(Object other, int maxTestTimes) {
-		boolean valid = false;
-		int i = 0;
-		do {
-			try {
-				valid = objectFactory.validateObject(other);
-			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
-			}
-		} while (!valid && i++ < maxTestTimes);
-		return valid;
-	}
-
-	public int getIdleSize() {
-		return idleList.size();
-	}
-
-	public int getActiveSize() {
-		return activeList.size();
-	}
-
-	public long getCreatedCount() {
-		return objectFactory.getCreatedCount();
-	}
-
-	public long getDestroyedCount() {
-		return objectFactory.getDestroyedCount();
-	}
-
-	public List<Map<String, Object>> getSnapshots() {
-		List<Map<String, Object>> snapshots = new ArrayList<Map<String, Object>>();
-		for (Card card : new ArrayList<Card>(cards.values())) {
-			snapshots.add(card.toSnapshot());
-		}
-		return snapshots;
-	}
-
-	public void close() throws Exception {
-		if (state == State.INITIALIZED || state == State.CLOSED) {
-			throw new IllegalStateException("ObjectPool is not running.");
-		}
-		if (state == State.SUSPENDED) {
-			throw new IllegalStateException("ObjectPool has been suspended until the end.");
-		}
-		state = State.SUSPENDED;
-		while (semaphore.availablePermits() != maxSize) {
-			ThreadUtils.sleep(1000L);
-			if (logger.isInfoEnabled()) {
-				logger.info("Closing the objectPool ...");
-			}
-		}
-		lock.lock();
-		try {
-			if (scheduler != null) {
-				scheduler.stop();
-			}
-			for (Object other : idleList) {
-				objectFactory.destroyObject(other);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Destroy the object: " + other);
-				}
-			}
-			idleList.clear();
-			cards.clear();
-		} finally {
-			lock.unlock();
-			state = State.CLOSED;
-			if (logger.isInfoEnabled()) {
-				logger.info("ObjectPool is closed on {}", DateUtils.format(System.currentTimeMillis()));
-			}
-		}
-	}
-
-	/**
-	 * Handle and discard some expired objects when user keep them for a long time.
-	 * 
-	 * @author Fred Feng
-	 * @version 1.0
-	 */
-	private class DiscardExpiredObjectHandler implements Executable {
-
-		public boolean execute() {
-			if (state == State.RUNNING || state == State.SUSPENDED) {
-				lock.lock();
-				int n = 0;
-				try {
-					Map.Entry<Object, Card> entry;
-					Object activeObject;
-					Card card;
-					for (Iterator<Map.Entry<Object, Card>> it = cards.entrySet().iterator(); it.hasNext();) {
-						entry = it.next();
-						activeObject = entry.getKey();
-						card = entry.getValue();
-						if (!card.isIdle() && (card.getLastBorrowedTimestamp() >= card.getLastGivebackTimestamp())
-								&& (TimeUnit.SECONDS.convert(
-										System.currentTimeMillis() - card.getLastBorrowedTimestamp(),
-										TimeUnit.MILLISECONDS) > maxWaitTimeForExpiration)) {
-							activeList.remove(activeObject);
-							try {
-								objectFactory.destroyObject(activeObject);
-								if (logger.isInfoEnabled()) {
-									logger.info("Long time no giveback and destroy the object(" + card.getId() + "): "
-											+ activeObject);
-								}
-							} catch (Exception e) {
-								logger.error(e.getMessage(), e);
-							}
-							it.remove();
-
-							n++;
+				if (idleQueue.size() > minIdleSize) {
+					List<Object> invalidObjects = new ArrayList<Object>();
+					for (Object idleObject : idleQueue) {
+						try {
+							testWhileIdle(idleObject);
+						} catch (Exception e) {
+							invalidObjects.add(idleObject);
+							log.error(e.getMessage(), e);
 						}
 					}
-				} finally {
-					lock.unlock();
-				}
-				if (n > 0) {
-					semaphore.release(n);
-				}
-			}
-			return true;
-		}
-	}
-
-	/**
-	 * Handle and discard some useless objects when db server is absent or break
-	 * down.
-	 * 
-	 * @author Fred Feng
-	 * @version 1.0
-	 */
-	private class DiscardUselessObjectHandler implements Executable {
-
-		public boolean execute() {
-			if (state == State.RUNNING || state == State.SUSPENDED) {
-				lock.lock();
-				try {
-					Object idleObject;
-					for (Iterator<Object> it = idleList.iterator(); it.hasNext();) {
-						idleObject = it.next();
-						if (!GenericObjectPool.this.test(idleObject, maxTestTimesWhileIdle)) {
-							it.remove();
+					if (invalidObjects.size() > 0) {
+						for (Object invalidObject : invalidObjects) {
 							try {
-								objectFactory.destroyObject(idleObject);
-								if (logger.isDebugEnabled()) {
-									logger.debug("Destroy the object: " + idleObject);
-								}
+								discardObject(invalidObject);
+								log.warn("Discard invalid object: " + invalidObject);
 							} catch (Exception e) {
-								logger.error(e.getMessage(), e);
+								log.error(e.getMessage(), e);
 							}
-							cards.remove(idleObject);
-
 						}
 					}
-				} finally {
-					lock.unlock();
 				}
-			}
-			return true;
-		}
-	}
-
-	/**
-	 * DelegatedObjectFactory
-	 * 
-	 * @author Fred Feng
-	 * @version 1.0
-	 */
-	static class DelegatedObjectFactory implements ObjectFactory {
-
-		private final ObjectFactory delegate;
-		private long createdCount;
-		private long destroyedCount;
-		private LifeCycleListener phaseListener;
-
-		DelegatedObjectFactory(ObjectFactory delegate) {
-			this.delegate = delegate;
-		}
-
-		public void setPhaseListener(LifeCycleListener phaseListener) {
-			this.phaseListener = phaseListener;
-		}
-
-		public Object createObject() throws Exception {
-			try {
-				Object o = delegate.createObject();
-				if (phaseListener != null) {
-					phaseListener.onCreateObject(o);
-				}
-				return o;
 			} finally {
-				createdCount++;
+				lock.unlock();
 			}
-
-		}
-
-		public boolean validateObject(Object o) throws Exception {
-			return delegate.validateObject(o);
-		}
-
-		public void destroyObject(Object o) throws Exception {
-			if (phaseListener != null) {
-				phaseListener.onDestroyObject(o);
-			}
-			try {
-				delegate.destroyObject(o);
-			} finally {
-				destroyedCount++;
-			}
-		}
-
-		public long getCreatedCount() {
-			return createdCount;
-		}
-
-		public long getDestroyedCount() {
-			return destroyedCount;
 		}
 
 	}
 
-	static class Scheduler {
+	class CheckIdleSizeTask implements Runnable {
 
-		final ScheduledExecutorService threadPool;
-		final Map<String, ScheduledFuture<?>> futures = new HashMap<String, ScheduledFuture<?>>();
-
-		Scheduler() {
-			this.threadPool = Executors.newScheduledThreadPool(2);
-		}
-
-		void schedule(final Executable executable, int interval) {
-			final String uuid = UUID.randomUUID().toString();
-			futures.put(uuid, threadPool.scheduleAtFixedRate(new Runnable() {
-				public void run() {
-					if (!executable.execute()) {
-						futures.remove(uuid).cancel(false);
+		@Override
+		public void run() {
+			lock.lock();
+			try {
+				if (idleQueue.size() > maxIdleSize) {
+					List<Object> queue = new ArrayList<Object>(idleQueue);
+					Collections.sort(queue, idleListSorter);
+					final int destroyedSize = queue.size() - maxIdleSize;
+					for (int i = 0; i < destroyedSize; i++) {
+						Object object = queue.get(i);
+						if (idleQueue.remove(object)) {
+							try {
+								discardObject(object);
+								log.warn("Discard redundant object: " + object);
+							} catch (Exception e) {
+								log.error(e.getMessage(), e);
+							}
+						}
 					}
 				}
-			}, interval, interval, TimeUnit.SECONDS));
+			} finally {
+				lock.unlock();
+			}
 		}
 
-		void stop() {
-			for (String uuid : new HashSet<String>(futures.keySet())) {
-				ScheduledFuture<?> future = futures.remove(uuid);
-				future.cancel(false);
+	}
+
+	class CheckObjectExpiredTask implements Runnable {
+
+		@Override
+		public void run() {
+			lock.lock();
+			try {
+				PooledObject pooledObject;
+				for (Object busyObject : busyQueue) {
+					pooledObject = pooledObjects.get(busyObject);
+					if (System.currentTimeMillis() - pooledObject.getLastBorrowed() > maxWaitTimeForExpiration) {
+						try {
+							discardObject(busyObject);
+							log.warn("Discard expired object: " + busyObject);
+						} catch (Exception e) {
+							log.error(e.getMessage(), e);
+						}
+					}
+				}
+			} finally {
+				lock.unlock();
 			}
-			ExecutorUtils.gracefulShutdown(threadPool, 60000);
 		}
 
 	}
