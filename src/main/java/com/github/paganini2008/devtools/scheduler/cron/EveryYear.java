@@ -76,7 +76,7 @@ public class EveryYear implements Year, Serializable {
 	}
 
 	public static void main(String[] args) {
-		Day every = CronUtils.thisYear().andNextYears(2).week(41).everyDay();
+		Day every = CronBuilder.thisYear().andNextYears(2).week(41).everyDay();
 		while (every.hasNext()) {
 			Day time = every.next();
 			System.out.println(DateUtils.format(time.getTime()));

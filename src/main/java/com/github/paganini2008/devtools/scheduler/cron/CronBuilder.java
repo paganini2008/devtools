@@ -6,14 +6,14 @@ import com.github.paganini2008.devtools.date.DateUtils;
 
 /**
  * 
- * CronUtils
+ * CronBuilder
  *
  * @author Fred Feng
  * @revised 2019-07
  * @created 2019-07
  * @version 1.0
  */
-public abstract class CronUtils {
+public abstract class CronBuilder {
 
 	private static final int END_YEAR_OF_THE_WORLD = 9999;
 

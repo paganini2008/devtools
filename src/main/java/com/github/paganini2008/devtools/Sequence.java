@@ -1,13 +1,10 @@
 package com.github.paganini2008.devtools;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-
-import com.github.paganini2008.devtools.multithreads.AtomicPositiveInteger;
 
 /**
  * 
@@ -66,26 +63,6 @@ public abstract class Sequence {
 			range.add(l);
 		}
 		return range;
-	}
-
-	static class Tester<T> implements Iterator<T> {
-
-		private final AtomicPositiveInteger integer;
-		private final List<T> elements;
-
-		Tester(List<T> elements) {
-			this.elements = elements;
-			this.integer = new AtomicPositiveInteger(0, elements.size());
-		}
-
-		public boolean hasNext() {
-			return true;
-		}
-
-		public T next() {
-			return elements.get(integer.getAndIncrement());
-		}
-
 	}
 
 	static class LongSequence implements Iterator<Long> {

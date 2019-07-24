@@ -11,8 +11,8 @@ public class TestMain2 {
 		System.out.println("TestMain2.main()");
 	}
 
-	private static Execution<Long> getIt(long i) {
-		return new Execution<Long>() {
+	private static Execution2<Long> getIt(long i) {
+		return new Execution2<Long>() {
 			public Long execute() throws Exception {
 				return i <= 1 ? 1 : i;
 			}

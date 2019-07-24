@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import com.github.paganini2008.devtools.multithreads.AsyncThreadPool;
 import com.github.paganini2008.devtools.multithreads.Executable;
-import com.github.paganini2008.devtools.multithreads.Execution;
+import com.github.paganini2008.devtools.multithreads.Execution2;
 import com.github.paganini2008.devtools.multithreads.Promise;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 
@@ -136,8 +136,8 @@ public abstract class DirectoryWalker {
 		System.out.println(info);
 	}
 
-	private Execution<DirectoryInfo> getExecution(final RootInfo rootInfo, final File file, final FileFilter fileFilter) {
-		return new Execution<DirectoryInfo>() {
+	private Execution2<DirectoryInfo> getExecution(final RootInfo rootInfo, final File file, final FileFilter fileFilter) {
+		return new Execution2<DirectoryInfo>() {
 			public DirectoryInfo execute() throws Exception {
 				if (file.isDirectory()) {
 					FileInfo fileInfo = new FileInfo(file);

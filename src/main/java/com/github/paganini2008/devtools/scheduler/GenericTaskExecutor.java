@@ -13,27 +13,27 @@ import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
 import com.github.paganini2008.devtools.multithreads.PooledThreadFactory;
 import com.github.paganini2008.devtools.scheduler.cron.CronExpression;
-import com.github.paganini2008.devtools.scheduler.cron.CronUtils;
+import com.github.paganini2008.devtools.scheduler.cron.CronBuilder;
 
 /**
  * 
- * ThreadPoolTaskExecutor
+ * GenericTaskExecutor
  *
  * @author Fred Feng
  * @revised 2019-07
  * @created 2018-05
  * @version 1.0
  */
-public class ThreadPoolTaskExecutor implements TaskExecutor {
+public class GenericTaskExecutor implements TaskExecutor {
 
 	private final ScheduledExecutorService executor;
 	private final ConcurrentMap<Executable, TaskFuture> taskFutures = new ConcurrentHashMap<Executable, TaskFuture>();
 
-	public ThreadPoolTaskExecutor(int nThreads, String threadNamePrefix) {
+	public GenericTaskExecutor(int nThreads, String threadNamePrefix) {
 		executor = Executors.newScheduledThreadPool(nThreads, new PooledThreadFactory(threadNamePrefix));
 	}
 
-	public ThreadPoolTaskExecutor(ScheduledExecutorService executor) {
+	public GenericTaskExecutor(ScheduledExecutorService executor) {
 		this.executor = executor;
 	}
 
@@ -228,8 +228,8 @@ public class ThreadPoolTaskExecutor implements TaskExecutor {
 	}
 
 	public static void main(String[] args) throws Exception {
-		CronExpression expression = CronUtils.everySecond();
-		ThreadPoolTaskExecutor es = new ThreadPoolTaskExecutor(2, null);
+		CronExpression expression = CronBuilder.everySecond();
+		GenericTaskExecutor es = new GenericTaskExecutor(2, null);
 		final TaskFuture taskFuture = es.schedule(new Executable() {
 			int n = 0;
 

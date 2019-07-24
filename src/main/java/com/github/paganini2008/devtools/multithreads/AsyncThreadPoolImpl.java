@@ -40,12 +40,12 @@ public class AsyncThreadPoolImpl<T> implements AsyncThreadPool<T> {
 		return delegate.apply(r);
 	}
 
-	public boolean submit(Execution<T> action) {
+	public boolean submit(Execution2<T> action) {
 		caller.workQueue.offer(action);
 		return delegate.apply(caller);
 	}
 
-	public Promise<T> submitAndWait(Execution<T> execution) {
+	public Promise<T> submitAndWait(Execution2<T> execution) {
 		final Latch latch = new CounterLatch(1);
 		final AtomicReference<T> reference = new AtomicReference<T>();
 		final AtomicBoolean cancelled = new AtomicBoolean(false);
@@ -120,13 +120,13 @@ public class AsyncThreadPoolImpl<T> implements AsyncThreadPool<T> {
 
 	class Caller implements Runnable {
 
-		final Map<Execution<T>, T> resultArea = new ConcurrentHashMap<Execution<T>, T>();
-		final Queue<Execution<T>> workQueue = new PriorityBlockingQueue<Execution<T>>();
+		final Map<Execution2<T>, T> resultArea = new ConcurrentHashMap<Execution2<T>, T>();
+		final Queue<Execution2<T>> workQueue = new PriorityBlockingQueue<Execution2<T>>();
 
 		public void run() {
 			T result = null;
 			Exception error = null;
-			final Execution<T> action = workQueue.poll();
+			final Execution2<T> action = workQueue.poll();
 			if (resultArea.containsKey(action)) {
 				result = resultArea.remove(action);
 				try {
@@ -167,14 +167,14 @@ public class AsyncThreadPoolImpl<T> implements AsyncThreadPool<T> {
 	 * @revised 2019-05
 	 * @version 1.0
 	 */
-	static class FutureExecution<T> implements Execution<T> {
+	static class FutureExecution<T> implements Execution2<T> {
 
-		private final Execution<T> delegate;
+		private final Execution2<T> delegate;
 		private final Latch latch;
 		private final AtomicReference<T> reference;
 		private final AtomicBoolean cancelled;
 
-		FutureExecution(Execution<T> delegate, Latch latch, AtomicReference<T> reference, AtomicBoolean cancelled) {
+		FutureExecution(Execution2<T> delegate, Latch latch, AtomicReference<T> reference, AtomicBoolean cancelled) {
 			this.delegate = delegate;
 			this.latch = latch;
 			this.reference = reference;
@@ -219,7 +219,7 @@ public class AsyncThreadPoolImpl<T> implements AsyncThreadPool<T> {
 		AsyncThreadPoolImpl<Integer> threadPool = new AsyncThreadPoolImpl<Integer>(ThreadUtils.newSimplePool(10,1000,Integer.MAX_VALUE));
 		final AtomicInteger score = new AtomicInteger(0);
 		for (final int i : Sequence.forEach(0, 1000)) {
-			threadPool.submit(new Execution<Integer>() {
+			threadPool.submit(new Execution2<Integer>() {
 				public Integer execute() throws Exception {
 					System.out.println(ThreadUtils.currentThreadName() + ": " + i);
 					return i;

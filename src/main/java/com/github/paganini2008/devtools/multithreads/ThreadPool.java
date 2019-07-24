@@ -13,7 +13,13 @@ import java.util.concurrent.Executor;
  */
 public interface ThreadPool extends Executor {
 
+	default void execute(Runnable task) {
+		apply(task);
+	}
+
 	boolean apply(Runnable task);
+
+	<R> Promise<R> submit(Action<R> action);
 
 	int getPoolSize();
 
@@ -24,9 +30,9 @@ public interface ThreadPool extends Executor {
 	int getActiveThreadSize();
 
 	int getIdleThreadSize();
-	
+
 	long getCompletedTaskCount();
-	
+
 	long getFailedTaskCount();
 
 	boolean isShutdown();

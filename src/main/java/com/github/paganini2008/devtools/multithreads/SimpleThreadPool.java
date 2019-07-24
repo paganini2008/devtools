@@ -1,7 +1,9 @@
 package com.github.paganini2008.devtools.multithreads;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,8 +29,7 @@ public class SimpleThreadPool implements ThreadPool {
 	private final Sync sync;
 	private final long timeout;
 	private volatile boolean running = true;
-	private volatile long failedCount = 0;
-	private volatile long completedCount = 0;
+	private State state = new State();
 	private Timer timer;
 	private RejectedExecutionHandler rejectedExecutionHandler;
 
@@ -46,10 +47,6 @@ public class SimpleThreadPool implements ThreadPool {
 		if (checkInterval >= 3) {
 			this.timer = ThreadUtils.scheduleAtFixedRate(new IdleQueueKeeper(maxIdleSize), checkInterval, TimeUnit.SECONDS);
 		}
-	}
-
-	public void execute(Runnable command) {
-		apply(command);
 	}
 
 	public int getActiveThreadSize() {
@@ -73,11 +70,11 @@ public class SimpleThreadPool implements ThreadPool {
 	}
 
 	public long getCompletedTaskCount() {
-		return completedCount;
+		return state.completedCount;
 	}
 
 	public long getFailedTaskCount() {
-		return failedCount;
+		return state.failedCount;
 	}
 
 	public void setRejectedExecutionHandler(RejectedExecutionHandler rejectedExecutionHandler) {
@@ -86,6 +83,12 @@ public class SimpleThreadPool implements ThreadPool {
 
 	private static synchronized String getThreadName() {
 		return "pool-thread-" + (++threadSerialNo);
+	}
+
+	static class State {
+
+		volatile long failedCount = 0;
+		volatile long completedCount = 0;
 	}
 
 	/**
@@ -112,7 +115,133 @@ public class SimpleThreadPool implements ThreadPool {
 
 	}
 
-	public boolean apply(Runnable runnable) {
+	/**
+	 * 
+	 * Reference
+	 *
+	 * @author Fred Feng
+	 * @revised 2019-07
+	 * @created 2019-02
+	 * @version 1.0
+	 */
+	static class Reference<R> {
+
+		R result;
+		volatile boolean done;
+
+		public R get() {
+			return result;
+		}
+
+		public void set(R result) {
+			this.result = result;
+		}
+
+		public boolean isDone() {
+			return done;
+		}
+
+		public void setDone(boolean done) {
+			this.done = done;
+		}
+
+	}
+
+	/**
+	 * 
+	 * PromiseRunnable
+	 *
+	 * @author Fred Feng
+	 * @revised 2019-07
+	 * @created 2019-02
+	 * @version 1.0
+	 */
+	static class PromiseRunnable<R> implements Runnable {
+
+		final Map<Action<R>, R> results = new HashMap<Action<R>, R>();
+		final Action<R> action;
+		final Reference<R> reference;
+		final ThreadPool threadPool;
+
+		PromiseRunnable(Action<R> action, Reference<R> reference, ThreadPool threadPool) {
+			this.action = action;
+			this.reference = reference;
+			this.threadPool = threadPool;
+		}
+
+		public void run() {
+			R result = null;
+			try {
+				if (results.containsKey(action)) {
+					R answer = results.remove(action);
+					result = action.onSuccess(answer, threadPool);
+				} else {
+					result = action.execute();
+				}
+			} catch (Exception e) {
+				action.onFailure(e, threadPool);
+			} finally {
+				if (result != null) {
+					results.put(action, result);
+					reference.set(result);
+					threadPool.apply(this);
+				} else {
+					synchronized (reference) {
+						reference.notifyAll();
+						reference.setDone(true);
+					}
+				}
+			}
+		}
+	}
+
+	public <R> Promise<R> submit(final Action<R> action) {
+		final long startTime = System.currentTimeMillis();
+		Reference<R> reference = new Reference<R>();
+		apply(new PromiseRunnable<R>(action, reference, this));
+		return new Promise<R>() {
+
+			volatile boolean cancelled;
+			volatile boolean done;
+
+			public boolean isCancelled() {
+				return cancelled;
+			}
+
+			public boolean isDone() {
+				return done || cancelled;
+			}
+
+			public long getElapsed() {
+				return System.currentTimeMillis() - startTime;
+			}
+
+			public R get() {
+				while (!isDone()) {
+					synchronized (reference) {
+						if (!reference.isDone()) {
+							try {
+								reference.wait();
+							} catch (InterruptedException ignored) {
+								break;
+							}
+						}
+					}
+					done = reference.isDone();
+				}
+				return reference.get();
+			}
+
+			public void cancel() {
+				synchronized (reference) {
+					reference.notifyAll();
+				}
+				cancelled = true;
+			}
+		};
+	}
+
+	public boolean apply(Runnable task) {
 		if (!running) {
 			throw new IllegalStateException("ThreadPool is shutdown now.");
 		}
@@ -120,23 +249,23 @@ public class SimpleThreadPool implements ThreadPool {
 		if (acquired) {
 			WorkerThread workerThread = poolManager.borrow();
 			if (workerThread != null) {
-				workerThread.runTask(runnable);
+				workerThread.runTask(task);
 				return true;
 			} else {
-				waitForNextExecuting(runnable);
+				waitForNextExecuting(task);
 			}
 		} else {
-			waitForNextExecuting(runnable);
+			waitForNextExecuting(task);
 		}
 		return false;
 	}
 
-	private void waitForNextExecuting(Runnable runnable) {
+	private void waitForNextExecuting(Runnable task) {
 		synchronized (waitQueue) {
-			waitQueue.add(runnable);
+			waitQueue.add(task);
 			if (waitQueue.size() > maxQueueSize) {
 				if (rejectedExecutionHandler != null) {
-					rejectedExecutionHandler.handleRejectedExecution(runnable, this);
+					rejectedExecutionHandler.handleRejectedExecution(task, this);
 				} else {
 					throw new IllegalStateException("WaitQueue Full!");
 				}
@@ -243,6 +372,12 @@ public class SimpleThreadPool implements ThreadPool {
 			}
 		}
 
+		public void join() {
+			while (permits > 0) {
+				ThreadUtils.randomSleep(1000L);
+			}
+		}
+
 	}
 
 	/**
@@ -320,17 +455,20 @@ public class SimpleThreadPool implements ThreadPool {
 	 */
 	class WorkerThread implements Runnable {
 
-		private final Object lock = new Object();
-		private final Thread thread;
-		private volatile boolean alive;
-		private volatile boolean idle;
+		final Object lock = new Object();
+		final Thread thread;
+		volatile boolean alive;
+		volatile boolean idle;
 
 		Runnable task;
 
 		WorkerThread() {
 			this.alive = true;
 			this.idle = true;
-			this.thread = ThreadUtils.runAsThread(getThreadName(), this);
+			this.thread = newThread(this);
+			if (thread.getState() == java.lang.Thread.State.NEW) {
+				thread.start();
+			}
 		}
 
 		boolean isAlive() {
@@ -357,13 +495,13 @@ public class SimpleThreadPool implements ThreadPool {
 				beforeRun(thread, r);
 				r.run();
 			} catch (Throwable e) {
-				failedCount++;
+				state.failedCount++;
 				cause = e;
 				return false;
 			} finally {
 
 				task = null;
-				completedCount++;
+				state.completedCount++;
 				submitAgainIfPresent();
 				idle = true;
 
@@ -419,19 +557,24 @@ public class SimpleThreadPool implements ThreadPool {
 		}
 	}
 
+	protected Thread newThread(Runnable task) {
+		return ThreadUtils.runAsThread(getThreadName(), task);
+	}
+
 	void submitAgainIfPresent() {
 
-		Runnable runnable;
+		Runnable task;
 		synchronized (waitQueue) {
-			runnable = waitQueue.pollFirst();
+			task = waitQueue.pollFirst();
 		}
-		if (runnable != null) {
-			apply(runnable);
+		if (task != null) {
+			apply(task);
 		}
 
 	}
 
 	public synchronized void shutdown() {
+		sync.join();
 		running = false;
 		if (timer != null) {
 			timer.cancel();
@@ -456,16 +599,34 @@ public class SimpleThreadPool implements ThreadPool {
 	}
 
 	public static void main(String[] args) throws IOException {
-		GenericThreadPool threadPool = new GenericThreadPool(10, 100, 0L, Integer.MAX_VALUE, new PooledThreadFactory());
+		SimpleThreadPool threadPool = new SimpleThreadPool(10, 1000L, Integer.MAX_VALUE);
+		for (final int i : Sequence.forEach(0, 100)) {
+			Promise<Long> p = threadPool.submit(new Action<Long>() {
+
+				public Long execute() throws Exception {
+					ThreadUtils.randomSleep(1000L);
+					return new Long(i);
+				}
+
+			});
+			System.out.println("***: " + p.get());
+		}
+		System.in.read();
+		threadPool.shutdown();
+		System.out.println("SimpleThreadPool.main()");
+	}
+
+	public static void main2(String[] args) throws IOException {
+		SimpleThreadPool threadPool = new SimpleThreadPool(10, 0L, Integer.MAX_VALUE);
 		final AtomicInteger score = new AtomicInteger(0);
-		for (final int i : Sequence.forEach(0, 100000)) {
+		for (final int i : Sequence.forEach(0, 500000)) {
 			threadPool.apply(new Runnable() {
 				public void run() {
 					// ThreadUtils.randomSleep(2000L);
 					System.out.println(Thread.currentThread().getName() + ": " + i + ", PoolSize: " + threadPool.getPoolSize()
 							+ ", waitSize: " + threadPool.getQueueSize() + ", idleSize: " + threadPool.getIdleThreadSize());
 					if (i % 3 == 0) {
-						//throw new IllegalStateException("111111111111111111-->3");
+						throw new IllegalStateException("111111111111111111-->3");
 					}
 					score.incrementAndGet();
 				}

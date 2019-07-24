@@ -107,7 +107,7 @@ public class EveryMonth implements Month, Serializable {
 	}
 
 	public static void main(String[] args) {
-		Second every = CronUtils.thisYear().Aug().everyWeek().Wed().toFri().everyHour(2).minute(20).andMinute(30).second(5).toSecond(10);
+		Second every = CronBuilder.thisYear().Aug().everyWeek().Wed().toFri().everyHour(2).minute(20).andMinute(30).second(5).toSecond(10);
 		while (every.hasNext()) {
 			Second time = every.next();
 			System.out.println(DateUtils.format(time.getTime()));

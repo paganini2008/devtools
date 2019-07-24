@@ -11,8 +11,8 @@ package com.github.paganini2008.devtools.multithreads;
  */
 public interface AsyncThreadPool<T> extends ThreadPool {
 
-	boolean submit(Execution<T> execution);
+	boolean submit(Execution2<T> execution);
 
-	Promise<T> submitAndWait(Execution<T> execution);
+	Promise<T> submitAndWait(Execution2<T> execution);
 
 }

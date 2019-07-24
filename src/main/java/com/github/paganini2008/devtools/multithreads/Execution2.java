@@ -8,7 +8,7 @@ package com.github.paganini2008.devtools.multithreads;
  * @revised 2019-05
  * @version 1.0
  */
-public interface Execution<T> extends Comparable<Execution<T>> {
+public interface Execution2<T> extends Comparable<Execution2<T>> {
 
 	T execute() throws Exception;
 
@@ -23,7 +23,7 @@ public interface Execution<T> extends Comparable<Execution<T>> {
 		e.printStackTrace();
 	}
 
-	default int compareTo(Execution<T> other) {
+	default int compareTo(Execution2<T> other) {
 		return 0;
 	}
 

@@ -104,7 +104,7 @@ public class EveryDay implements Day, Serializable {
 	}
 
 	public static void main(String[] args) {
-		Day everyDay = CronUtils.everyYear(2019, 2030, 3).everyMonth(5, 10, 2).everyDay(1, 15, 3);
+		Day everyDay = CronBuilder.everyYear(2019, 2030, 3).everyMonth(5, 10, 2).everyDay(1, 15, 3);
 		while (everyDay.hasNext()) {
 			Day day = everyDay.next();
 			System.out.println(DateUtils.format(day.getTime()));
