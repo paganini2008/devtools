@@ -1,11 +1,21 @@
 package com.github.paganini2008.devtools.multithreads;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import com.github.paganini2008.devtools.Sequence;
 
 /**
  * 
@@ -13,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 
  * @author Fred Feng
  * @revised 2019-05
+ * @created 2019-02
  * @version 1.0
  */
 public class GenericThreadPool extends ThreadPoolExecutor implements ThreadPool {
@@ -49,6 +60,15 @@ public class GenericThreadPool extends ThreadPoolExecutor implements ThreadPool 
 		return acquired;
 	}
 
+	public <R> Promise<R> submit(final Action<R> action) {
+		final Reference<R> reference = new Reference<R>();
+		final Future<R> future = super.submit(() -> {
+			return action.execute();
+		});
+		apply(new ActionFutureTask<R>(future, action, reference, this));
+		return new DefaultPromise<R>(reference);
+	}
+
 	public int getMaxPoolSize() {
 		return getMaximumPoolSize();
 	}
@@ -77,8 +97,8 @@ public class GenericThreadPool extends ThreadPoolExecutor implements ThreadPool 
 		apply(command);
 	}
 
-	protected final void afterExecute(Runnable r, Throwable e) {
-		super.afterExecute(r, e);
+	protected final void afterExecute(Runnable runnable, Throwable e) {
+		super.afterExecute(runnable, e);
 		latch.release();
 		if (e != null) {
 			failedCount.incrementAndGet();
@@ -103,6 +123,159 @@ public class GenericThreadPool extends ThreadPoolExecutor implements ThreadPool 
 		str.append(", completedTaskCount=").append(getCompletedTaskCount());
 		str.append(", queueSize=").append(getQueueSize());
 		return str.toString();
+	}
+
+	static class DefaultPromise<R> implements Promise<R> {
+
+		final Reference<R> reference;
+		final long startTime;
+		volatile boolean cancelled;
+		volatile boolean done;
+
+		DefaultPromise(Reference<R> reference) {
+			this.reference = reference;
+			this.startTime = System.currentTimeMillis();
+		}
+
+		public boolean isCancelled() {
+			return cancelled;
+		}
+
+		public boolean isDone() {
+			return done || cancelled;
+		}
+
+		public long getElapsed() {
+			return System.currentTimeMillis() - startTime;
+		}
+
+		public R get() {
+			while (!isDone()) {
+				synchronized (reference) {
+					if (!reference.isDone()) {
+						try {
+							reference.wait();
+						} catch (InterruptedException ignored) {
+							break;
+						}
+					}
+				}
+				done = reference.isDone();
+			}
+			return reference.get();
+		}
+
+		public R get(long timeout) {
+			if (!isDone()) {
+				synchronized (reference) {
+					if (!reference.isDone()) {
+						try {
+							reference.wait(timeout);
+						} catch (InterruptedException ignored) {
+						}
+					}
+				}
+			}
+			done = reference.isDone();
+			return reference.get();
+		}
+
+		public void cancel() {
+			if (!isDone()) {
+				cancelled = true;
+				synchronized (reference) {
+					reference.notifyAll();
+				}
+			}
+		}
+	}
+
+	static class Reference<R> {
+
+		R result;
+		volatile boolean done;
+
+		public R get() {
+			return result;
+		}
+
+		public void set(R result) {
+			this.result = result;
+		}
+
+		public boolean isDone() {
+			return done;
+		}
+
+		public void setDone(boolean done) {
+			this.done = done;
+		}
+
+	}
+
+	static class ActionFutureTask<R> implements Runnable {
+
+		ActionFutureTask(Future<R> delegate, Action<R> action, Reference<R> reference, ThreadPool threadPool) {
+			this.delegate = delegate;
+			this.action = action;
+			this.reference = reference;
+			this.threadPool = threadPool;
+		}
+
+		final Map<Action<R>, R> results = new HashMap<Action<R>, R>();
+		final Future<R> delegate;
+		final Action<R> action;
+		final Reference<R> reference;
+		final ThreadPool threadPool;
+
+		public void run() {
+			R result = null;
+			if (results.containsKey(action)) {
+				result = action.onReaction(results.remove(action), threadPool);
+			} else {
+				try {
+					result = delegate.get();
+				} catch (Exception e) {
+					if (e instanceof ExecutionException) {
+						action.onFailure(e, threadPool);
+					}
+				}
+			}
+			if (action.shouldReact(result)) {
+				results.put(action, result);
+				reference.set(result);
+				threadPool.apply(this);
+			} else {
+				synchronized (reference) {
+					reference.notifyAll();
+					reference.setDone(true);
+				}
+			}
+		}
+
+	}
+
+	public static void main(String[] args) throws IOException {
+		GenericThreadPool threadPool = new GenericThreadPool(10, 100, 1000L, Integer.MAX_VALUE, Executors.defaultThreadFactory());
+		List<Promise<Long>> promises = new CopyOnWriteArrayList<Promise<Long>>();
+		for (final int i : Sequence.forEach(0, 100)) {
+			Promise<Long> p = threadPool.submit(new Action<Long>() {
+
+				public Long execute() throws Exception {
+					ThreadUtils.randomSleep(1000L);
+					System.out.println(ThreadUtils.currentThreadName() + " say: " + i);
+					return new Long(i);
+				}
+
+			});
+			promises.add(p);
+		}
+		for (Promise<Long> p : promises) {
+			System.out.println("***: " + p.get());
+		}
+		System.in.read();
+		threadPool.shutdown();
+		System.out.println("SimpleThreadPool.main()");
 	}
 
 }

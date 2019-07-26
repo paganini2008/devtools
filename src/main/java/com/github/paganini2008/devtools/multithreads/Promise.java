@@ -19,6 +19,8 @@ public interface Promise<R> {
 
 	R get();
 
+	R get(long timeout);
+
 	void cancel();
 
 }

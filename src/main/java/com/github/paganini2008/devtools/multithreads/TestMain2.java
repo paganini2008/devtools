@@ -3,26 +3,27 @@ package com.github.paganini2008.devtools.multithreads;
 public class TestMain2 {
 
 	public static void main(String[] args) throws Exception {
-		AsyncThreadPool<Long> tp = ThreadUtils.newAsyncPool(ThreadUtils.newSimplePool(100));
-		Promise<Long> p = tp.submitAndWait(getIt(6L));
+		SimpleThreadPool tp = new SimpleThreadPool(10, 1000L, Integer.MAX_VALUE);
+		Promise<Long> p = tp.submit(getIt(1L));
 		System.out.println("No. " + p.get());
 		System.in.read();
 		tp.shutdown();
 		System.out.println("TestMain2.main()");
 	}
 
-	private static Execution2<Long> getIt(long i) {
-		return new Execution2<Long>() {
+	private static Action<Long> getIt(final long l) {
+		return new Action<Long>() {
 			public Long execute() throws Exception {
-				return i <= 1 ? 1 : i;
+				return l;
 			}
 
-			public void onSuccess(Long result, AsyncThreadPool<Long> threadPool) {
-				if (i > 1) {
-					Promise<Long> p = threadPool.submitAndWait(getIt(result - 1));
-					Promise<Long> p2 = threadPool.submitAndWait(getIt(result - 2));
-					System.out.println(ThreadUtils.currentThreadName() + ", Fab2222 : " + (p.get() + p2.get()));
-				}
+			public boolean shouldReact(Long result) {
+				return result < 10;
+			}
+
+			public Long onReaction(Long result, ThreadPool threadPool) {
+				ThreadUtils.randomSleep(1000L);
+				return result + 1;
 			}
 		};
 	}

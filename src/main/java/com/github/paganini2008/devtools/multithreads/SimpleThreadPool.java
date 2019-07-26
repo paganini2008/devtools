@@ -1,13 +1,17 @@
 package com.github.paganini2008.devtools.multithreads;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.github.paganini2008.devtools.RandomUtils;
 import com.github.paganini2008.devtools.Sequence;
 
 /**
@@ -22,7 +26,6 @@ import com.github.paganini2008.devtools.Sequence;
 public class SimpleThreadPool implements ThreadPool {
 
 	private static long threadSerialNo = 0;
-
 	private final PoolManager poolManager;
 	private final LinkedList<Runnable> waitQueue = new LinkedList<Runnable>();
 	private final int maxQueueSize;
@@ -174,14 +177,14 @@ public class SimpleThreadPool implements ThreadPool {
 			try {
 				if (results.containsKey(action)) {
 					R answer = results.remove(action);
-					result = action.onSuccess(answer, threadPool);
+					result = action.onReaction(answer, threadPool);
 				} else {
 					result = action.execute();
 				}
 			} catch (Exception e) {
 				action.onFailure(e, threadPool);
 			} finally {
-				if (result != null) {
+				if (action.shouldReact(result)) {
 					results.put(action, result);
 					reference.set(result);
 					threadPool.apply(this);
@@ -195,50 +198,75 @@ public class SimpleThreadPool implements ThreadPool {
 		}
 	}
 
-	public <R> Promise<R> submit(final Action<R> action) {
-		final long startTime = System.currentTimeMillis();
-		Reference<R> reference = new Reference<R>();
-		apply(new PromiseRunnable<R>(action, reference, this));
-		return new Promise<R>() {
+	static class DefaultPromise<R> implements Promise<R> {
 
-			volatile boolean cancelled;
-			volatile boolean done;
+		final Reference<R> reference;
+		final long startTime;
+		volatile boolean cancelled;
+		volatile boolean done;
 
-			public boolean isCancelled() {
-				return cancelled;
-			}
+		DefaultPromise(Reference<R> reference) {
+			this.reference = reference;
+			this.startTime = System.currentTimeMillis();
+		}
 
-			public boolean isDone() {
-				return done || cancelled;
-			}
+		public boolean isCancelled() {
+			return cancelled;
+		}
 
-			public long getElapsed() {
-				return System.currentTimeMillis() - startTime;
-			}
+		public boolean isDone() {
+			return done || cancelled;
+		}
 
-			public R get() {
-				while (!isDone()) {
-					synchronized (reference) {
-						if (!reference.isDone()) {
-							try {
-								reference.wait();
-							} catch (InterruptedException ignored) {
-								break;
-							}
+		public long getElapsed() {
+			return System.currentTimeMillis() - startTime;
+		}
+
+		public R get() {
+			while (!isDone()) {
+				synchronized (reference) {
+					if (!reference.isDone()) {
+						try {
+							reference.wait();
+						} catch (InterruptedException ignored) {
+							break;
 						}
 					}
-					done = reference.isDone();
 				}
-				return reference.get();
+				done = reference.isDone();
 			}
+			return reference.get();
+		}
 
-			public void cancel() {
+		public R get(long timeout) {
+			if (!isDone()) {
+				synchronized (reference) {
+					if (!reference.isDone()) {
+						try {
+							reference.wait(timeout);
+						} catch (InterruptedException ignored) {
+						}
+					}
+				}
+			}
+			done = reference.isDone();
+			return reference.get();
+		}
+
+		public void cancel() {
+			if (!isDone()) {
+				cancelled = true;
 				synchronized (reference) {
 					reference.notifyAll();
 				}
-				cancelled = true;
 			}
-		};
+		}
+	}
+
+	public <R> Promise<R> submit(final Action<R> action) {
+		final Reference<R> reference = new Reference<R>();
+		apply(new PromiseRunnable<R>(action, reference, this));
+		return new DefaultPromise<R>(reference);
 	}
 
 	public boolean apply(Runnable task) {
@@ -449,7 +477,7 @@ public class SimpleThreadPool implements ThreadPool {
 	 * WorkerThread
 	 *
 	 * @author Fred Feng
-	 * @created 2019-07
+	 * @revised 2019-07
 	 * @created 2012-01
 	 * @version 1.0
 	 */
@@ -562,7 +590,6 @@ public class SimpleThreadPool implements ThreadPool {
 	}
 
 	void submitAgainIfPresent() {
-
 		Runnable task;
 		synchronized (waitQueue) {
 			task = waitQueue.pollFirst();
@@ -598,17 +625,38 @@ public class SimpleThreadPool implements ThreadPool {
 		return str.toString();
 	}
 
+	public static void main3(String[] args) throws IOException {
+		SimpleThreadPool threadPool = new SimpleThreadPool(10, 1000L, Integer.MAX_VALUE);
+		Promise<Long> p = threadPool.submit(new Action<Long>() {
+
+			public Long execute() throws Exception {
+				ThreadUtils.sleep(10000L);
+				return RandomUtils.randomLong(0, 10000);
+			}
+
+		});
+		System.out.println("***: " + p.get(3000));
+
+		threadPool.shutdown();
+		System.out.println("SimpleThreadPool.main()");
+	}
+
 	public static void main(String[] args) throws IOException {
 		SimpleThreadPool threadPool = new SimpleThreadPool(10, 1000L, Integer.MAX_VALUE);
+		List<Promise<Long> > promises = new CopyOnWriteArrayList<Promise<Long>>();
 		for (final int i : Sequence.forEach(0, 100)) {
 			Promise<Long> p = threadPool.submit(new Action<Long>() {
 
 				public Long execute() throws Exception {
 					ThreadUtils.randomSleep(1000L);
+					System.out.println(ThreadUtils.currentThreadName()+" say: " + i);
 					return new Long(i);
 				}
 
 			});
+			promises.add(p);
+		}
+		for(Promise<Long> p: promises) {
 			System.out.println("***: " + p.get());
 		}
 		System.in.read();

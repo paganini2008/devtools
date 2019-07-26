@@ -269,19 +269,7 @@ public class ThreadUtils {
 	}
 
 	public static ThreadPool newCommonPool(int maxPoolSize, long timeout, int queueSize) {
-		return new GenericThreadPool(maxPoolSize, Integer.MAX_VALUE, timeout, queueSize, new PooledThreadFactory());
-	}
-
-	public static <T> AsyncThreadPool<T> newAsyncPool(ThreadPool delegate) {
-		return new AsyncThreadPoolImpl<T>(delegate);
-	}
-
-	public static <T> AsyncThreadPool<T> newAsyncPool(int maxPoolSize, long timeout, int queueSize) {
-		return newAsyncPool(newCommonPool(maxPoolSize, timeout, queueSize));
-	}
-
-	public static <T> AsyncThreadPool<T> newAsyncPool(int maxPoolSize) {
-		return newAsyncPool(maxPoolSize, 0L, Integer.MAX_VALUE);
+		return new GenericThreadPool(maxPoolSize, maxPoolSize, timeout, queueSize, new PooledThreadFactory());
 	}
 
 	private ThreadUtils() {

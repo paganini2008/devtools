@@ -6,14 +6,18 @@ package com.github.paganini2008.devtools.multithreads;
  *
  * @author Fred Feng
  * @revised 2019-07
- * @created 2019-07
+ * @created 2019-02
  * @version 1.0
  */
 public interface Action<R> {
 
 	R execute() throws Exception;
 
-	default R onSuccess(R result, ThreadPool threadPool) {
+	default boolean shouldReact(R result) {
+		return result != null;
+	}
+
+	default R onReaction(R result, ThreadPool threadPool) {
 		return null;
 	}
 
