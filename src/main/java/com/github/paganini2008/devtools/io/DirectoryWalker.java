@@ -2,112 +2,67 @@ package com.github.paganini2008.devtools.io;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.Serializable;
-import java.text.NumberFormat;
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.github.paganini2008.devtools.multithreads.AsyncThreadPool;
-import com.github.paganini2008.devtools.multithreads.Executable;
-import com.github.paganini2008.devtools.multithreads.Execution2;
-import com.github.paganini2008.devtools.multithreads.Promise;
+import com.github.paganini2008.devtools.date.DateUtils;
+import com.github.paganini2008.devtools.multithreads.ThreadPool;
+import com.github.paganini2008.devtools.multithreads.ThreadPoolBuilder;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
+import com.github.paganini2008.devtools.multithreads.latch.RecursiveLatch;
+import com.github.paganini2008.devtools.primitives.Floats;
 
 /**
  * 
  * DirectoryWalker
- * 
+ *
  * @author Fred Feng
- * @revised 2019-05
- * @version 1.0
+ * @revised 2019-07
+ * @created 2013-06
  */
-public abstract class DirectoryWalker {
+public class DirectoryWalker {
 
-	public DirectoryWalker(int nThreads) {
-		threadPool = ThreadUtils.newAsyncPool(nThreads);
+	private final File directory;
+	private final int maxDepth;
+	private final FileFilter fileFilter;
+
+	public DirectoryWalker(File directory, int maxDepth, FileFilter fileFilter) {
+		this.directory = directory;
+		this.maxDepth = maxDepth;
+		this.fileFilter = fileFilter;
 	}
 
-	public DirectoryWalker(AsyncThreadPool<DirectoryInfo> threadPool) {
-		this.threadPool = threadPool;
-	}
+	static class FileInfoImpl implements FileInfo {
 
-	private final AsyncThreadPool<DirectoryInfo> threadPool;
-
-	/**
-	 * 
-	 * RootInfo
-	 * 
-	 * @author Fred Feng
-	 * @revised 2019-05
-	 * @version 1.0
-	 */
-	static class RootInfo extends FileInfo implements Executable {
-
-		private static final long serialVersionUID = 7955063976098275397L;
-		private static final NumberFormat nf = NumberFormat.getPercentInstance();
-
-		RootInfo(File directory, Progressable progressable, AsyncThreadPool<DirectoryInfo> threadPool) {
-			super(directory);
-			this.progressable = progressable;
-			this.threadPool = threadPool;
-			this.startTime = System.currentTimeMillis();
-			ThreadUtils.scheduleAtFixedRate(this, 1, TimeUnit.SECONDS);
-		}
-
-		final long startTime;
-		final Progressable progressable;
-		final AsyncThreadPool<DirectoryInfo> threadPool;
-
-		public boolean execute() {
-			if (progressable == null) {
-				return false;
-			}
-			progressable.progress("", getFileCount(), getFolderCount(), getLength(), getCompletedRatio(), getElapsed(), "");
-			return !threadPool.isShutdown();
-		}
-
-		public long getElapsed() {
-			return System.currentTimeMillis() - startTime;
-		}
-
-		public String getCompletedRatio() {
-			return "-";
-		}
-
-		public String toString() {
-			return super.toString() + ", Concurrents: " + "100%" + ", Elapsed: " + getElapsed();
-		}
-
-	}
-
-	/**
-	 * 
-	 * FileInfo
-	 * 
-	 * @author Fred Feng
-	 * @revised 2019-05
-	 * @version 1.0
-	 */
-	public static class FileInfo implements DirectoryInfo, Serializable {
-
-		private static final long serialVersionUID = -1857113693945072546L;
-		final File directory;
+		final AtomicInteger counter = new AtomicInteger(0);
 		final AtomicInteger fileCount = new AtomicInteger(0);
 		final AtomicInteger folderCount = new AtomicInteger(0);
 		final AtomicLong length = new AtomicLong(0);
-		final Queue<File> directorys = new ConcurrentLinkedQueue<File>();
+		final long startTime;
+		long elapsed;
 
-		FileInfo(File directory) {
-			this.directory = directory;
+		FileInfoImpl() {
+			startTime = System.currentTimeMillis();
 		}
 
-		public File getFile() {
-			return directory;
+		public long getStartTime() {
+			return startTime;
+		}
+
+		public long getElapsed() {
+			return counter.get() > 0 ? (elapsed = System.currentTimeMillis() - startTime) : elapsed;
+		}
+
+		public float getCompletedRatio() {
+			int remainingCount = counter.get();
+			int folderCount = getFolderCount();
+			float value = (float) folderCount / (folderCount + remainingCount);
+			return Floats.toFixed(value, 3);
 		}
 
 		public int getFileCount() {
@@ -122,108 +77,120 @@ public abstract class DirectoryWalker {
 			return length.get();
 		}
 
-		public String toString() {
-			return "File: " + getFile() + ", FileCount: " + getFileCount() + ", FolderCount: " + getFolderCount() + ", Length: "
-					+ getLength();
+	}
+
+	public FileInfo walk(int nThreads, final Progressable progressable) {
+		final ThreadPool threadPool = ThreadPoolBuilder.common(nThreads).setLatch(new RecursiveLatch(nThreads * 2)).build();
+		return walk(threadPool, progressable);
+	}
+
+	public FileInfo walk(final Executor executor, final Progressable progressable) {
+		final FileInfoImpl info = new FileInfoImpl();
+		final Map<String, Object> context = new ConcurrentHashMap<String, Object>();
+		info.counter.incrementAndGet();
+		executor.execute(() -> {
+			try {
+				walk(directory, 0, context, executor, info);
+			} catch (IOException e) {
+				handleDirectoryIfError(directory, 0, e, context);
+			} finally {
+				info.counter.decrementAndGet();
+				ThreadUtils.notify(info, () -> {
+					return info.counter.get() == 0;
+				});
+			}
+		});
+		if (progressable != null) {
+			ThreadUtils.scheduleAtFixedRate(() -> {
+				progressable.progress("-", info.getFileCount(), info.getFolderCount(), info.getLength(), info.getCompletedRatio(),
+						info.getElapsed());
+				return info.counter.get() > 0;
+			}, 1, TimeUnit.SECONDS);
 		}
-
+		ThreadUtils.wait(info, () -> {
+			return info.counter.get() == 0;
+		});
+		return info;
 	}
 
-	public void walk(File directory, FileFilter fileFilter, Progressable progressable) {
-		final RootInfo rootInfo = new RootInfo(directory, progressable, threadPool);
-		Promise<DirectoryInfo> promise = threadPool.submitAndWait(getExecution(rootInfo, directory, fileFilter));
-		DirectoryInfo info = promise.get();
-		System.out.println(info);
-	}
-
-	private Execution2<DirectoryInfo> getExecution(final RootInfo rootInfo, final File file, final FileFilter fileFilter) {
-		return new Execution2<DirectoryInfo>() {
-			public DirectoryInfo execute() throws Exception {
-				if (file.isDirectory()) {
-					FileInfo fileInfo = new FileInfo(file);
-					if (shouldHandleDirectory(fileInfo, file)) {
-						enterDirectory(fileInfo, file);
-						File[] childFiles = fileFilter != null ? file.listFiles(fileFilter) : file.listFiles();
-						for (File childFile : childFiles) {
-							if (childFile.isDirectory()) {
-								rootInfo.folderCount.incrementAndGet();
-								fileInfo.folderCount.incrementAndGet();
-								fileInfo.directorys.offer(childFile);
-							} else {
-								rootInfo.fileCount.incrementAndGet();
-								fileInfo.fileCount.incrementAndGet();
-								rootInfo.length.addAndGet(childFile.length());
-								fileInfo.length.addAndGet(childFile.length());
-								if (shouldHandleFile(fileInfo, childFile)) {
-									handleFile(fileInfo, childFile);
+	private void walk(final File directory, final int depth, final Map<String, Object> context, final Executor executor,
+			final FileInfoImpl info) throws IOException {
+		if (shouldHandleDirectory(directory, depth, context)) {
+			enterDirectory(directory, depth, context);
+			int childDepth = depth + 1;
+			if (maxDepth < 0 || childDepth <= maxDepth) {
+				File[] childFiles = fileFilter == null ? directory.listFiles() : directory.listFiles(fileFilter);
+				if (childFiles != null) {
+					for (File childFile : childFiles) {
+						if (childFile.isDirectory()) {
+							info.folderCount.incrementAndGet();
+							info.counter.incrementAndGet();
+							executor.execute(() -> {
+								try {
+									walk(childFile, childDepth, context, executor, info);
+								} catch (IOException e) {
+									handleDirectoryIfError(childFile, childDepth, e, context);
+								} finally {
+									info.counter.decrementAndGet();
+								}
+							});
+						} else {
+							if (shouldHandleFile(childFile, childDepth, context)) {
+								info.fileCount.incrementAndGet();
+								info.length.addAndGet(childFile.length());
+								try {
+									handleFile(childFile, childDepth, context);
+								} catch (Exception e) {
+									handleFileIfError(childFile, childDepth, e, context);
 								}
 							}
 						}
-						leaveDirectory(fileInfo, file);
-					}
-					return fileInfo;
-				}
-				throw new IllegalStateException("File '" + file + "' is not existed or not a directory.");
-			}
-
-			public void onSuccess(DirectoryInfo result, AsyncThreadPool<DirectoryInfo> threadPool) {
-				final FileInfo fileInfo = (FileInfo) result;
-				if (fileInfo != null) {
-					while (!fileInfo.directorys.isEmpty()) {
-						File file = fileInfo.directorys.poll();
-						Promise<DirectoryInfo> promise = threadPool.submitAndWait(getExecution(rootInfo, file, fileFilter));
-						DirectoryInfo info = promise.get();
-						fileInfo.folderCount.addAndGet(info.getFolderCount());
-						fileInfo.fileCount.addAndGet(info.getFileCount());
-						fileInfo.length.addAndGet(info.getLength());
 					}
 				}
 			}
-
-		};
+		}
+		leaveDirectory(directory, depth, context);
 	}
 
-	public void close() {
+	public static void main(String[] args) throws IOException {
+		File directory = new File("H:\\my project");
+		DirectoryWalker walker = new DirectoryWalker(directory, -1, null);
+		ThreadPool threadPool = ThreadPoolBuilder.common(10).setLatch(new RecursiveLatch(10)).build();
+		FileInfo fileInfo = walker.walk(threadPool, new Progressable() {
+
+			public void progress(String processingFile, int fileCount, int folderCount, long length, float completedRatio, long elapsed) {
+				System.out.println(processingFile + ", fileCount: " + fileCount + ", folderCount: " + folderCount + ", length: " + length
+						+ ", completedRatio: " + completedRatio + ", elapsed: " + elapsed);
+			}
+		});
+		System.out.println(DateUtils.formatDurationAsHour(fileInfo.getElapsed()));
+		System.out.println(fileInfo);
+		System.in.read();
 		threadPool.shutdown();
+		System.out.println("Completed.");
 	}
 
-	protected void enterDirectory(FileInfo fileInfo, File dir) throws Exception {
+	protected void enterDirectory(File file, int depth, Map<String, Object> context) throws IOException {
 	}
 
-	protected void leaveDirectory(FileInfo fileInfo, File dir) throws Exception {
+	protected void leaveDirectory(File file, int depth, Map<String, Object> context) throws IOException {
 	}
 
-	protected boolean shouldHandleDirectory(FileInfo fileInfo, File dir) throws Exception {
+	protected void handleDirectoryIfError(File file, int depth, Exception cause, Map<String, Object> context) {
+	}
+
+	protected boolean shouldHandleDirectory(File directory, int depth, Map<String, Object> context) throws IOException {
 		return true;
 	}
 
-	protected boolean shouldHandleFile(FileInfo fileInfo, File file) throws Exception {
+	protected boolean shouldHandleFile(File file, int depth, Map<String, Object> context) throws IOException {
 		return true;
 	}
 
-	protected void handleFile(FileInfo fileInfo, File file) throws Exception {
-
+	protected void handleFile(File file, int depth, Map<String, Object> context) throws IOException {
 	}
 
-	protected void handleFileOnError(FileInfo fileInfo, File fileOrDir, Exception error) throws Exception {
-	}
-
-	public static List<File> searchFiles(final File directory, final int nThreads, final FileFilter filter,
-			final Progressable progressable) {
-		List<File> results = new CopyOnWriteArrayList<File>();
-		DirectoryWalker directoryWalker = new DirectoryWalker(nThreads) {
-
-			protected void handleFile(FileInfo fileInfo, File file) throws Exception {
-				System.out.println("CurrentFile: " + file);
-				if (filter.accept(file)) {
-					results.add(file);
-				}
-			}
-
-		};
-		directoryWalker.walk(directory, null, progressable);
-		directoryWalker.close();
-		return results;
+	protected void handleFileIfError(File file, int depth, Exception cause, Map<String, Object> context) {
 	}
 
 }

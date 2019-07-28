@@ -16,6 +16,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.github.paganini2008.devtools.Sequence;
+import com.github.paganini2008.devtools.multithreads.latch.CounterLatch;
+import com.github.paganini2008.devtools.multithreads.latch.Latch;
 
 /**
  * 
@@ -23,27 +25,32 @@ import com.github.paganini2008.devtools.Sequence;
  * 
  * @author Fred Feng
  * @revised 2019-05
- * @created 2019-02
+ * @created 2016-02
  * @version 1.0
  */
 public class GenericThreadPool extends ThreadPoolExecutor implements ThreadPool {
 
-	public GenericThreadPool(int poolSize, int maxPermits, long acquiredTimeout, int queueSize, ThreadFactory threadFactory) {
-		super(poolSize, poolSize, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), threadFactory,
+	public GenericThreadPool(int maxPoolSize, long timeout, int queueSize, ThreadFactory threadFactory) {
+		this(maxPoolSize, new CounterLatch(maxPoolSize * 2), timeout, queueSize, threadFactory);
+	}
+
+	public GenericThreadPool(int maxPoolSize, Latch latch, long timeout, int queueSize, ThreadFactory threadFactory) {
+		super(maxPoolSize, maxPoolSize, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), threadFactory,
 				new ThreadPoolExecutor.AbortPolicy());
-		this.latch = new CounterLatch(maxPermits);
-		this.acquiredTimeout = acquiredTimeout;
+		this.latch = latch;
+		this.timeout = timeout;
 		this.waitQueue = new LinkedBlockingQueue<Runnable>(queueSize);
 	}
 
 	private final Latch latch;
-	private final long acquiredTimeout;
+	private final long timeout;
 	private final Queue<Runnable> waitQueue;
 	private final AtomicInteger failedCount = new AtomicInteger(0);
 	private RejectedExecutionHandler rejectedExecutionHandler;
 
 	public boolean apply(Runnable task) {
-		boolean acquired = acquiredTimeout > 0 ? latch.acquire(acquiredTimeout, TimeUnit.MILLISECONDS) : latch.acquire();
+		boolean acquired = timeout > 0 ? latch.acquire(timeout, TimeUnit.MILLISECONDS)
+				: timeout == 0 ? latch.tryAcquire() : latch.acquire();
 		if (acquired) {
 			super.execute(task);
 		} else {
@@ -116,11 +123,12 @@ public class GenericThreadPool extends ThreadPoolExecutor implements ThreadPool 
 
 	public String toString() {
 		StringBuilder str = new StringBuilder();
-		str.append("[GenericThreadPool]: ").append("poolSize=").append(getPoolSize());
+		str.append("[GenericThreadPool]: ");
 		str.append(", maxPoolSize=").append(getMaxPoolSize());
 		str.append(", activeThreadSize=").append(getActiveThreadSize());
 		str.append(", idleThreadSize=").append(getIdleThreadSize());
 		str.append(", completedTaskCount=").append(getCompletedTaskCount());
+		str.append(", failedTaskCount=").append(getFailedTaskCount());
 		str.append(", queueSize=").append(getQueueSize());
 		return str.toString();
 	}
@@ -256,7 +264,7 @@ public class GenericThreadPool extends ThreadPoolExecutor implements ThreadPool 
 	}
 
 	public static void main(String[] args) throws IOException {
-		GenericThreadPool threadPool = new GenericThreadPool(10, 100, 1000L, Integer.MAX_VALUE, Executors.defaultThreadFactory());
+		GenericThreadPool threadPool = new GenericThreadPool(10, 1000L, Integer.MAX_VALUE, Executors.defaultThreadFactory());
 		List<Promise<Long>> promises = new CopyOnWriteArrayList<Promise<Long>>();
 		for (final int i : Sequence.forEach(0, 100)) {
 			Promise<Long> p = threadPool.submit(new Action<Long>() {

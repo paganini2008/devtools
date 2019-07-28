@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.github.paganini2008.devtools.multithreads.Producer;
+
 /**
  * 
  * Sequence
@@ -108,4 +110,5 @@ public abstract class Sequence {
 		}
 
 	}
+	
 }

@@ -10,6 +10,6 @@ package com.github.paganini2008.devtools.io;
  */
 public interface DirectoryFilter {
 
-	boolean accept(DirectoryInfo fileInfo);
+	boolean accept(FileInfo fileInfo);
 
 }

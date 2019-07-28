@@ -1,7 +1,6 @@
 package com.github.paganini2008.devtools.multithreads;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -354,7 +353,7 @@ public class SimpleThreadPool implements ThreadPool {
 						return true;
 					} else {
 						try {
-							lock.wait();
+							lock.wait(1000L);
 						} catch (InterruptedException ignored) {
 							break;
 						}

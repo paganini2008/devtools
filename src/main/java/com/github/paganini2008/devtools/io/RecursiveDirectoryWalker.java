@@ -14,10 +14,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.github.paganini2008.devtools.multithreads.CounterLatch;
 import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
+import com.github.paganini2008.devtools.multithreads.latch.CounterLatch;
 
 /**
  * 
@@ -25,6 +25,7 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
  * 
  * @author Fred Feng
  * @revised 2019-05
+ * @created 2016-11
  * @version 1.0
  */
 public abstract class RecursiveDirectoryWalker {
@@ -37,7 +38,7 @@ public abstract class RecursiveDirectoryWalker {
 	 * @revised 2019-05
 	 * @version 1.0
 	 */
-	public static class RootInfo extends BasicInfo implements DirectoryInfo, Executable {
+	public static class RootInfo extends BasicInfo implements FileInfo, Executable {
 
 		private static final long serialVersionUID = 4103715943927015754L;
 		private static final NumberFormat nf = NumberFormat.getPercentInstance();
@@ -53,18 +54,18 @@ public abstract class RecursiveDirectoryWalker {
 		final long startTime;
 		final Progressable progressable;
 		final CounterLatch lock;
-		volatile String processing;
+		volatile String processingFile;
 
 		public boolean execute() {
 			if (progressable == null) {
 				return false;
 			}
-			progressable.progress(processing, getFileCount(), getFolderCount(), getLength(), getCompletedRatio(), getElapsed(), null);
+			progressable.progress(processingFile, getFileCount(), getFolderCount(), getLength(), getCompletedRatio(), getElapsed());
 			return lock.isLocked();
 		}
 
-		public String getCompletedRatio() {
-			return "-";
+		public float getCompletedRatio() {
+			return 0L;
 		}
 
 		public long getElapsed() {
@@ -85,14 +86,14 @@ public abstract class RecursiveDirectoryWalker {
 	 * @revised 2019-05
 	 * @version 1.0
 	 */
-	public static class BasicInfo implements DirectoryInfo, Serializable {
+	public static class BasicInfo implements FileInfo, Serializable {
 
 		private static final long serialVersionUID = -1704402670961888384L;
 		final File directory;
 		final AtomicInteger fileCount = new AtomicInteger(0);
 		final AtomicInteger folderCount = new AtomicInteger(0);
 		final AtomicLong length = new AtomicLong(0);
-		final List<DirectoryInfo> childInfos = new ArrayList<DirectoryInfo>();
+		final List<FileInfo> childInfos = new ArrayList<FileInfo>();
 
 		BasicInfo(File directory) {
 			this.directory = directory;
@@ -108,7 +109,7 @@ public abstract class RecursiveDirectoryWalker {
 
 		public int getFileCountRecursively() {
 			int total = getFileCount();
-			for (DirectoryInfo fileInfo : childInfos) {
+			for (FileInfo fileInfo : childInfos) {
 				total += fileInfo.getFileCount();
 			}
 			return total;
@@ -120,7 +121,7 @@ public abstract class RecursiveDirectoryWalker {
 
 		public int getFolderCountRecursively() {
 			int total = getFolderCount();
-			for (DirectoryInfo fileInfo : childInfos) {
+			for (FileInfo fileInfo : childInfos) {
 				total += fileInfo.getFolderCount();
 			}
 			return total;
@@ -132,7 +133,7 @@ public abstract class RecursiveDirectoryWalker {
 
 		public long getLengthRecursively() {
 			long total = getLength();
-			for (DirectoryInfo fileInfo : childInfos) {
+			for (FileInfo fileInfo : childInfos) {
 				total += fileInfo.getLength();
 			}
 			return total;
@@ -152,7 +153,7 @@ public abstract class RecursiveDirectoryWalker {
 	 * @author Fred Feng
 	 * @version 1.0
 	 */
-	class DirectoryWalkTask extends RecursiveTask<DirectoryInfo> {
+	class DirectoryWalkTask extends RecursiveTask<FileInfo> {
 
 		private static final long serialVersionUID = -1911846799071310358L;
 
@@ -170,7 +171,7 @@ public abstract class RecursiveDirectoryWalker {
 			this.lock = lock;
 		}
 
-		protected DirectoryInfo compute() {
+		protected FileInfo compute() {
 			final File directory = fileInfo.getFile();
 			try {
 				enterDirectory(directory, depth, rootInfo);
@@ -185,7 +186,7 @@ public abstract class RecursiveDirectoryWalker {
 									DirectoryWalkTask task = new DirectoryWalkTask(rootInfo, childFile, fileFilter, depth + 1, lock);
 									lock.acquire();
 									task.fork();
-									DirectoryInfo childInfo = task.join();
+									FileInfo childInfo = task.join();
 									fileInfo.childInfos.add(childInfo);
 									leaveDirectory(childInfo, depth, rootInfo);
 								}
@@ -217,7 +218,7 @@ public abstract class RecursiveDirectoryWalker {
 		try {
 			DirectoryWalkTask task = new DirectoryWalkTask(rootInfo, directory, fileFilter, 0, lock);
 			lock.acquire();
-			Future<DirectoryInfo> future = pool.submit(task);
+			Future<FileInfo> future = pool.submit(task);
 			leaveDirectory(rootInfo, 0, future.get());
 			lock.join();
 		} finally {
@@ -230,31 +231,31 @@ public abstract class RecursiveDirectoryWalker {
 		return new ForkJoinPool(nThreads);
 	}
 
-	protected void enterDirectory(File directory, int depth, DirectoryInfo rootInfo) throws Exception {
+	protected void enterDirectory(File directory, int depth, FileInfo rootInfo) throws Exception {
 	}
 
-	protected void leaveDirectory(DirectoryInfo fileInfo, int depth, DirectoryInfo rootInfo) throws Exception {
+	protected void leaveDirectory(FileInfo fileInfo, int depth, FileInfo rootInfo) throws Exception {
 	}
 
-	protected boolean shouldHandleDirectory(File directory, int depth, DirectoryInfo rootInfo) throws Exception {
+	protected boolean shouldHandleDirectory(File directory, int depth, FileInfo rootInfo) throws Exception {
 		return true;
 	}
 
-	protected boolean shouldHandleFile(File file, int depth, DirectoryInfo rootInfo) throws Exception {
+	protected boolean shouldHandleFile(File file, int depth, FileInfo rootInfo) throws Exception {
 		return true;
 	}
 
-	protected void handleFile(File file, int depth, DirectoryInfo rootInfo) throws Exception {
+	protected void handleFile(File file, int depth, FileInfo rootInfo) throws Exception {
 	}
 
-	protected void handleFileOnError(File file, int depth, DirectoryInfo rootInfo, Exception error) {
+	protected void handleFileOnError(File file, int depth, FileInfo rootInfo, Exception error) {
 	}
 
 	public static List<File> searchFiles(final File directory, final int nThreads, final FileFilter searcher,
 			final Progressable progressable) throws Exception {
 		List<File> results = new CopyOnWriteArrayList<File>();
 		RecursiveDirectoryWalker directoryWalker = new RecursiveDirectoryWalker() {
-			protected void handleFile(File file, int depth, DirectoryInfo rootInfo) throws Exception {
+			protected void handleFile(File file, int depth, FileInfo rootInfo) throws Exception {
 				if (searcher.accept(file)) {
 					ThreadUtils.randomSleep(3000L);
 					results.add(file);
@@ -265,11 +266,11 @@ public abstract class RecursiveDirectoryWalker {
 		return results;
 	}
 
-	public static List<DirectoryInfo> searchDirectories(final File directory, final int nThreads, final DirectoryFilter searcher,
+	public static List<FileInfo> searchDirectories(final File directory, final int nThreads, final DirectoryFilter searcher,
 			final Progressable progressable) throws Exception {
-		List<DirectoryInfo> results = new CopyOnWriteArrayList<DirectoryInfo>();
+		List<FileInfo> results = new CopyOnWriteArrayList<FileInfo>();
 		RecursiveDirectoryWalker directoryWalker = new RecursiveDirectoryWalker() {
-			protected void leaveDirectory(DirectoryInfo fileInfo, int depth, DirectoryInfo rootInfo) throws Exception {
+			protected void leaveDirectory(FileInfo fileInfo, int depth, FileInfo rootInfo) throws Exception {
 				if (searcher.accept(fileInfo)) {
 					results.add(fileInfo);
 				}

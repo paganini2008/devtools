@@ -137,7 +137,7 @@ public class EventBus implements EventPubSub {
 		}
 
 		public void onEventFired(final E event) {
-			producer.submit(() -> {
+			producer.produce(() -> {
 				final Queue<EventSubscriber<E>> q = new ArrayDeque<EventSubscriber<E>>(subscribers);
 				while (!q.isEmpty()) {
 					q.poll().onEventFired(event);

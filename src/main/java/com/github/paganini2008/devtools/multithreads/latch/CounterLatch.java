@@ -1,10 +1,12 @@
-package com.github.paganini2008.devtools.multithreads;
+package com.github.paganini2008.devtools.multithreads.latch;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 
 /**
  * 
@@ -17,21 +19,21 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class CounterLatch implements Latch {
 
-	private final AtomicLong counter = new AtomicLong(0);
-	private final long maxPermits;
+	private final AtomicInteger counter = new AtomicInteger(0);
+	private final int maxPermits;
 	private final Lock lock;
 	private final Condition condition;
 	private final long startTime;
 
 	public CounterLatch() {
-		this(Integer.MAX_VALUE);
+		this(1);
 	}
 
-	public CounterLatch(long maxPermits) {
+	public CounterLatch(int maxPermits) {
 		this(maxPermits, new ReentrantLock());
 	}
 
-	public CounterLatch(long maxPermits, Lock lock) {
+	public CounterLatch(int maxPermits, Lock lock) {
 		this.maxPermits = maxPermits;
 		this.lock = lock;
 		this.condition = lock.newCondition();
@@ -93,13 +95,21 @@ public class CounterLatch implements Latch {
 		return false;
 	}
 
+	public boolean tryAcquire() {
+		if (counter.get() < maxPermits) {
+			counter.incrementAndGet();
+			return true;
+		}
+		return false;
+	}
+
 	public void release() {
 		if (!isLocked()) {
 			return;
 		}
 		lock.lock();
-		condition.signalAll();
 		counter.decrementAndGet();
+		condition.signalAll();
 		lock.unlock();
 	}
 

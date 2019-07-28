@@ -1,4 +1,4 @@
-package com.github.paganini2008.devtools.multithreads;
+package com.github.paganini2008.devtools.multithreads.latch;
 
 import java.util.concurrent.TimeUnit;
 
@@ -16,6 +16,8 @@ public interface Latch {
 	long availablePermits();
 
 	boolean acquire();
+	
+	boolean tryAcquire();
 
 	boolean acquire(long timeout, TimeUnit timeUnit);
 

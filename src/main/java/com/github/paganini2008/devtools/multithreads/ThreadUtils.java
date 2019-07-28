@@ -1,5 +1,7 @@
 package com.github.paganini2008.devtools.multithreads;
 
+import static com.github.paganini2008.devtools.date.DateUtils.convertToMillis;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -7,6 +9,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import com.github.paganini2008.devtools.RandomUtils;
 
@@ -44,35 +47,83 @@ public class ThreadUtils {
 		return true;
 	}
 
-	public static boolean wait(Object monitor) {
-		return wait(monitor, 0);
-	}
-
-	public static boolean wait(Object monitor, long ms) {
+	public static boolean wait(Object monitor, Supplier<Boolean> condition) {
 		if (monitor != null) {
-			synchronized (monitor) {
-				try {
-					monitor.wait(ms);
-				} catch (InterruptedException ignored) {
-					return false;
+			while (true) {
+				synchronized (monitor) {
+					if (condition.get()) {
+						return true;
+					} else {
+						try {
+							monitor.wait(1000L);
+						} catch (InterruptedException ignored) {
+							break;
+						}
+					}
 				}
 			}
 		}
-		return true;
+		return false;
+	}
+
+	public static boolean wait(Object monitor, Supplier<Boolean> condition, long timeout) {
+		if (monitor != null) {
+			final long begin = System.nanoTime();
+			long elapsed;
+			long m = timeout;
+			long n = 0;
+			while (true) {
+				synchronized (monitor) {
+					if (condition.get()) {
+						return true;
+					} else {
+						if (m > 0) {
+							try {
+								monitor.wait(m, (int) n);
+							} catch (InterruptedException ignored) {
+								break;
+							}
+							elapsed = (System.nanoTime() - begin);
+							m -= elapsed / 1000000L;
+							n = elapsed % 1000000L;
+						} else {
+							break;
+						}
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	public static void notify(Object monitor) {
+		notify(monitor, () -> {
+			return false;
+		});
+	}
+
+	public static void notify(Object monitor, Supplier<Boolean> condition) {
 		if (monitor != null) {
-			synchronized (monitor) {
-				monitor.notify();
+			if (condition.get()) {
+				synchronized (monitor) {
+					monitor.notify();
+				}
 			}
 		}
 	}
 
 	public static void notifyAll(Object monitor) {
+		notifyAll(monitor, () -> {
+			return false;
+		});
+	}
+
+	public static void notifyAll(Object monitor, Supplier<Boolean> condition) {
 		if (monitor != null) {
-			synchronized (monitor) {
-				monitor.notifyAll();
+			if (condition.get()) {
+				synchronized (monitor) {
+					monitor.notifyAll();
+				}
 			}
 		}
 	}
@@ -252,24 +303,16 @@ public class ThreadUtils {
 
 	}
 
-	private static long convertToMillis(long interval, TimeUnit timeUnit) {
-		return timeUnit != TimeUnit.MILLISECONDS ? TimeUnit.MILLISECONDS.convert(interval, timeUnit) : interval;
-	}
-
-	public static ThreadPool newSimplePool(int maxPoolSize) {
-		return newSimplePool(maxPoolSize, -1L, Integer.MAX_VALUE);
-	}
-
-	public static ThreadPool newSimplePool(int maxPoolSize, long timeout, int queueSize) {
-		return new SimpleThreadPool(maxPoolSize, timeout, queueSize);
+	public static ThreadPool newCommonPool() {
+		return newCommonPool(Runtime.getRuntime().availableProcessors() * 2);
 	}
 
 	public static ThreadPool newCommonPool(int maxPoolSize) {
-		return newCommonPool(maxPoolSize, 0L, Integer.MAX_VALUE);
+		return newCommonPool(maxPoolSize, -1L, Integer.MAX_VALUE);
 	}
 
 	public static ThreadPool newCommonPool(int maxPoolSize, long timeout, int queueSize) {
-		return new GenericThreadPool(maxPoolSize, maxPoolSize, timeout, queueSize, new PooledThreadFactory());
+		return ThreadPoolBuilder.common(maxPoolSize).setTimeout(timeout).setQueueSize(queueSize).build();
 	}
 
 	private ThreadUtils() {

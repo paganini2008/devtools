@@ -2,32 +2,40 @@ package com.github.paganini2008.devtools.multithreads;
 
 import java.util.concurrent.ThreadFactory;
 
+import com.github.paganini2008.devtools.multithreads.latch.CounterLatch;
+import com.github.paganini2008.devtools.multithreads.latch.Latch;
+
 /**
- * ThreadPoolBuilder
  * 
+ * ThreadPoolBuilder
+ *
  * @author Fred Feng
- * @version 1.0
+ * @revised 2019-07
+ * @created 2016-02
  */
 public class ThreadPoolBuilder {
 
-	private int poolSize;
+	private int maxPoolSize;
+	private Latch latch;
 	private int queueSize;
-	private long acquiredTimeout;
+	private long timeout;
 	private ThreadFactory threadFactory;
 
-	public ThreadPoolBuilder(int nThreads) {
-		this.poolSize = nThreads;
-		this.queueSize = Integer.MAX_VALUE;
-		this.acquiredTimeout = 1000L;
-		this.threadFactory = new PooledThreadFactory();
+	public int getMaxPoolSize() {
+		return maxPoolSize;
 	}
 
-	public int getPoolSize() {
-		return poolSize;
+	public ThreadPoolBuilder setMaxPoolSize(int maxPoolSize) {
+		this.maxPoolSize = maxPoolSize;
+		return this;
 	}
 
-	public ThreadPoolBuilder setPoolSize(int poolSize) {
-		this.poolSize = poolSize;
+	public Latch getLatch() {
+		return latch;
+	}
+
+	public ThreadPoolBuilder setLatch(Latch latch) {
+		this.latch = latch;
 		return this;
 	}
 
@@ -49,17 +57,26 @@ public class ThreadPoolBuilder {
 		return this;
 	}
 
-	public long getAcquiredTimeout() {
-		return acquiredTimeout;
+	public long getTimeout() {
+		return timeout;
 	}
 
-	public ThreadPoolBuilder setAcquiredTimeout(long acquiredTimeout) {
-		this.acquiredTimeout = acquiredTimeout;
+	public ThreadPoolBuilder setTimeout(long timeout) {
+		this.timeout = timeout;
 		return this;
 	}
 
 	public ThreadPool build() {
-		return new GenericThreadPool(poolSize, Integer.MAX_VALUE, acquiredTimeout, queueSize, threadFactory);
+		return new GenericThreadPool(maxPoolSize, latch, timeout, queueSize, threadFactory);
+	}
+
+	ThreadPoolBuilder() {
+	}
+
+	public static ThreadPoolBuilder common(int maxPoolSize) {
+		ThreadPoolBuilder builder = new ThreadPoolBuilder();
+		return builder.setMaxPoolSize(maxPoolSize).setLatch(new CounterLatch(maxPoolSize * 2)).setQueueSize(Integer.MAX_VALUE)
+				.setTimeout(-1L).setThreadFactory(new PooledThreadFactory());
 	}
 
 }

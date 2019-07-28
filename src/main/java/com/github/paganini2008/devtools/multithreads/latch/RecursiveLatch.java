@@ -1,4 +1,4 @@
-package com.github.paganini2008.devtools.multithreads;
+package com.github.paganini2008.devtools.multithreads.latch;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -7,6 +7,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.github.paganini2008.devtools.Sequence;
+import com.github.paganini2008.devtools.multithreads.ThreadPool;
+import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 
 /**
  * 
@@ -14,6 +16,7 @@ import com.github.paganini2008.devtools.Sequence;
  * 
  * @author Fred Feng
  * @revised 2019-05
+ * @created 2019-05
  * @version 1.0
  */
 public class RecursiveLatch implements Latch {
@@ -27,10 +30,10 @@ public class RecursiveLatch implements Latch {
 	};
 
 	public RecursiveLatch() {
-		this(Integer.MAX_VALUE);
+		this(1);
 	}
 
-	public RecursiveLatch(long maxPermits) {
+	public RecursiveLatch(int maxPermits) {
 		this(new CounterLatch(maxPermits));
 	}
 
@@ -49,6 +52,25 @@ public class RecursiveLatch implements Latch {
 			boolean acquired = true;
 			if (threads.get() == 0) {
 				acquired = delegate.acquire();
+			}
+			if (acquired) {
+				threads.incrementAndGet();
+				return true;
+			} else {
+				return false;
+			}
+		} finally {
+			lock.unlock();
+		}
+	}
+
+	public boolean tryAcquire() {
+		lock.lock();
+		try {
+			AtomicInteger threads = counter.get();
+			boolean acquired = true;
+			if (threads.get() == 0) {
+				acquired = delegate.tryAcquire();
 			}
 			if (acquired) {
 				threads.incrementAndGet();
