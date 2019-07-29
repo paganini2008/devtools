@@ -9,15 +9,13 @@ import com.github.paganini2008.devtools.jdbc.AbstractDataSource;
 
 /**
  * 
- * DummyDataSource
+ * GenericDataSource
  *
  * @author Fred Feng
  * @revised 2019-07
  * @created 2014-03
  */
 public class GenericDataSource extends AbstractDataSource {
-
-	private final ConnectionPool connectionPool = new ConnectionPool();
 
 	public GenericDataSource(String driverClassName, String url, String username, String password) throws SQLException {
 		this.setDriverClassName(driverClassName);
@@ -28,6 +26,8 @@ public class GenericDataSource extends AbstractDataSource {
 
 	public GenericDataSource() {
 	}
+
+	private final ConnectionPool connectionPool = new ConnectionPool();
 
 	public void setUser(String username) {
 		this.connectionPool.setUser(username);

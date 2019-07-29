@@ -182,7 +182,7 @@ public class DirectoryWalker {
 	}
 
 	public static void main(String[] args) throws IOException {
-		File directory = new File("D:\\work\\gitlab_repo");
+		File directory = new File("D:\\work\\gitlab_cloud");
 		DirectoryWalker walker = new DirectoryWalker(directory, -1, null);
 		FileInfo fileInfo = walker.walk(10, new Progressable() {
 
