@@ -1,100 +1,31 @@
 package com.github.paganini2008.devtools.multithreads;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.github.paganini2008.devtools.Sequence;
+import com.github.paganini2008.devtools.multithreads.latch.RecursiveLatch;
 
 public class TestMain {
 
-	static class Worker {
-		public void test(int i) {
-			System.out.println(ThreadUtils.currentThreadName()+ " TestMain.Worker.test(): " + i);
-		}
-
-		public void destroy() {
-			System.out.println("TestMain.Worker.destroy()");
-		}
-	}
-
-	static class PoolManager {
-
-		final LinkedList<Worker> idleQueue = new LinkedList<Worker>();
-		final LinkedList<Worker> busyQueue = new LinkedList<Worker>();
-		final int maxPoolSize;
-		volatile int poolSize = 0;
-
-		PoolManager(int maxPoolSize) {
-			this.maxPoolSize = maxPoolSize;
-		}
-
-		synchronized void giveback(Worker workerThread) {
-			busyQueue.remove(workerThread);
-			idleQueue.add(workerThread);
-		}
-
-		synchronized Worker borrow() {
-			Worker workerThread = idleQueue.pollFirst();
-			if (workerThread == null) {
-				if (poolSize < maxPoolSize) {
-					workerThread = new Worker();
-					poolSize++;
-				}
-			}
-			if (workerThread != null) {
-				busyQueue.add(workerThread);
-			}
-			return workerThread;
-		}
-
-		synchronized void destroy() {
-			while (!busyQueue.isEmpty()) {
-				ThreadUtils.randomSleep(1000L);
-			}
-			while (!idleQueue.isEmpty()) {
-				destroy(idleQueue.pollFirst());
-			}
-		}
-
-		synchronized void retain(int n) {
-			int l = idleQueue.size();
-			if (l > n) {
-				for (int i = n; i < l; i++) {
-					destroy(idleQueue.pollFirst());
-				}
-			}
-		}
-
-		synchronized void destroy(Worker workerThread) {
-			workerThread.destroy();
-			poolSize--;
-		}
-
+	public static ThreadPoolBuilder common(int maxPoolSize) {
+		ThreadPoolBuilder builder = new ThreadPoolBuilder();
+		return builder.setMaxPoolSize(maxPoolSize).setLatch(new RecursiveLatch(maxPoolSize/2)).setQueueSize(Integer.MAX_VALUE).setTimeout(-1L)
+				.setThreadFactory(new PooledThreadFactory());
 	}
 
 	public static void main(String[] args) throws IOException {
-		Executor executor = Executors.newFixedThreadPool(50);
-		PoolManager poolManager = new PoolManager(10);
-		AtomicInteger score = new AtomicInteger();
+		final ThreadPool threadPool = common(10).build();
+		final AtomicInteger score = new AtomicInteger();
 		for (int i : Sequence.forEach(0, 100)) {
-			executor.execute(() -> {
-				Worker worker = poolManager.borrow();
-				if (worker != null) {
-					worker.test(i);
-					//ThreadUtils.randomSleep(1000L);
-					score.incrementAndGet();
-					poolManager.giveback(worker);
-				} else {
-					System.out.println(ThreadUtils.currentThreadName() + " failed: " + i);
-				}
+			threadPool.execute(() -> {
+				System.out.println(ThreadUtils.currentThreadName()+ " say: " + i);
+				score.incrementAndGet();
 			});
 		}
 		System.in.read();
 		System.out.println(score);
-		ExecutorUtils.gracefulShutdown(executor, 60000);
+		threadPool.shutdown();
 		System.out.println("TestMain.main()");
 	}
 

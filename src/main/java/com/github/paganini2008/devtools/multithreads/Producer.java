@@ -60,6 +60,9 @@ public final class Producer<X, R> {
 				} finally {
 					if (cause != null) {
 						consumer.onFailure(action, cause);
+					} else if (consumer.shouldCallback(result)) {
+						resultArea.put(action, result);
+						produce(action);
 					}
 				}
 			} else {

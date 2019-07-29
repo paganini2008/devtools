@@ -37,17 +37,31 @@ public class DirectoryWalker {
 		this.fileFilter = fileFilter;
 	}
 
+	/**
+	 * 
+	 * FileInfoImpl
+	 *
+	 * @author Fred Feng
+	 * @revised 2019-07
+	 * @created 2013-06
+	 */
 	static class FileInfoImpl implements FileInfo {
 
 		final AtomicInteger counter = new AtomicInteger(0);
 		final AtomicInteger fileCount = new AtomicInteger(0);
 		final AtomicInteger folderCount = new AtomicInteger(0);
 		final AtomicLong length = new AtomicLong(0);
+		final File file;
 		final long startTime;
 		long elapsed;
 
-		FileInfoImpl() {
-			startTime = System.currentTimeMillis();
+		FileInfoImpl(File file) {
+			this.startTime = System.currentTimeMillis();
+			this.file = file;
+		}
+
+		public File getFile() {
+			return file;
 		}
 
 		public long getStartTime() {
@@ -56,13 +70,6 @@ public class DirectoryWalker {
 
 		public long getElapsed() {
 			return counter.get() > 0 ? (elapsed = System.currentTimeMillis() - startTime) : elapsed;
-		}
-
-		public float getCompletedRatio() {
-			int remainingCount = counter.get();
-			int folderCount = getFolderCount();
-			float value = (float) folderCount / (folderCount + remainingCount);
-			return Floats.toFixed(value, 3);
 		}
 
 		public int getFileCount() {
@@ -81,11 +88,15 @@ public class DirectoryWalker {
 
 	public FileInfo walk(int nThreads, final Progressable progressable) {
 		final ThreadPool threadPool = ThreadPoolBuilder.common(nThreads).setLatch(new RecursiveLatch(nThreads * 2)).build();
-		return walk(threadPool, progressable);
+		try {
+			return walk(threadPool, progressable);
+		} finally {
+			threadPool.shutdown();
+		}
 	}
 
 	public FileInfo walk(final Executor executor, final Progressable progressable) {
-		final FileInfoImpl info = new FileInfoImpl();
+		final FileInfoImpl info = new FileInfoImpl(directory);
 		final Map<String, Object> context = new ConcurrentHashMap<String, Object>();
 		info.counter.incrementAndGet();
 		executor.execute(() -> {
@@ -102,7 +113,7 @@ public class DirectoryWalker {
 		});
 		if (progressable != null) {
 			ThreadUtils.scheduleAtFixedRate(() -> {
-				progressable.progress("-", info.getFileCount(), info.getFolderCount(), info.getLength(), info.getCompletedRatio(),
+				progressable.progress("-", info.getFileCount(), info.getFolderCount(), info.getLength(), getCompletedRatio(info),
 						info.getElapsed());
 				return info.counter.get() > 0;
 			}, 1, TimeUnit.SECONDS);
@@ -111,6 +122,13 @@ public class DirectoryWalker {
 			return info.counter.get() == 0;
 		});
 		return info;
+	}
+
+	protected float getCompletedRatio(FileInfo info) {
+		int remainingCount = ((FileInfoImpl) info).counter.get();
+		int folderCount = info.getFolderCount();
+		float value = (float) folderCount / (folderCount + remainingCount);
+		return Floats.toFixed(value, 3);
 	}
 
 	private void walk(final File directory, final int depth, final Map<String, Object> context, final Executor executor,

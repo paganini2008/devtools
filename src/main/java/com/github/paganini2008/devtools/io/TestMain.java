@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import com.github.paganini2008.devtools.io.filter.LengthFileFilter;
+import com.github.paganini2008.devtools.multithreads.RecursiveDirectoryWalker;
 
 public class TestMain {
 

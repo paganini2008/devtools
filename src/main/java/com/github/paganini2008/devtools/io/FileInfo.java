@@ -1,5 +1,7 @@
 package com.github.paganini2008.devtools.io;
 
+import java.io.File;
+
 /**
  * 
  * FileInfo
@@ -11,15 +13,15 @@ package com.github.paganini2008.devtools.io;
  */
 public interface FileInfo {
 
-	long getStartTime();
-
+	File getFile();
+	
 	int getFileCount();
 
 	int getFolderCount();
 
 	long getLength();
-
-	float getCompletedRatio();
+	
+	long getStartTime();
 
 	long getElapsed();
 }
