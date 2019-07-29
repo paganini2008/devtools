@@ -1,22 +1,24 @@
-package com.github.paganini2008.devtools.multithreads;
+package com.github.paganini2008.devtools.io;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 import java.util.concurrent.RecursiveTask;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.github.paganini2008.devtools.date.DateUtils;
-import com.github.paganini2008.devtools.io.FileInfo;
-import com.github.paganini2008.devtools.io.Progressable;
+import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
+import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 import com.github.paganini2008.devtools.primitives.Floats;
 
 /**
@@ -68,9 +70,68 @@ public class RecursiveDirectoryWalker {
 
 		long getLength(boolean recursive);
 
-		String getProcessingFile();
-
 		int getDepth();
+
+		FileInfo getRootInfo();
+
+	}
+
+	/**
+	 * 
+	 * RootInfo
+	 *
+	 * @author Fred Feng
+	 * @revised 2019-07
+	 * @created 2016-11
+	 */
+	static class RootInfo implements FileInfo {
+
+		final AtomicInteger fileCount = new AtomicInteger(0);
+		final AtomicInteger folderCount = new AtomicInteger(0);
+		final AtomicLong length = new AtomicLong(0);
+		final long startTime;
+		final File directory;
+		final List<File> files = new CopyOnWriteArrayList<File>();
+		final int fileSize;
+		volatile long elapsed;
+
+		RootInfo(File directory) {
+			this.directory = directory;
+			this.files.addAll(Arrays.asList(directory.listFiles(file -> {
+				return file.isDirectory();
+			})));
+			this.fileSize = files.size();
+			this.startTime = System.currentTimeMillis();
+		}
+
+		public File getFile() {
+			return directory;
+		}
+
+		public int getFileCount() {
+			return fileCount.get();
+		}
+
+		public int getFolderCount() {
+			return folderCount.get();
+		}
+
+		public long getLength() {
+			return length.get();
+		}
+
+		public long getElapsed() {
+			return files.isEmpty() ? elapsed : (elapsed = System.currentTimeMillis() - startTime);
+		}
+
+		public boolean isFinished() {
+			return files.isEmpty();
+		}
+
+		public float getCompletedRatio() {
+			float value = (fileSize - files.size()) / (float) fileSize;
+			return Floats.toFixed(value, 3);
+		}
 
 	}
 
@@ -83,23 +144,23 @@ public class RecursiveDirectoryWalker {
 	 * @created 2016-11
 	 * @version 1.0
 	 */
-	public static class FileInfoImpl implements EnhancedFileInfo, Serializable {
+	static class FileInfoImpl implements EnhancedFileInfo {
 
-		private static final long serialVersionUID = -1704402670961888384L;
-		final AtomicInteger counter = new AtomicInteger();
 		final AtomicInteger fileCount = new AtomicInteger(0);
 		final AtomicInteger folderCount = new AtomicInteger(0);
 		final AtomicLong length = new AtomicLong(0);
 		final List<EnhancedFileInfo> childs = new ArrayList<EnhancedFileInfo>();
 		final File directory;
 		final int depth;
-		long startTime;
-		volatile long elapsed;
-		volatile String processingFile;
+		final long startTime;
+		final RootInfo rootInfo;
+		final AtomicBoolean finished = new AtomicBoolean(false);
+		long elapsed;
 
-		FileInfoImpl(File directory, int depth) {
+		FileInfoImpl(File directory, int depth, RootInfo rootInfo) {
 			this.directory = directory;
 			this.depth = depth;
+			this.rootInfo = rootInfo;
 			this.startTime = System.currentTimeMillis();
 		}
 
@@ -107,23 +168,26 @@ public class RecursiveDirectoryWalker {
 			return directory;
 		}
 
-		public long getStartTime() {
-			return startTime;
+		void countFiles() {
+			fileCount.incrementAndGet();
+			rootInfo.fileCount.incrementAndGet();
 		}
 
-		public long getElapsed() {
-			return counter.get() > 0 ? (elapsed = System.currentTimeMillis() - startTime) : elapsed;
+		void countFolders() {
+			folderCount.incrementAndGet();
+			rootInfo.folderCount.incrementAndGet();
 		}
 
-		public String getProcessingFile() {
-			return processingFile;
+		void setLength(long length) {
+			this.length.addAndGet(length);
+			rootInfo.length.addAndGet(length);
 		}
 
 		public int getFileCount(boolean recursive) {
 			int total = fileCount.get();
 			if (recursive) {
-				for (FileInfo fileInfo : childs) {
-					total += fileInfo.getFileCount();
+				for (EnhancedFileInfo fileInfo : childs) {
+					total += fileInfo.getFileCount(recursive);
 				}
 			}
 			return total;
@@ -132,8 +196,8 @@ public class RecursiveDirectoryWalker {
 		public int getFolderCount(boolean recursive) {
 			int total = folderCount.get();
 			if (recursive) {
-				for (FileInfo fileInfo : childs) {
-					total += fileInfo.getFolderCount();
+				for (EnhancedFileInfo fileInfo : childs) {
+					total += fileInfo.getFolderCount(recursive);
 				}
 			}
 			return total;
@@ -141,14 +205,35 @@ public class RecursiveDirectoryWalker {
 
 		public long getLength(boolean recursive) {
 			long total = length.get();
-			for (FileInfo fileInfo : childs) {
-				total += fileInfo.getLength();
+			for (EnhancedFileInfo fileInfo : childs) {
+				total += fileInfo.getLength(recursive);
 			}
 			return total;
 		}
 
 		public int getDepth() {
 			return depth;
+		}
+
+		public long getElapsed() {
+			return finished.get() ? elapsed : (elapsed = System.currentTimeMillis() - startTime);
+		}
+
+		public FileInfo getRootInfo() {
+			return rootInfo;
+		}
+
+		public boolean isFinished() {
+			return finished.get();
+		}
+
+		public float getCompletedRatio() {
+			return rootInfo.getCompletedRatio();
+		}
+
+		void finish(File file) {
+			rootInfo.files.remove(file);
+			finished.set(true);
 		}
 
 	}
@@ -173,7 +258,6 @@ public class RecursiveDirectoryWalker {
 
 		protected EnhancedFileInfo compute() {
 			final File directory = fileInfo.getFile();
-			System.out.println("处理目录： " + directory);
 			try {
 				if (shouldHandleDirectory(directory, fileInfo)) {
 					enterDirectory(directory, fileInfo);
@@ -183,23 +267,21 @@ public class RecursiveDirectoryWalker {
 						if (childFiles != null) {
 							for (File childFile : childFiles) {
 								if (childFile.isDirectory()) {
-									fileInfo.folderCount.incrementAndGet();
-									fileInfo.counter.incrementAndGet();
-									DirectoryWalkTask task = new DirectoryWalkTask(new FileInfoImpl(childFile, childDepth + 1), context);
+									fileInfo.countFolders();
+									DirectoryWalkTask task = new DirectoryWalkTask(
+											new FileInfoImpl(childFile, childDepth + 1, (RootInfo) fileInfo.getRootInfo()), context);
 									task.fork();
 									EnhancedFileInfo childInfo = task.join();
 									fileInfo.childs.add(childInfo);
 								} else if (shouldHandleFile(childFile, fileInfo)) {
-									fileInfo.fileCount.incrementAndGet();
-									fileInfo.length.addAndGet(childFile.length());
-									fileInfo.processingFile = childFile.getAbsolutePath();
+									fileInfo.countFiles();
+									fileInfo.setLength(childFile.length());
 									try {
 										handleFile(childFile, fileInfo);
 									} catch (Exception e) {
 										handleFileIfError(childFile, fileInfo, e);
 									}
 								}
-
 							}
 						}
 					}
@@ -208,16 +290,16 @@ public class RecursiveDirectoryWalker {
 			} catch (Exception e) {
 				handleDirectoryIfError(directory, fileInfo, e);
 			}
-			fileInfo.counter.decrementAndGet();
+			fileInfo.finish(directory);
 			return fileInfo;
 		}
 	}
 
-	public EnhancedFileInfo walk(int nThreads, Progressable progressable) throws Exception {
-		final FileInfoImpl fileInfo = new FileInfoImpl(directory, 0);
-		final ForkJoinPool pool = getPool(nThreads);
+	public final FileInfo walk(int nThreads, Progressable progressable) throws Exception {
+		final RootInfo rootInfo = new RootInfo(directory);
+		final FileInfoImpl fileInfo = new FileInfoImpl(directory, 0, rootInfo);
+		final ForkJoinPool pool = getThreadPool(nThreads);
 		final Map<String, Object> context = new ConcurrentHashMap<String, Object>();
-		fileInfo.counter.incrementAndGet();
 		ThreadUtils.runAsThread(() -> {
 			try {
 				DirectoryWalkTask task = new DirectoryWalkTask(fileInfo, context);
@@ -226,33 +308,26 @@ public class RecursiveDirectoryWalker {
 			} catch (Exception e) {
 				handleDirectoryIfError(directory, fileInfo, e);
 			} finally {
-				ThreadUtils.notify(fileInfo, () -> {
-					return fileInfo.counter.get() == 0;
+				ThreadUtils.notify(rootInfo, () -> {
+					return rootInfo.isFinished();
 				});
 				ExecutorUtils.gracefulShutdown(pool, 60000L);
 			}
 		});
 		if (progressable != null) {
 			ThreadUtils.scheduleAtFixedRate(() -> {
-				progressable.progress(fileInfo.getProcessingFile(), fileInfo.getFileCount(), fileInfo.getFolderCount(),
-						fileInfo.getLength(), getCompletedRatio(fileInfo), fileInfo.getElapsed());
-				return fileInfo.counter.get() > 0;
+				progressable.progress(rootInfo.getFileCount(), rootInfo.getFolderCount(), rootInfo.getLength(),
+						rootInfo.getCompletedRatio(), rootInfo.getElapsed());
+				return !rootInfo.isFinished();
 			}, 1, TimeUnit.SECONDS);
 		}
-		ThreadUtils.wait(fileInfo, () -> {
-			return fileInfo.counter.get() == 0;
+		ThreadUtils.wait(rootInfo, () -> {
+			return rootInfo.isFinished();
 		});
 		return fileInfo;
 	}
 
-	protected float getCompletedRatio(FileInfo info) {
-		int remainingCount = ((FileInfoImpl) info).counter.get();
-		int folderCount = info.getFolderCount();
-		float value = (float) folderCount / (folderCount + remainingCount);
-		return Floats.toFixed(value, 3);
-	}
-
-	protected ForkJoinPool getPool(int nThreads) {
+	protected ForkJoinPool getThreadPool(int nThreads) {
 		return new ForkJoinPool(nThreads);
 	}
 
@@ -271,6 +346,7 @@ public class RecursiveDirectoryWalker {
 	}
 
 	protected void handleFile(File file, FileInfo fileInfo) throws Exception {
+
 	}
 
 	protected void handleFileIfError(File file, FileInfo fileInfo, Exception cause) {
@@ -280,12 +356,12 @@ public class RecursiveDirectoryWalker {
 	}
 
 	public static void main(String[] args) throws Exception {
-		File directory = new File("d:/sql");
+		File directory = new File("D:\\work\\gitlab_repo\\mec-series");
 		RecursiveDirectoryWalker walker = new RecursiveDirectoryWalker(directory, -1, null);
 		FileInfo fileInfo = walker.walk(10, new Progressable() {
 
-			public void progress(String processingFile, int fileCount, int folderCount, long length, float completedRatio, long elapsed) {
-				System.out.println(processingFile + ", fileCount: " + fileCount + ", folderCount: " + folderCount + ", length: " + length
+			public void progress(int fileCount, int folderCount, long length, float completedRatio, long elapsed) {
+				System.out.println("fileCount: " + fileCount + ", folderCount: " + folderCount + ", length: " + length
 						+ ", completedRatio: " + completedRatio + ", elapsed: " + elapsed);
 			}
 		});

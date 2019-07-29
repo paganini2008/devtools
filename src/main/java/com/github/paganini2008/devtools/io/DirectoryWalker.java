@@ -3,8 +3,11 @@ package com.github.paganini2008.devtools.io;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -47,29 +50,30 @@ public class DirectoryWalker {
 	 */
 	static class FileInfoImpl implements FileInfo {
 
-		final AtomicInteger counter = new AtomicInteger(0);
 		final AtomicInteger fileCount = new AtomicInteger(0);
 		final AtomicInteger folderCount = new AtomicInteger(0);
 		final AtomicLong length = new AtomicLong(0);
-		final File file;
+		final File directory;
 		final long startTime;
+		final List<File> files = new CopyOnWriteArrayList<File>();
+		final int fileSize;
 		long elapsed;
 
-		FileInfoImpl(File file) {
+		FileInfoImpl(File directory) {
+			this.directory = directory;
+			this.files.addAll(Arrays.asList(directory.listFiles(file -> {
+				return file.isDirectory();
+			})));
+			this.fileSize = files.size();
 			this.startTime = System.currentTimeMillis();
-			this.file = file;
 		}
 
 		public File getFile() {
-			return file;
-		}
-
-		public long getStartTime() {
-			return startTime;
+			return directory;
 		}
 
 		public long getElapsed() {
-			return counter.get() > 0 ? (elapsed = System.currentTimeMillis() - startTime) : elapsed;
+			return files.size() > 0 ? (elapsed = System.currentTimeMillis() - startTime) : elapsed;
 		}
 
 		public int getFileCount() {
@@ -84,51 +88,59 @@ public class DirectoryWalker {
 			return length.get();
 		}
 
+		public boolean isFinished() {
+			return files.isEmpty();
+		}
+
+		public float getCompletedRatio() {
+			float value = (fileSize - files.size()) / (float) fileSize;
+			return Floats.toFixed(value, 3);
+		}
+
+		void finish(File file) {
+			files.remove(file);
+		}
+
 	}
 
 	public FileInfo walk(int nThreads, final Progressable progressable) {
-		final ThreadPool threadPool = ThreadPoolBuilder.common(nThreads).setLatch(new RecursiveLatch(nThreads * 2)).build();
+		final Executor executor = getThreadPool(nThreads);
 		try {
-			return walk(threadPool, progressable);
+			return walk(executor, progressable);
 		} finally {
-			threadPool.shutdown();
+			((ThreadPool) executor).shutdown();
 		}
 	}
 
-	public FileInfo walk(final Executor executor, final Progressable progressable) {
+	protected final FileInfo walk(final Executor executor, final Progressable progressable) {
 		final FileInfoImpl info = new FileInfoImpl(directory);
 		final Map<String, Object> context = new ConcurrentHashMap<String, Object>();
-		info.counter.incrementAndGet();
 		executor.execute(() -> {
 			try {
 				walk(directory, 0, context, executor, info);
 			} catch (IOException e) {
 				handleDirectoryIfError(directory, 0, e, context);
 			} finally {
-				info.counter.decrementAndGet();
 				ThreadUtils.notify(info, () -> {
-					return info.counter.get() == 0;
+					return info.isFinished();
 				});
 			}
 		});
 		if (progressable != null) {
 			ThreadUtils.scheduleAtFixedRate(() -> {
-				progressable.progress("-", info.getFileCount(), info.getFolderCount(), info.getLength(), getCompletedRatio(info),
+				progressable.progress(info.getFileCount(), info.getFolderCount(), info.getLength(), info.getCompletedRatio(),
 						info.getElapsed());
-				return info.counter.get() > 0;
+				return !info.isFinished();
 			}, 1, TimeUnit.SECONDS);
 		}
 		ThreadUtils.wait(info, () -> {
-			return info.counter.get() == 0;
+			return info.isFinished();
 		});
 		return info;
 	}
 
-	protected float getCompletedRatio(FileInfo info) {
-		int remainingCount = ((FileInfoImpl) info).counter.get();
-		int folderCount = info.getFolderCount();
-		float value = (float) folderCount / (folderCount + remainingCount);
-		return Floats.toFixed(value, 3);
+	protected Executor getThreadPool(int nThreads) {
+		return ThreadPoolBuilder.common(nThreads).setLatch(new RecursiveLatch(nThreads * 2)).build();
 	}
 
 	private void walk(final File directory, final int depth, final Map<String, Object> context, final Executor executor,
@@ -142,14 +154,12 @@ public class DirectoryWalker {
 					for (File childFile : childFiles) {
 						if (childFile.isDirectory()) {
 							info.folderCount.incrementAndGet();
-							info.counter.incrementAndGet();
 							executor.execute(() -> {
 								try {
 									walk(childFile, childDepth, context, executor, info);
 								} catch (IOException e) {
 									handleDirectoryIfError(childFile, childDepth, e, context);
 								} finally {
-									info.counter.decrementAndGet();
 								}
 							});
 						} else {
@@ -168,23 +178,22 @@ public class DirectoryWalker {
 			}
 		}
 		leaveDirectory(directory, depth, context);
+		info.finish(directory);
 	}
 
 	public static void main(String[] args) throws IOException {
-		File directory = new File("H:\\my project");
+		File directory = new File("D:\\work\\gitlab_repo");
 		DirectoryWalker walker = new DirectoryWalker(directory, -1, null);
-		ThreadPool threadPool = ThreadPoolBuilder.common(10).setLatch(new RecursiveLatch(10)).build();
-		FileInfo fileInfo = walker.walk(threadPool, new Progressable() {
+		FileInfo fileInfo = walker.walk(10, new Progressable() {
 
-			public void progress(String processingFile, int fileCount, int folderCount, long length, float completedRatio, long elapsed) {
-				System.out.println(processingFile + ", fileCount: " + fileCount + ", folderCount: " + folderCount + ", length: " + length
+			public void progress(int fileCount, int folderCount, long length, float completedRatio, long elapsed) {
+				System.out.println("fileCount: " + fileCount + ", folderCount: " + folderCount + ", length: " + length
 						+ ", completedRatio: " + completedRatio + ", elapsed: " + elapsed);
 			}
 		});
 		System.out.println(DateUtils.formatDurationAsHour(fileInfo.getElapsed()));
 		System.out.println(fileInfo);
 		System.in.read();
-		threadPool.shutdown();
 		System.out.println("Completed.");
 	}
 

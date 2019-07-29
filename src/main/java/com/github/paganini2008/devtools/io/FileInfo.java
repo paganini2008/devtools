@@ -14,14 +14,16 @@ import java.io.File;
 public interface FileInfo {
 
 	File getFile();
-	
+
 	int getFileCount();
 
 	int getFolderCount();
 
 	long getLength();
-	
-	long getStartTime();
+
+	float getCompletedRatio();
 
 	long getElapsed();
+
+	boolean isFinished();
 }
