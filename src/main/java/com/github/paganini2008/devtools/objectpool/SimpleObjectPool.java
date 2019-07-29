@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.github.paganini2008.devtools.beans.ToStringBuilder;
 import com.github.paganini2008.devtools.logging.Log;
 import com.github.paganini2008.devtools.logging.LogFactory;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
@@ -28,7 +27,7 @@ public class SimpleObjectPool implements ObjectPool {
 	private final LinkedList<Object> busyQueue = new LinkedList<Object>();
 	private final LinkedList<Object> idleQueue = new LinkedList<Object>();
 	private final IdentityHashMap<Object, PooledObject> pooledObjects = new IdentityHashMap<Object, PooledObject>();
-	private final int maxPoolSize;
+	private int maxPoolSize = 8;
 	private int minIdleSize = 1;
 	private int maxIdleSize;
 	private int maxUses = -1;
@@ -39,14 +38,12 @@ public class SimpleObjectPool implements ObjectPool {
 	private long testWhileIdleInterval = 3L * 1000;
 	private boolean checkObjectExpired;
 	private long checkObjectExpiredInterval = 60L * 1000;
-	private long testWhileExpiredInterval = 60L * 1000;
 	private long maxWaitTimeForExpiration = 60L * 1000;
 	private volatile boolean running;
 	private Timer timer = new Timer();
 	private final ObjectFactory objectFactory;
 
-	public SimpleObjectPool(int maxPoolSize, ObjectFactory objectFactory) {
-		this.maxPoolSize = maxPoolSize;
+	public SimpleObjectPool(ObjectFactory objectFactory) {
 		this.objectFactory = objectFactory;
 		this.running = true;
 	}
@@ -118,10 +115,10 @@ public class SimpleObjectPool implements ObjectPool {
 			return new PooledObject(object);
 		}
 
-		public String toString() {
-			return ToStringBuilder.reflectionToString(this);
-		}
+	}
 
+	public void setMaxPoolSize(int maxPoolSize) {
+		this.maxPoolSize = maxPoolSize;
 	}
 
 	public int getMaxPoolSize() {
@@ -180,14 +177,6 @@ public class SimpleObjectPool implements ObjectPool {
 
 	public void setTestWhileIdleInterval(long testWhileIdleInterval) {
 		this.testWhileIdleInterval = testWhileIdleInterval;
-	}
-
-	public long getTestWhileExpiredInterval() {
-		return testWhileExpiredInterval;
-	}
-
-	public void setTestWhileExpiredInterval(long testWhileExpiredInterval) {
-		this.testWhileExpiredInterval = testWhileExpiredInterval;
 	}
 
 	public boolean isCheckObjectExpired() {

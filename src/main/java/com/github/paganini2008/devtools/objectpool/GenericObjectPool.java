@@ -38,25 +38,24 @@ public class GenericObjectPool implements ObjectPool {
 	private final LinkedList<Object> busyQueue = new LinkedList<Object>();
 	private final LinkedList<Object> idleQueue = new LinkedList<Object>();
 	private final IdentityHashMap<Object, PooledObject> pooledObjects = new IdentityHashMap<Object, PooledObject>();
-	private final int maxPoolSize;
+	private int maxPoolSize = 8;
 	private int minIdleSize = 1;
 	private int maxIdleSize;
 	private int maxUses = -1;
 	private long checkIdleSizeInterval = 60L * 1000;
 	private int maxTestTimes = 3;
+
 	private volatile int poolSize;
 	private boolean testWhileIdle;
 	private long testWhileIdleInterval = 3L * 1000;
 	private boolean checkObjectExpired;
 	private long checkObjectExpiredInterval = 60L * 1000;
-	private long testWhileExpiredInterval = 60L * 1000;
 	private long maxWaitTimeForExpiration = 60L * 1000;
 	private final AtomicBoolean running;
 	private ScheduledExecutorService timer;
 	private final ObjectFactory objectFactory;
 
-	public GenericObjectPool(int maxPoolSize, ObjectFactory objectFactory) {
-		this.maxPoolSize = maxPoolSize;
+	public GenericObjectPool(ObjectFactory objectFactory) {
 		this.objectFactory = objectFactory;
 		this.timer = Executors.newScheduledThreadPool(3);
 		this.running = new AtomicBoolean(true);
@@ -135,6 +134,10 @@ public class GenericObjectPool implements ObjectPool {
 
 	}
 
+	public void setMaxPoolSize(int maxPoolSize) {
+		this.maxPoolSize = maxPoolSize;
+	}
+
 	public int getMaxPoolSize() {
 		return maxPoolSize;
 	}
@@ -191,14 +194,6 @@ public class GenericObjectPool implements ObjectPool {
 
 	public void setTestWhileIdleInterval(long testWhileIdleInterval) {
 		this.testWhileIdleInterval = testWhileIdleInterval;
-	}
-
-	public long getTestWhileExpiredInterval() {
-		return testWhileExpiredInterval;
-	}
-
-	public void setTestWhileExpiredInterval(long testWhileExpiredInterval) {
-		this.testWhileExpiredInterval = testWhileExpiredInterval;
 	}
 
 	public boolean isCheckObjectExpired() {

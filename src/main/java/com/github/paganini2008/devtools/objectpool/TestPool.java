@@ -45,7 +45,8 @@ public class TestPool {
 	}
 
 	public static void main(String[] args) throws Exception {
-		GenericObjectPool objectPool = new GenericObjectPool(10, new ResourceFactory());
+		GenericObjectPool objectPool = new GenericObjectPool(new ResourceFactory());
+		objectPool.setMaxPoolSize(10);
 		objectPool.setMaxIdleSize(3);
 		Executor executor = Executors.newFixedThreadPool(50);
 		AtomicInteger score = new AtomicInteger();
