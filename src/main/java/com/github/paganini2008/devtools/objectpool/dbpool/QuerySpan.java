@@ -19,6 +19,10 @@ public interface QuerySpan {
 	 */
 	void record(QueryTrace queryTrace);
 
+	/**
+	 * Get slow queries
+	 * @return
+	 */
 	List<QueryTrace> getQueryTraces();
 
 	/**

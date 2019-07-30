@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Map;
 
 import com.github.paganini2008.devtools.jdbc.AbstractDataSource;
 
@@ -95,6 +96,10 @@ public class GenericDataSource extends AbstractDataSource {
 
 	public void setStatisticalSqlSampleCount(int statisticalSqlSampleCount) {
 		this.connectionPool.getQueryStatistics().setStatisticalSqlSampleCount(statisticalSqlSampleCount);
+	}
+
+	public Map<String, QuerySpan> getStatisticsResult(String daily) {
+		return connectionPool.getStatisticsResult(daily);
 	}
 
 	public PrintWriter getLogWriter() throws SQLException {

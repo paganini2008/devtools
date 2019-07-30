@@ -1,15 +1,21 @@
 package com.github.paganini2008.devtools.objectpool.dbpool;
 
+import java.io.Serializable;
 import java.util.Arrays;
+
+import com.github.paganini2008.devtools.date.DateUtils;
 
 /**
  * QueryTraceImpl
  * 
  * @author Fred Feng
+ * @revised 2019-07
+ * @created 2014-03
  * @version 1.0
  */
-public class QueryTraceImpl implements QueryTrace {
+public class QueryTraceImpl implements QueryTrace, Serializable {
 
+	private static final long serialVersionUID = 5264579507686000051L;
 	private final String sql;
 	private final Object[] parameters;
 	private final long startTime;
@@ -39,8 +45,8 @@ public class QueryTraceImpl implements QueryTrace {
 	}
 
 	public String toString() {
-		return "QueryTrace [startTime=" + startTime + ", endTime=" + endTime + ", parameters=" + Arrays.toString(parameters) + ", sql="
-				+ sql + "]";
+		return "[QueryTrace] sql: " + sql + ", parameters: " + Arrays.toString(parameters) + ", elapsed: "
+				+ DateUtils.formatDurationAsHour(endTime - startTime);
 	}
 
 }

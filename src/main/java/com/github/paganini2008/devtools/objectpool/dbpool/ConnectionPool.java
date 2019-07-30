@@ -2,7 +2,11 @@ package com.github.paganini2008.devtools.objectpool.dbpool;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Map;
 
+import com.github.paganini2008.devtools.logging.Log;
+import com.github.paganini2008.devtools.logging.LogFactory;
+import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 import com.github.paganini2008.devtools.objectpool.GenericObjectPool;
 
 /**
@@ -12,6 +16,8 @@ import com.github.paganini2008.devtools.objectpool.GenericObjectPool;
  * @version 1.0
  */
 public class ConnectionPool {
+
+	private static Log logger = LogFactory.getLog(ConnectionPool.class);
 
 	public ConnectionPool() {
 		connectionFactory = new ConnectionFactory(this);
@@ -23,10 +29,6 @@ public class ConnectionPool {
 
 	private DailyQueryStatistics queryStatistics = new DailyQueryStatistics();
 	private long maxWaitTime = 60L * 1000;
-
-	public DailyQueryStatistics getQueryStatistics() {
-		return queryStatistics;
-	}
 
 	public void setUser(String username) {
 		this.connectionFactory.setUser(username);
@@ -96,6 +98,14 @@ public class ConnectionPool {
 		this.objectPool.setMaxWaitTimeForExpiration(maxWaitTimeForExpiration);
 	}
 
+	public Map<String, QuerySpan> getStatisticsResult(String daily) {
+		return queryStatistics.getStatisticsResult(daily);
+	}
+
+	DailyQueryStatistics getQueryStatistics() {
+		return queryStatistics;
+	}
+
 	/**
 	 * Take a Connection
 	 * 
@@ -106,6 +116,7 @@ public class ConnectionPool {
 		try {
 			PooledConnection connection = (PooledConnection) objectPool.borrowObject(maxWaitTime);
 			connection.setValid(true);
+			logger.info(ThreadUtils.currentThreadName() + " take connection " + connection.toString());
 			return connection.getProxyConnection();
 		} catch (Exception e) {
 			if (e instanceof SQLException) {
@@ -124,6 +135,7 @@ public class ConnectionPool {
 	public void giveback(PooledConnection connection) throws SQLException {
 		try {
 			objectPool.givebackObject(connection);
+			logger.info(ThreadUtils.currentThreadName() + " giveback connection " + connection.toString());
 		} catch (Exception e) {
 			if (e instanceof SQLException) {
 				throw (SQLException) e;

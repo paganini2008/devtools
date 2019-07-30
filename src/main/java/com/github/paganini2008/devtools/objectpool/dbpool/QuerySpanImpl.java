@@ -1,5 +1,6 @@
 package com.github.paganini2008.devtools.objectpool.dbpool;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
@@ -15,7 +16,9 @@ import com.github.paganini2008.devtools.collection.LruSet;
  * @revised 2019-07
  * @created 2014-03
  */
-public class QuerySpanImpl implements QuerySpan {
+public class QuerySpanImpl implements QuerySpan, Serializable {
+
+	private static final long serialVersionUID = 3318269140121500179L;
 
 	public QuerySpanImpl(int maxSize, long acceptableExecutionTime) {
 		this.slowQueries = new LruSet<QueryTrace>(new TreeSet<QueryTrace>(), maxSize);
@@ -68,7 +71,7 @@ public class QuerySpanImpl implements QuerySpan {
 
 	public String toString() {
 		return "QuerySpan [executionCount=" + getExecutionCount() + ", executionAvgTime=" + getExecutionAvgTime() + ", executionMaxTime="
-				+ getExecutionMaxTime() + ", executionMinTime=" + getExecutionMinTime() + "]";
+				+ getExecutionMaxTime() + ", executionMinTime=" + getExecutionMinTime() + ", slowQueries: " + slowQueries.size() + "]";
 	}
 
 }

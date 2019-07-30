@@ -1,4 +1,4 @@
-package com.github.paganini2008.devtools.objectpool;
+package com.github.paganini2008.devtools.objectpool.examples;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +9,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.github.paganini2008.devtools.Sequence;
 import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
+import com.github.paganini2008.devtools.objectpool.GenericObjectPool;
+import com.github.paganini2008.devtools.objectpool.ObjectFactory;
 
-public class TestPool {
+public class TestObjectPool {
 
 	public static class Resource {
 
