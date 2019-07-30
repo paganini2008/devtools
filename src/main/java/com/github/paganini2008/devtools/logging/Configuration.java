@@ -19,7 +19,7 @@ import java.util.logging.Level;
  */
 public class Configuration {
 
-	private static final String SYS_PROP_PREFIX = "lazycat.logging.";
+	private static final String SYS_PROP_PREFIX = "devtools.logging.";
 
 	private static final Comparator<String> nameComparator = new Comparator<String>() {
 		public int compare(String left, String right) {

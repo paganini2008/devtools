@@ -17,6 +17,10 @@ import com.github.paganini2008.devtools.objectpool.dbpool.QuerySpan;
 
 public class TestDbPool {
 
+	static {
+		System.setProperty("devtools.logging.com.github.paganini2008.devtools.objectpool", "debug");
+	}
+
 	public static void main(String[] args) throws Exception {
 		GenericDataSource ds = new GenericDataSource();
 		ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
@@ -25,13 +29,13 @@ public class TestDbPool {
 		ds.setUser("fengyan");
 		ds.setPassword("Allyes@911");
 		Executor executor = Executors.newFixedThreadPool(10);
-		for (final int i : Sequence.forEach(0, 100)) {
+		for (final int i : Sequence.forEach(0, 10000)) {
 			executor.execute(() -> {
 				Connection connection = null;
 				try {
 					connection = ds.getConnection();
-					Iterator<Map<String, Object>> iterator = DBUtils.executeQuery(connection,
-							"select * from mec_area where level=?", new Object[] {RandomUtils.randomInt(1, 4)});
+					Iterator<Map<String, Object>> iterator = DBUtils.executeQuery(connection, "select * from mec_area where level=?",
+							new Object[] { RandomUtils.randomInt(1, 4) });
 					System.out.println(CollectionUtils.getFirst(iterator));
 				} catch (SQLException e) {
 					e.printStackTrace();
@@ -41,7 +45,7 @@ public class TestDbPool {
 			});
 		}
 		System.in.read();
-		Map<String, QuerySpan> results= ds.getStatisticsResult("30/07/2019");
+		Map<String, QuerySpan> results = ds.getStatisticsResult("30/07/2019");
 		System.out.println(results);
 		ds.close();
 		ExecutorUtils.gracefulShutdown(executor, 60000);
