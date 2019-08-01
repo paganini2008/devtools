@@ -1,17 +1,15 @@
 package com.github.paganini2008.devtools;
 
-import java.util.UUID;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.io.File;
 
 public class TestMain {
 
 	public static void main(String[] args) throws Exception {
-		BlockingQueue<String> q = new LinkedBlockingQueue<String>(10);
-		for(int i=0;i<12;i++) {
-			q.add(UUID.randomUUID().toString());
-		}
-		System.out.println(q.size());
+		File directory = new File("d:/sql/");
+		File file = new File("d:/sql/abc/123/jkl.jsp");
+		String path = file.getAbsolutePath().replace(directory.getAbsolutePath(), "");
+		String name = path.substring(1, path.indexOf(File.separatorChar, 1));
+		System.out.println(name);
 	}
 
 }

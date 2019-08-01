@@ -356,7 +356,7 @@ public class RecursiveDirectoryWalker {
 	}
 
 	public static void main(String[] args) throws Exception {
-		File directory = new File("D:\\work\\gitlab_repo\\mec-series");
+		File directory = new File("H:\\Pingansec2016");
 		RecursiveDirectoryWalker walker = new RecursiveDirectoryWalker(directory, -1, null);
 		FileInfo fileInfo = walker.walk(10, new Progressable() {
 

@@ -3,17 +3,15 @@ package com.github.paganini2008.devtools.io;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.github.paganini2008.devtools.date.DateUtils;
+import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
 import com.github.paganini2008.devtools.multithreads.ThreadPool;
 import com.github.paganini2008.devtools.multithreads.ThreadPoolBuilder;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
@@ -55,15 +53,20 @@ public class DirectoryWalker {
 		final AtomicLong length = new AtomicLong(0);
 		final File directory;
 		final long startTime;
-		final List<File> files = new CopyOnWriteArrayList<File>();
+		final Map<String, AtomicInteger> files = new ConcurrentHashMap<String, AtomicInteger>();
 		final int fileSize;
 		long elapsed;
 
 		FileInfoImpl(File directory) {
 			this.directory = directory;
-			this.files.addAll(Arrays.asList(directory.listFiles(file -> {
+			File[] fileArray = directory.listFiles(file -> {
 				return file.isDirectory();
-			})));
+			});
+			if (fileArray != null) {
+				for (File file : fileArray) {
+					files.put(file.getName(), new AtomicInteger(-1));
+				}
+			}
 			this.fileSize = files.size();
 			this.startTime = System.currentTimeMillis();
 		}
@@ -97,8 +100,30 @@ public class DirectoryWalker {
 			return Floats.toFixed(value, 3);
 		}
 
-		void finish(File file) {
-			files.remove(file);
+		void startScan(File file) {
+			final String name = getPathName(file);
+			AtomicInteger counter = files.get(name);
+			if (counter != null) {
+				counter.incrementAndGet();
+			}
+		}
+
+		void finishScan(File file) {
+			final String name = getPathName(file);
+			AtomicInteger counter = files.get(name);
+			if (counter != null) {
+				if (counter.get() == 0) {
+					files.remove(name);
+				} else if (counter.get() > 0) {
+					counter.decrementAndGet();
+				}
+			}
+		}
+
+		private String getPathName(File file) {
+			String path = file.getAbsolutePath().replace(directory.getAbsolutePath(), "");
+			int index = path.indexOf(File.separatorChar, 1);
+			return index != -1 ? path.substring(1, index) : path.substring(1);
 		}
 
 	}
@@ -108,7 +133,11 @@ public class DirectoryWalker {
 		try {
 			return walk(executor, progressable);
 		} finally {
-			((ThreadPool) executor).shutdown();
+			if (executor instanceof ThreadPool) {
+				((ThreadPool) executor).shutdown();
+			} else {
+				ExecutorUtils.gracefulShutdown(executor, 60000L);
+			}
 		}
 	}
 
@@ -154,12 +183,14 @@ public class DirectoryWalker {
 					for (File childFile : childFiles) {
 						if (childFile.isDirectory()) {
 							info.folderCount.incrementAndGet();
+							info.startScan(childFile);
 							executor.execute(() -> {
 								try {
 									walk(childFile, childDepth, context, executor, info);
 								} catch (IOException e) {
 									handleDirectoryIfError(childFile, childDepth, e, context);
 								} finally {
+									info.finishScan(childFile);
 								}
 							});
 						} else {
@@ -170,6 +201,7 @@ public class DirectoryWalker {
 									handleFile(childFile, childDepth, context);
 								} catch (Exception e) {
 									handleFileIfError(childFile, childDepth, e, context);
+								} finally {
 								}
 							}
 						}
@@ -178,11 +210,10 @@ public class DirectoryWalker {
 			}
 		}
 		leaveDirectory(directory, depth, context);
-		info.finish(directory);
 	}
 
 	public static void main(String[] args) throws IOException {
-		File directory = new File("D:\\work\\gitlab_cloud");
+		File directory = new File("H:\\JiYong2018");
 		DirectoryWalker walker = new DirectoryWalker(directory, -1, null);
 		FileInfo fileInfo = walker.walk(10, new Progressable() {
 

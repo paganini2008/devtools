@@ -1,15 +1,14 @@
 package com.github.paganini2008.devtools;
 
 /**
- * Assert
  * 
+ * Assert
+ *
  * @author Fred Feng
- * @version 1.0
+ * @revised 2019-07
+ * @created 2011-05
  */
-public class Assert {
-
-	private Assert() {
-	}
+public abstract class Assert {
 
 	public static void hasNoLength(CharSequence text) {
 		hasNoLength(text, "The string type parameter must not be null or empty.");
@@ -48,8 +47,7 @@ public class Assert {
 	}
 
 	public static void isNotArray(Object arg) {
-		isNotArray(arg, "The argument type of '%s' is not array.",
-				new Object[] { arg != null ? arg.getClass() : null });
+		isNotArray(arg, "The argument type of '%s' is not array.", new Object[] { arg != null ? arg.getClass() : null });
 	}
 
 	public static void isNotArray(Object arg, String msg) {

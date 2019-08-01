@@ -11,7 +11,7 @@ import com.github.paganini2008.devtools.Case;
  * @author Fred Feng
  * @created 2018-03
  */
-public class KeyCaseInsensitiveMap<V> extends KeyInsensitiveMap<V> {
+public class KeyCaseInsensitiveMap<V> extends KeyConversionMap<String, String, V> {
 
 	private static final long serialVersionUID = -1990983691300106507L;
 	private static final String NULL = "NULL";

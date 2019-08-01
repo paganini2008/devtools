@@ -13,9 +13,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.github.paganini2008.devtools.Cases;
 import com.github.paganini2008.devtools.Observable;
 import com.github.paganini2008.devtools.Observer;
-import com.github.paganini2008.devtools.collection.CaseInsensitiveMap;
+import com.github.paganini2008.devtools.beans.Tuple;
+import com.github.paganini2008.devtools.collection.CollectionUtils;
 
 /**
  * DBUtils
@@ -192,7 +194,13 @@ public class DBUtils {
 		}
 	}
 
-	public static Iterator<Map<String, Object>> executeQuery(Connection connection, String sql) throws SQLException {
+	public static Object executeOneResultQuery(Connection connection, String sql) throws SQLException {
+		Iterator<Tuple> iterator = executeQuery(connection, sql);
+		Map<String, Object> first = CollectionUtils.getFirst(iterator);
+		return first != null ? CollectionUtils.getFirst(first.values().iterator()) : null;
+	}
+
+	public static Iterator<Tuple> executeQuery(Connection connection, String sql) throws SQLException {
 		Statement sm = null;
 		ResultSet rs = null;
 		Observable observable = Observable.unrepeatable();
@@ -205,7 +213,13 @@ public class DBUtils {
 		}
 	}
 
-	public static Iterator<Map<String, Object>> executeQuery(Connection connection, String sql, Object[] args) throws SQLException {
+	public static Object executeOneResultQuery(Connection connection, String sql, Object[] args) throws SQLException {
+		Iterator<Tuple> iterator = executeQuery(connection, sql, args);
+		Tuple first = CollectionUtils.getFirst(iterator);
+		return first != null ? CollectionUtils.getFirst(first.values().iterator()) : null;
+	}
+
+	public static Iterator<Tuple> executeQuery(Connection connection, String sql, Object[] args) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		Observable observable = Observable.unrepeatable();
@@ -228,21 +242,21 @@ public class DBUtils {
 		});
 	}
 
-	public static Map<String, Object> toMap(ResultSet rs) throws SQLException {
+	private static Tuple toTuple(ResultSet rs) throws SQLException {
 		ResultSetMetaData rsmd = rs.getMetaData();
 		int columnCount = rsmd.getColumnCount();
-		Map<String, Object> results = new CaseInsensitiveMap<Object>();
+		Tuple tuple = new Tuple(Cases.UNDER_SCORE);
 		for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
 			String columnName = rsmd.getColumnLabel(columnIndex);
 			Object value = rs.getObject(columnIndex);
-			results.put(columnName, value);
+			tuple.put(columnName, value);
 		}
-		return results;
+		return tuple;
 	}
 
-	private static Iterator<Map<String, Object>> toIterator(final ResultSet rs, final Observable observable) throws SQLException {
+	private static Iterator<Tuple> toIterator(final ResultSet rs, final Observable observable) throws SQLException {
 
-		return new Iterator<Map<String, Object>>() {
+		return new Iterator<Tuple>() {
 
 			public boolean hasNext() {
 				boolean state = true;
@@ -258,10 +272,10 @@ public class DBUtils {
 				}
 			}
 
-			public Map<String, Object> next() {
+			public Tuple next() {
 				boolean state = true;
 				try {
-					return toMap(rs);
+					return toTuple(rs);
 				} catch (SQLException e) {
 					state = false;
 					throw new IllegalStateException(e);

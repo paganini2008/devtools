@@ -13,12 +13,10 @@ import com.github.paganini2008.devtools.collection.LruMap;
  * 
  * @author Fred Feng
  * @revised 2019-05
+ * @created 2011-05
  * @version 1.0
  */
-public class CharsetUtils {
-
-	private CharsetUtils() {
-	}
+public abstract class CharsetUtils {
 
 	private static final LruMap<String, Charset> cache = new LruMap<String, Charset>(16);
 

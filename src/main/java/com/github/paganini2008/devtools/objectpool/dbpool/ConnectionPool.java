@@ -17,7 +17,7 @@ import com.github.paganini2008.devtools.objectpool.GenericObjectPool;
  */
 public class ConnectionPool {
 
-	private static Log logger = LogFactory.getLog(ConnectionPool.class);
+	private static final Log logger = LogFactory.getLog(ConnectionPool.class);
 
 	public ConnectionPool() {
 		connectionFactory = new ConnectionFactory(this);
@@ -116,7 +116,9 @@ public class ConnectionPool {
 		try {
 			PooledConnection connection = (PooledConnection) objectPool.borrowObject(maxWaitTime);
 			connection.setValid(true);
-			logger.info(ThreadUtils.currentThreadName() + " take connection " + connection.toString());
+			if (logger.isDebugEnabled()) {
+				logger.debug(ThreadUtils.currentThreadName() + " take connection " + connection.toString());
+			}
 			return connection.getProxyConnection();
 		} catch (Exception e) {
 			if (e instanceof SQLException) {
@@ -135,7 +137,9 @@ public class ConnectionPool {
 	public void giveback(PooledConnection connection) throws SQLException {
 		try {
 			objectPool.givebackObject(connection);
-			logger.info(ThreadUtils.currentThreadName() + " giveback connection " + connection.toString());
+			if (logger.isDebugEnabled()) {
+				logger.debug(ThreadUtils.currentThreadName() + " giveback connection " + connection.toString());
+			}
 		} catch (Exception e) {
 			if (e instanceof SQLException) {
 				throw (SQLException) e;

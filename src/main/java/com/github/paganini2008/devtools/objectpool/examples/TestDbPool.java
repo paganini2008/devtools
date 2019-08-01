@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 
 import com.github.paganini2008.devtools.RandomUtils;
 import com.github.paganini2008.devtools.Sequence;
+import com.github.paganini2008.devtools.beans.Tuple;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.jdbc.DBUtils;
 import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
@@ -34,7 +35,7 @@ public class TestDbPool {
 				Connection connection = null;
 				try {
 					connection = ds.getConnection();
-					Iterator<Map<String, Object>> iterator = DBUtils.executeQuery(connection, "select * from mec_area where level=?",
+					Iterator<Tuple> iterator = DBUtils.executeQuery(connection, "select * from mec_area where level=?",
 							new Object[] { RandomUtils.randomInt(1, 4) });
 					System.out.println(CollectionUtils.getFirst(iterator));
 				} catch (SQLException e) {

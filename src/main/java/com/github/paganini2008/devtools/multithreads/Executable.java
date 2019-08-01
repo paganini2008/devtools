@@ -19,6 +19,7 @@ public interface Executable {
 	}
 
 	default void onCancellation() {
+		System.out.println("Executable.onCancellation()");
 	}
 
 }

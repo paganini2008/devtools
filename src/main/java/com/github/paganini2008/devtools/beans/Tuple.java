@@ -13,6 +13,7 @@ import com.github.paganini2008.devtools.collection.MapUtils;
  * Tuple
  * 
  * @author Fred Feng
+ * @revised 2019-07
  * @created 2019-03
  */
 public class Tuple extends KeyCaseInsensitiveMap<Object> {
@@ -30,6 +31,7 @@ public class Tuple extends KeyCaseInsensitiveMap<Object> {
 	public Object[] toArray() {
 		return values().toArray();
 	}
+
 	public <T> T getRequiredProperty(String key, Class<T> requiredType) {
 		T result = getProperty(key, requiredType);
 		if (result == null) {
