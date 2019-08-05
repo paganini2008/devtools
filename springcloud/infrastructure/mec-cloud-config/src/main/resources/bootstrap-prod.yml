@@ -1,0 +1,33 @@
+server:
+   port: 7010
+spring:
+  application:
+    name: config-service
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://git.d-linking.tech/Java/mec-syscfg.git
+          label: hlsh-v3
+          search-paths: /hlsh-config/cloud/default-settings/{profile}
+          username: fengyan
+          password: 20180514
+          fail-fast: true
+          retry:
+            initial-interval: 1000
+            max-attempts: 10
+            max-interval: 5000
+            multiplier: 1.1
+eureka:
+  instance:
+    prefer-ip-address: true
+    metadata-map:
+      zone: zone-1,zone-2
+  client:
+    region: shanghai
+    availability-zones:
+      shanghai: zone-1,zone-2
+    prefer-same-zone-eureka: true
+    service-url:
+      zone-1: http://allyes:allyes@10.26.5.12:7001/eureka/
+      zone-2: http://allyes:allyes@10.26.5.13:7001/eureka/

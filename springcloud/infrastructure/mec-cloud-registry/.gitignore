@@ -1,0 +1,26 @@
+#maven
+/target/
+# Eclipse
+.classpath
+.project
+/.metadata/
+/.settings/
+#other
+/tmp/
+/logs/
+/mec-cloud-registry.iml
+/bin/
+/app-error.log
+/app-info.log
+#maven
+/target/
+# Eclipse
+.classpath
+.project
+/.metadata/
+/.settings/
+#other
+/tmp/
+/logs/
+/mec-cloud-registry.iml
+/bin/

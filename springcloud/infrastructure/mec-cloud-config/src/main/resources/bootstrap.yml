@@ -1,0 +1,4 @@
+# 运行时使用命令行参数
+spring:
+  profiles:
+    active: dev

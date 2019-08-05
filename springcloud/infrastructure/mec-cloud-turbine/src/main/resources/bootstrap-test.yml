@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: turbine-service
+  security:
+    basic:
+      enabled: true
+    user:
+      name: test
+      password: test
+eureka:
+  instance:
+    prefer-ip-address: true
+    metadata-map:
+      zone: zone-1,zone-2
+  client:
+    region: shanghai
+    availability-zones:
+      shanghai: zone-1,zone-2
+    prefer-same-zone-eureka: true
+    service-url:
+      zone-1: http://allyes:allyes@10.10.0.10:7001/eureka/
+      zone-2: http://allyes:allyes@10.10.0.11:7001/eureka/

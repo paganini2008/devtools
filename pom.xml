@@ -6,7 +6,8 @@
     <artifactId>devtools</artifactId>
     <version>1.0</version>
     <modules>
-	    <module>devtools-base</module>
+	    <module>base</module>
+		<module>springcloud</module>
     </modules>
     <packaging>pom</packaging>
 

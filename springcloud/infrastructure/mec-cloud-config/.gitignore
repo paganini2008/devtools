@@ -1,0 +1,8 @@
+/bin/
+/target/
+/.settings/
+.classpath
+.project
+/mec-cloud-gateway.iml
+/app-error.log
+/app-info.log
