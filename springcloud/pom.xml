@@ -11,6 +11,7 @@
     <modules>
 	    <module>components</module>
 		<module>infrastructure</module>
+		<module>microservice</module>
     </modules>
     <packaging>pom</packaging>
     <name>springcloud</name>

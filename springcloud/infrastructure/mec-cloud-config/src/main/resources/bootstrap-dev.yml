@@ -29,4 +29,4 @@ eureka:
       shanghai: zone-3
     prefer-same-zone-eureka: true
     service-url:
-      zone-3: http://dev:dev@10.200.28.42:7003/eureka/
+      zone-3: http://dev:dev@localhost:7003/eureka/

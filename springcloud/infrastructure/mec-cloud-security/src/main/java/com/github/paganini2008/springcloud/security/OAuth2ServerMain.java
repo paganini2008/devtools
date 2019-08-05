@@ -12,8 +12,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.allyes.components.authorization.EnableOAuth2Server;
-import com.github.paganini2008.springcloud.config.GitConfigurationSpringApplication;
+import com.github.paganini2008.springboot.authorization.EnableOAuth2Server;
+import com.github.paganini2008.springboot.config.GitConfigurationSpringApplication;
 
 /**
  * 

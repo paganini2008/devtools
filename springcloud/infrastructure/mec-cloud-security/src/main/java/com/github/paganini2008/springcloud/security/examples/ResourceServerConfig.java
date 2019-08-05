@@ -16,7 +16,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
-import com.allyes.components.authorization.BugFixedRedisTokenStore;
+import com.github.paganini2008.springboot.authorization.BugFixedRedisTokenStore;
 
 import lombok.Getter;
 import lombok.Setter;
