@@ -115,6 +115,10 @@ public class ClassUtils {
 		return wrapperArrayClassMap.get(name);
 	}
 
+	public static boolean isPrimitiveOrWrapper(Class<?> type) {
+		return type != null && (type.isPrimitive() || wrapperPrimitiveMapper.containsKey(type));
+	}
+
 	public static String getAbbreviation(String name) {
 		if (name == null) {
 			return "";
@@ -305,6 +309,7 @@ public class ClassUtils {
 			for (Class<?> interfaceClass : interfaces) {
 				if (!found.contains(interfaceClass)) {
 					found.add(interfaceClass);
+					getAllInterfaces(interfaceClass, found);
 				}
 			}
 			getAllSuperClassesAndInterfaces(superClass, found);

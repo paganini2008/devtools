@@ -16,7 +16,7 @@ import javax.persistence.criteria.Selection;
 public abstract class AbstractTransformer<E, T> implements Transformer<E, T> {
 
 	public T transfer(Model<E> model, List<Selection<?>> selections, Tuple tuple) {
-		final T object = createObject();
+		final T object = createObject(selections.size());
 		for (Selection<?> selection : selections) {
 			setAttributeValue(model, selection.getAlias(), selection.getJavaType(), tuple, object);
 		}
@@ -26,7 +26,7 @@ public abstract class AbstractTransformer<E, T> implements Transformer<E, T> {
 
 	protected abstract void setAttributeValue(Model<E> model, String attributeName, Class<?> javaType, Tuple tuple, T object);
 
-	protected abstract T createObject();
+	protected abstract T createObject(int columns);
 
 	protected void afterTransfer(Model<E> model, Tuple tuple, T object) {
 	}

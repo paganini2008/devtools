@@ -21,6 +21,8 @@ public interface Tuple {
 	
 	Object get(String key);
 	
+	void set(String key, Object value);
+	
 	String[] keys();
 
 	String getProperty(String key);

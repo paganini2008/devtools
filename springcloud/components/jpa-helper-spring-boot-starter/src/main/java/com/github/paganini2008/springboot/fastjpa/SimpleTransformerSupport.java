@@ -9,16 +9,16 @@ import com.github.paganini2008.devtools.beans.PropertyUtils;
 
 /**
  * 
- * TransformerSupport
+ * SimpleTransformerSupport
  *
  * @author Fred Feng
  * @revised 2019-07
  * @created 2019-02
  * @version 1.0
  */
-public abstract class TransformerSupport<E, T> extends AbstractTransformer<E, T> {
+public abstract class SimpleTransformerSupport<E, T> extends AbstractTransformer<E, T> {
 
-	private static final Logger logger = LoggerFactory.getLogger(TransformerSupport.class);
+	private static final Logger logger = LoggerFactory.getLogger(SimpleTransformerSupport.class);
 
 	protected void setAttributeValue(Model<E> model, String attributeName, Class<?> javaType, Tuple tuple, T object) {
 		final Object result = tuple.get(attributeName);

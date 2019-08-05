@@ -45,9 +45,9 @@ public class ThreadFactoryBuilder {
 
 	public ThreadFactoryBuilder setPriority(Integer priority) {
 		if (priority != null) {
-			Assert.isGt(priority, Thread.MAX_PRIORITY, "Thread priority (%s) must be <= %s",
+			Assert.gt(priority, Thread.MAX_PRIORITY, "Thread priority (%s) must be <= %s",
 					new Object[] { priority, Thread.MAX_PRIORITY });
-			Assert.isLt(priority, Thread.MIN_PRIORITY, "Thread priority (%s) must be >= %s",
+			Assert.lt(priority, Thread.MIN_PRIORITY, "Thread priority (%s) must be >= %s",
 					new Object[] { priority, Thread.MIN_PRIORITY });
 		}
 		this.priority = priority;

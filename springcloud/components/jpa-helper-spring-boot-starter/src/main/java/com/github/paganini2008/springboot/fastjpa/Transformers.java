@@ -1,9 +1,14 @@
 package com.github.paganini2008.springboot.fastjpa;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
-import com.github.paganini2008.springboot.fastjpa.support.BeanReflection;
+import com.github.paganini2008.devtools.Cases;
+import com.github.paganini2008.devtools.beans.TupleImpl;
+import com.github.paganini2008.devtools.collection.Tuple;
+import com.github.paganini2008.springboot.fastjpa.support.BeanTransformer;
 
 /**
  * 
@@ -20,11 +25,15 @@ public abstract class Transformers {
 		return new MapTransformer<E>();
 	}
 
-	public static <E, T> Transformer<E, T> asBean(Class<T> resultClass) {
-		return asBean(resultClass, null);
+	public static <E> Transformer<E, Tuple> asTuple() {
+		return new TupleTransformer<E>();
 	}
 
-	public static <E, T> Transformer<E, T> asBean(Class<T> resultClass, String[] includedProperties) {
+	public static <E> Transformer<E, List<Object>> asList() {
+		return new ListTransformer<E>();
+	}
+
+	public static <E, T> Transformer<E, T> asBean(Class<T> resultClass, String... includedProperties) {
 		return new BeanTransformer<E, T>(resultClass, includedProperties);
 	}
 
@@ -37,13 +46,13 @@ public abstract class Transformers {
 	 * @created 2019-02
 	 * @version 1.0
 	 */
-	public static class MapTransformer<E> extends TransformerSupport<E, Map<String, Object>> {
+	public static class MapTransformer<E> extends SimpleTransformerSupport<E, Map<String, Object>> {
 
 		MapTransformer() {
 		}
 
-		protected Map<String, Object> createObject() {
-			return new LinkedHashMap<String, Object>();
+		protected Map<String, Object> createObject(int columns) {
+			return new LinkedHashMap<String, Object>(columns);
 		}
 
 		protected void setAsValue(String attributeName, Object attributeValue, Map<String, Object> data) {
@@ -54,27 +63,48 @@ public abstract class Transformers {
 
 	/**
 	 * 
-	 * BeanTransformer
+	 * TupleTransformer
 	 *
 	 * @author Fred Feng
 	 * @revised 2019-07
-	 * @created 2019-02
+	 * @created 2019-03
 	 * @version 1.0
 	 */
-	public static class BeanTransformer<E, T> extends TransformerSupport<E, T> {
+	public static class TupleTransformer<E> extends SimpleTransformerSupport<E, Tuple> {
 
-		private final BeanReflection<T> beanReflection;
-
-		BeanTransformer(Class<T> resultClass, String... includedProperties) {
-			this.beanReflection = new BeanReflection<T>(resultClass, includedProperties);
+		TupleTransformer() {
 		}
 
-		protected void setAsValue(String attributeName, Object attributeValue, T object) {
-			beanReflection.setProperty(object, attributeName, attributeValue);
+		protected Tuple createObject(int columns) {
+			return new TupleImpl(Cases.UNDER_SCORE);
 		}
 
-		protected T createObject() {
-			return beanReflection.instantiateBean();
+		protected void setAsValue(String attributeName, Object attributeValue, Tuple data) {
+			data.set(attributeName, attributeValue);
+		}
+
+	}
+
+	/**
+	 * 
+	 * ListTransformer
+	 *
+	 * @author Fred Feng
+	 * @revised 2019-07
+	 * @created 2019-07
+	 * @version 1.0
+	 */
+	public static class ListTransformer<E> extends SimpleTransformerSupport<E, List<Object>> {
+
+		ListTransformer() {
+		}
+
+		protected List<Object> createObject(int columns) {
+			return new ArrayList<Object>(columns);
+		}
+
+		protected void setAsValue(String attributeName, Object attributeValue, List<Object> data) {
+			data.add(attributeValue);
 		}
 
 	}

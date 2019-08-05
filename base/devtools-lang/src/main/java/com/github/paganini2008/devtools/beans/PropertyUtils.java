@@ -85,7 +85,7 @@ public class PropertyUtils {
 			for (PropertyDescriptor descriptor : descriptors) {
 				data.put(descriptor.getName(), descriptor);
 			}
-			return data;
+			return Collections.unmodifiableMap(data);
 		}
 		return Collections.EMPTY_MAP;
 	}

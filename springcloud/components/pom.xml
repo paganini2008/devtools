@@ -23,4 +23,11 @@
     <name>components</name>
     <description>Springcloud Framework Extended Common Components</description>
 	
+	<dependencies>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
 </project>

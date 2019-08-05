@@ -37,12 +37,8 @@ public class TupleImpl extends KeyCaseInsensitiveMap<Object> implements Tuple {
 		return keySet().toArray(new String[0]);
 	}
 
-	public <T> T getRequiredProperty(String key, Class<T> requiredType) {
-		T result = getProperty(key, requiredType);
-		if (result == null) {
-			throw new MissingKeyException(key);
-		}
-		return result;
+	public void set(String key, Object value) {
+		super.put(key, value);
 	}
 
 	public Object get(String key) {
@@ -63,6 +59,14 @@ public class TupleImpl extends KeyCaseInsensitiveMap<Object> implements Tuple {
 
 	public <T> T getProperty(String key, Class<T> requiredType, T defaultValue) {
 		return MapUtils.get(this, key, requiredType, defaultValue);
+	}
+
+	public <T> T getRequiredProperty(String key, Class<T> requiredType) {
+		T result = getProperty(key, requiredType);
+		if (result == null) {
+			throw new MissingKeyException(key);
+		}
+		return result;
 	}
 
 	public <T> T toBean(Class<T> requiredType) {
