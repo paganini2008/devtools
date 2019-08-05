@@ -1,6 +1,5 @@
-# 运行时使用命令行参数
 server:
   port: 10010
 spring:
   profiles:
-    active: prod
+    active: dev

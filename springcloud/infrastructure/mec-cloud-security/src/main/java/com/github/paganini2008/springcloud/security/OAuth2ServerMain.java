@@ -1,4 +1,4 @@
-package com.allyes.mec.cloud.security;
+package com.github.paganini2008.springcloud.security;
 
 import java.io.File;
 import java.security.Principal;
@@ -17,14 +17,16 @@ import com.allyes.developer.utils.io.FileUtils;
 /**
  * 
  * OAuth2ServerMain
- * 
- * @author Fred Feng
  *
+ * @author Fred Feng
+ * @revised 2019-07
+ * @created 2018-05
+ * @version 1.0
  */
 @EnableOAuth2Server
 @RestController
 @SpringBootApplication
-@ComponentScan(basePackages = { "com.allyes.mec.cloud.security" })
+@ComponentScan(basePackages = { "com.github.paganini2008.springcloud.security" })
 public class OAuth2ServerMain {
 	static {
 		System.setProperty("spring.devtools.restart.enabled", "false");

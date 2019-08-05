@@ -1,4 +1,4 @@
-package com.allyes.mec.cloud.security.config;
+package com.github.paganini2008.springcloud.security.config;
 
 
 import java.lang.reflect.Method;
@@ -21,10 +21,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import com.allyes.mec.cloud.security.utils.JsonUtils;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.paganini2008.springcloud.security.utils.JsonUtils;
 
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;

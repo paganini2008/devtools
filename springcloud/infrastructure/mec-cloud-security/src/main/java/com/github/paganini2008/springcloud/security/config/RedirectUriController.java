@@ -1,4 +1,4 @@
-package com.allyes.mec.cloud.security.config;
+package com.github.paganini2008.springcloud.security.config;
 
 import java.util.HashMap;
 import java.util.Map;

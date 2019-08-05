@@ -1,7 +1,8 @@
-package com.allyes.mec.cloud.turbine;
+package com.github.paganini2008.springcloud.turbine;
 
 import java.io.File;
-import java.util.Map;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,15 +12,14 @@ import org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboar
 import org.springframework.cloud.netflix.turbine.EnableTurbine;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.allyes.developer.utils.Env;
-import com.allyes.developer.utils.StringUtils;
-
 /**
  * 
  * TurbineMain
- * 
- * @author Fred Feng
  *
+ * @author Fred Feng
+ * @revised 2019-07
+ * @created 2018-05
+ * @version 1.0
  */
 @SpringBootApplication
 @EnableTurbine
@@ -28,8 +28,8 @@ public class TurbineMain {
 
 	static {
 		System.setProperty("spring.devtools.restart.enabled", "false");
-		File userHome = new File(System.getProperty("user.home"));
-		File logDir = FileUtils.getFile(userHome, "logs", "mec-cloud-turbine");
+		File userdir = new File(System.getProperty("user.dir"));
+		File logDir = FileUtils.getFile(userdir, "logs", "springcloud", "turbine");
 		if (!logDir.exists()) {
 			logDir.mkdirs();
 		}
@@ -37,21 +37,24 @@ public class TurbineMain {
 	}
 
 	public static void main(String[] args) {
-		Map<String, String> params = Env.getInitParameters(args);
-		String logdir = params.get("appLogdir");
-		if (StringUtils.isNotBlank(logdir)) {
-			System.out.println("Ext LogDir: " + logdir);
-			System.setProperty("MEC_LOG_BASE", logdir);
-		}
 		SpringApplication.run(TurbineMain.class, args);
-		System.out.println(Env.getPid());
+		System.out.println(getPid());
 	}
-	
+
 	@Value("${spring.profiles.active}")
 	private String active;
 
 	@GetMapping("/ping")
 	public String ping() {
 		return "pong:" + active;
+	}
+	
+	private static int getPid() {
+		try {
+			RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+			return Integer.parseInt(runtimeMXBean.getName().split("@")[0]);
+		} catch (Exception e) {
+			return 0;
+		}
 	}
 }

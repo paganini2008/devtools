@@ -1,4 +1,4 @@
-package com.allyes.mec.cloud.registry.config;
+package com.github.paganini2008.springcloud.registry.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,8 +8,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 /**
  * 
  * WebSecurityConfig
- * 
+ *
  * @author Fred Feng
+ * @revised 2019-07
+ * @created 2018-05
+ * @version 1.0
  */
 @Configuration
 @EnableWebSecurity

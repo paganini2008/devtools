@@ -1,4 +1,4 @@
-package com.allyes.mec.cloud.security.config;
+package com.github.paganini2008.springcloud.security.config;
 
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.web.embedded.undertow.UndertowServletWebServerFactory;

@@ -1,4 +1,4 @@
-package com.allyes.mec.cloud.security.utils;
+package com.github.paganini2008.springcloud.security.utils;
 
 import com.google.gson.Gson;
 

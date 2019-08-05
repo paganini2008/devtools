@@ -1,4 +1,4 @@
-package com.allyes.mec.cloud.registry;
+package com.github.paganini2008.springcloud.registry;
 
 import java.io.File;
 
@@ -15,9 +15,10 @@ import com.allyes.developer.utils.io.FileUtils;
 /**
  * 
  * RegistryMain
- * 
+ *
  * @author Fred Feng
- * @revised 2019-06
+ * @revised 2019-07
+ * @created 2018-05
  * @version 1.0
  */
 @RestController

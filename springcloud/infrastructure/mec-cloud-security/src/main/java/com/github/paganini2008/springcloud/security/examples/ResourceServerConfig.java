@@ -1,4 +1,4 @@
-package com.allyes.mec.cloud.security.examples;
+package com.github.paganini2008.springcloud.security.examples;
 
 import java.io.Serializable;
 
