@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.paganini2008.devtools.RandomUtils;
-import com.github.paganini2008.devtools.beans.Tuple;
+import com.github.paganini2008.devtools.beans.TupleImpl;
 import com.github.paganini2008.devtools.beans.streaming.Product.Sort;
 import com.github.paganini2008.devtools.date.DateUtils;
 
@@ -43,10 +43,10 @@ public class Tester {
 		}
 		System.out.println(products);
 		com.github.paganini2008.devtools.beans.streaming.Sort<Product> order = Orders.descending("created", Date.class);
-		List<Tuple> list = Select.from(products).filter(Restrictions.gt("created", new Date())).groupBy("location", String.class)
+		List<TupleImpl> list = Select.from(products).filter(Restrictions.gt("created", new Date())).groupBy("location", String.class)
 				.groupBy("export", Boolean.class).groupBy("sort", Sort.class).orderBy(Orders.groupAscending("location", String.class))
 				.setTransformer(new View<Product>() {
-					protected void setAttributes(Tuple m, Group<Product> group) {
+					protected void setAttributes(TupleImpl m, Group<Product> group) {
 						m.put("maxPrice", group.max("price", Float.class));
 						m.put("minPrice", group.min("price", Float.class));
 						m.put("avgFreight", group.avg("freight"));
@@ -58,10 +58,10 @@ public class Tester {
 			System.out.println(p);
 		}
 		System.out.println("-------------------------------------------------");
-		List<Tuple> list2 = Select.from(products).filter(Restrictions.gt("created", new Date())).groupBy("location", String.class)
+		List<TupleImpl> list2 = Select.from(products).filter(Restrictions.gt("created", new Date())).groupBy("location", String.class)
 				.groupBy("export", Boolean.class).orderBy(Orders.groupAscending("location", String.class))
 				.setTransformer(new View<Product>() {
-					protected void setAttributes(Tuple m, Group<Product> group) {
+					protected void setAttributes(TupleImpl m, Group<Product> group) {
 						m.put("maxPrice", group.max("price", Float.class));
 						m.put("minPrice", group.min("price", Float.class));
 						m.put("avgFreight", group.avg("freight"));
@@ -73,9 +73,9 @@ public class Tester {
 			System.out.println(p);
 		}
 		System.out.println("-------------------------------------------------");
-		List<Tuple> list3 = Select.from(products).filter(Restrictions.gt("created", new Date())).groupBy("location", String.class).orderBy(Orders.groupAscending("location", String.class))
+		List<TupleImpl> list3 = Select.from(products).filter(Restrictions.gt("created", new Date())).groupBy("location", String.class).orderBy(Orders.groupAscending("location", String.class))
 				.setTransformer(new View<Product>() {
-					protected void setAttributes(Tuple m, Group<Product> group) {
+					protected void setAttributes(TupleImpl m, Group<Product> group) {
 						m.put("maxPrice", group.max("price", Float.class));
 						m.put("minPrice", group.min("price", Float.class));
 						m.put("avgFreight", group.avg("freight"));

@@ -12,10 +12,7 @@ import com.github.paganini2008.devtools.collection.MapUtils;
  * @author Fred Feng
  * @version 1.0
  */
-public class ResourceUtils {
-
-	private ResourceUtils() {
-	}
+public abstract class ResourceUtils {
 
 	private final static LruMap<String, Resource> cache = new LruMap<String, Resource>(128);
 

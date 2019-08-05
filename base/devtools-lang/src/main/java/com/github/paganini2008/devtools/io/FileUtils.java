@@ -62,7 +62,7 @@ public class FileUtils {
 
 	public static final long FILE_COPY_BUFFER_SIZE = 30 * MB;
 
-	public static File toFile(File directory, String... names) {
+	public static File getFile(File directory, String... names) {
 		Assert.isNull(directory, "Destination directory must not be null.");
 		Assert.isNull(names, "Names must not be null.");
 		File file = directory;
@@ -72,7 +72,7 @@ public class FileUtils {
 		return file;
 	}
 
-	public static File toFile(String... names) {
+	public static File getFile(String... names) {
 		Assert.isNull(names, "Names must not be null.");
 		File file = null;
 		for (String name : names) {
@@ -145,7 +145,7 @@ public class FileUtils {
 		FileAssert.cannotWrite(directory);
 	}
 
-	public static File[] toFiles(File parent, String... files) {
+	public static File[] getFiles(File parent, String... files) {
 		if (files == null) {
 			return null;
 		}
@@ -157,7 +157,7 @@ public class FileUtils {
 		return array;
 	}
 
-	public static File[] toFiles(String... files) {
+	public static File[] getFiles(String... files) {
 		if (files == null) {
 			return null;
 		}
@@ -183,12 +183,14 @@ public class FileUtils {
 		}
 	}
 
-	public static void mkdirs(File dir) throws IOException {
+	public static boolean mkdirs(File dir) throws IOException {
 		if (dir != null && !dir.exists()) {
 			if (!dir.mkdirs() && !dir.isDirectory()) {
 				throw new IOException("Directory '" + dir + "' cannot be created.");
 			}
+			return false;
 		}
+		return true;
 	}
 
 	public static void mkdirs(String dir) throws IOException {
@@ -286,21 +288,29 @@ public class FileUtils {
 		Assert.isNull(size, "Size must not be null.");
 		BigDecimal tmp;
 		String displaySize;
-		if ((tmp = BigDecimalUtils.divide(size, YB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
+		if ((tmp = BigDecimalUtils.divide(size, YB, scale, RoundingMode.HALF_UP)).toBigInteger()
+				.compareTo(BigInteger.ZERO) > 0) {
 			displaySize = String.valueOf(tmp) + " YB";
-		} else if ((tmp = BigDecimalUtils.divide(size, ZB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
+		} else if ((tmp = BigDecimalUtils.divide(size, ZB, scale, RoundingMode.HALF_UP)).toBigInteger()
+				.compareTo(BigInteger.ZERO) > 0) {
 			displaySize = String.valueOf(tmp) + " ZB";
-		} else if ((tmp = BigDecimalUtils.divide(size, EB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
+		} else if ((tmp = BigDecimalUtils.divide(size, EB, scale, RoundingMode.HALF_UP)).toBigInteger()
+				.compareTo(BigInteger.ZERO) > 0) {
 			displaySize = String.valueOf(tmp) + " EB";
-		} else if ((tmp = BigDecimalUtils.divide(size, PB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
+		} else if ((tmp = BigDecimalUtils.divide(size, PB, scale, RoundingMode.HALF_UP)).toBigInteger()
+				.compareTo(BigInteger.ZERO) > 0) {
 			displaySize = String.valueOf(tmp) + " PB";
-		} else if ((tmp = BigDecimalUtils.divide(size, TB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
+		} else if ((tmp = BigDecimalUtils.divide(size, TB, scale, RoundingMode.HALF_UP)).toBigInteger()
+				.compareTo(BigInteger.ZERO) > 0) {
 			displaySize = String.valueOf(tmp) + " TB";
-		} else if ((tmp = BigDecimalUtils.divide(size, GB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
+		} else if ((tmp = BigDecimalUtils.divide(size, GB, scale, RoundingMode.HALF_UP)).toBigInteger()
+				.compareTo(BigInteger.ZERO) > 0) {
 			displaySize = String.valueOf(tmp) + " GB";
-		} else if ((tmp = BigDecimalUtils.divide(size, MB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
+		} else if ((tmp = BigDecimalUtils.divide(size, MB, scale, RoundingMode.HALF_UP)).toBigInteger()
+				.compareTo(BigInteger.ZERO) > 0) {
 			displaySize = String.valueOf(tmp) + " MB";
-		} else if ((tmp = BigDecimalUtils.divide(size, KB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
+		} else if ((tmp = BigDecimalUtils.divide(size, KB, scale, RoundingMode.HALF_UP)).toBigInteger()
+				.compareTo(BigInteger.ZERO) > 0) {
 			displaySize = String.valueOf(tmp) + " KB";
 		} else {
 			tmp = BigDecimalUtils.setScale(size, scale, RoundingMode.HALF_UP);
@@ -600,7 +610,8 @@ public class FileUtils {
 		}
 	}
 
-	public static void writeFile(Collection<String> collection, File file, boolean append, Charset charset) throws IOException {
+	public static void writeFile(Collection<String> collection, File file, boolean append, Charset charset)
+			throws IOException {
 		Assert.isNull(collection, "Content must not be null.");
 		Assert.isNull(file, "Destination file must not be null.");
 		FileOutputStream fos = openOutputStream(file, append);
@@ -638,7 +649,8 @@ public class FileUtils {
 			copyDirectory(srcDir, destDir);
 			deleteDirectory(srcDir);
 			if (srcDir.exists()) {
-				throw new IOException("Failed to delete original directory '" + srcDir + "' after copy to '" + destDir + "'");
+				throw new IOException(
+						"Failed to delete original directory '" + srcDir + "' after copy to '" + destDir + "'");
 			}
 		}
 	}
@@ -656,7 +668,8 @@ public class FileUtils {
 			doCopyFile(srcFile, destFile);
 			if (!srcFile.delete()) {
 				deleteFile(destFile);
-				throw new IOException("Failed to delete original file '" + srcFile + "' after copy to '" + destFile + "'");
+				throw new IOException(
+						"Failed to delete original file '" + srcFile + "' after copy to '" + destFile + "'");
 			}
 		}
 	}
@@ -672,7 +685,8 @@ public class FileUtils {
 		canRead(srcFile);
 		canWrite(destFile);
 		if (srcFile.getCanonicalPath().equals(destFile.getCanonicalPath())) {
-			throw new IOException("Source file '" + srcFile + "' and destination file '" + destFile + "' are the same.");
+			throw new IOException(
+					"Source file '" + srcFile + "' and destination file '" + destFile + "' are the same.");
 		}
 		doCopyFile(srcFile, destFile);
 	}
@@ -722,7 +736,8 @@ public class FileUtils {
 		canScan(srcDir);
 		canChange(destDir);
 		if (srcDir.getCanonicalPath().equals(destDir.getCanonicalPath())) {
-			throw new IOException("Source directory '" + srcDir + "' and destination directory '" + destDir + "' are the same.");
+			throw new IOException(
+					"Source directory '" + srcDir + "' and destination directory '" + destDir + "' are the same.");
 		}
 		List<String> exclusionList = null;
 		if (destDir.getCanonicalPath().startsWith(srcDir.getCanonicalPath())) {
@@ -738,7 +753,8 @@ public class FileUtils {
 		doCopyDirectory(srcDir, destDir, filter, exclusionList);
 	}
 
-	private static void doCopyDirectory(File srcDir, File destDir, FileFilter filter, List<String> exclusionList) throws IOException {
+	private static void doCopyDirectory(File srcDir, File destDir, FileFilter filter, List<String> exclusionList)
+			throws IOException {
 		File[] srcFiles = filter == null ? srcDir.listFiles() : srcDir.listFiles(filter);
 		if (srcFiles == null) {
 			return;

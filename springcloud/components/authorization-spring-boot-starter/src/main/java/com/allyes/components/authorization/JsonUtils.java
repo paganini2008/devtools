@@ -4,7 +4,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import com.allyes.developer.utils.StringUtils;
+import com.github.paganini2008.devtools.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 

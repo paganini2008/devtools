@@ -8,7 +8,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import com.github.paganini2008.devtools.beans.Tuple;
+import com.github.paganini2008.devtools.collection.Tuple;
 
 /**
  * 

@@ -21,10 +21,7 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * @created 2012-01
  * @version 1.0
  */
-public class FieldUtils {
-
-	private FieldUtils() {
-	}
+public abstract class FieldUtils {
 
 	public static Object readField(Object target, Field field) {
 		Assert.isNull(target, "Target object must not be null.");
@@ -103,6 +100,12 @@ public class FieldUtils {
 		writeField(target, field, value);
 	}
 
+	public static void writeField(Object target, String fieldName, Object value) {
+		Assert.isNull(target, "Target object must not be null.");
+		final Field field = getField(target.getClass(), fieldName);
+		writeField(target, field, value);
+	}
+
 	public static void writeStaticField(Class<?> type, String fieldName, Object value) {
 		final Field field = getField(type, fieldName);
 		writeStaticField(field, value);
@@ -121,14 +124,14 @@ public class FieldUtils {
 		}
 	}
 
-	public static Field getField(Class<?> cls, String fieldName) {
-		Assert.isNull(cls, "The class must not be null.");
+	public static Field getField(Class<?> type, String fieldName) {
+		Assert.isNull(type, "The class must not be null.");
 		Assert.hasNoText(fieldName, "The field name must not be null.");
 		try {
-			return cls.getDeclaredField(fieldName);
+			return type.getDeclaredField(fieldName);
 		} catch (NoSuchFieldException e) {
 		}
-		return searchField(cls, fieldName);
+		return searchField(type, fieldName);
 	}
 
 	private static Field searchField(Class<?> type, String fieldName) {
@@ -191,6 +194,7 @@ public class FieldUtils {
 	 * 
 	 * @author Fred Feng
 	 * @revised 2019-07
+	 * @created 2019-06
 	 * @version 1.0
 	 */
 	public static class DeclaredFieldIterator implements Iterator<Field> {
@@ -226,7 +230,8 @@ public class FieldUtils {
 	 * FieldIterator
 	 * 
 	 * @author Fred Feng
-	 * @revised 2019-05
+	 * @revised 2019-07
+	 * @created 2019-06
 	 * @version 1.0
 	 */
 	public static class FieldIterator implements Iterator<Field> {
@@ -242,7 +247,9 @@ public class FieldUtils {
 		public boolean hasNext() {
 			boolean next;
 			if (!(next = canContinue())) {
-				fields = superClassesAndInterfaces.hasNext() ? new DeclaredFieldIterator(superClassesAndInterfaces.next()) : null;
+				fields = superClassesAndInterfaces.hasNext()
+						? new DeclaredFieldIterator(superClassesAndInterfaces.next())
+						: null;
 				next = canContinue();
 			}
 			return next;

@@ -1,5 +1,6 @@
 package com.github.paganini2008.devtools.collection;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -14,6 +15,8 @@ import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 import com.github.paganini2008.devtools.MatchMode;
+import com.github.paganini2008.devtools.io.FileUtils;
+import com.github.paganini2008.devtools.io.IOUtils;
 import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 
@@ -28,7 +31,7 @@ public abstract class RefreshingProperties extends ReadonlyProperties implements
 
 	private static final long serialVersionUID = 1L;
 
-	private Properties delegate;
+	protected Properties delegate;
 
 	protected abstract Properties createObject() throws Exception;
 
@@ -71,6 +74,17 @@ public abstract class RefreshingProperties extends ReadonlyProperties implements
 
 	public Set<Map.Entry<Object, Object>> entrySet() {
 		return delegate.entrySet();
+	}
+	
+
+	public void store(File outputFile, String comments) throws IOException {
+		OutputStream out = null;
+		try {
+			out = FileUtils.openOutputStream(outputFile, false);
+			delegate.store(out, comments);
+		} finally {
+			IOUtils.closeQuietly(out);
+		}
 	}
 
 	public void store(Writer writer, String comments) throws IOException {

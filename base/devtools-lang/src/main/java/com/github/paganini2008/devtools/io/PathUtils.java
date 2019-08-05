@@ -6,9 +6,12 @@ import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.StringUtils;
 
 /**
- * PathUtils
  * 
+ * PathUtils
+ *
  * @author Fred Feng
+ * @revised 2019-07
+ * @created 2013-05
  * @version 1.0
  */
 public class PathUtils {
@@ -47,8 +50,8 @@ public class PathUtils {
 		}
 		return cp;
 	}
-	
-	public static void main(String[] args){
+
+	public static void main(String[] args) {
 		System.out.println(runRootPath());
 	}
 

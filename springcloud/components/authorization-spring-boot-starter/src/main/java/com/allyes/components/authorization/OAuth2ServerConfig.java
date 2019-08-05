@@ -2,7 +2,6 @@ package com.allyes.components.authorization;
 
 import java.sql.SQLException;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Objects;
 
 import javax.sql.DataSource;
@@ -33,7 +32,8 @@ import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
-import com.allyes.developer.utils.jdbc.DBUtils;
+import com.github.paganini2008.devtools.collection.Tuple;
+import com.github.paganini2008.devtools.jdbc.DBUtils;
 
 /**
  * 
@@ -58,7 +58,7 @@ public class OAuth2ServerConfig {
 		@Autowired
 		DataSource dataSource;
 
-		private Iterator<Map<String, Object>> getUserDetails() {
+		private Iterator<Tuple> getUserDetails() {
 			try {
 				return DBUtils.executeQuery(dataSource.getConnection(), SQL_SELECT_USER_DETAILS);
 			} catch (SQLException e) {
@@ -72,14 +72,15 @@ public class OAuth2ServerConfig {
 			InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
 			manager.createUser(
 					User.withUsername("admin").password("admin123").authorities("trusted-client").roles("admin", "user", "guest").build());
-			Iterator<Map<String, Object>> iterator = getUserDetails();
+			Iterator<Tuple> iterator = getUserDetails();
 			while (iterator.hasNext()) {
-				Map<String, Object> userDetail = iterator.next();
+				Tuple userDetail = iterator.next();
 				String username = (String) userDetail.get("username");
 				String password = (String) userDetail.get("password");
 				String authorities = (String) userDetail.get("authorities");
 				String roles = (String) userDetail.get("roles");
-				UserDetails userDetails = User.withUsername(username).password(password).authorities(authorities.split(",")).roles(roles.split(",")).build();
+				UserDetails userDetails = User.withUsername(username).password(password).authorities(authorities.split(","))
+						.roles(roles.split(",")).build();
 				manager.createUser(userDetails);
 			}
 			return manager;
@@ -136,7 +137,7 @@ public class OAuth2ServerConfig {
 			});
 			oauthServer.tokenKeyAccess("permitAll()").checkTokenAccess("permitAll()");
 		}
-		
+
 		@Bean
 		public PasswordEncoder passwordEncoder() {
 			return new PasswordEncoder() {
@@ -154,7 +155,4 @@ public class OAuth2ServerConfig {
 
 	}
 
-
-
-	
 }

@@ -36,7 +36,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
 
-import com.allyes.developer.utils.StringUtils;
+import com.github.paganini2008.devtools.StringUtils;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;

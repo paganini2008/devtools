@@ -25,7 +25,7 @@ public class SerializableStore implements Store {
 	public static final String fileExtension = ".cache";
 
 	public SerializableStore(int maxSize) {
-		cache = new LruMap<Object, File>(maxSize){
+		cache = new LruMap<Object, File>(maxSize) {
 
 			private static final long serialVersionUID = 8262093056909008093L;
 
@@ -52,7 +52,7 @@ public class SerializableStore implements Store {
 
 	protected File asFile(String name) {
 		String fileName = UUID.nameUUIDFromBytes(name.getBytes()).toString();
-		return FileUtils.toFile(storeDir, fileName + fileExtension);
+		return FileUtils.getFile(storeDir, fileName + fileExtension);
 	}
 
 	public void writeObject(Object name, Object o) {

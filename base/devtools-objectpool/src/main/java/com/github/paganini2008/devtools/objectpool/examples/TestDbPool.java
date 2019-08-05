@@ -9,8 +9,8 @@ import java.util.concurrent.Executors;
 
 import com.github.paganini2008.devtools.RandomUtils;
 import com.github.paganini2008.devtools.Sequence;
-import com.github.paganini2008.devtools.beans.Tuple;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
+import com.github.paganini2008.devtools.collection.Tuple;
 import com.github.paganini2008.devtools.jdbc.DBUtils;
 import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
 import com.github.paganini2008.devtools.objectpool.dbpool.GenericDataSource;

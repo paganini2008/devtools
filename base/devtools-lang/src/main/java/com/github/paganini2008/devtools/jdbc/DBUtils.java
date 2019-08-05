@@ -11,13 +11,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import com.github.paganini2008.devtools.Cases;
 import com.github.paganini2008.devtools.Observable;
 import com.github.paganini2008.devtools.Observer;
-import com.github.paganini2008.devtools.beans.Tuple;
+import com.github.paganini2008.devtools.beans.TupleImpl;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
+import com.github.paganini2008.devtools.collection.Tuple;
 
 /**
  * DBUtils
@@ -196,8 +196,8 @@ public class DBUtils {
 
 	public static Object executeOneResultQuery(Connection connection, String sql) throws SQLException {
 		Iterator<Tuple> iterator = executeQuery(connection, sql);
-		Map<String, Object> first = CollectionUtils.getFirst(iterator);
-		return first != null ? CollectionUtils.getFirst(first.values().iterator()) : null;
+		Tuple first = CollectionUtils.getFirst(iterator);
+		return first != null && !first.isEmpty() ? first.toArray()[0] : null;
 	}
 
 	public static Iterator<Tuple> executeQuery(Connection connection, String sql) throws SQLException {
@@ -216,7 +216,7 @@ public class DBUtils {
 	public static Object executeOneResultQuery(Connection connection, String sql, Object[] args) throws SQLException {
 		Iterator<Tuple> iterator = executeQuery(connection, sql, args);
 		Tuple first = CollectionUtils.getFirst(iterator);
-		return first != null ? CollectionUtils.getFirst(first.values().iterator()) : null;
+		return first != null && !first.isEmpty() ? first.toArray()[0] : null;
 	}
 
 	public static Iterator<Tuple> executeQuery(Connection connection, String sql, Object[] args) throws SQLException {
@@ -245,7 +245,7 @@ public class DBUtils {
 	private static Tuple toTuple(ResultSet rs) throws SQLException {
 		ResultSetMetaData rsmd = rs.getMetaData();
 		int columnCount = rsmd.getColumnCount();
-		Tuple tuple = new Tuple(Cases.UNDER_SCORE);
+		TupleImpl tuple = new TupleImpl(Cases.UNDER_SCORE);
 		for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
 			String columnName = rsmd.getColumnLabel(columnIndex);
 			Object value = rs.getObject(columnIndex);
@@ -311,11 +311,13 @@ public class DBUtils {
 		return tableExists(conn.getMetaData(), schema, tableName);
 	}
 
-	public static PreparedStatementSetter newBatchArgumentTypePrepareStatementSetter(List<Object[]> parameterList, int[] jdbcTypes) {
+	public static PreparedStatementSetter newBatchArgumentTypePrepareStatementSetter(List<Object[]> parameterList,
+			int[] jdbcTypes) {
 		return new BatchArgumentTypePrepareStatementSetter(parameterList, jdbcTypes);
 	}
 
-	public static PreparedStatementSetter newBatchArgumentTypePrepareStatementSetter(List<Object[]> parameterList, JdbcType[] jdbcTypes) {
+	public static PreparedStatementSetter newBatchArgumentTypePrepareStatementSetter(List<Object[]> parameterList,
+			JdbcType[] jdbcTypes) {
 		return new BatchArgumentTypePrepareStatementSetter(parameterList, jdbcTypes);
 	}
 
@@ -331,7 +333,8 @@ public class DBUtils {
 		return new ArgumentTypePrepareStatementSetter(parameters, jdbcTypes);
 	}
 
-	public static PreparedStatementSetter newArgumentTypePrepareStatementSetter(Object[] parameters, JdbcType[] jdbcTypes) {
+	public static PreparedStatementSetter newArgumentTypePrepareStatementSetter(Object[] parameters,
+			JdbcType[] jdbcTypes) {
 		return new ArgumentTypePrepareStatementSetter(parameters, jdbcTypes);
 	}
 
@@ -362,7 +365,8 @@ public class DBUtils {
 					int leftLength = parameters != null ? parameters.length : 0;
 					int rightLength = sqlTypes != null ? sqlTypes.length : 0;
 					if (leftLength != rightLength) {
-						throw new IllegalArgumentException("JdbcTypes'length doesn't matches parameters'length length.");
+						throw new IllegalArgumentException(
+								"JdbcTypes'length doesn't matches parameters'length length.");
 					}
 					if (parameters != null && parameters.length > 0) {
 						for (int i = 0; i < parameters.length; i++) {

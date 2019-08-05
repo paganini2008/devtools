@@ -9,9 +9,10 @@ import java.util.concurrent.PriorityBlockingQueue;
 /**
  * 
  * Observable
- * 
+ *
  * @author Fred Feng
- * @revised 2019-05
+ * @revised 2019-07
+ * @created 2017-03
  * @version 1.0
  */
 public class Observable {
