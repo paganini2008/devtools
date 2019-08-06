@@ -50,10 +50,6 @@
 			<version>5.2.1.201812262042-r</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-		</dependency>
 	</dependencies>
 
 </project>

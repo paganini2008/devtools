@@ -14,7 +14,7 @@
 	<name>article-service</name>
 	<url>http://maven.apache.org</url>
 
-	<properties>
+	<properties> 
 	</properties>
 
 	<dependencies>

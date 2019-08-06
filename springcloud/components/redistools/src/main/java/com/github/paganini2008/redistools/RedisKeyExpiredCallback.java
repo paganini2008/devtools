@@ -1,0 +1,16 @@
+package com.github.paganini2008.redistools;
+
+/**
+ * 
+ * RedisKeyExpiredCallback
+ *
+ * @author Fred Feng
+ * @revised 2019-07
+ * @created 2019-03
+ * @version 1.0
+ */
+public interface RedisKeyExpiredCallback {
+
+	void handleKeyExpired(String expiredKey, Object expiredValue);
+
+}

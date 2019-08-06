@@ -12,6 +12,7 @@
 	    <module>components</module>
 		<module>infrastructure</module>
 		<module>microservice</module>
+		<module>devtools-web</module>
     </modules>
     <packaging>pom</packaging>
     <name>springcloud</name>
@@ -28,6 +29,11 @@
 			<groupId>com.github.paganini2008</groupId>
 			<artifactId>devtools-lang</artifactId>
 			<version>1.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
 		</dependency>
 
 		<dependency>
