@@ -1,4 +1,4 @@
-package com.github.paganini2008.blogonline.utils;
+package com.github.paganini2008.devtools.web;
 
 import java.io.IOException;
 

@@ -14,10 +14,22 @@
 	<name>article-service</name>
 	<url>http://maven.apache.org</url>
 
-	<properties> 
+	<properties>
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.github.paganini2008</groupId>
+			<artifactId>devtools-web</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.paganini2008</groupId>
+			<artifactId>redistools</artifactId>
+			<version>1.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.github.paganini2008</groupId>
 			<artifactId>config-spring-boot-starter</artifactId>
@@ -34,6 +46,12 @@
 			<groupId>com.github.paganini2008</groupId>
 			<artifactId>authorization-spring-boot-starter</artifactId>
 			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>p6spy</groupId>
+			<artifactId>p6spy</artifactId>
+			<version>3.7.0</version>
 		</dependency>
 	</dependencies>
 
