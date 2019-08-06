@@ -431,161 +431,69 @@ public class StringUtils {
 	}
 
 	public static void main(String[] args) throws Exception {
-		System.out.println(parseText("\\/?1\\~^?2?0", "?", new Object[] { 1, false, "abc" }));
+		System.out.println(format("\\/{}???\\~^{},{}{}{}{}?000000000000000?", "{}", new Object[] { 1, false, "abc" }));
 	}
 
-	public static String parseText(String text, String openToken, String closeToken, Map<String, ?> params) {
-		Assert.hasNoText(text, "Can't parse empty text.");
-		Assert.hasNoText(openToken, "Open token string is required.");
-		Assert.hasNoText(closeToken, "Close token string is required.");
+	public static String parseText(String text, String prefix, String suffix, Object... args) {
+		Assert.hasNoText(text, "Can't parse blank text.");
+		Assert.hasNoText(prefix, "Prefix string is required.");
+		Assert.hasNoText(suffix, "Suffix string is required.");
+		if (args == null || args.length == 0) {
+			return text;
+		}
+		PlaceholderTokenizer placeholderTokenizer = new PlaceholderTokenizer(prefix, suffix);
+		return placeholderTokenizer.parse(text, str -> {
+			return args[Integer.parseInt(str)];
+		});
+	}
+
+	public static String parseText(String text, String prefix, String suffix, Map<String, ?> params) {
+		Assert.hasNoText(text, "Can't parse blank text.");
+		Assert.hasNoText(prefix, "Prefix string is required.");
+		Assert.hasNoText(suffix, "Suffix string is required.");
 		if (params == null || params.size() == 0) {
 			return text;
 		}
-		int offset = 0;
-		int start = text.indexOf(openToken, offset);
-		if (start == -1) {
-			return text;
-		}
-		StringBuilder builder = new StringBuilder();
-		char[] src = text.toCharArray();
-		while (start > -1) {
-			if (start > 0 && src[start - 1] == '\\') {
-				builder.append(src, offset, start - offset - 1).append(openToken);
-				offset = start + openToken.length();
-			} else {
-				int end = text.indexOf(closeToken, start);
-				if (end == -1) {
-					builder.append(src, offset, src.length - offset);
-					offset = src.length;
-				} else {
-					builder.append(src, offset, start - offset);
-					offset = start + openToken.length();
-					String key = new String(src, offset, end - offset);// {a}{}{b}
-					if (isNotBlank(key)) {
-						Object value = params.get(key);
-						if (value == null) {
-							value = System.getProperty(key);
-						}
-						builder.append(value);
-					} else {
-						builder.append(src, start, end - start + closeToken.length());
-					}
-					offset = end + closeToken.length();
-				}
-			}
-			start = text.indexOf(openToken, offset);
-		}
-		if (offset < src.length) {
-			builder.append(src, offset, src.length - offset);
-		}
-		return builder.toString();
+		PlaceholderTokenizer placeholderTokenizer = new PlaceholderTokenizer(prefix, suffix);
+		return placeholderTokenizer.parse(text, key -> {
+			return params.get(key);
+		});
 	}
 
-	public static String parseText(String text, String token, Map<String, ?> params) {
-		Assert.hasNoText(text, "Can't parse empty text.");
+	public static String parseText(String text, String token, final Map<String, ?> params) {
+		Assert.hasNoText(text, "Can't parse blank text.");
 		Assert.hasNoText(token, "Token string is required.");
 		if (params == null || params.size() == 0) {
 			return text;
 		}
-		int offset = 0;
-		int start = text.indexOf(token, offset);
-		if (start == -1) {
-			return text;
-		}
-		StringBuilder builder = new StringBuilder();
-		char[] src = text.toCharArray();
-		while (start > -1) {
-			if (start > 0 && src[start - 1] == '\\') {
-				builder.append(src, offset, start - offset - 1).append(token);
-				offset = start + token.length();
-			} else {
-				int i = start + token.length();
-				StringBuilder variable = new StringBuilder();
-				while ((i < src.length) && (src[i] == '_' || Character.isLetterOrDigit(src[i]))) {
-					variable.append(src[i]);
-					i++;
-				}
-				if (variable.length() == 0) {
-					throw new IllegalArgumentException("Bad string format. Index: " + start);
-				}
-				builder.append(src, offset, start - offset);
-				String key = variable.toString();
-				Object value = params.get(key);
-				if (value == null) {
-					value = System.getProperty(key);
-				}
-				builder.append(value);
-				offset = start + token.length() + variable.length();
-			}
-			start = text.indexOf(token, offset);
-		}
-		if (offset < src.length) {
-			builder.append(src, offset, src.length - offset);
-		}
-		return builder.toString();
+		PrefixationTokenizer prefixationTokenizer = new PrefixationTokenizer(token);
+		return prefixationTokenizer.parse(text, key -> {
+			return params.get(key);
+		});
 	}
 
-	public static String parseText(String text, String token, Object[] args) {
-		Assert.hasNoText(text, "Can't parse empty text.");
+	public static String parseText(String text, String token, final Object... args) {
+		Assert.hasNoText(text, "Can't parse blank text.");
 		Assert.hasNoText(token, "Token string is required.");
 		if (args == null || args.length == 0) {
 			return text;
 		}
-		int offset = 0;
-		int start = text.indexOf(token, offset);
-		if (start == -1) {
+		PrefixationTokenizer prefixationTokenizer = new PrefixationTokenizer(token);
+		return prefixationTokenizer.parse(text, str -> {
+			return args[Integer.parseInt(str)];
+		});
+	}
+
+	public static String format(String text, String token, final Object... args) {
+		Assert.hasNoText(text, "Can't parse blank text.");
+		Assert.hasNoText(token, "Token string is required.");
+		if (args == null || args.length == 0) {
 			return text;
 		}
-		StringBuilder builder = new StringBuilder();
-		char[] src = text.toCharArray();
-		int n = 0;
-		StringBuilder digit = null;
-		while (start > -1) {
-			if (start > 0 && src[start - 1] == '\\') {
-				builder.append(src, offset, start - offset - 1).append(token);
-				offset = start + token.length();
-			} else {
-				builder.append(src, offset, start - offset);
-				int i = start + token.length();
-				while ((i < src.length) && (Character.isDigit(src[i]))) {
-					if (digit == null) {
-						digit = new StringBuilder(2);
-					}
-					digit.append(src[i]);
-					i++;
-				}
-				if (isNotBlank(digit)) {
-					if (n > 0) {
-						throw new IllegalArgumentException("Bad string format. Index: " + start);
-					}
-					int index;
-					try {
-						index = Integer.parseInt(digit.toString());
-					} catch (NumberFormatException e) {
-						throw new IllegalArgumentException("Can't parse argument number.");
-					}
-					if (index > args.length - 1) {
-						throw new IllegalArgumentException("Argument number more than parameters' length.");
-					}
-					builder.append(args[index]);
-					offset = start + token.length() + digit.length();
-				} else {
-					builder.append(args[n]);
-					if (n < args.length - 1) {
-						n++;
-					}
-					offset = start + token.length();
-				}
-			}
-			if (digit != null) {
-				digit.delete(0, digit.length());
-			}
-			start = text.indexOf(token, offset);
-		}
-		if (offset < src.length) {
-			builder.append(src, offset, src.length - offset);
-		}
-		return builder.toString();
+		SimpleTokenizer simpleTokenizer = new SimpleTokenizer(token);
+		return simpleTokenizer.parse(text, index -> {
+			return args[Integer.min(index, args.length - 1)];
+		});
 	}
 
 	public static String unicodeEscape(String unicodeString) {

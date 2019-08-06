@@ -103,7 +103,7 @@ public abstract class Cases {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(toLowerCase("lastModified"));
+		System.out.println(toUnderScoreCase("lastModified"));
 	}
 
 }

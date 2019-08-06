@@ -1,4 +1,4 @@
-package com.allyes.mec.cloud.code.config;
+package com.github.paganini2008.blogonline.config;
 
 import javax.validation.Validation;
 import javax.validation.Validator;

@@ -1,4 +1,4 @@
-package com.allyes.mec.cloud.code.config;
+package com.github.paganini2008.blogonline.config;
 
 import java.lang.reflect.Method;
 import java.time.Duration;
@@ -24,12 +24,12 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import com.allyes.mec.common.IdGenerator;
-import com.allyes.mec.common.JsonUtils;
-import com.allyes.mec.common.redis.RedisIdGenerator;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.paganini2008.devtools.web.IdGenerator;
+import com.github.paganini2008.devtools.web.redis.RedisIdGenerator;
+import com.github.paganini2008.springboot.authorization.JsonUtils;
 
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -49,7 +49,7 @@ public class RedisConfig {
 	private String host;
 	@Value("${hlsh.redis.password}")
 	private String password;
-	@Value("${hlsh.redis.port}")
+	@Value("${hlsh.redis.port:6379}")
 	private int port;
 	@Value("${hlsh.redis.dbIndex:0}")
 	private int dbIndex;

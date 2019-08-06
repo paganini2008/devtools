@@ -1,8 +1,10 @@
-package com.github.paganini2008.redistools;
+package com.github.paganini2008.devtools.web.redis;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+
+import com.github.paganini2008.devtools.web.JacksonUtils;
 
 /**
  * 

@@ -1,4 +1,4 @@
-package com.allyes.mec.cloud.code.config;
+package com.github.paganini2008.blogonline.config;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
-import com.allyes.components.authorization.AcceptedRequestFilter.HttpRequestMatcher;
+import com.github.paganini2008.springboot.authorization.AcceptedRequestFilter.HttpRequestMatcher;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 

@@ -23,10 +23,10 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import com.allyes.components.authorization.AcceptedRequestFilter;
-import com.allyes.components.authorization.AcceptedRequestFilter.HttpRequestMatcher;
-import com.allyes.mec.cloud.ResultVO;
-import com.allyes.mec.cloud.code.config.Swagger2.Swagger2RequestMatcher;
+import com.github.paganini2008.blogonline.config.Swagger2.Swagger2RequestMatcher;
+import com.github.paganini2008.devtools.web.vo.ResultVO;
+import com.github.paganini2008.springboot.authorization.AcceptedRequestFilter;
+import com.github.paganini2008.springboot.authorization.AcceptedRequestFilter.HttpRequestMatcher;
 
 import lombok.extern.slf4j.Slf4j;
 

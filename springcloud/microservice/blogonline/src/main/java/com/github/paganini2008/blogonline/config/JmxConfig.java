@@ -1,4 +1,4 @@
-package com.allyes.mec.cloud.code.config;
+package com.github.paganini2008.blogonline.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,8 +8,8 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.jmx.support.ConnectorServerFactoryBean;
 import org.springframework.remoting.rmi.RmiRegistryFactoryBean;
 
-import com.allyes.developer.utils.NetUtils;
-import com.allyes.mec.common.utils.SysLogs;
+import com.github.paganini2008.devtools.net.NetUtils;
+import com.github.paganini2008.devtools.web.SysLogs;
 
 /**
  * 

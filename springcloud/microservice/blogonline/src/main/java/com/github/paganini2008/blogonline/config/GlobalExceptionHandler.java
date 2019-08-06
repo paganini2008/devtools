@@ -1,4 +1,4 @@
-package com.allyes.mec.cloud.code.config;
+package com.github.paganini2008.blogonline.config;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,19 +9,22 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.allyes.developer.utils.ArrayUtils;
-import com.allyes.developer.utils.io.ExceptionUtils;
-import com.allyes.mec.cloud.ResultVO;
-import com.allyes.mec.common.BizException;
-import com.allyes.mec.common.utils.TipInfoUtils;
+import com.github.paganini2008.devtools.ArrayUtils;
+import com.github.paganini2008.devtools.ExceptionUtils;
+import com.github.paganini2008.devtools.web.BizException;
+import com.github.paganini2008.devtools.web.TipInfoUtils;
+import com.github.paganini2008.devtools.web.vo.ResultVO;
 
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 全局异常处理
  * 
- * @author ken_guo
+ * GlobalExceptionHandler
  *
+ * @author Fred Feng
+ * @revised 2019-07
+ * @created 2019-03
+ * @version 1.0
  */
 @Slf4j
 @Order(200)

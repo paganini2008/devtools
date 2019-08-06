@@ -1,4 +1,4 @@
-package com.github.paganini2008.redistools;
+package com.github.paganini2008.devtools.web.redis;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

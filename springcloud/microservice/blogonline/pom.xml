@@ -26,12 +26,6 @@
 
 		<dependency>
 			<groupId>com.github.paganini2008</groupId>
-			<artifactId>redistools</artifactId>
-			<version>1.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.github.paganini2008</groupId>
 			<artifactId>config-spring-boot-starter</artifactId>
 			<version>1.0</version>
 		</dependency>

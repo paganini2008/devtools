@@ -75,7 +75,6 @@ public abstract class RefreshingProperties extends ReadonlyProperties implements
 	public Set<Map.Entry<Object, Object>> entrySet() {
 		return delegate.entrySet();
 	}
-	
 
 	public void store(File outputFile, String comments) throws IOException {
 		OutputStream out = null;
@@ -155,7 +154,10 @@ public abstract class RefreshingProperties extends ReadonlyProperties implements
 
 	private Timer timer;
 
-	public void setInterval(long interval, TimeUnit timeUnit) {
+	public void setInterval(long interval, TimeUnit timeUnit) throws Exception {
+		if (delegate == null) {
+			refresh();
+		}
 		timer = ThreadUtils.scheduleAtFixedRate(this, interval, timeUnit);
 	}
 

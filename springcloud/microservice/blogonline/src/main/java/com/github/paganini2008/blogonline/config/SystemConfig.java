@@ -1,18 +1,14 @@
-package com.allyes.mec.cloud.code.config;
+package com.github.paganini2008.blogonline.config;
 
 import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.sql.DataSource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import com.allyes.mec.common.multithreads.ThreadPoolHolder;
-import com.allyes.mec.common.utils.TipInfoService;
+import com.github.paganini2008.devtools.web.TipInfoService;
 
 /**
  * 
@@ -25,8 +21,6 @@ import com.allyes.mec.common.utils.TipInfoService;
  */
 @Configuration
 public class SystemConfig {
-
-	private static final Logger logger = LoggerFactory.getLogger(SystemConfig.class);
 
 	@Bean(destroyMethod = "close")
 	public TipInfoService createTipInfoService(DataSource dataSource) throws Exception {
@@ -43,12 +37,6 @@ public class SystemConfig {
 		taskExecutor.setMaxPoolSize(10);
 		taskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
 		return taskExecutor;
-	}
-
-	@Bean(destroyMethod = "shutdown")
-	@DependsOn("threadPoolBean")
-	public ThreadPoolHolder threadPoolHolder() {
-		return new ThreadPoolHolder();
 	}
 
 }

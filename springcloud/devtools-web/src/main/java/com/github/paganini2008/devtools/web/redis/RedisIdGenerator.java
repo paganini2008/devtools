@@ -1,4 +1,4 @@
-package com.github.paganini2008.redistools;
+package com.github.paganini2008.devtools.web.redis;
 
 import java.util.concurrent.TimeUnit;
 
@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
+import com.github.paganini2008.devtools.web.IdGenerator;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
  * @version 2.0.0
  */
 @Slf4j
-public class RedisIdGenerator {
+public class RedisIdGenerator implements IdGenerator {
 
 	private final static long timestampSeed = 1526227200551L;
 	private final static long initalValue = 100000000000000000L;
@@ -41,11 +42,11 @@ public class RedisIdGenerator {
 		serial.set(value);
 	}
 
-	public Long currentValue() {
+	public long currentValue() {
 		return serial.get();
 	}
 
-	public Long nextValue() {
+	public long nextValue() {
 		while (true) {
 			try {
 				return serial.getAndIncrement();

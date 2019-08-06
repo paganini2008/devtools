@@ -1,4 +1,4 @@
-package com.allyes.mec.cloud.code.config;
+package com.github.paganini2008.blogonline.config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +20,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.allyes.developer.utils.StringUtils;
-import com.allyes.developer.utils.regex.RegexUtils;
-import com.allyes.mec.cloud.ResultVO;
-import com.allyes.mec.common.utils.TipInfoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.paganini2008.devtools.StringUtils;
+import com.github.paganini2008.devtools.regex.RegexUtils;
+import com.github.paganini2008.devtools.web.TipInfoService;
+import com.github.paganini2008.devtools.web.vo.ResultVO;
 
 /**
  * 

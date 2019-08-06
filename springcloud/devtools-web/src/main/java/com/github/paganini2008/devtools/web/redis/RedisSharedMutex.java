@@ -1,4 +1,4 @@
-package com.github.paganini2008.redistools;
+package com.github.paganini2008.devtools.web.redis;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;

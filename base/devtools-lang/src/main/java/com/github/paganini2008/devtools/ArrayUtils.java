@@ -13,16 +13,16 @@ import com.github.paganini2008.devtools.primitives.Longs;
 import com.github.paganini2008.devtools.primitives.Shorts;
 
 /**
- * ArrayUtils
  * 
+ * ArrayUtils
+ *
  * @author Fred Feng
+ * @revised 2019-07
+ * @created 2012-01
  * @version 1.0
  */
 @SuppressWarnings("all")
-public class ArrayUtils {
-
-	private ArrayUtils() {
-	}
+public abstract class ArrayUtils {
 
 	public static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
 

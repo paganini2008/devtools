@@ -1,4 +1,4 @@
-package com.allyes.mec.cloud.code.config;
+package com.github.paganini2008.blogonline.config;
 
 import java.util.Map;
 
@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.allyes.mec.cloud.ResultVO;
+import com.github.paganini2008.devtools.web.vo.ResultVO;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -22,7 +22,7 @@ public class TupleImpl extends KeyCaseInsensitiveMap<Object> implements Tuple {
 	private static final long serialVersionUID = 3578053139527863010L;
 
 	public TupleImpl() {
-		this(Cases.PLAIN);
+		this(Cases.LOWER);
 	}
 
 	public TupleImpl(Case format) {
@@ -82,13 +82,17 @@ public class TupleImpl extends KeyCaseInsensitiveMap<Object> implements Tuple {
 	}
 
 	public static Tuple createBy(Map<String, ?> kwargs) {
-		return createBy(Cases.PLAIN, kwargs);
+		return createBy(Cases.LOWER, kwargs);
 	}
 
 	public static Tuple createBy(Case caseFormat, Map<String, ?> kwargs) {
 		TupleImpl tuple = new TupleImpl(caseFormat);
 		tuple.putAll(kwargs);
 		return tuple;
+	}
+
+	public static void main(String[] args) {
+
 	}
 
 }

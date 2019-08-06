@@ -1,4 +1,4 @@
-package com.allyes.mec.cloud.code.config;
+package com.github.paganini2008.blogonline.config;
 
 import java.util.Map;
 
@@ -19,7 +19,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.allyes.components.jpahelper.support.EntityDaoFactoryBean;
+import com.github.paganini2008.springboot.fastjpa.support.EntityDaoFactoryBean;
 
 /**
  * 
