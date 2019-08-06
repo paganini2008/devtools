@@ -11,7 +11,7 @@
 
 	<artifactId>redistools</artifactId>
 	<packaging>jar</packaging>
-	<name>redis-toolkit</name>
+	<name>redistools</name>
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
