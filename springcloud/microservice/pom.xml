@@ -13,7 +13,7 @@
     <version>1.0</version>
 	
     <modules>
-		<module>article-service</module>
+		<module>blogonline</module>
     </modules>
 
 	

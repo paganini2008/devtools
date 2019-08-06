@@ -9,9 +9,9 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>article-service</artifactId>
+	<artifactId>blogonline</artifactId>
 	<packaging>jar</packaging>
-	<name>article-service</name>
+	<name>blogonline</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>
