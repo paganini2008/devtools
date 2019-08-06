@@ -3,13 +3,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>springcloud-microservice</artifactId>
-		<groupId>com.github.paganini2008</groupId>
+		<artifactId>microservice</artifactId>
+		<groupId>com.github.paganini2008.springcloud</groupId>
 		<version>1.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>blogonline</artifactId>
+	<artifactId>blogonline-service</artifactId>
 	<packaging>jar</packaging>
 	<name>blogonline</name>
 	<url>http://maven.apache.org</url>
@@ -18,26 +18,27 @@
 	</properties>
 
 	<dependencies>
+
 		<dependency>
-			<groupId>com.github.paganini2008</groupId>
-			<artifactId>devtools-web</artifactId>
+			<groupId>com.github.paganini2008.springcloud</groupId>
+			<artifactId>dependency-utils</artifactId>
 			<version>1.0</version>
 		</dependency>
 
 		<dependency>
-			<groupId>com.github.paganini2008</groupId>
+			<groupId>com.github.paganini2008.springcloud</groupId>
+			<artifactId>dependency-base</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.paganini2008.springcloud</groupId>
 			<artifactId>config-spring-boot-starter</artifactId>
 			<version>1.0</version>
 		</dependency>
 
 		<dependency>
-			<groupId>com.github.paganini2008</groupId>
-			<artifactId>fastjpa-spring-boot-starter</artifactId>
-			<version>1.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.github.paganini2008</groupId>
+			<groupId>com.github.paganini2008.springcloud</groupId>
 			<artifactId>authorization-spring-boot-starter</artifactId>
 			<version>1.0</version>
 		</dependency>

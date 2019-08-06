@@ -1,0 +1,28 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+	
+    <parent>
+		<artifactId>springcloud</artifactId>
+		<groupId>com.github.paganini2008</groupId>
+		<version>1.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	
+	<groupId>com.github.paganini2008.springcloud</groupId>
+    <artifactId>dependency</artifactId>
+	<version>1.0</version>
+	
+    <modules>
+        <module>utils</module>
+		<module>base</module>
+		<module>biz</module>
+    </modules>
+	
+    <packaging>pom</packaging>
+    <name>dependency</name>
+    <description>Springcloud Microservice Dependency</description>
+	
+	<dependencies>
+	</dependencies>
+</project>

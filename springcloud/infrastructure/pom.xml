@@ -9,13 +9,13 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	
-    <artifactId>springcloud-infrastructure</artifactId>
+	<groupId>com.github.paganini2008.springcloud</groupId>
+    <artifactId>infrastructure-service</artifactId>
 	
     <modules>
-		<module>mec-cloud-registry</module>
-		<module>mec-cloud-security</module>
-		<module>mec-cloud-config</module>
-		<module>mec-cloud-turbine</module>
+		<module>registry-service</module>
+		<module>security-service</module>
+		<module>turbine-service</module>
     </modules>
 
     <packaging>pom</packaging>

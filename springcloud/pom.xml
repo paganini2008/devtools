@@ -8,11 +8,12 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
     <artifactId>springcloud</artifactId>
+	<groupId>com.github.paganini2008</groupId>
     <modules>
 	    <module>components</module>
 		<module>infrastructure</module>
 		<module>microservice</module>
-		<module>devtools-web</module>
+		<module>dependency</module>
     </modules>
     <packaging>pom</packaging>
     <name>springcloud</name>

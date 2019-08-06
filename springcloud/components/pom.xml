@@ -9,12 +9,13 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	
-    <artifactId>springcloud-components</artifactId>
+    <artifactId>components</artifactId>
+	<groupId>com.github.paganini2008.springcloud</groupId>
 	<version>1.0</version>
 	
     <modules>
         <module>amber-spring-boot-starter</module>
-		<module>jpa-helper-spring-boot-starter</module>
+		<module>fastjpa-spring-boot-starter</module>
 		<module>config-spring-boot-starter</module>
 		<module>authorization-spring-boot-starter</module>
     </modules>
@@ -24,10 +25,5 @@
     <description>Springcloud Framework Extended Common Components</description>
 	
 	<dependencies>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<scope>provided</scope>
-		</dependency>
 	</dependencies>
 </project>

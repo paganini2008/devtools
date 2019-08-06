@@ -9,7 +9,8 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	
-    <artifactId>springcloud-microservice</artifactId>
+	<groupId>com.github.paganini2008.springcloud</groupId>
+    <artifactId>microservice</artifactId>
     <version>1.0</version>
 	
     <modules>

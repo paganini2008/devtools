@@ -3,8 +3,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>springcloud-components</artifactId>
-		<groupId>com.github.paganini2008</groupId>
+		<artifactId>components</artifactId>
+		<groupId>com.github.paganini2008.springcloud</groupId>
 		<version>1.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
