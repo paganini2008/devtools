@@ -25,12 +25,10 @@ import com.github.paganini2008.devtools.reflection.MethodUtils;
  * 
  * @author Fred Feng
  * @revised 2019-05
+ * @created 2012-08
  * @version 1.0
  */
-public class PropertyUtils {
-
-	private PropertyUtils() {
-	}
+public abstract class PropertyUtils {
 
 	private static final Map<Type, Map<Type, Map<String, PropertyDescriptor>>> cache = new LruMap<Type, Map<Type, Map<String, PropertyDescriptor>>>(
 			256);
@@ -129,22 +127,22 @@ public class PropertyUtils {
 		PropertyDescriptor descriptor;
 		Method method;
 		Field field;
-		Mapping mapping;
+		PropertyMapper mapping;
 		for (Map.Entry<String, PropertyDescriptor> e : descriptors.entrySet()) {
 			propertyName = e.getKey();
 			descriptor = e.getValue();
 			field = FieldUtils.getFieldIfAbsent(type, propertyName);
 			if (field != null) {
-				if (field.isAnnotationPresent(Excluding.class)) {
+				if (field.isAnnotationPresent(ExcludedProperty.class)) {
 					results.remove(propertyName);
-				} else if (field.isAnnotationPresent(Mapping.class)) {
-					mapping = field.getAnnotation(Mapping.class);
+				} else if (field.isAnnotationPresent(PropertyMapper.class)) {
+					mapping = field.getAnnotation(PropertyMapper.class);
 					results.put(StringUtils.isBlank(mapping.value()) ? e.getKey() : mapping.value(), descriptor);
 				}
 			}
 			method = descriptor.getWriteMethod();
-			if (method != null && method.isAnnotationPresent(Mapping.class)) {
-				mapping = method.getAnnotation(Mapping.class);
+			if (method != null && method.isAnnotationPresent(PropertyMapper.class)) {
+				mapping = method.getAnnotation(PropertyMapper.class);
 				results.put(StringUtils.isBlank(mapping.value()) ? e.getKey() : mapping.value(), descriptor);
 			}
 		}

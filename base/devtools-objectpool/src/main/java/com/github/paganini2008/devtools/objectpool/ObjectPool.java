@@ -4,7 +4,7 @@ package com.github.paganini2008.devtools.objectpool;
  * A container of some object.
  * 
  * @author Fred Feng
- * @created 2012-02
+ * @created 2014-03
  * @version 1.0
  */
 public interface ObjectPool {

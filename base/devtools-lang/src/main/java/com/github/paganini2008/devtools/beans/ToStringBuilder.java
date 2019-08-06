@@ -13,9 +13,11 @@ import com.github.paganini2008.devtools.collection.MapUtils;
  * ToStringBuilder
  * 
  * @author Fred Feng
- * @created 2019-05
+ * @created 2012-05
+ * @revised 2019-07
+ * @version 1.0
  */
-public class ToStringBuilder {
+public abstract class ToStringBuilder {
 
 	private static final ToStringStyle DEFAULT_STYLE = new DefaultToSringStyle();
 
@@ -47,9 +49,6 @@ public class ToStringBuilder {
 			}
 			return null;
 		}
-	}
-
-	private ToStringBuilder() {
 	}
 
 	public static String reflectionToString(Object target) {

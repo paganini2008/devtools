@@ -7,7 +7,7 @@
     <version>1.0</version>
     <modules>
 	    <module>base</module>
-		<module>springcloud</module>
+		<module>springworld</module>
     </modules>
     <packaging>pom</packaging>
 

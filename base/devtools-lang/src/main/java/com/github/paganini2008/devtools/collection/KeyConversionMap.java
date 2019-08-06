@@ -13,6 +13,8 @@ import java.util.Set;
  * 
  * @author Fred Feng
  * @created 2018-03
+ * @revised 2019-07
+ * @version 1.0
  */
 public abstract class KeyConversionMap<T, K, V> extends AbstractMap<K, V> implements Map<K, V>, Serializable {
 

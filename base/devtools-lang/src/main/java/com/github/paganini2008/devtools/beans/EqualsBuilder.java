@@ -10,15 +10,15 @@ import com.github.paganini2008.devtools.collection.MapUtils;
 import com.github.paganini2008.devtools.reflection.MethodUtils;
 
 /**
+ * 
  * EqualsBuilder
  * 
  * @author Fred Feng
+ * @created 2012-05
+ * @revised 2019-07
  * @version 1.0
  */
-public class EqualsBuilder {
-
-	private EqualsBuilder() {
-	}
+public abstract class EqualsBuilder {
 
 	public static boolean reflectionEquals(Object source, Object target) {
 		return reflectionEquals(source, target, (PropertyFilter) null);
@@ -38,8 +38,7 @@ public class EqualsBuilder {
 		if (source.getClass() != target.getClass()) {
 			return false;
 		}
-		Map<String, PropertyDescriptor> descriptors = PropertyUtils.getPropertyDescriptors(source.getClass(), stopClass,
-				filter);
+		Map<String, PropertyDescriptor> descriptors = PropertyUtils.getPropertyDescriptors(source.getClass(), stopClass, filter);
 		if (MapUtils.isEmpty(descriptors)) {
 			return source.equals(target);
 		}

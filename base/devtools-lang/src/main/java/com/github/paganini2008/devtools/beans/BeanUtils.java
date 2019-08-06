@@ -9,13 +9,10 @@ import com.github.paganini2008.devtools.reflection.ConstructorUtils;
  * 
  * @author Fred Feng
  * @revised 2019-07
- * @created 2012-01
+ * @created 2012-08
  * @version 1.0
  */
-public class BeanUtils {
-
-	private BeanUtils() {
-	}
+public abstract class BeanUtils {
 
 	public static <T> T copy(Object original) {
 		return copy(original, (PropertyFilter) null);

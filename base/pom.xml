@@ -7,7 +7,6 @@
 		<version>1.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-    <groupId>com.github.paganini2008</groupId>
     <artifactId>devtools-base</artifactId>
     <modules>
 	    <module>devtools-lang</module>

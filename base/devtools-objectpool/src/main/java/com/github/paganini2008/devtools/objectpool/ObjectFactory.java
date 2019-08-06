@@ -5,7 +5,7 @@ package com.github.paganini2008.devtools.objectpool;
  * in it.
  * 
  * @author Fred Feng
- * @created 2012-02
+ * @created 2014-03
  * @version 1.0
  */
 public interface ObjectFactory {

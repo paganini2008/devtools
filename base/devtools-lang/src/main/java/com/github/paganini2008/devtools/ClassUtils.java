@@ -15,13 +15,12 @@ import com.github.paganini2008.devtools.collection.MapUtils;
  * ClassUtils
  * 
  * @author Fred Feng
+ * @created 2011-08
+ * @revised 2019-05
  * @version 1.0
  */
 @SuppressWarnings("all")
-public class ClassUtils {
-
-	private ClassUtils() {
-	}
+public abstract class ClassUtils {
 
 	public static final Class<?>[] EMPTY_ARRAY = new Class<?>[0];
 
