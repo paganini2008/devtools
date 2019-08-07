@@ -101,7 +101,7 @@ public class ApplicationPropertiesKeeper implements BeanPostProcessor, Environme
 		applicationProperties.addEventListener(event -> {
 			Properties latest = event.getLatest();
 			Properties current = event.getCurrent();
-			Map<Object, Object> difference = MapUtils.compareEachOther(latest, current);
+			Map<Object, Object> difference = MapUtils.compareDifference(latest, current);
 			if (MapUtils.isNotEmpty(difference)) {
 				for (String key : keys) {
 					if (difference.containsKey(key)) {
@@ -121,7 +121,7 @@ public class ApplicationPropertiesKeeper implements BeanPostProcessor, Environme
 			public void onEventFired(PropertyChangeEvent<Properties> event) {
 				Properties latest = event.getLatest();
 				Properties current = event.getCurrent();
-				Map<Object, Object> difference = MapUtils.compareEachOther(latest, current);
+				Map<Object, Object> difference = MapUtils.compareDifference(latest, current);
 				if (difference != null && difference.containsKey(key)) {
 					Object previousValue = null;
 					Object currentValue = environment.getProperty(key, field.getType());

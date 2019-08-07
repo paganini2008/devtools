@@ -409,7 +409,7 @@ public class MapUtils {
 		return !isEmpty(map);
 	}
 
-	public static <K, V> Map<K, V> compareEachOther(Map<K, V> left, Map<K, V> right) {
+	public static <K, V> Map<K, V> compareDifference(Map<K, V> left, Map<K, V> right) {
 		if (left == right) {
 			return null;
 		}
