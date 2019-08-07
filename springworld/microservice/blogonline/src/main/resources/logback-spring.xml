@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+
+	<!--生产环境 -->
+	<springProfile name="prod">
+		<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+			<encoder charset="UTF-8">
+				<pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %logger{36} - %msg%n
+				</pattern>
+			</encoder>
+		</appender>
+
+		<springProperty scope="context" name="rabbitmqAddresses"
+			source="spring.rabbitmq.addresses" />
+		<springProperty scope="context" name="rabbitmqUsername"
+			source="spring.rabbitmq.username" />
+		<springProperty scope="context" name="rabbitmqPassword"
+			source="spring.rabbitmq.password" />
+		<springProperty scope="context" name="rabbitmqVhost"
+			source="spring.rabbitmq.vhost" />
+		<springProperty scope="context" name="activeProfile"
+			source="spring.profiles.active" />
+
+		<!--直连Rabbitmq -->
+		<appender name="RabbitMq"
+			class="org.springframework.amqp.rabbit.logback.AmqpAppender">
+			<layout>
+				<pattern><![CDATA[ [eco-service-${activeProfile}-${internalVersion}-%p]: %d %t [%c] - <%m>%n ]]></pattern>
+			</layout>
+			<!--rabbitmq地址 -->
+			<addresses>${rabbitmqAddresses}</addresses>
+			<abbreviation>36</abbreviation>
+			<includeCallerData>true</includeCallerData>
+			<applicationId>eco-service</applicationId>
+			<username>${rabbitmqUsername}</username>
+			<password>${rabbitmqPassword}</password>
+			<virtualHost>${rabbitmqVhost}</virtualHost>
+			<routingKeyPattern>mec_runtime_logger</routingKeyPattern>
+			<generateId>true</generateId>
+			<charset>UTF-8</charset>
+			<durable>true</durable>
+			<deliveryMode>NON_PERSISTENT</deliveryMode>
+			<declareExchange>true</declareExchange>
+			<autoDelete>false</autoDelete>
+		</appender>
+
+		<springProperty scope="context" name="driverClassName"
+			source="blogonline.datasource.actualDriverClassName" />
+		<springProperty scope="context" name="url"
+			source="blogonline.datasource.actualJdbcUrl" />
+		<springProperty scope="context" name="username"
+			source="blogonline.datasource.username" />
+		<springProperty scope="context" name="password"
+			source="blogonline.datasource.password" />
+
+		<appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
+			<filter class="com.github.paganini2008.springworld.support.logback.MarkerThresholdFilter">
+				<level>ERROR</level>
+				<marker>mec</marker>
+				<onMatch>ACCEPT</onMatch>
+				<onMismatch>DENY</onMismatch>
+			</filter>
+			<connectionSource
+				class="com.github.paganini2008.springworld.support.logback.HikariCPConnectionSource">
+				<driverClassName>${driverClassName}</driverClassName>
+				<url>${url}</url>
+				<username>${username}</username>
+				<password>${password}</password>
+			</connectionSource>
+		</appender>
+
+		<appender name="DB_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+			<discardingThreshold>0</discardingThreshold>
+			<queueSize>256</queueSize>
+			<includeCallerData>true</includeCallerData>
+			<appender-ref ref="DB" />
+		</appender>
+
+		<root level="info">
+			<appender-ref ref="STDOUT" />
+			<appender-ref ref="RabbitMq" />
+			<appender-ref ref="DB_ASYNC" />
+		</root>
+	</springProfile>
+
+	<!--测试环境 -->
+	<springProfile name="test">
+		<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+			<encoder charset="UTF-8">
+				<pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %logger{36} - %msg%n
+				</pattern>
+			</encoder>
+		</appender>
+
+		<springProperty scope="context" name="rabbitmqAddresses"
+			source="spring.rabbitmq.addresses" />
+		<springProperty scope="context" name="rabbitmqUsername"
+			source="spring.rabbitmq.username" />
+		<springProperty scope="context" name="rabbitmqPassword"
+			source="spring.rabbitmq.password" />
+		<springProperty scope="context" name="rabbitmqVhost"
+			source="spring.rabbitmq.vhost" />
+		<springProperty scope="context" name="activeProfile"
+			source="spring.profiles.active" />
+
+		<!--直连Rabbitmq -->
+		<appender name="RabbitMq"
+			class="org.springframework.amqp.rabbit.logback.AmqpAppender">
+			<layout>
+				<pattern><![CDATA[ [eco-service-${activeProfile}-${internalVersion}-%p]: %d %t [%c] - <%m>%n ]]></pattern>
+			</layout>
+			<!--rabbitmq地址 -->
+			<addresses>${rabbitmqAddresses}</addresses>
+			<abbreviation>36</abbreviation>
+			<includeCallerData>true</includeCallerData>
+			<applicationId>eco-service</applicationId>
+			<username>${rabbitmqUsername}</username>
+			<password>${rabbitmqPassword}</password>
+			<virtualHost>${rabbitmqVhost}</virtualHost>
+			<routingKeyPattern>mec_runtime_logger</routingKeyPattern>
+			<generateId>true</generateId>
+			<charset>UTF-8</charset>
+			<durable>true</durable>
+			<deliveryMode>NON_PERSISTENT</deliveryMode>
+			<declareExchange>true</declareExchange>
+			<autoDelete>false</autoDelete>
+		</appender>
+
+		<springProperty scope="context" name="driverClassName"
+			source="blogonline.datasource.actualDriverClassName" />
+		<springProperty scope="context" name="url"
+			source="blogonline.datasource.actualJdbcUrl" />
+		<springProperty scope="context" name="username"
+			source="blogonline.datasource.username" />
+		<springProperty scope="context" name="password"
+			source="blogonline.datasource.password" />
+
+		<appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
+			<filter class="com.github.paganini2008.springworld.support.logback.MarkerThresholdFilter">
+				<level>ERROR</level>
+				<marker>mec</marker>
+				<onMatch>ACCEPT</onMatch>
+				<onMismatch>DENY</onMismatch>
+			</filter>
+			<connectionSource
+				class="com.github.paganini2008.springworld.support.logback.HikariCPConnectionSource">
+				<driverClassName>${driverClassName}</driverClassName>
+				<url>${url}</url>
+				<username>${username}</username>
+				<password>${password}</password>
+			</connectionSource>
+		</appender>
+
+		<appender name="DB_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+			<discardingThreshold>0</discardingThreshold>
+			<queueSize>256</queueSize>
+			<includeCallerData>true</includeCallerData>
+			<appender-ref ref="DB" />
+		</appender>
+
+		<root level="info">
+			<appender-ref ref="STDOUT" />
+			<appender-ref ref="RabbitMq" />
+			<appender-ref ref="DB_ASYNC" />
+		</root>
+	</springProfile>
+	
+	<!--开发环境 -->
+	<springProfile name="dev">
+		<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+			<encoder charset="UTF-8">
+				<pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %logger{36} - %msg%n
+				</pattern>
+			</encoder>
+		</appender>
+
+		<appender name="INFO"
+			class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<filter class="ch.qos.logback.classic.filter.LevelFilter">
+				<level>ERROR</level>
+				<onMatch>DENY</onMatch>
+				<onMismatch>ACCEPT</onMismatch>
+			</filter>
+			<file>${DEFAULT_LOG_BASE}/app-info.log</file>
+			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+				<fileNamePattern>${DEFAULT_LOG_BASE}/logs/app-info.%d{yyyy-MM-dd}-%i.log
+				</fileNamePattern>
+				<maxHistory>10</maxHistory>
+				<timeBasedFileNamingAndTriggeringPolicy
+					class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+					<MaxFileSize>50MB</MaxFileSize>
+				</timeBasedFileNamingAndTriggeringPolicy>
+			</rollingPolicy>
+			<encoder>
+				<pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %logger{36} - %msg%n
+				</pattern>
+			</encoder>
+		</appender>
+
+		<appender name="ERROR"
+			class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+				<level>ERROR</level>
+			</filter>
+			<file>${DEFAULT_LOG_BASE}/app-error.log</file>
+			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+				<fileNamePattern>${DEFAULT_LOG_BASE}/history/app-error.%d{yyyy-MM-dd}-%i.log
+				</fileNamePattern>
+				<maxHistory>10</maxHistory>
+				<timeBasedFileNamingAndTriggeringPolicy
+					class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+					<MaxFileSize>50MB</MaxFileSize>
+				</timeBasedFileNamingAndTriggeringPolicy>
+			</rollingPolicy>
+			<encoder>
+				<pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %logger{36} - %msg%n
+				</pattern>
+			</encoder>
+		</appender>
+
+		<springProperty scope="context" name="driverClassName"
+			source="blogonline.datasource.actualDriverClassName" />
+		<springProperty scope="context" name="url"
+			source="blogonline.datasource.actualJdbcUrl" />
+		<springProperty scope="context" name="username"
+			source="blogonline.datasource.username" />
+		<springProperty scope="context" name="password"
+			source="blogonline.datasource.password" />
+
+		<appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
+			<filter class="com.github.paganini2008.springworld.support.logback.MarkerThresholdFilter">
+				<level>ERROR</level>
+				<marker>mec</marker>
+				<onMatch>ACCEPT</onMatch>
+				<onMismatch>DENY</onMismatch>
+			</filter>
+			<connectionSource
+				class="com.github.paganini2008.springworld.support.logback.HikariCPConnectionSource">
+				<driverClassName>${driverClassName}</driverClassName>
+				<url>${url}</url>
+				<username>${username}</username>
+				<password>${password}</password>
+			</connectionSource>
+		</appender>
+
+		<appender name="DB_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+			<discardingThreshold>0</discardingThreshold>
+			<queueSize>256</queueSize>
+			<includeCallerData>true</includeCallerData>
+			<appender-ref ref="DB" />
+		</appender>
+
+		<root level="info">
+			<appender-ref ref="STDOUT" />
+			<appender-ref ref="INFO" />
+			<appender-ref ref="ERROR" />
+			<appender-ref ref="DB_ASYNC" />
+		</root>
+	</springProfile>
+
+	<!--本地环境 -->
+	<springProfile name="local">
+		<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+			<encoder charset="UTF-8">
+				<pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %logger{36} - %msg%n
+				</pattern>
+			</encoder>
+		</appender>
+
+		<appender name="INFO"
+			class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<filter class="ch.qos.logback.classic.filter.LevelFilter">
+				<level>ERROR</level>
+				<onMatch>DENY</onMatch>
+				<onMismatch>ACCEPT</onMismatch>
+			</filter>
+			<file>${DEFAULT_LOG_BASE}/app-info.log</file>
+			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+				<fileNamePattern>${DEFAULT_LOG_BASE}/logs/app-info.%d{yyyy-MM-dd}-%i.log
+				</fileNamePattern>
+				<maxHistory>10</maxHistory>
+				<timeBasedFileNamingAndTriggeringPolicy
+					class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+					<MaxFileSize>50MB</MaxFileSize>
+				</timeBasedFileNamingAndTriggeringPolicy>
+			</rollingPolicy>
+			<encoder>
+				<pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %logger{36} - %msg%n
+				</pattern>
+			</encoder>
+		</appender>
+
+		<appender name="ERROR"
+			class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+				<level>ERROR</level>
+			</filter>
+			<file>${DEFAULT_LOG_BASE}/app-error.log</file>
+			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+				<fileNamePattern>${DEFAULT_LOG_BASE}/history/app-error.%d{yyyy-MM-dd}-%i.log
+				</fileNamePattern>
+				<maxHistory>10</maxHistory>
+				<timeBasedFileNamingAndTriggeringPolicy
+					class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+					<MaxFileSize>50MB</MaxFileSize>
+				</timeBasedFileNamingAndTriggeringPolicy>
+			</rollingPolicy>
+			<encoder>
+				<pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %logger{36} - %msg%n
+				</pattern>
+			</encoder>
+		</appender>
+
+		<springProperty scope="context" name="driverClassName"
+			source="blogonline.datasource.actualDriverClassName" />
+		<springProperty scope="context" name="url"
+			source="blogonline.datasource.actualJdbcUrl" />
+		<springProperty scope="context" name="username"
+			source="blogonline.datasource.username" />
+		<springProperty scope="context" name="password"
+			source="blogonline.datasource.password" />
+
+		<appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
+			<filter class="com.github.paganini2008.springworld.support.logback.MarkerThresholdFilter">
+				<level>ERROR</level>
+				<marker>mec</marker>
+				<onMatch>ACCEPT</onMatch>
+				<onMismatch>DENY</onMismatch>
+			</filter>
+			<connectionSource
+				class="com.github.paganini2008.springworld.support.logback.HikariCPConnectionSource">
+				<driverClassName>${driverClassName}</driverClassName>
+				<url>${url}</url>
+				<username>${username}</username>
+				<password>${password}</password>
+			</connectionSource>
+		</appender>
+
+		<appender name="DB_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+			<discardingThreshold>0</discardingThreshold>
+			<queueSize>256</queueSize>
+			<includeCallerData>true</includeCallerData>
+			<appender-ref ref="DB" />
+		</appender>
+
+		<root level="info">
+			<appender-ref ref="STDOUT" />
+			<appender-ref ref="INFO" />
+			<appender-ref ref="ERROR" />
+			<appender-ref ref="DB_ASYNC" />
+		</root>
+	</springProfile>
+
+	<!--开发环境 -->
+	<springProfile name="fat">
+		<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+			<encoder charset="UTF-8">
+				<pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %logger{36} - %msg%n
+				</pattern>
+			</encoder>
+		</appender>
+
+		<appender name="INFO"
+			class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<filter class="ch.qos.logback.classic.filter.LevelFilter">
+				<level>ERROR</level>
+				<onMatch>DENY</onMatch>
+				<onMismatch>ACCEPT</onMismatch>
+			</filter>
+			<file>${DEFAULT_LOG_BASE}/app-info.log</file>
+			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+				<fileNamePattern>${DEFAULT_LOG_BASE}/logs/app-info.%d{yyyy-MM-dd}-%i.log
+				</fileNamePattern>
+				<maxHistory>10</maxHistory>
+				<timeBasedFileNamingAndTriggeringPolicy
+					class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+					<MaxFileSize>50MB</MaxFileSize>
+				</timeBasedFileNamingAndTriggeringPolicy>
+			</rollingPolicy>
+			<encoder>
+				<pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %logger{36} - %msg%n
+				</pattern>
+			</encoder>
+		</appender>
+
+		<appender name="ERROR"
+			class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+				<level>ERROR</level>
+			</filter>
+			<file>${DEFAULT_LOG_BASE}/app-error.log</file>
+			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+				<fileNamePattern>${DEFAULT_LOG_BASE}/history/app-error.%d{yyyy-MM-dd}-%i.log
+				</fileNamePattern>
+				<maxHistory>10</maxHistory>
+				<timeBasedFileNamingAndTriggeringPolicy
+					class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+					<MaxFileSize>50MB</MaxFileSize>
+				</timeBasedFileNamingAndTriggeringPolicy>
+			</rollingPolicy>
+			<encoder>
+				<pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %logger{36} - %msg%n
+				</pattern>
+			</encoder>
+		</appender>
+
+		<springProperty scope="context" name="rabbitmqAddresses"
+			source="spring.rabbitmq.addresses" />
+		<springProperty scope="context" name="rabbitmqUsername"
+			source="spring.rabbitmq.username" />
+		<springProperty scope="context" name="rabbitmqPassword"
+			source="spring.rabbitmq.password" />
+		<springProperty scope="context" name="rabbitmqVhost"
+			source="spring.rabbitmq.vhost" />
+		<springProperty scope="context" name="activeProfile"
+			source="spring.profiles.active" />
+
+		<!--直连Rabbitmq -->
+		<appender name="RabbitMq"
+			class="org.springframework.amqp.rabbit.logback.AmqpAppender">
+			<layout>
+				<pattern><![CDATA[ [eco-service-${activeProfile}-${internalVersion}-%p]: %d %t [%c] - <%m>%n ]]></pattern>
+			</layout>
+			<!--rabbitmq地址 -->
+			<addresses>${rabbitmqAddresses}</addresses>
+			<abbreviation>36</abbreviation>
+			<includeCallerData>true</includeCallerData>
+			<applicationId>eco-service</applicationId>
+			<username>${rabbitmqUsername}</username>
+			<password>${rabbitmqPassword}</password>
+			<virtualHost>${rabbitmqVhost}</virtualHost>
+			<routingKeyPattern>mec_runtime_logger</routingKeyPattern>
+			<generateId>true</generateId>
+			<charset>UTF-8</charset>
+			<durable>true</durable>
+			<deliveryMode>NON_PERSISTENT</deliveryMode>
+			<declareExchange>true</declareExchange>
+			<autoDelete>false</autoDelete>
+		</appender>
+
+		<springProperty scope="context" name="driverClassName"
+			source="blogonline.datasource.actualDriverClassName" />
+		<springProperty scope="context" name="url"
+			source="blogonline.datasource.actualJdbcUrl" />
+		<springProperty scope="context" name="username"
+			source="blogonline.datasource.username" />
+		<springProperty scope="context" name="password"
+			source="blogonline.datasource.password" />
+
+		<appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
+			<filter class="com.github.paganini2008.springworld.support.logback.MarkerThresholdFilter">
+				<level>ERROR</level>
+				<marker>mec</marker>
+				<onMatch>ACCEPT</onMatch>
+				<onMismatch>DENY</onMismatch>
+			</filter>
+			<connectionSource
+				class="com.github.paganini2008.springworld.support.logback.HikariCPConnectionSource">
+				<driverClassName>${driverClassName}</driverClassName>
+				<url>${url}</url>
+				<username>${username}</username>
+				<password>${password}</password>
+			</connectionSource>
+		</appender>
+
+		<appender name="DB_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+			<discardingThreshold>0</discardingThreshold>
+			<queueSize>256</queueSize>
+			<includeCallerData>true</includeCallerData>
+			<appender-ref ref="DB" />
+		</appender>
+
+		<root level="info">
+			<appender-ref ref="STDOUT" />
+			<appender-ref ref="INFO" />
+			<appender-ref ref="ERROR" />
+			<appender-ref ref="RabbitMq" />
+			<appender-ref ref="DB_ASYNC" />
+		</root>
+	</springProfile>
+</configuration>
