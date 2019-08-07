@@ -1,7 +1,8 @@
-package com.github.paganini2008.springboot.config;
+package com.github.paganini2008.springworld.config;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.context.ApplicationEvent;
+
+import com.github.paganini2008.devtools.beans.ToStringBuilder;
 
 /**
  * 
@@ -27,8 +28,12 @@ public class BeanChangeEvent extends ApplicationEvent {
 		return beanName;
 	}
 
+	public Class<?> getBeanClass() {
+		return getSource().getClass();
+	}
+
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+		return ToStringBuilder.reflectionToString(this, new String[] { "source" });
 	}
 
 }

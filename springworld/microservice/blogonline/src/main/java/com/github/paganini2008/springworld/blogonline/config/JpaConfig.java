@@ -31,7 +31,7 @@ import com.github.paganini2008.springboot.fastjpa.support.EntityDaoFactoryBean;
  */
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(repositoryFactoryBeanClass = EntityDaoFactoryBean.class, basePackages = { "com.github.paganini2008.springcloud.blogonline.dao" })
+@EnableJpaRepositories(repositoryFactoryBeanClass = EntityDaoFactoryBean.class, basePackages = { "com.github.paganini2008.springworld.blogonline.dao" })
 public class JpaConfig {
 
 	public static final String PRIMARY_ENTITY_FACTORY_BEAN_NAME = "entityManagerFactory";
@@ -42,7 +42,7 @@ public class JpaConfig {
 			JpaProperties jpaProperties, HibernateProperties hibernateProperties) {
 		Map<String, Object> properties = hibernateProperties.determineHibernateProperties(jpaProperties.getProperties(),
 				new HibernateSettings());
-		return builder.dataSource(dataSource).properties(properties).packages("com.github.paganini2008.springcloud.blogonline.entity").build();
+		return builder.dataSource(dataSource).properties(properties).packages("com.github.paganini2008.springworld.blogonline.entity").build();
 	}
 
 	@Bean

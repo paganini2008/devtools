@@ -1,5 +1,7 @@
 package com.github.paganini2008.devtools.collection;
 
+import java.util.Map;
+
 /**
  * 
  * Tuple
@@ -38,5 +40,7 @@ public interface Tuple {
 	void fill(Object object);
 
 	<T> T toBean(Class<T> requiredType);
+	
+	Map<String, Object> toMap();
 
 }

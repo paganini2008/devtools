@@ -1,6 +1,6 @@
-package com.github.paganini2008.springboot.config;
+package com.github.paganini2008.springworld.config;
 
-import static com.github.paganini2008.springboot.config.ExternalConfigurationSpringApplication.CONFIGURATION_BOOT_NAME;
+import static com.github.paganini2008.springworld.config.ExternalConfigurationSpringApplication.CONFIGURATION_BOOT_NAME;
 
 import java.util.concurrent.TimeUnit;
 
@@ -83,7 +83,7 @@ public class ApplicationPropertiesConfig implements EnvironmentAware {
 
 		MutablePropertySources propertySources = ((ConfigurableEnvironment) environment).getPropertySources();
 		if (propertySources.contains(CONFIGURATION_BOOT_NAME)) {
-			propertySources.addAfter(CONFIGURATION_BOOT_NAME,
+			propertySources.addBefore(CONFIGURATION_BOOT_NAME,
 					new PropertiesPropertySource(EXTERNAL_APPLICATION_PROPERTIES_NAME, configProperties));
 		} else {
 			propertySources.addLast(new PropertiesPropertySource(EXTERNAL_APPLICATION_PROPERTIES_NAME, configProperties));
@@ -100,7 +100,7 @@ public class ApplicationPropertiesConfig implements EnvironmentAware {
 		private String password;
 		private String searchPath;
 		private String fileNames;
-		private int refreshingInterval = 5 * 60;
+		private int refreshingInterval = 3 * 60;
 
 	}
 

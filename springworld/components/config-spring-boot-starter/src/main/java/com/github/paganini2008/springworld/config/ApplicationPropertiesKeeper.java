@@ -1,4 +1,4 @@
-package com.github.paganini2008.springboot.config;
+package com.github.paganini2008.springworld.config;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -18,7 +18,6 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 
 import com.github.paganini2008.devtools.ObjectUtils;
-import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.SystemPropertyUtils;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.MapUtils;
@@ -67,48 +66,35 @@ public class ApplicationPropertiesKeeper implements BeanPostProcessor, Environme
 			ConfigurationProperties configurationProperties = beanClass.getAnnotation(ConfigurationProperties.class);
 			final String prefix = configurationProperties.prefix();
 			List<Field> fields = FieldUtils.getFields(bean.getClass(), FieldFilters.isAnnotationPresent(Keeping.class));
-			List<String> keys = new ArrayList<String>();
+			List<String> effectedKeys = new ArrayList<String>();
 			for (Field field : fields) {
-				String key = prefix + "." + field.getName();
-				keys.add(key);
-				watchingFieldChange(key, field, bean, beanName);
+				Keeping keeping = field.getAnnotation(Keeping.class);
+				if (keeping != null) {
+					String key = prefix + "." + field.getName();
+					effectedKeys.add(key);
+					watchingFieldChange(key, field, bean, beanName);
+				}
 			}
-			if (CollectionUtils.isNotEmpty(fields)) {
-				watchingDeclaredObjectChange(keys.toArray(new String[0]), beanClass, beanName);
+			if (CollectionUtils.isNotEmpty(effectedKeys)) {
+				watchingDeclaredObjectChange(effectedKeys.toArray(new String[0]), bean, beanName);
 			}
 		} else {
 			List<Field> fields = FieldUtils.getFields(bean.getClass(), FieldFilters.isAnnotationPresent(Keeping.class));
-			List<String> keys = new ArrayList<String>();
+			List<String> effectedKeys = new ArrayList<String>();
 			for (Field field : fields) {
 				if (field.isAnnotationPresent(Value.class)) {
 					Value value = field.getAnnotation(Value.class);
 					String represent = value.value();
 					String key = resolvePlaceholder(represent);
-					keys.add(key);
+					effectedKeys.add(key);
 					watchingFieldChange(key, field, bean, beanName);
-				} else {
-					Keeping keeping = field.getAnnotation(Keeping.class);
-					if (StringUtils.isNotBlank(keeping.value())) {
-						String key = keeping.value();
-						keys.add(key);
-						watchingFieldChange(key, field, bean, beanName);
-					}
 				}
 			}
-			if (CollectionUtils.isNotEmpty(fields)) {
-				watchingDeclaredObjectChange(keys.toArray(new String[0]), beanClass, beanName);
+			if (CollectionUtils.isNotEmpty(effectedKeys)) {
+				watchingDeclaredObjectChange(effectedKeys.toArray(new String[0]), bean, beanName);
 			}
 		}
 		return bean;
-	}
-
-	private String resolvePlaceholder(String represent) {
-		String key = RegexUtils.match(represent, PATTERN_PLACEHOLDER, 0, 1, 0);
-		int index = key.indexOf(':');
-		if (index > 0) {
-			key = key.substring(0, index);
-		}
-		return key;
 	}
 
 	private void watchingDeclaredObjectChange(String[] keys, Object bean, String beanName) {
@@ -161,6 +147,15 @@ public class ApplicationPropertiesKeeper implements BeanPostProcessor, Environme
 			}
 		});
 		log.info("Find Keeping Key {} for {}.{}", key, bean.getClass().getName(), field.getName());
+	}
+
+	private String resolvePlaceholder(String represent) {
+		String key = RegexUtils.match(represent, PATTERN_PLACEHOLDER, 0, 1, 0);
+		int index = key.indexOf(':');
+		if (index > 0) {
+			key = key.substring(0, index);
+		}
+		return key;
 	}
 
 }

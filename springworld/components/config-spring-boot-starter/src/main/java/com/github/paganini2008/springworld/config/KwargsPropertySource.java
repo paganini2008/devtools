@@ -1,4 +1,4 @@
-package com.github.paganini2008.springboot.config;
+package com.github.paganini2008.springworld.config;
 
 import java.util.Map;
 

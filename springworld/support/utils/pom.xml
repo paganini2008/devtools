@@ -53,7 +53,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.github.paganini2008.springcloud</groupId>
+			<groupId>com.github.paganini2008.springworld</groupId>
 			<artifactId>fastjpa-spring-boot-starter</artifactId>
 			<version>1.0</version>
 		</dependency>

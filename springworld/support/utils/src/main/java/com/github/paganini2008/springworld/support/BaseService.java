@@ -32,9 +32,11 @@ import com.github.paganini2008.springboot.fastjpa.support.EntityDao;
  */
 public abstract class BaseService<E extends BaseEntity, ID extends Serializable, DAO extends EntityDao<E, ID>> {
 
-	protected DAO dao;
-
-	protected abstract void setDao(DAO dao);
+	protected BaseService(DAO dao) {
+		this.dao = dao;
+	}
+	
+	protected final DAO dao;
 
 	public E save(E entity) {
 		return dao.save(entity);

@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.blogonline.entity.enums;
+package com.github.paganini2008.springworld.support.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;

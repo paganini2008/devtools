@@ -13,9 +13,12 @@ import com.zaxxer.hikari.HikariDataSource;
 
 /**
  * 
- * DbConfig
+ * DbPoolConfig
  * 
  * @author Fred Feng
+ * @created 2019-07
+ * @revised 2019-02
+ * @version 1.0
  */
 @Configuration
 public class DbPoolConfig {

@@ -1,8 +1,6 @@
 package com.github.paganini2008.springcloud.security;
 
 import java.io.File;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
 import java.security.Principal;
 
 import org.apache.commons.io.FileUtils;
@@ -14,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.github.paganini2008.springboot.authorization.EnableOAuth2Server;
 import com.github.paganini2008.springboot.config.GitConfigurationSpringApplication;
+import com.github.paganini2008.springcloud.security.utils.Env;
 
 /**
  * 
@@ -40,7 +39,7 @@ public class OAuth2ServerMain {
 
 	public static void main(String[] args) {
 		GitConfigurationSpringApplication.run(OAuth2ServerMain.class, args);
-		System.out.println(getPid());
+		System.out.println(Env.getPid());
 	}
 
 	@Value("${spring.profiles.active}")
@@ -54,14 +53,5 @@ public class OAuth2ServerMain {
 	@GetMapping("/ping")
 	public String ping() {
 		return "pong:" + active;
-	}
-	
-	private static int getPid() {
-		try {
-			RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
-			return Integer.parseInt(runtimeMXBean.getName().split("@")[0]);
-		} catch (Exception e) {
-			return 0;
-		}
 	}
 }

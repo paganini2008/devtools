@@ -6,9 +6,9 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
-import com.github.paganini2008.springworld.blogonline.entity.enums.Gender;
 import com.github.paganini2008.springworld.support.BaseEntity;
 import com.github.paganini2008.springworld.support.Comment;
+import com.github.paganini2008.springworld.support.enums.Gender;
 
 import lombok.Getter;
 import lombok.Setter;

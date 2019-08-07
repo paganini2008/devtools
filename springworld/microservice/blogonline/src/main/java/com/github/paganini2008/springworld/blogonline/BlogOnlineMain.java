@@ -9,14 +9,14 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import com.github.paganini2008.devtools.io.FileUtils;
 import com.github.paganini2008.devtools.net.NetUtils;
 import com.github.paganini2008.springboot.authorization.EnableOAuth2ResourceServer;
-import com.github.paganini2008.springboot.config.EnableApplicationPropertiesKeeper;
-import com.github.paganini2008.springboot.config.GitConfigurationSpringApplication;
+import com.github.paganini2008.springworld.config.EnableApplicationPropertiesKeeper;
+import com.github.paganini2008.springworld.config.GitConfigurationSpringApplication;
 import com.github.paganini2008.springworld.support.Env;
 import com.github.paganini2008.springworld.support.redis.EnableRedisAdvancedFeatures;
 
 /**
  * 
- * CommunityApiMain
+ * BlogOnlineMain
  * 
  * @author Fred Feng
  * @created 2019-06
@@ -27,23 +27,23 @@ import com.github.paganini2008.springworld.support.redis.EnableRedisAdvancedFeat
 @EnableApplicationPropertiesKeeper
 @EnableAsync
 @SpringBootApplication
-@ComponentScan(basePackages = { "com.github.paganini2008.springcloud" })
-public class BlogApiMain {
-	
+@ComponentScan(basePackages = { "com.github.paganini2008.springworld" })
+public class BlogOnlineMain {
+
 	static {
 		System.setProperty("spring.devtools.restart.enabled", "false");
-		File logDir = FileUtils.getFile(FileUtils.getUserHome(), "logs", "mec-cloud-biz");
+		File logDir = FileUtils.getFile(FileUtils.getUserDirectory(), "logs", "springworld", "blogonline");
 		if (!logDir.exists()) {
 			logDir.mkdirs();
 		}
-		System.setProperty("MEC_LOG_BASE", logDir.getAbsolutePath());
+		System.setProperty("DEFAULT_LOG_BASE", logDir.getAbsolutePath());
 	}
 
 	public static void main(String[] args) {
 		final int port = NetUtils.getRandomPort(Constants.MICROSERVICE_RANDOM_PORT_START, Constants.MICROSERVICE_BIZ_RANDOM_PORT_END);
 		System.out.println("Server Port: " + port);
 		System.setProperty("server.port", String.valueOf(port));
-		GitConfigurationSpringApplication.run(BlogApiMain.class, args);
+		GitConfigurationSpringApplication.run(BlogOnlineMain.class, args);
 		System.out.println(Env.getPid());
 	}
 }

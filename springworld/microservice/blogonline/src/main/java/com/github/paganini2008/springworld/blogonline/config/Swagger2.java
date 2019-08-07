@@ -48,7 +48,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class Swagger2 {
 
 	private static final Collection<String> basePackageNames = Collections
-			.unmodifiableCollection(Arrays.asList("com.allyes.mec.cloud.code.controller"));
+			.unmodifiableCollection(Arrays.asList("com.github.paganini2008.springworld.blogonlone.controller"));
 
 	@Bean
 	public Docket createRestApi() {// 创建API基本信息

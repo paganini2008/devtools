@@ -4,12 +4,12 @@ import com.google.gson.Gson;
 
 /**
  * 
- * JsonUtils
+ * GsonUtils
  * 
  * @author Fred Feng
  * @version 1.0
  */
-public class JsonUtils {
+public class GsonUtils {
 
 	private static final Gson gson = new Gson();
 
@@ -21,6 +21,6 @@ public class JsonUtils {
 		return gson.toJson(object);
 	}
 
-	private JsonUtils() {
+	private GsonUtils() {
 	}
 }

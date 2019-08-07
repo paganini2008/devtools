@@ -1,13 +1,15 @@
-package com.github.paganini2008.springboot.config;
+package com.github.paganini2008.springworld.config;
 
 import java.io.Serializable;
 
 /**
  * 
- * MessageEntity
+ * ResultEntity
  * 
  * @author Fred Feng
+ * @revised 2019-07
  * @created 2019-05
+ * @version 1.0
  */
 public class ResultEntity<T> implements Serializable {
 
@@ -59,7 +61,7 @@ public class ResultEntity<T> implements Serializable {
 	public static <T> ResultEntity<T> onFailure(String msg) {
 		return new ResultEntity<T>(false, msg, null);
 	}
-	
+
 	public static <T> ResultEntity<T> onSuccess(T body) {
 		return onSuccess("ok", body);
 	}

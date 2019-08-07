@@ -38,14 +38,15 @@ public abstract class RefreshingProperties extends ReadonlyProperties implements
 	public synchronized boolean refresh() throws Exception {
 		boolean hasChanged = false;
 		Properties lastest = createObject();
+		Properties current = null;
 		if (delegate != null) {
-			Properties current = (Properties) delegate.clone();
+			current = (Properties) delegate.clone();
 			hasChanged = !MapUtils.deepEquals(lastest, current);
-			if (hasChanged) {
-				onChange(lastest, current);
-			}
 		}
 		this.delegate = lastest;
+		if (hasChanged) {
+			onChange(lastest, current);
+		}
 		return hasChanged;
 	}
 
@@ -155,10 +156,10 @@ public abstract class RefreshingProperties extends ReadonlyProperties implements
 	private Timer timer;
 
 	public void setInterval(long interval, TimeUnit timeUnit) throws Exception {
-		if (delegate == null) {
+		if (timer == null) {
 			refresh();
+			timer = ThreadUtils.scheduleAtFixedRate(this, interval, timeUnit);
 		}
-		timer = ThreadUtils.scheduleAtFixedRate(this, interval, timeUnit);
 	}
 
 	public void clearInterval() {

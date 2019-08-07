@@ -24,9 +24,8 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.paganini2008.springcloud.security.utils.JsonUtils;
+import com.github.paganini2008.springcloud.security.utils.GsonUtils;
 
-import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 /**
@@ -72,7 +71,7 @@ public class RedisConfig {
 				sb.append("#");
 				sb.append(method.getName());
 				sb.append("(");
-				sb.append(params != null ? JsonUtils.parseObject(params) : "");
+				sb.append(params != null ? GsonUtils.parseObject(params) : "");
 				sb.append(")");
 				return sb.toString();
 			}
@@ -86,11 +85,10 @@ public class RedisConfig {
 		redisStandaloneConfiguration.setPort(port);
 		redisStandaloneConfiguration.setDatabase(dbIndex);
 		redisStandaloneConfiguration.setPassword(RedisPassword.of(password));
-		JedisClientConfiguration.JedisClientConfigurationBuilder jedisClientConfiguration = JedisClientConfiguration
-				.builder();
-		jedisClientConfiguration.connectTimeout(Duration.ofMillis(60000));
-		JedisConnectionFactory factory = new JedisConnectionFactory(redisStandaloneConfiguration,
-				jedisClientConfiguration.build());
+		JedisClientConfiguration.JedisClientConfigurationBuilder jedisClientConfiguration = JedisClientConfiguration.builder();
+		jedisClientConfiguration.connectTimeout(Duration.ofMillis(60000)).readTimeout(Duration.ofMillis(60000)).usePooling()
+				.poolConfig(jedisPoolConfig());
+		JedisConnectionFactory factory = new JedisConnectionFactory(redisStandaloneConfiguration, jedisClientConfiguration.build());
 		return factory;
 	}
 
@@ -114,14 +112,13 @@ public class RedisConfig {
 	}
 
 	@Bean
-	public JedisPool createRedisPool() {
+	public JedisPoolConfig jedisPoolConfig() {
 		JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
 		jedisPoolConfig.setMinIdle(1);
 		jedisPoolConfig.setMaxIdle(5);
 		jedisPoolConfig.setMaxTotal(10);
 		jedisPoolConfig.setMaxWaitMillis(-1);
 		jedisPoolConfig.setTestWhileIdle(true);
-		JedisPool jedisPool = new JedisPool(jedisPoolConfig, host, port, 60000, password);
-		return jedisPool;
+		return jedisPoolConfig;
 	}
 }

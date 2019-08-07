@@ -1,5 +1,6 @@
 package com.github.paganini2008.devtools.beans;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.github.paganini2008.devtools.Case;
@@ -81,6 +82,10 @@ public class TupleImpl extends KeyCaseInsensitiveMap<Object> implements Tuple {
 		}
 	}
 
+	public Map<String, Object> toMap() {
+		return new LinkedHashMap<String, Object>(this);
+	}
+
 	public static Tuple createBy(Map<String, ?> kwargs) {
 		return createBy(Cases.LOWER, kwargs);
 	}
@@ -89,10 +94,6 @@ public class TupleImpl extends KeyCaseInsensitiveMap<Object> implements Tuple {
 		TupleImpl tuple = new TupleImpl(caseFormat);
 		tuple.putAll(kwargs);
 		return tuple;
-	}
-
-	public static void main(String[] args) {
-
 	}
 
 }

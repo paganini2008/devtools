@@ -32,7 +32,7 @@ import lombok.Setter;
 @Configuration
 public class ResourceServerConfig {
 
-	public static final String RESOURCE_ID = "hlsh-api";
+	public static final String RESOURCE_ID = "web-api";
 
 	@Getter
 	@Setter

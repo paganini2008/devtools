@@ -1,4 +1,4 @@
-package com.github.paganini2008.springboot.config;
+package com.github.paganini2008.springworld.config;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -17,7 +17,4 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Keeping {
-	
-	String value() default "";
-	
 }

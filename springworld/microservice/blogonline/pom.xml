@@ -36,7 +36,7 @@
 			<artifactId>config-spring-boot-starter</artifactId>
 			<version>1.0</version>
 		</dependency>
-
+ 
 		<dependency>
 			<groupId>com.github.paganini2008.springworld</groupId>
 			<artifactId>authorization-spring-boot-starter</artifactId>
