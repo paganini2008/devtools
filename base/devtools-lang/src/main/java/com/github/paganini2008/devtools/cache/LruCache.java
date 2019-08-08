@@ -9,6 +9,7 @@ import com.github.paganini2008.devtools.collection.LruList;
  * LruCache
  * 
  * @author Fred Feng
+ * @created 2016-11
  * @version 1.0
  */
 public class LruCache extends LimitedCache {

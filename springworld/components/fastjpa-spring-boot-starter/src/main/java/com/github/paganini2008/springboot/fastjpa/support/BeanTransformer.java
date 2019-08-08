@@ -7,6 +7,9 @@ import java.util.Map;
 
 import javax.persistence.Tuple;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.beans.PropertyMapper;
 import com.github.paganini2008.devtools.beans.PropertyUtils;
@@ -27,6 +30,7 @@ import com.github.paganini2008.springboot.fastjpa.Model;
  */
 public class BeanTransformer<E, T> extends AbstractTransformer<E, T> {
 
+	private static final Logger logger = LoggerFactory.getLogger(BeanTransformer.class);
 	private final BeanReflection<T> beanReflection;
 
 	public BeanTransformer(Class<T> resultClass, String... includedProperties) {
@@ -63,21 +67,33 @@ public class BeanTransformer<E, T> extends AbstractTransformer<E, T> {
 			Object attributeValue;
 			for (JpaAttributeDetail attributeDetail : model.getAttributeDetails(attributeName)) {
 				realAttribute = attributeDetail.getName();
-				if (attributeNames.containsKey(realAttribute)) {
-					attributeValue = PropertyUtils.getProperty(result, attributeNames.get(realAttribute));
-					beanReflection.setProperty(object, attributeFields.get(realAttribute).getName(), attributeValue);
-				} else {
-					attributeValue = PropertyUtils.getProperty(result, realAttribute);
-					beanReflection.setProperty(object, realAttribute, attributeValue);
+				try {
+					if (attributeNames.containsKey(realAttribute)) {
+						attributeValue = PropertyUtils.getProperty(result, attributeNames.get(realAttribute));
+						beanReflection.setProperty(object, attributeFields.get(realAttribute).getName(), attributeValue);
+					} else {
+						attributeValue = PropertyUtils.getProperty(result, realAttribute);
+						beanReflection.setProperty(object, realAttribute, attributeValue);
+					}
+				} catch (Exception e) {
+					if (logger.isTraceEnabled()) {
+						logger.trace(e.getMessage(), e);
+					}
 				}
 			}
 		} else {
 			Object attributeValue = result;
-			if (attributeNames.containsKey(attributeName)) {
-				attributeValue = PropertyUtils.getProperty(result, attributeNames.get(attributeName));
-				beanReflection.setProperty(object, attributeFields.get(attributeName).getName(), attributeValue);
-			} else {
-				beanReflection.setProperty(object, attributeName, attributeValue);
+			try {
+				if (attributeNames.containsKey(attributeName)) {
+					attributeValue = PropertyUtils.getProperty(result, attributeNames.get(attributeName));
+					beanReflection.setProperty(object, attributeFields.get(attributeName).getName(), attributeValue);
+				} else {
+					beanReflection.setProperty(object, attributeName, attributeValue);
+				}
+			} catch (Exception e) {
+				if (logger.isTraceEnabled()) {
+					logger.trace(e.getMessage(), e);
+				}
 			}
 		}
 	}

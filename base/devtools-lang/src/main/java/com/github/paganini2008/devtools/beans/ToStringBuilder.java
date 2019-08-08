@@ -6,6 +6,10 @@ import java.lang.reflect.Modifier;
 import java.util.Map;
 
 import com.github.paganini2008.devtools.Assert;
+import com.github.paganini2008.devtools.beans.ToStringStyles.DefaultToSringStyle;
+import com.github.paganini2008.devtools.beans.ToStringStyles.MultiLineToStringStyle;
+import com.github.paganini2008.devtools.beans.ToStringStyles.PlainToStringStyle;
+import com.github.paganini2008.devtools.beans.ToStringStyles.SingleLineToSrtingStyle;
 import com.github.paganini2008.devtools.collection.MapUtils;
 
 /**

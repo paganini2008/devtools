@@ -4,6 +4,7 @@ package com.github.paganini2008.devtools.cache;
  * ExpiredCache
  * 
  * @author Fred Feng
+ * @created 2016-11
  * @version 1.0
  */
 public interface ExpiredCache extends Cache {

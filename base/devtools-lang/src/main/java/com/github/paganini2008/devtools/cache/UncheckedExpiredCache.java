@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
  * UncheckedExpiredCache
  * 
  * @author Fred Feng
+ * @created 2016-11
  * @version 1.0
  */
 public class UncheckedExpiredCache extends AbstractCache implements ExpiredCache {

@@ -1,15 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<artifactId>components</artifactId>
 		<groupId>com.github.paganini2008.springworld</groupId>
 		<version>1.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-	
+
 	<artifactId>amber-spring-boot-starter</artifactId>
 	<packaging>jar</packaging>
 
@@ -17,7 +16,13 @@
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
-		  
+
+		<dependency>
+			<groupId>com.github.paganini2008</groupId>
+			<artifactId>devtools-scheduler</artifactId>
+			<version>1.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
@@ -84,8 +89,8 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-autoconfigure</artifactId>
 		</dependency>
-		
+
 	</dependencies>
 
-	
+
 </project>
