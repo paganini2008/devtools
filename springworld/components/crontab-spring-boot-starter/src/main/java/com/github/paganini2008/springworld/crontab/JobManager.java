@@ -16,6 +16,8 @@ public interface JobManager {
 	void setTaskExecutor(TaskExecutor taskExecutor);
 
 	void schedule(Job job);
+	
+	boolean hasJob(Job job);
 
 	void runNow();
 	

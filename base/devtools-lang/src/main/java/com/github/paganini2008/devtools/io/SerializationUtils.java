@@ -20,28 +20,16 @@ import com.github.paganini2008.devtools.Assert;
  * SerializationUtils
  * 
  * @author Fred Feng
+ * @revised 2019-08
+ * @created 2013-05
  * @version 1.0
  */
 @SuppressWarnings("all")
-public class SerializationUtils {
-
-	private SerializationUtils() {
-	}
-
-	public static byte[] serialize(Object serializable, boolean compress) {
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		writeObject(serializable, bos, compress);
-		return bos.toByteArray();
-	}
-
-	public static <T> T deserialize(byte[] bytes, boolean compress) {
-		ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-		return (T) readObject(bis, compress);
-	}
+public abstract class SerializationUtils {
 
 	public static <T> T clone(T serializable) {
-		byte[] bytes = serialize(serializable, false);
-		return deserialize(bytes, false);
+		byte[] bytes = toByteArray(serializable);
+		return readObject(bytes);
 	}
 
 	public static <T> List<T> cloneMany(T serializable, int count) {
@@ -69,6 +57,12 @@ public class SerializationUtils {
 		}
 	}
 
+	public static byte[] toByteArray(Object serializable) {
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		writeObject(serializable, output);
+		return output.toByteArray();
+	}
+
 	public static void writeObject(Object serializable, OutputStream os) {
 		writeObject(serializable, os, false);
 	}
@@ -85,6 +79,11 @@ public class SerializationUtils {
 		} finally {
 			IOUtils.flushQuietly(oos);
 		}
+	}
+
+	public static <T> T readObject(byte[] bytes) {
+		ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+		return (T) readObject(bis);
 	}
 
 	public static Object readObject(InputStream is) {

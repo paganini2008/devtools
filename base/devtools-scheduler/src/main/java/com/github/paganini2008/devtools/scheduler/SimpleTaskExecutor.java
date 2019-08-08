@@ -33,10 +33,8 @@ public class SimpleTaskExecutor implements TaskExecutor {
 	}
 
 	public TaskFuture schedule(Executable e, long delay) {
-		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(e, new Trigger() {
-			public long getNextFireTime() {
-				return System.currentTimeMillis() + delay;
-			}
+		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(e, () -> {
+			return System.currentTimeMillis() + delay;
 		});
 		taskDetail.nextExecuted = System.currentTimeMillis() + delay;
 		final SimpleTask task = new SimpleTask(e, taskDetail);
@@ -46,10 +44,8 @@ public class SimpleTaskExecutor implements TaskExecutor {
 	}
 
 	public TaskFuture scheduleAtFixedRate(Executable e, long delay, long period) {
-		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(e, new Trigger() {
-			public long getNextFireTime() {
-				return System.currentTimeMillis() + delay;
-			}
+		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(e, () -> {
+			return System.currentTimeMillis() + delay;
 		});
 		taskDetail.nextExecuted = System.currentTimeMillis() + delay;
 		final SimpleTask task = new SimpleTask(e, taskDetail);
@@ -59,10 +55,8 @@ public class SimpleTaskExecutor implements TaskExecutor {
 	}
 
 	public TaskFuture scheduleWithFixedDelay(Executable e, long delay, long period) {
-		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(e, new Trigger() {
-			public long getNextFireTime() {
-				return System.currentTimeMillis() + delay;
-			}
+		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(e, () -> {
+			return System.currentTimeMillis() + delay;
 		});
 		taskDetail.nextExecuted = System.currentTimeMillis() + delay;
 		final SimpleTask task = new SimpleTask(e, taskDetail);
@@ -125,10 +119,11 @@ public class SimpleTaskExecutor implements TaskExecutor {
 	 */
 	static class TaskFutureImpl implements TaskFuture {
 
-		private final DefaultTaskDetail taskDetail;
+		final DefaultTaskDetail taskDetail;
 		volatile TimerTask timerTask;
-		private boolean cancelled;
+		boolean cancelled;
 		volatile boolean done;
+		TaskInterceptorHandler interceptorHandler;
 
 		TaskFutureImpl(DefaultTaskDetail taskDetail, TimerTask timerTask) {
 			this.timerTask = timerTask;
@@ -149,6 +144,10 @@ public class SimpleTaskExecutor implements TaskExecutor {
 
 		public TaskDetail getDetail() {
 			return taskDetail;
+		}
+
+		public void setTaskInterceptorHandler(TaskInterceptorHandler interceptorHandler) {
+			this.interceptorHandler = interceptorHandler;
 		}
 
 	}
@@ -179,10 +178,12 @@ public class SimpleTaskExecutor implements TaskExecutor {
 			}
 			boolean result = false;
 			final long now = System.currentTimeMillis();
+			final TaskFutureImpl taskFuture = (TaskFutureImpl) taskFutures.get(task);
 			taskDetail.running.set(true);
 			try {
 				taskDetail.lastExecuted = now;
 				taskDetail.nextExecuted = taskDetail.trigger.getNextFireTime();
+				taskFuture.interceptorHandler.beforeJobExecution(taskFuture);
 				result = task.execute();
 				taskDetail.completedCount.incrementAndGet();
 			} catch (Exception e) {
@@ -190,6 +191,7 @@ public class SimpleTaskExecutor implements TaskExecutor {
 				result = task.onError(e);
 			} finally {
 				taskDetail.running.set(false);
+				taskFuture.interceptorHandler.afterJobExecution(taskFuture);
 				if (result) {
 					CronTask nextTask = new CronTask(task, taskDetail);
 					timer.schedule(nextTask, taskDetail.nextExecuted - System.currentTimeMillis());

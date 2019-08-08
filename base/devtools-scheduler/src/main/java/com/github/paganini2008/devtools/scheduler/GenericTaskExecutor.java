@@ -12,8 +12,8 @@ import com.github.paganini2008.devtools.date.DateUtils;
 import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
 import com.github.paganini2008.devtools.multithreads.PooledThreadFactory;
-import com.github.paganini2008.devtools.scheduler.cron.CronExpression;
 import com.github.paganini2008.devtools.scheduler.cron.CronBuilder;
+import com.github.paganini2008.devtools.scheduler.cron.CronExpression;
 
 /**
  * 
@@ -119,6 +119,7 @@ public class GenericTaskExecutor implements TaskExecutor {
 	 * @version 1.0
 	 */
 	class CronTask implements Runnable {
+
 		final Executable task;
 		final DefaultTaskDetail taskDetail;
 
@@ -134,10 +135,12 @@ public class GenericTaskExecutor implements TaskExecutor {
 			}
 			boolean result = false;
 			final long now = System.currentTimeMillis();
+			final TaskFutureImpl taskFuture = ((TaskFutureImpl) taskFutures.get(task));
 			taskDetail.running.set(true);
 			try {
 				taskDetail.lastExecuted = now;
 				taskDetail.nextExecuted = taskDetail.trigger.getNextFireTime();
+				taskFuture.interceptorHandler.beforeJobExecution(taskFuture);
 				result = task.execute();
 				taskDetail.completedCount.incrementAndGet();
 			} catch (Exception e) {
@@ -145,10 +148,11 @@ public class GenericTaskExecutor implements TaskExecutor {
 				result = task.onError(e);
 			} finally {
 				taskDetail.running.set(false);
+				taskFuture.interceptorHandler.afterJobExecution(taskFuture);
 				if (result) {
 					ScheduledFuture<?> scheduledFuture = executor.schedule(this, taskDetail.nextExecuted - System.currentTimeMillis(),
 							TimeUnit.MILLISECONDS);
-					((TaskFutureImpl) taskFutures.get(task)).scheduledFuture = scheduledFuture;
+					taskFuture.scheduledFuture = scheduledFuture;
 				} else {
 					removeSchedule(task);
 					task.onCancellation();
@@ -161,6 +165,8 @@ public class GenericTaskExecutor implements TaskExecutor {
 
 		final TaskDetail taskDetail;
 		volatile ScheduledFuture<?> scheduledFuture;
+		TaskInterceptorHandler interceptorHandler = new TaskInterceptorHandler() {
+		};
 
 		TaskFutureImpl(TaskDetail taskDetail, ScheduledFuture<?> scheduledFuture) {
 			this.taskDetail = taskDetail;
@@ -181,6 +187,10 @@ public class GenericTaskExecutor implements TaskExecutor {
 
 		public TaskDetail getDetail() {
 			return taskDetail;
+		}
+
+		public void setTaskInterceptorHandler(TaskInterceptorHandler interceptorHandler) {
+			this.interceptorHandler = interceptorHandler;
 		}
 
 	}
@@ -207,10 +217,12 @@ public class GenericTaskExecutor implements TaskExecutor {
 		public void run() {
 			boolean result = false;
 			final long now = System.currentTimeMillis();
+			final TaskFutureImpl taskFuture = ((TaskFutureImpl) taskFutures.get(task));
 			taskDetail.running.set(true);
 			try {
 				taskDetail.lastExecuted = now;
 				taskDetail.nextExecuted = taskDetail.trigger.getNextFireTime();
+				taskFuture.interceptorHandler.beforeJobExecution(taskFuture);
 				result = task.execute();
 				taskDetail.completedCount.incrementAndGet();
 			} catch (Exception e) {
@@ -218,6 +230,7 @@ public class GenericTaskExecutor implements TaskExecutor {
 				result = task.onError(e);
 			} finally {
 				taskDetail.running.set(false);
+				taskFuture.interceptorHandler.afterJobExecution(taskFuture);
 				if (!result) {
 					removeSchedule(task);
 					task.onCancellation();

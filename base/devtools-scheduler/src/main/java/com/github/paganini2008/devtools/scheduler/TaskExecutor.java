@@ -104,6 +104,8 @@ public interface TaskExecutor {
 		boolean isDone();
 
 		TaskDetail getDetail();
+		
+		void setTaskInterceptorHandler(TaskInterceptorHandler interceptorHandler);
 
 	}
 

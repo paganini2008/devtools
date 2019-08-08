@@ -23,9 +23,11 @@ import com.github.paganini2008.devtools.collection.Tuple;
  * DBUtils
  * 
  * @author Fred Feng
+ * @revised 2019-08
+ * @created 2012-12
  * @version 1.0
  */
-public class DBUtils {
+public abstract class DBUtils {
 
 	public static void close(Connection conn) throws SQLException {
 		if (conn != null) {
@@ -155,6 +157,12 @@ public class DBUtils {
 		}
 	}
 
+	public static interface PreparedStatementCallback {
+
+		void setParameters(PreparedStatement ps) throws SQLException;
+
+	}
+
 	public static Connection getConnection(String url, String user, String password) throws SQLException {
 		return DriverManager.getConnection(url, user, password);
 	}
@@ -169,14 +177,20 @@ public class DBUtils {
 		}
 	}
 
-	public static int[] executeBatch(Connection connection, String sql, List<Object[]> argsList) throws SQLException {
+	public static int[] executeBatch(Connection connection, String sql, List<Object[]> argList) throws SQLException {
+		return executeBatch(connection, sql, ps -> {
+			for (Object[] args : argList) {
+				setParameters(ps, args);
+				ps.addBatch();
+			}
+		});
+	}
+
+	public static int[] executeBatch(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement(sql);
-			for (Object[] args : argsList) {
-				setValues(ps, args);
-				ps.addBatch();
-			}
+			callback.setParameters(ps);
 			return ps.executeBatch();
 		} finally {
 			closeQuietly(ps);
@@ -184,10 +198,16 @@ public class DBUtils {
 	}
 
 	public static int executeUpdate(Connection connection, String sql, Object[] args) throws SQLException {
+		return executeUpdate(connection, sql, ps -> {
+			setParameters(ps, args);
+		});
+	}
+
+	public static int executeUpdate(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement(sql);
-			setValues(ps, args);
+			callback.setParameters(ps);
 			return ps.executeUpdate();
 		} finally {
 			closeQuietly(ps);
@@ -220,12 +240,18 @@ public class DBUtils {
 	}
 
 	public static Iterator<Tuple> executeQuery(Connection connection, String sql, Object[] args) throws SQLException {
+		return executeQuery(connection, sql, ps -> {
+			setParameters(ps, args);
+		});
+	}
+
+	public static Iterator<Tuple> executeQuery(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		Observable observable = Observable.unrepeatable();
 		try {
 			ps = connection.prepareStatement(sql);
-			setValues(ps, args);
+			callback.setParameters(ps);
 			rs = ps.executeQuery();
 			return toIterator(rs, observable);
 		} finally {
@@ -292,7 +318,7 @@ public class DBUtils {
 		};
 	}
 
-	public static void setValues(PreparedStatement ps, Object[] args) throws SQLException {
+	public static void setParameters(PreparedStatement ps, Object[] args) throws SQLException {
 		int parameterIndex = 1;
 		for (Object arg : args) {
 			ps.setObject(parameterIndex++, arg);
@@ -311,13 +337,11 @@ public class DBUtils {
 		return tableExists(conn.getMetaData(), schema, tableName);
 	}
 
-	public static PreparedStatementSetter newBatchArgumentTypePrepareStatementSetter(List<Object[]> parameterList,
-			int[] jdbcTypes) {
+	public static PreparedStatementSetter newBatchArgumentTypePrepareStatementSetter(List<Object[]> parameterList, int[] jdbcTypes) {
 		return new BatchArgumentTypePrepareStatementSetter(parameterList, jdbcTypes);
 	}
 
-	public static PreparedStatementSetter newBatchArgumentTypePrepareStatementSetter(List<Object[]> parameterList,
-			JdbcType[] jdbcTypes) {
+	public static PreparedStatementSetter newBatchArgumentTypePrepareStatementSetter(List<Object[]> parameterList, JdbcType[] jdbcTypes) {
 		return new BatchArgumentTypePrepareStatementSetter(parameterList, jdbcTypes);
 	}
 
@@ -333,8 +357,7 @@ public class DBUtils {
 		return new ArgumentTypePrepareStatementSetter(parameters, jdbcTypes);
 	}
 
-	public static PreparedStatementSetter newArgumentTypePrepareStatementSetter(Object[] parameters,
-			JdbcType[] jdbcTypes) {
+	public static PreparedStatementSetter newArgumentTypePrepareStatementSetter(Object[] parameters, JdbcType[] jdbcTypes) {
 		return new ArgumentTypePrepareStatementSetter(parameters, jdbcTypes);
 	}
 
@@ -365,8 +388,7 @@ public class DBUtils {
 					int leftLength = parameters != null ? parameters.length : 0;
 					int rightLength = sqlTypes != null ? sqlTypes.length : 0;
 					if (leftLength != rightLength) {
-						throw new IllegalArgumentException(
-								"JdbcTypes'length doesn't matches parameters'length length.");
+						throw new IllegalArgumentException("JdbcTypes'length doesn't matches parameters'length length.");
 					}
 					if (parameters != null && parameters.length > 0) {
 						for (int i = 0; i < parameters.length; i++) {

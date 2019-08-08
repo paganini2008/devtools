@@ -39,6 +39,10 @@ public class MemoryJobManager implements JobManager {
 			log.info("Schedule job: " + job.getClass().getName() + ", current job size: " + countOfJobs());
 		}
 	}
+	
+	public boolean hasJob(Job job) {
+		return store.containsValue(job);
+	}
 
 	public void runNow() {
 		observable.notifyObservers();
