@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.decentration;
+package com.github.paganini2008.springworld.decentration.implementation.redis;
 
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
@@ -11,6 +11,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
+import com.github.paganini2008.springworld.decentration.implementation.ContextActivatedEvent;
+import com.github.paganini2008.springworld.decentration.implementation.ContextHeartbeatEvent;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,13 +28,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ContextHeartbeatEventListener implements ApplicationListener<ContextHeartbeatEvent> {
 
-	static final String HEART_BEAT_KEY = "heartbeat:";
-	static final String HEART_BEAT_VALUE = "ok";
+	static final String HEART_BEAT_KEY = "springboot:cluster:heartbeat:";
+	static final String HEART_BEAT_VALUE = "standby";
 
 	@Autowired
 	private StringRedisTemplate redisTemplate;
 
-	@Value("spring.application.name")
+	@Value("${spring.application.name}")
 	private String applicationName;
 
 	private HeartbeatTask heartbeatTask;
@@ -43,7 +45,9 @@ public class ContextHeartbeatEventListener implements ApplicationListener<Contex
 		heartbeatTask.start(event.getTicket());
 		final ApplicationContext context = event.getApplicationContext();
 		context.publishEvent(new ContextActivatedEvent(context));
-		log.info("Spring context is activated now.");
+		log.info(
+				"The process of cluster leader election is completed. You can set ApplicationListener in your system to proceed subsequent step by watching event type: "
+						+ ContextActivatedEvent.class.getName());
 	}
 
 	/**

@@ -1,13 +1,16 @@
-package com.github.paganini2008.springworld.decentration;
+package com.github.paganini2008.springworld.decentration.implementation.redis;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationListener;
 import org.springframework.data.redis.core.RedisKeyExpiredEvent;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
+
+import com.github.paganini2008.springworld.decentration.implementation.ContextHeartbeatEvent;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,11 +31,12 @@ public class HeartbeatKeyExpiredListener implements ApplicationListener<RedisKey
 	private ContextHeartbeatAware contextHeartbeatAware;
 
 	@Autowired
+	@Qualifier("serial")
 	private RedisAtomicLong serialNumber;
 
 	private ApplicationContext context;
 
-	@Value("spring.application.name")
+	@Value("${spring.application.name}")
 	private String applicationName;
 
 	@Override
@@ -40,10 +44,11 @@ public class HeartbeatKeyExpiredListener implements ApplicationListener<RedisKey
 		final String expiredKey = new String(event.getSource());
 		final String heartbeatKey = ContextHeartbeatEventListener.HEART_BEAT_KEY + applicationName;
 		if (heartbeatKey.equals(expiredKey)) {
-			if (contextHeartbeatAware.getTicket() == serialNumber.get()) {
-				context.publishEvent(new ContextHeartbeatEvent(context, contextHeartbeatAware.getTicket()));
+			log.info("One of applications named '" + applicationName + "' is shutdown.");
+			if (contextHeartbeatAware.getTicket() == serialNumber.get() + 1) {
 				serialNumber.incrementAndGet();
-				log.info("Current context is the leader. Context: " + context); 
+				context.publishEvent(new ContextHeartbeatEvent(context, contextHeartbeatAware.getTicket()));
+				log.info("Current context is the cluster leader. Context: " + context);
 			}
 		}
 	}

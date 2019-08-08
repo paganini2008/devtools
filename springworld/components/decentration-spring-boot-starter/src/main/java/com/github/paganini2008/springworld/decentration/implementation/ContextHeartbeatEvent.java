@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.decentration;
+package com.github.paganini2008.springworld.decentration.implementation;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ApplicationContextEvent;
