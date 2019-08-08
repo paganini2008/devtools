@@ -23,7 +23,7 @@ public class SingleMinute implements ConcreteMinute, Serializable {
 	private final TreeMap<Integer, Calendar> siblings;
 	private Hour hour;
 	private int index;
-	private Calendar calendar;
+	private Calendar minute;
 	private int lastMinute;
 
 	SingleMinute(Hour hour, int minute) {
@@ -32,6 +32,7 @@ public class SingleMinute implements ConcreteMinute, Serializable {
 		siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(hour.getTime(), Calendar.MINUTE, minute);
 		siblings.put(minute, calendar);
+		this.minute = calendar;
 		this.lastMinute = minute;
 	}
 
@@ -52,31 +53,31 @@ public class SingleMinute implements ConcreteMinute, Serializable {
 	}
 
 	public Date getTime() {
-		return calendar.getTime();
+		return minute.getTime();
 	}
 
 	public long getTimeInMillis() {
-		return calendar.getTimeInMillis();
+		return minute.getTimeInMillis();
 	}
 
 	public int getYear() {
-		return calendar.get(Calendar.YEAR);
+		return minute.get(Calendar.YEAR);
 	}
 
 	public int getMonth() {
-		return calendar.get(Calendar.MONTH);
+		return minute.get(Calendar.MONTH);
 	}
 
 	public int getDay() {
-		return calendar.get(Calendar.DAY_OF_MONTH);
+		return minute.get(Calendar.DAY_OF_MONTH);
 	}
 
 	public int getHour() {
-		return calendar.get(Calendar.HOUR_OF_DAY);
+		return minute.get(Calendar.HOUR_OF_DAY);
 	}
 
 	public int getMinute() {
-		return calendar.get(Calendar.MINUTE);
+		return minute.get(Calendar.MINUTE);
 	}
 
 	public ConcreteSecond second(int second) {
@@ -100,11 +101,11 @@ public class SingleMinute implements ConcreteMinute, Serializable {
 	}
 
 	public Minute next() {
-		calendar = CollectionUtils.get(siblings.values().iterator(), index++);
-		calendar.set(Calendar.YEAR, hour.getYear());
-		calendar.set(Calendar.MONTH, hour.getMonth());
-		calendar.set(Calendar.DAY_OF_MONTH, hour.getDay());
-		calendar.set(Calendar.HOUR_OF_DAY, hour.getHour());
+		minute = CollectionUtils.get(siblings.values().iterator(), index++);
+		minute.set(Calendar.YEAR, hour.getYear());
+		minute.set(Calendar.MONTH, hour.getMonth());
+		minute.set(Calendar.DAY_OF_MONTH, hour.getDay());
+		minute.set(Calendar.HOUR_OF_DAY, hour.getHour());
 		return this;
 	}
 

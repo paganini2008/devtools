@@ -23,7 +23,7 @@ public class SingleHour implements ConcreteHour , Serializable{
 	private final TreeMap<Integer, Calendar> siblings;
 	private Day day;
 	private int index;
-	private Calendar calendar;
+	private Calendar hour;
 	private int lastHour;
 
 	SingleHour(Day day, int hour) {
@@ -32,6 +32,7 @@ public class SingleHour implements ConcreteHour , Serializable{
 		siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(day.getTime(), Calendar.HOUR_OF_DAY, hour);
 		siblings.put(hour, calendar);
+		this.hour = calendar;
 		this.lastHour = hour;
 	}
 
@@ -52,27 +53,27 @@ public class SingleHour implements ConcreteHour , Serializable{
 	}
 
 	public Date getTime() {
-		return calendar.getTime();
+		return hour.getTime();
 	}
 
 	public long getTimeInMillis() {
-		return calendar.getTimeInMillis();
+		return hour.getTimeInMillis();
 	}
 
 	public int getYear() {
-		return calendar.get(Calendar.YEAR);
+		return hour.get(Calendar.YEAR);
 	}
 
 	public int getMonth() {
-		return calendar.get(Calendar.MONTH);
+		return hour.get(Calendar.MONTH);
 	}
 
 	public int getDay() {
-		return calendar.get(Calendar.DAY_OF_MONTH);
+		return hour.get(Calendar.DAY_OF_MONTH);
 	}
 
 	public int getHour() {
-		return calendar.get(Calendar.HOUR_OF_DAY);
+		return hour.get(Calendar.HOUR_OF_DAY);
 	}
 
 	public ConcreteMinute minute(int minute) {
@@ -96,10 +97,10 @@ public class SingleHour implements ConcreteHour , Serializable{
 	}
 
 	public Hour next() {
-		calendar = CollectionUtils.get(siblings.values().iterator(), index++);
-		calendar.set(Calendar.YEAR, day.getYear());
-		calendar.set(Calendar.MONTH, day.getMonth());
-		calendar.set(Calendar.DAY_OF_MONTH, day.getDay());
+		hour = CollectionUtils.get(siblings.values().iterator(), index++);
+		hour.set(Calendar.YEAR, day.getYear());
+		hour.set(Calendar.MONTH, day.getMonth());
+		hour.set(Calendar.DAY_OF_MONTH, day.getDay());
 		return this;
 	}
 

@@ -13,6 +13,8 @@ public interface ConcreteDay extends Day {
 
 	ConcreteDay andDay(int day);
 	
+	Day andLastDay();
+	
 	default ConcreteDay andNextDay() {
 		return andNextDays(1);
 	}

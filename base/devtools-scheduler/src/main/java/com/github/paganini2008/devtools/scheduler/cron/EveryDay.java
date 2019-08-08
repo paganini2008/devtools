@@ -25,7 +25,7 @@ public class EveryDay implements Day, Serializable {
 	private final int fromDay;
 	private final int toDay;
 	private final int interval;
-	private boolean state;
+	private boolean self;
 	private boolean forward = true;
 
 	EveryDay(Month month, Function<Month, Integer> from, Function<Month, Integer> to, int interval) {
@@ -34,13 +34,13 @@ public class EveryDay implements Day, Serializable {
 		CalendarAssert.checkDayOfMonth(month, fromDay);
 		this.day = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH, fromDay);
 		this.interval = interval;
-		this.state = true;
+		this.self = true;
 		this.toDay = to.apply(month);
 		CalendarAssert.checkDayOfMonth(month, toDay);
 	}
 
 	public boolean hasNext() {
-		boolean next = state || day.get(Calendar.DAY_OF_MONTH) + interval <= toDay;
+		boolean next = self || day.get(Calendar.DAY_OF_MONTH) + interval <= toDay;
 		if (!next) {
 			if (month.hasNext()) {
 				month = month.next();
@@ -55,8 +55,8 @@ public class EveryDay implements Day, Serializable {
 	}
 
 	public Day next() {
-		if (state) {
-			state = false;
+		if (self) {
+			self = false;
 		} else {
 			if (forward) {
 				day.add(Calendar.DAY_OF_MONTH, interval);

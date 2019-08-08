@@ -23,7 +23,7 @@ public class SingleDay implements ConcreteDay, Serializable {
 	private final TreeMap<Integer, Calendar> siblings;
 	private Month month;
 	private int index;
-	private Calendar calendar;
+	private Calendar day;
 	private int lastDay;
 
 	SingleDay(Month month, int day) {
@@ -32,6 +32,7 @@ public class SingleDay implements ConcreteDay, Serializable {
 		siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH, day);
 		siblings.put(day, calendar);
+		this.day = calendar;
 		this.lastDay = day;
 	}
 
@@ -41,6 +42,10 @@ public class SingleDay implements ConcreteDay, Serializable {
 		siblings.put(day, calendar);
 		this.lastDay = day;
 		return this;
+	}
+
+	public Day andLastDay() {
+		return andDay(month.getLasyDay());
 	}
 
 	public ConcreteDay andNextDays(int days) {
@@ -61,31 +66,31 @@ public class SingleDay implements ConcreteDay, Serializable {
 	}
 
 	public Date getTime() {
-		return calendar.getTime();
+		return day.getTime();
 	}
 
 	public long getTimeInMillis() {
-		return calendar.getTimeInMillis();
+		return day.getTimeInMillis();
 	}
 
 	public int getYear() {
-		return calendar.get(Calendar.YEAR);
+		return day.get(Calendar.YEAR);
 	}
 
 	public int getMonth() {
-		return calendar.get(Calendar.MONTH);
+		return day.get(Calendar.MONTH);
 	}
 
 	public int getDay() {
-		return calendar.get(Calendar.DAY_OF_MONTH);
+		return day.get(Calendar.DAY_OF_MONTH);
 	}
 
 	public int getWeekDay() {
-		return calendar.get(Calendar.DAY_OF_WEEK);
+		return day.get(Calendar.DAY_OF_WEEK);
 	}
 
 	public int getDayOfYear() {
-		return calendar.get(Calendar.DAY_OF_YEAR);
+		return day.get(Calendar.DAY_OF_YEAR);
 	}
 
 	public ConcreteHour hour(int hour) {
@@ -109,9 +114,9 @@ public class SingleDay implements ConcreteDay, Serializable {
 	}
 
 	public Day next() {
-		calendar = CollectionUtils.get(siblings.values().iterator(), index++);
-		calendar.set(Calendar.YEAR, month.getYear());
-		calendar.set(Calendar.MONTH, month.getMonth());
+		day = CollectionUtils.get(siblings.values().iterator(), index++);
+		day.set(Calendar.YEAR, month.getYear());
+		day.set(Calendar.MONTH, month.getMonth());
 		return this;
 	}
 }

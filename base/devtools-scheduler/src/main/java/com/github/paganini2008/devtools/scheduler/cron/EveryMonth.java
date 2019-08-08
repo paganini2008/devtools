@@ -25,7 +25,7 @@ public class EveryMonth implements Month, Serializable {
 	private final int fromMonth;
 	private final int toMonth;
 	private final int interval;
-	private boolean state;
+	private boolean self;
 	private boolean forward = true;
 
 	EveryMonth(Year year, Function<Year, Integer> from, Function<Year, Integer> to, int interval) {
@@ -34,13 +34,13 @@ public class EveryMonth implements Month, Serializable {
 		CalendarAssert.checkMonth(fromMonth);
 		this.month = CalendarUtils.setField(year.getTime(), Calendar.MONTH, fromMonth);
 		this.interval = interval;
-		this.state = true;
+		this.self = true;
 		this.toMonth = to.apply(year);
 		CalendarAssert.checkMonth(toMonth);
 	}
 
 	public boolean hasNext() {
-		boolean next = state || month.get(Calendar.MONTH) + interval <= toMonth;
+		boolean next = self || month.get(Calendar.MONTH) + interval <= toMonth;
 		if (!next) {
 			if (year.hasNext()) {
 				year = year.next();
@@ -54,8 +54,8 @@ public class EveryMonth implements Month, Serializable {
 	}
 
 	public Month next() {
-		if (state) {
-			state = false;
+		if (self) {
+			self = false;
 		} else {
 			if (forward) {
 				month.add(Calendar.MONTH, interval);
@@ -94,6 +94,10 @@ public class EveryMonth implements Month, Serializable {
 		return new SingleDay(CollectionUtils.getFirst(this), day);
 	}
 
+	public Day lastDay() {
+		return new LastDay(CollectionUtils.getFirst(this));
+	}
+
 	public Day everyDay(Function<Month, Integer> from, Function<Month, Integer> to, int interval) {
 		return new EveryDay(CollectionUtils.getFirst(this), from, to, interval);
 	}
@@ -107,7 +111,7 @@ public class EveryMonth implements Month, Serializable {
 	}
 
 	public static void main(String[] args) {
-		Second every = CronBuilder.thisYear().Aug().everyWeek().Wed().toFri().everyHour(2).minute(20).andMinute(30).second(5).toSecond(10);
+		Second every = CronBuilder.thisYear().Aug().lastDay().everyHour(2).minute(20).andMinute(30).second(5).toSecond(10);
 		while (every.hasNext()) {
 			Second time = every.next();
 			System.out.println(DateUtils.format(time.getTime()));

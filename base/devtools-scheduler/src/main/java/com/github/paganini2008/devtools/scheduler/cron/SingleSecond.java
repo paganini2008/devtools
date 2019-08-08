@@ -16,13 +16,13 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * @created 2019-07
  * @version 1.0
  */
-public class SingleSecond implements ConcreteSecond, Serializable{
+public class SingleSecond implements ConcreteSecond, Serializable {
 
 	private static final long serialVersionUID = 6264419114715870528L;
 	private final TreeMap<Integer, Calendar> siblings;
 	private Minute minute;
 	private int index;
-	private Calendar calendar;
+	private Calendar second;
 	private int lastSecond;
 
 	SingleSecond(Minute minute, int second) {
@@ -31,6 +31,7 @@ public class SingleSecond implements ConcreteSecond, Serializable{
 		siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(minute.getTime(), Calendar.SECOND, second);
 		siblings.put(second, calendar);
+		this.second = calendar;
 		this.lastSecond = second;
 	}
 
@@ -51,35 +52,35 @@ public class SingleSecond implements ConcreteSecond, Serializable{
 	}
 
 	public Date getTime() {
-		return calendar.getTime();
+		return second.getTime();
 	}
 
 	public long getTimeInMillis() {
-		return calendar.getTimeInMillis();
+		return second.getTimeInMillis();
 	}
 
 	public int getYear() {
-		return calendar.get(Calendar.YEAR);
+		return second.get(Calendar.YEAR);
 	}
 
 	public int getMonth() {
-		return calendar.get(Calendar.MONTH);
+		return second.get(Calendar.MONTH);
 	}
 
 	public int getDay() {
-		return calendar.get(Calendar.DAY_OF_MONTH);
+		return second.get(Calendar.DAY_OF_MONTH);
 	}
 
 	public int getHour() {
-		return calendar.get(Calendar.HOUR_OF_DAY);
+		return second.get(Calendar.HOUR_OF_DAY);
 	}
 
 	public int getMinute() {
-		return calendar.get(Calendar.MINUTE);
+		return second.get(Calendar.MINUTE);
 	}
 
 	public int getSecond() {
-		return calendar.get(Calendar.SECOND);
+		return second.get(Calendar.SECOND);
 	}
 
 	public boolean hasNext() {
@@ -95,12 +96,12 @@ public class SingleSecond implements ConcreteSecond, Serializable{
 	}
 
 	public Second next() {
-		calendar = CollectionUtils.get(siblings.values().iterator(), index++);
-		calendar.set(Calendar.YEAR, minute.getYear());
-		calendar.set(Calendar.MONTH, minute.getMonth());
-		calendar.set(Calendar.DAY_OF_MONTH, minute.getDay());
-		calendar.set(Calendar.HOUR_OF_DAY, minute.getHour());
-		calendar.set(Calendar.MINUTE, minute.getMinute());
+		second = CollectionUtils.get(siblings.values().iterator(), index++);
+		second.set(Calendar.YEAR, minute.getYear());
+		second.set(Calendar.MONTH, minute.getMonth());
+		second.set(Calendar.DAY_OF_MONTH, minute.getDay());
+		second.set(Calendar.HOUR_OF_DAY, minute.getHour());
+		second.set(Calendar.MINUTE, minute.getMinute());
 		return this;
 	}
 

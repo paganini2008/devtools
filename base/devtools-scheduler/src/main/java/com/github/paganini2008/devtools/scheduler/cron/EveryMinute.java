@@ -24,7 +24,7 @@ public class EveryMinute implements Minute, Serializable {
 	private final int fromMinute;
 	private final int toMinute;
 	private final int interval;
-	private boolean state;
+	private boolean self;
 	private boolean forward = true;
 
 	EveryMinute(Hour hour, Function<Hour, Integer> from, Function<Hour, Integer> to, int interval) {
@@ -33,13 +33,13 @@ public class EveryMinute implements Minute, Serializable {
 		this.minute = CalendarUtils.setField(hour.getTime(), Calendar.MINUTE, fromMinute);
 		CalendarAssert.checkMinute(fromMinute);
 		this.interval = interval;
-		this.state = true;
+		this.self = true;
 		this.toMinute = to.apply(hour);
 		CalendarAssert.checkMinute(toMinute);
 	}
 
 	public boolean hasNext() {
-		boolean next = state || minute.get(Calendar.MINUTE) + interval <= toMinute;
+		boolean next = self || minute.get(Calendar.MINUTE) + interval <= toMinute;
 		if (!next) {
 			if (hour.hasNext()) {
 				hour = hour.next();
@@ -56,8 +56,8 @@ public class EveryMinute implements Minute, Serializable {
 	}
 
 	public Minute next() {
-		if (state) {
-			state = false;
+		if (self) {
+			self = false;
 		} else {
 			if (forward) {
 				minute.add(Calendar.MINUTE, interval);

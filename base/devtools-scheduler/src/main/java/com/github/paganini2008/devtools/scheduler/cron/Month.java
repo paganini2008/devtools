@@ -38,13 +38,7 @@ public interface Month extends Iterator<Month>, CronExpression {
 
 	ConcreteDay day(int day);
 
-	default ConcreteDay firstDay() {
-		return day(1);
-	}
-
-	default ConcreteDay lastDay() {
-		return day(getLasyDay());
-	}
+	Day lastDay();
 
 	Day everyDay(Function<Month, Integer> from, Function<Month, Integer> to, int interval);
 

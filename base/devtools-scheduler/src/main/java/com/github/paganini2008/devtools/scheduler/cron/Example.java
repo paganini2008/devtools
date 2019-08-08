@@ -14,15 +14,16 @@ import com.github.paganini2008.devtools.date.DateUtils;
 public class Example {
 
 	public static void main(String[] args) {
-		Second every = CronBuilder.everyYear().everyMonth(6, 11, 1).everyDay().everyHour().everyMinute(1).everySecond(3);
-		int i = 0;
+		Day every = CronBuilder.everyYear().everyMonth(6, 11, 1).everyDay();
+		int i = 1;
 		while (every.hasNext()) {
 			String str = DateUtils.format(every.next().getTime());
 			System.out.println(str);
-			if (i++ > 10) {
+			if (i++ >= 100) {
 				break;
 			}
 		}
+		System.out.println(i);
 	}
 
 }

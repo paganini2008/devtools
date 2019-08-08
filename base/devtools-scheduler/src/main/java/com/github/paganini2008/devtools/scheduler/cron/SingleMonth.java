@@ -24,7 +24,7 @@ public class SingleMonth implements ConcreteMonth, Serializable {
 	private final TreeMap<Integer, Calendar> siblings;
 	private Year year;
 	private int index;
-	private Calendar calendar;
+	private Calendar month;
 	private int lastMonth;
 
 	SingleMonth(Year year, int month) {
@@ -33,6 +33,7 @@ public class SingleMonth implements ConcreteMonth, Serializable {
 		siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.MONTH, month);
 		siblings.put(month, calendar);
+		this.month = calendar;
 		this.lastMonth = month;
 	}
 
@@ -62,31 +63,35 @@ public class SingleMonth implements ConcreteMonth, Serializable {
 	}
 
 	public Date getTime() {
-		return calendar.getTime();
+		return month.getTime();
 	}
 
 	public long getTimeInMillis() {
-		return calendar.getTimeInMillis();
+		return month.getTimeInMillis();
 	}
 
 	public int getYear() {
-		return calendar.get(Calendar.YEAR);
+		return month.get(Calendar.YEAR);
 	}
 
 	public int getMonth() {
-		return calendar.get(Calendar.MONTH);
+		return month.get(Calendar.MONTH);
 	}
 
 	public int getLasyDay() {
-		return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+		return month.getActualMaximum(Calendar.DAY_OF_MONTH);
 	}
 	
 	public int getWeekCount() {
-		return calendar.getActualMaximum(Calendar.WEEK_OF_MONTH);
+		return month.getActualMaximum(Calendar.WEEK_OF_MONTH);
 	}
 
 	public ConcreteDay day(int day) {
 		return new SingleDay(CollectionUtils.getFirst(this), day);
+	}
+	
+	public Day lastDay() {
+		return new LastDay(CollectionUtils.getFirst(this));
 	}
 
 	public Day everyDay(Function<Month, Integer> from, Function<Month, Integer> to, int interval) {
@@ -114,8 +119,8 @@ public class SingleMonth implements ConcreteMonth, Serializable {
 	}
 
 	public Month next() {
-		calendar = CollectionUtils.get(siblings.values().iterator(), index++);
-		calendar.set(Calendar.YEAR, year.getYear());
+		month = CollectionUtils.get(siblings.values().iterator(), index++);
+		month.set(Calendar.YEAR, year.getYear());
 		return this;
 	}
 

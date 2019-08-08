@@ -23,7 +23,7 @@ public class SingleWeekOfYear implements ConcreteWeek, Serializable {
 	private final TreeMap<Integer, Calendar> siblings;
 	private Year year;
 	private int index;
-	private Calendar calendar;
+	private Calendar week;
 	private int lastWeek;
 
 	SingleWeekOfYear(Year year, int week) {
@@ -32,6 +32,7 @@ public class SingleWeekOfYear implements ConcreteWeek, Serializable {
 		siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.WEEK_OF_YEAR, week);
 		siblings.put(week, calendar);
+		this.week = calendar;
 		this.lastWeek = week;
 	}
 
@@ -48,31 +49,31 @@ public class SingleWeekOfYear implements ConcreteWeek, Serializable {
 		for (int i = lastWeek + interval; i < week; i += interval) {
 			andWeek(i);
 		}
-		return null;
+		return this;
 	}
 
 	public Date getTime() {
-		return calendar.getTime();
+		return week.getTime();
 	}
 
 	public long getTimeInMillis() {
-		return calendar.getTimeInMillis();
+		return week.getTimeInMillis();
 	}
 
 	public int getYear() {
-		return calendar.get(Calendar.YEAR);
+		return week.get(Calendar.YEAR);
 	}
 
 	public int getMonth() {
-		return calendar.get(Calendar.MONTH);
+		return week.get(Calendar.MONTH);
 	}
 
 	public int getWeek() {
-		return calendar.get(Calendar.WEEK_OF_MONTH);
+		return week.get(Calendar.WEEK_OF_MONTH);
 	}
 
 	public int getWeekOfYear() {
-		return calendar.get(Calendar.WEEK_OF_YEAR);
+		return week.get(Calendar.WEEK_OF_YEAR);
 	}
 
 	public ConcreteWeekDay weekday(int day) {
@@ -96,8 +97,8 @@ public class SingleWeekOfYear implements ConcreteWeek, Serializable {
 	}
 
 	public Week next() {
-		calendar = CollectionUtils.get(siblings.values().iterator(), index++);
-		calendar.set(Calendar.YEAR, year.getYear());
+		week = CollectionUtils.get(siblings.values().iterator(), index++);
+		week.set(Calendar.YEAR, year.getYear());
 		return this;
 	}
 }

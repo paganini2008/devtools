@@ -23,7 +23,7 @@ public class SingleDayOfWeek implements ConcreteWeekDay, Serializable {
 	private final TreeMap<Integer, Calendar> siblings;
 	private Week week;
 	private int index;
-	private Calendar calendar;
+	private Calendar day;
 	private int lastDay;
 
 	SingleDayOfWeek(Week week, int day) {
@@ -52,31 +52,31 @@ public class SingleDayOfWeek implements ConcreteWeekDay, Serializable {
 	}
 
 	public Date getTime() {
-		return calendar.getTime();
+		return day.getTime();
 	}
 
 	public long getTimeInMillis() {
-		return calendar.getTimeInMillis();
+		return day.getTimeInMillis();
 	}
 
 	public int getYear() {
-		return calendar.get(Calendar.YEAR);
+		return day.get(Calendar.YEAR);
 	}
 
 	public int getMonth() {
-		return calendar.get(Calendar.MONTH);
+		return day.get(Calendar.MONTH);
 	}
 
 	public int getDay() {
-		return calendar.get(Calendar.DAY_OF_MONTH);
+		return day.get(Calendar.DAY_OF_MONTH);
 	}
 
 	public int getWeekDay() {
-		return calendar.get(Calendar.DAY_OF_WEEK);
+		return day.get(Calendar.DAY_OF_WEEK);
 	}
 
 	public int getDayOfYear() {
-		return calendar.get(Calendar.DAY_OF_YEAR);
+		return day.get(Calendar.DAY_OF_YEAR);
 	}
 
 	public ConcreteHour hour(int hour) {
@@ -100,10 +100,10 @@ public class SingleDayOfWeek implements ConcreteWeekDay, Serializable {
 	}
 
 	public Day next() {
-		calendar = CollectionUtils.get(siblings.values().iterator(), index++);
-		calendar.set(Calendar.YEAR, week.getYear());
-		calendar.set(Calendar.MONTH, week.getMonth());
-		calendar.set(Calendar.WEEK_OF_MONTH, week.getWeek());
+		day = CollectionUtils.get(siblings.values().iterator(), index++);
+		day.set(Calendar.YEAR, week.getYear());
+		day.set(Calendar.MONTH, week.getMonth());
+		day.set(Calendar.WEEK_OF_MONTH, week.getWeek());
 		return this;
 	}
 

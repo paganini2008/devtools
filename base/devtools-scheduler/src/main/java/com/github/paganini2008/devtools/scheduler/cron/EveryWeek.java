@@ -24,7 +24,7 @@ public class EveryWeek implements Week, Serializable {
 	private final int fromWeek;
 	private final int toWeek;
 	private final int interval;
-	private boolean state;
+	private boolean self;
 	private boolean forward = true;
 	private Date previous;
 
@@ -35,13 +35,13 @@ public class EveryWeek implements Week, Serializable {
 		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.WEEK_OF_MONTH, fromWeek);
 		this.week = calendar;
 		this.interval = interval;
-		this.state = true;
+		this.self = true;
 		this.toWeek = to.apply(month);
 		CalendarAssert.checkWeekOfMonth(month, toWeek);
 	}
 
 	public boolean hasNext() {
-		boolean next = state || shoudNext();
+		boolean next = self || shoudNext();
 		if (!next) {
 			if (month.hasNext()) {
 				month = month.next();
@@ -65,8 +65,8 @@ public class EveryWeek implements Week, Serializable {
 	}
 
 	public Week next() {
-		if (state) {
-			state = false;
+		if (self) {
+			self = false;
 		} else {
 			if (forward) {
 				week.add(Calendar.WEEK_OF_MONTH, interval);

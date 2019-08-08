@@ -23,7 +23,7 @@ import com.github.paganini2008.devtools.scheduler.TaskExecutor.TaskFuture;
  */
 public class JdbcJobManager implements JobManager {
 
-	private static final String SQL_INSERT = "insert into cron_job_info(name,descrption,job_class,cron) values (?,?,?,?)";
+	private static final String SQL_INSERT = "insert into cron_job_detail(name,descrption,job_class,cron) values (?,?,?,?)";
 	private final Observable observable = Observable.unrepeatable();
 	private TaskExecutor taskExecutor = new GenericTaskExecutor(8, "crontab");
 	private DataSource dataSource;

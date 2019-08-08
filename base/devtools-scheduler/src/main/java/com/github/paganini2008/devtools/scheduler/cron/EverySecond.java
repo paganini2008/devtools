@@ -24,7 +24,7 @@ public class EverySecond implements Second, Serializable {
 	private final int fromSecond;
 	private final int toSecond;
 	private final int interval;
-	private boolean state;
+	private boolean self;
 	private boolean forward = true;
 
 	EverySecond(Minute minute, Function<Minute, Integer> from, Function<Minute, Integer> to, int interval) {
@@ -33,13 +33,13 @@ public class EverySecond implements Second, Serializable {
 		CalendarAssert.checkSecond(fromSecond);
 		this.second = CalendarUtils.setField(minute.getTime(), Calendar.SECOND, fromSecond);
 		this.interval = interval;
-		this.state = true;
+		this.self = true;
 		this.toSecond = to.apply(minute);
 		CalendarAssert.checkSecond(toSecond);
 	}
 
 	public boolean hasNext() {
-		boolean next = state || second.get(Calendar.SECOND) + interval <= toSecond;
+		boolean next = self || second.get(Calendar.SECOND) + interval <= toSecond;
 		if (!next) {
 			if (minute.hasNext()) {
 				minute = minute.next();
@@ -57,8 +57,8 @@ public class EverySecond implements Second, Serializable {
 	}
 
 	public Second next() {
-		if (state) {
-			state = false;
+		if (self) {
+			self = false;
 		} else {
 			if (forward) {
 				second.add(Calendar.SECOND, interval);

@@ -24,7 +24,7 @@ public class EveryWeekDay implements Day, Serializable {
 	private final int fromDay;
 	private final int toDay;
 	private final int interval;
-	private boolean state;
+	private boolean self;
 	private boolean forward = true;
 
 	EveryWeekDay(Week week, Function<Week, Integer> from, Function<Week, Integer> to, int interval) {
@@ -34,13 +34,13 @@ public class EveryWeekDay implements Day, Serializable {
 		Calendar calendar = CalendarUtils.setField(week.getTime(), Calendar.DAY_OF_WEEK, fromDay);
 		this.day = calendar;
 		this.interval = interval;
-		this.state = true;
+		this.self = true;
 		this.toDay = to.apply(week);
 		CalendarAssert.checkDayOfWeek(toDay);
 	}
 
 	public boolean hasNext() {
-		boolean next = state || day.get(Calendar.DAY_OF_WEEK) + interval <= toDay;
+		boolean next = self || day.get(Calendar.DAY_OF_WEEK) + interval <= toDay;
 		if (!next) {
 			if (week.hasNext()) {
 				week = week.next();
@@ -56,8 +56,8 @@ public class EveryWeekDay implements Day, Serializable {
 	}
 
 	public Day next() {
-		if (state) {
-			state = false;
+		if (self) {
+			self = false;
 		} else {
 			if (forward) {
 				day.add(Calendar.DAY_OF_WEEK, interval);

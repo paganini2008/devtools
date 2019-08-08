@@ -28,6 +28,12 @@ public abstract class CalendarAssert {
 		}
 	}
 
+	public static void checkDayOfYear(Year year, int day) {
+		if (day < 1 || day > year.getLastDay()) {
+			throw new IllegalArgumentException("Day's range is 1 to " + year.getLastDay());
+		}
+	}
+
 	public static void checkWeekOfYear(Year year, int week) {
 		if (week < 1 || week > year.getWeekCount()) {
 			throw new IllegalArgumentException("Week's range is 1 to " + year.getWeekCount());

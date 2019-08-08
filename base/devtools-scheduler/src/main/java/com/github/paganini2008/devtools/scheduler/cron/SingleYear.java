@@ -22,7 +22,7 @@ public class SingleYear implements ConcreteYear, Serializable {
 
 	private static final long serialVersionUID = -5316436238766770045L;
 	private final TreeMap<Integer, Calendar> siblings;
-	private Calendar calendar;
+	private Calendar year;
 	private int index;
 	private int lastYear;
 
@@ -31,6 +31,7 @@ public class SingleYear implements ConcreteYear, Serializable {
 		siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(new Date(), Calendar.YEAR, year);
 		siblings.put(year, calendar);
+		this.year = calendar;
 		this.lastYear = year;
 	}
 
@@ -60,23 +61,31 @@ public class SingleYear implements ConcreteYear, Serializable {
 	}
 
 	public Date getTime() {
-		return calendar.getTime();
+		return year.getTime();
 	}
 
 	public long getTimeInMillis() {
-		return calendar.getTimeInMillis();
+		return year.getTimeInMillis();
 	}
 
 	public int getYear() {
-		return calendar.get(Calendar.YEAR);
+		return year.get(Calendar.YEAR);
 	}
 
 	public int getWeekCount() {
-		return calendar.getActualMaximum(Calendar.WEEK_OF_YEAR);
+		return year.getActualMaximum(Calendar.WEEK_OF_YEAR);
+	}
+
+	public int getLastDay() {
+		return year.getActualMaximum(Calendar.DAY_OF_YEAR);
 	}
 
 	public Month everyMonth(Function<Year, Integer> from, Function<Year, Integer> to, int interval) {
 		return new EveryMonth(CollectionUtils.getFirst(this), from, to, interval);
+	}
+
+	public ConcreteDay day(int day) {
+		return new SingleDayOfYear(CollectionUtils.getFirst(this), day);
 	}
 
 	public ConcreteWeek week(int week) {
@@ -92,17 +101,17 @@ public class SingleYear implements ConcreteYear, Serializable {
 	}
 
 	public Year next() {
-		calendar = CollectionUtils.get(siblings.values().iterator(), index++);
+		year = CollectionUtils.get(siblings.values().iterator(), index++);
 		return this;
 	}
 
 	public static void main(String[] args) {
 		ConcreteYear singleYear = new SingleYear(2019);
-		singleYear = singleYear.andYear(2028).andYear(2024).andNextYear().toYear(2035);
-		Month everyMonth = singleYear.everyMonth(2);
-		while (everyMonth.hasNext()) {
-			Month month = everyMonth.next();
-			System.out.println(DateUtils.format(month.getTime()));
+		singleYear = singleYear.andYear(2028).andYear(2024);
+		Day day = singleYear.everyMonth().lastDay();
+		while (day.hasNext()) {
+			Day time = day.next();
+			System.out.println(DateUtils.format(time.getTime()));
 		}
 	}
 

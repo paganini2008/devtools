@@ -24,7 +24,7 @@ public class EveryHour implements Hour, Serializable {
 	private final int fromHour;
 	private final int toHour;
 	private final int interval;
-	private boolean state;
+	private boolean self;
 	private boolean forward = true;
 
 	EveryHour(Day day, Function<Day, Integer> from, Function<Day, Integer> to, int interval) {
@@ -33,13 +33,13 @@ public class EveryHour implements Hour, Serializable {
 		CalendarAssert.checkHourOfDay(fromHour);
 		this.hour = CalendarUtils.setField(day.getTime(), Calendar.HOUR_OF_DAY, fromHour);
 		this.interval = interval;
-		this.state = true;
+		this.self = true;
 		this.toHour = to.apply(day);
 		CalendarAssert.checkHourOfDay(toHour);
 	}
 
 	public boolean hasNext() {
-		boolean next = state || hour.get(Calendar.HOUR_OF_DAY) + interval <= toHour;
+		boolean next = self || hour.get(Calendar.HOUR_OF_DAY) + interval <= toHour;
 		if (!next) {
 			if (day.hasNext()) {
 				day = day.next();
@@ -55,8 +55,8 @@ public class EveryHour implements Hour, Serializable {
 	}
 
 	public Hour next() {
-		if (state) {
-			state = false;
+		if (self) {
+			self = false;
 		} else {
 			if (forward) {
 				hour.add(Calendar.HOUR_OF_DAY, interval);

@@ -25,14 +25,14 @@ public class EveryYear implements Year, Serializable {
 		CalendarAssert.checkYear(fromYear);
 		this.year = CalendarUtils.setField(new Date(), Calendar.YEAR, fromYear);
 		this.interval = interval;
-		this.state = true;
+		this.self = true;
 		this.toYear = to.apply(this);
 	}
 
 	private final Calendar year;
 	private final int toYear;
 	private final int interval;
-	private boolean state;
+	private boolean self;
 
 	public int getYear() {
 		return year.get(Calendar.YEAR);
@@ -40,6 +40,10 @@ public class EveryYear implements Year, Serializable {
 
 	public int getWeekCount() {
 		return year.getActualMaximum(Calendar.WEEK_OF_YEAR);
+	}
+
+	public int getLastDay() {
+		return year.getActualMaximum(Calendar.DAY_OF_YEAR);
 	}
 
 	public Date getTime() {
@@ -51,12 +55,12 @@ public class EveryYear implements Year, Serializable {
 	}
 
 	public boolean hasNext() {
-		return state || year.get(Calendar.YEAR) + interval <= toYear;
+		return self || year.get(Calendar.YEAR) + interval <= toYear;
 	}
 
 	public Year next() {
-		if (state) {
-			state = false;
+		if (self) {
+			self = false;
 		} else {
 			year.add(Calendar.YEAR, interval);
 		}
@@ -65,6 +69,10 @@ public class EveryYear implements Year, Serializable {
 
 	public Month everyMonth(Function<Year, Integer> from, Function<Year, Integer> to, int interval) {
 		return new EveryMonth(CollectionUtils.getFirst(this), from, to, interval);
+	}
+
+	public ConcreteDay day(int day) {
+		return new SingleDayOfYear(CollectionUtils.getFirst(this), day);
 	}
 
 	public ConcreteWeek week(int week) {
@@ -76,10 +84,11 @@ public class EveryYear implements Year, Serializable {
 	}
 
 	public static void main(String[] args) {
-		Day every = CronBuilder.thisYear().andNextYears(2).week(41).everyDay();
+		Day every = CronBuilder.thisYear().toYear(2025).Feb().andAug().toDec().lastDay();
 		while (every.hasNext()) {
 			Day time = every.next();
 			System.out.println(DateUtils.format(time.getTime()));
+			//System.out.println(time.getLasyDay());
 		}
 	}
 
