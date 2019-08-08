@@ -127,8 +127,8 @@ public class SingleMonth implements ConcreteMonth, Serializable {
 	public static void main(String[] args) {
 		ConcreteYear singleYear = new SingleYear(2019);
 		singleYear = singleYear.andYear(2024).andYear(2028);
-		ConcreteMonth singleMonth = singleYear.month(9).andMonth(11);
-		ConcreteDay singleDay = singleMonth.day(15).andDay(18);
+		ConcreteMonth singleMonth = singleYear.month(8).andMonth(11);
+		Day singleDay = singleMonth.day(15).andDay(18);
 		while (singleDay.hasNext()) {
 			Day day = singleDay.next();
 			System.out.println(DateUtils.format(day.getTime()));

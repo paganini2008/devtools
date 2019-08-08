@@ -78,10 +78,6 @@ public class SingleDayOfYear implements ConcreteDay, Serializable {
 		this.lastDay = day;
 		return this;
 	}
-	
-	public Day andLastDay() {
-		return andDay(year.getLastDay());
-	}
 
 	public ConcreteDay andNextDays(int days) {
 		CalendarAssert.checkDayOfYear(year, lastDay + days);

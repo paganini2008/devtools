@@ -44,10 +44,6 @@ public class SingleDay implements ConcreteDay, Serializable {
 		return this;
 	}
 
-	public Day andLastDay() {
-		return andDay(month.getLasyDay());
-	}
-
 	public ConcreteDay andNextDays(int days) {
 		CalendarAssert.checkDayOfMonth(month, lastDay + days);
 		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH, lastDay + days);
