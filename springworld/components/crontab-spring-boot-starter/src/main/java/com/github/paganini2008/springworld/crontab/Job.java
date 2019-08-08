@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.amber.dev;
+package com.github.paganini2008.springworld.crontab;
 
 import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.scheduler.cron.CronExpression;
@@ -14,6 +14,14 @@ import com.github.paganini2008.devtools.scheduler.cron.CronExpression;
  */
 public interface Job extends Executable {
 
+	default String name() {
+		return "Untitled";
+	}
+
 	CronExpression cron();
+
+	default String description() {
+		return null;
+	}
 
 }

@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.decentration.implementation.redis;
+package com.github.paganini2008.springworld.decentration.implementor.redis;
 
 import java.time.Duration;
 
@@ -19,6 +19,8 @@ import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 
+import com.github.paganini2008.springworld.decentration.DecentrationImplementor;
+
 import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -34,7 +36,7 @@ import redis.clients.jedis.JedisPoolConfig;
 @Slf4j
 @Configuration
 @ConditionalOnProperty(value = "spring.cluster.decentration.implementor", havingValue = "redis")
-public class RedisDecentrationImplementor {
+public class RedisDecentrationImplementor implements DecentrationImplementor {
 
 	@Value("${spring.redis.host:localhost}")
 	private String host;

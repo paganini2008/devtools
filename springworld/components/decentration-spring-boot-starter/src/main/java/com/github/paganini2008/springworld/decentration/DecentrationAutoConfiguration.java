@@ -3,7 +3,7 @@ package com.github.paganini2008.springworld.decentration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import com.github.paganini2008.springworld.decentration.implementation.redis.RedisDecentrationImplementor;
+import com.github.paganini2008.springworld.decentration.implementor.redis.RedisDecentrationImplementor;
 
 /**
  * 

@@ -13,6 +13,13 @@
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
+	
+		<dependency>
+			<groupId>com.github.paganini2008</groupId>
+			<artifactId>devtools-scheduler</artifactId>
+			<version>1.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.github.paganini2008.springworld</groupId>
 			<artifactId>decentration-spring-boot-starter</artifactId>
