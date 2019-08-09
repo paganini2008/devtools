@@ -15,7 +15,7 @@ import com.github.paganini2008.devtools.scheduler.cron.CronExpression;
 public interface Job extends Executable {
 
 	default String name() {
-		return "Untitled";
+		return "";
 	}
 
 	CronExpression cron();

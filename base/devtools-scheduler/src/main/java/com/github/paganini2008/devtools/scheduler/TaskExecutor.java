@@ -53,13 +53,17 @@ public interface TaskExecutor {
 		return scheduleWithFixedDelay(task, DateUtils.convertToMillis(delay, timeUnit), DateUtils.convertToMillis(period, periodTimeUnit));
 	}
 
+	void setTaskInterceptorHandler(TaskInterceptorHandler interceptorHandler);
+
 	void removeSchedule(Executable task);
+
+	boolean hasScheduled(Executable e);
+
+	int taskCount();
 
 	void close();
 
 	boolean isClosed();
-
-	int taskCount();
 
 	/**
 	 * 
@@ -97,6 +101,10 @@ public interface TaskExecutor {
 	 */
 	interface TaskFuture {
 
+		void pause();
+
+		void resume();
+
 		boolean cancel();
 
 		boolean isCancelled();
@@ -104,8 +112,6 @@ public interface TaskExecutor {
 		boolean isDone();
 
 		TaskDetail getDetail();
-		
-		void setTaskInterceptorHandler(TaskInterceptorHandler interceptorHandler);
 
 	}
 

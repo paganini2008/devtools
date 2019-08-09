@@ -28,6 +28,8 @@ public class GenericTaskExecutor implements TaskExecutor {
 
 	private final ScheduledExecutorService executor;
 	private final ConcurrentMap<Executable, TaskFuture> taskFutures = new ConcurrentHashMap<Executable, TaskFuture>();
+	private TaskInterceptorHandler interceptorHandler = new TaskInterceptorHandler() {
+	};
 
 	public GenericTaskExecutor(int nThreads, String threadNamePrefix) {
 		executor = Executors.newScheduledThreadPool(nThreads, new PooledThreadFactory(threadNamePrefix));
@@ -87,6 +89,14 @@ public class GenericTaskExecutor implements TaskExecutor {
 		return taskFutures.get(e);
 	}
 
+	public void setTaskInterceptorHandler(TaskInterceptorHandler interceptorHandler) {
+		this.interceptorHandler = interceptorHandler;
+	}
+
+	public boolean hasScheduled(Executable e) {
+		return taskFutures.containsKey(e);
+	}
+
 	public void removeSchedule(Executable e) {
 		TaskFuture taskFuture = taskFutures.remove(e);
 		if (taskFuture != null) {
@@ -140,15 +150,15 @@ public class GenericTaskExecutor implements TaskExecutor {
 			try {
 				taskDetail.lastExecuted = now;
 				taskDetail.nextExecuted = taskDetail.trigger.getNextFireTime();
-				taskFuture.interceptorHandler.beforeJobExecution(taskFuture);
-				result = task.execute();
+				interceptorHandler.beforeJobExecution(taskFuture);
+				result = taskFuture.paused ? true : task.execute();
 				taskDetail.completedCount.incrementAndGet();
 			} catch (Exception e) {
 				taskDetail.failedCount.incrementAndGet();
 				result = task.onError(e);
 			} finally {
 				taskDetail.running.set(false);
-				taskFuture.interceptorHandler.afterJobExecution(taskFuture);
+				interceptorHandler.afterJobExecution(taskFuture);
 				if (result) {
 					ScheduledFuture<?> scheduledFuture = executor.schedule(this, taskDetail.nextExecuted - System.currentTimeMillis(),
 							TimeUnit.MILLISECONDS);
@@ -165,12 +175,19 @@ public class GenericTaskExecutor implements TaskExecutor {
 
 		final TaskDetail taskDetail;
 		volatile ScheduledFuture<?> scheduledFuture;
-		TaskInterceptorHandler interceptorHandler = new TaskInterceptorHandler() {
-		};
+		volatile boolean paused;
 
 		TaskFutureImpl(TaskDetail taskDetail, ScheduledFuture<?> scheduledFuture) {
 			this.taskDetail = taskDetail;
 			this.scheduledFuture = scheduledFuture;
+		}
+
+		public void pause() {
+			paused = true;
+		}
+
+		public void resume() {
+			paused = false;
 		}
 
 		public boolean cancel() {
@@ -187,10 +204,6 @@ public class GenericTaskExecutor implements TaskExecutor {
 
 		public TaskDetail getDetail() {
 			return taskDetail;
-		}
-
-		public void setTaskInterceptorHandler(TaskInterceptorHandler interceptorHandler) {
-			this.interceptorHandler = interceptorHandler;
 		}
 
 	}
@@ -222,7 +235,7 @@ public class GenericTaskExecutor implements TaskExecutor {
 			try {
 				taskDetail.lastExecuted = now;
 				taskDetail.nextExecuted = taskDetail.trigger.getNextFireTime();
-				taskFuture.interceptorHandler.beforeJobExecution(taskFuture);
+				interceptorHandler.beforeJobExecution(taskFuture);
 				result = task.execute();
 				taskDetail.completedCount.incrementAndGet();
 			} catch (Exception e) {
@@ -230,7 +243,7 @@ public class GenericTaskExecutor implements TaskExecutor {
 				result = task.onError(e);
 			} finally {
 				taskDetail.running.set(false);
-				taskFuture.interceptorHandler.afterJobExecution(taskFuture);
+				interceptorHandler.afterJobExecution(taskFuture);
 				if (!result) {
 					removeSchedule(task);
 					task.onCancellation();

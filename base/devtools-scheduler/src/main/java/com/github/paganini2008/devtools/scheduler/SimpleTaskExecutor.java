@@ -22,6 +22,8 @@ public class SimpleTaskExecutor implements TaskExecutor {
 	private volatile boolean running;
 	private final Timer timer;
 	private final Hashtable<Executable, TaskFuture> taskFutures = new Hashtable<Executable, TaskFuture>();
+	private TaskInterceptorHandler interceptorHandler = new TaskInterceptorHandler() {
+	};
 
 	public SimpleTaskExecutor() {
 		this(new Timer());
@@ -108,6 +110,14 @@ public class SimpleTaskExecutor implements TaskExecutor {
 		return taskFutures.size();
 	}
 
+	public void setTaskInterceptorHandler(TaskInterceptorHandler interceptorHandler) {
+		this.interceptorHandler = interceptorHandler;
+	}
+	
+	public boolean hasScheduled(Executable e) {
+		return taskFutures.containsKey(e);
+	}
+
 	/**
 	 * 
 	 * CronTask
@@ -121,13 +131,21 @@ public class SimpleTaskExecutor implements TaskExecutor {
 
 		final DefaultTaskDetail taskDetail;
 		volatile TimerTask timerTask;
-		boolean cancelled;
+		volatile boolean cancelled;
 		volatile boolean done;
-		TaskInterceptorHandler interceptorHandler;
+		volatile boolean paused;
 
 		TaskFutureImpl(DefaultTaskDetail taskDetail, TimerTask timerTask) {
 			this.timerTask = timerTask;
 			this.taskDetail = taskDetail;
+		}
+		
+		public void pause() {
+			paused = true;
+		}
+
+		public void resume() {
+			paused = false;
 		}
 
 		public boolean cancel() {
@@ -144,10 +162,6 @@ public class SimpleTaskExecutor implements TaskExecutor {
 
 		public TaskDetail getDetail() {
 			return taskDetail;
-		}
-
-		public void setTaskInterceptorHandler(TaskInterceptorHandler interceptorHandler) {
-			this.interceptorHandler = interceptorHandler;
 		}
 
 	}
@@ -183,7 +197,7 @@ public class SimpleTaskExecutor implements TaskExecutor {
 			try {
 				taskDetail.lastExecuted = now;
 				taskDetail.nextExecuted = taskDetail.trigger.getNextFireTime();
-				taskFuture.interceptorHandler.beforeJobExecution(taskFuture);
+				interceptorHandler.beforeJobExecution(taskFuture);
 				result = task.execute();
 				taskDetail.completedCount.incrementAndGet();
 			} catch (Exception e) {
@@ -191,11 +205,11 @@ public class SimpleTaskExecutor implements TaskExecutor {
 				result = task.onError(e);
 			} finally {
 				taskDetail.running.set(false);
-				taskFuture.interceptorHandler.afterJobExecution(taskFuture);
+				interceptorHandler.afterJobExecution(taskFuture);
 				if (result) {
 					CronTask nextTask = new CronTask(task, taskDetail);
 					timer.schedule(nextTask, taskDetail.nextExecuted - System.currentTimeMillis());
-					((TaskFutureImpl) taskFutures.get(task)).timerTask = nextTask;
+					taskFuture.timerTask = nextTask;
 				} else {
 					removeSchedule(task);
 					task.onCancellation();
@@ -227,10 +241,12 @@ public class SimpleTaskExecutor implements TaskExecutor {
 		public void run() {
 			boolean result = false;
 			final long now = System.currentTimeMillis();
+			final TaskFutureImpl taskFuture = (TaskFutureImpl) taskFutures.get(task);
 			taskDetail.running.set(true);
 			try {
 				taskDetail.lastExecuted = now;
 				taskDetail.nextExecuted = taskDetail.trigger.getNextFireTime();
+				interceptorHandler.beforeJobExecution(taskFuture);
 				result = task.execute();
 				taskDetail.completedCount.incrementAndGet();
 			} catch (Exception e) {
@@ -238,6 +254,7 @@ public class SimpleTaskExecutor implements TaskExecutor {
 				result = task.onError(e);
 			} finally {
 				taskDetail.running.set(false);
+				interceptorHandler.afterJobExecution(taskFuture);
 				if (!result) {
 					removeSchedule(task);
 					task.onCancellation();

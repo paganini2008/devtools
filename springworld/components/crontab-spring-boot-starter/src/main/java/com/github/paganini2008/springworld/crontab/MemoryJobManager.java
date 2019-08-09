@@ -1,5 +1,7 @@
 package com.github.paganini2008.springworld.crontab;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -22,26 +24,46 @@ import lombok.extern.slf4j.Slf4j;
 public class MemoryJobManager implements JobManager {
 
 	private final Observable observable = Observable.unrepeatable();
-	private final Map<String, Job> store = new ConcurrentHashMap<String, Job>();
+	private final Map<Job, TaskExecutor.TaskFuture> store = new ConcurrentHashMap<Job, TaskExecutor.TaskFuture>();
 	private TaskExecutor taskExecutor = new GenericTaskExecutor(8, "crontab");
 
 	public void setTaskExecutor(TaskExecutor taskExecutor) {
 		this.taskExecutor = taskExecutor;
 	}
 
-	public void schedule(final Job job) {
-		if (!store.containsValue(job)) {
-			observable.addObserver((ob, arg) -> {
-				taskExecutor.schedule(job, job.cron());
-				log.info("Start to run job: " + job.name());
-			});
-			store.put(job.name(), job);
-			log.info("Schedule job: " + job.getClass().getName() + ", current job size: " + countOfJobs());
+	public void schedule(final Job... jobs) {
+		for (Job job : jobs) {
+			if (!store.containsKey(job)) {
+				observable.addObserver((ob, arg) -> {
+					store.put(job, taskExecutor.schedule(job, job.cron()));
+					log.info("Start to run job: " + job.name());
+				});
+				log.info("Schedule job: " + job.getClass().getName() + ", current job size: " + countOfJobs());
+			}
 		}
 	}
-	
+
+	public void deleteJob(Job job) {
+		if (hasJob(job)) {
+			taskExecutor.removeSchedule(job);
+			store.remove(job);
+		}
+	}
+
+	public void pauseJob(Job job) {
+		if (hasJob(job)) {
+			store.get(job).pause();
+		}
+	}
+
+	public void resumeJob(Job job) {
+		if (hasJob(job)) {
+			store.get(job).resume();
+		}
+	}
+
 	public boolean hasJob(Job job) {
-		return store.containsValue(job);
+		return store.containsKey(job);
 	}
 
 	public void runNow() {
@@ -52,9 +74,13 @@ public class MemoryJobManager implements JobManager {
 	public int countOfJobs() {
 		return store.size();
 	}
-	
+
 	public String[] jobNames() {
-		return store.keySet().toArray(new String[0]);
+		List<String> names = new ArrayList<String>();
+		for (Job job : store.keySet()) {
+			names.add(job.name());
+		}
+		return names.toArray(new String[0]);
 	}
 
 	public void close() {

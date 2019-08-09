@@ -48,7 +48,7 @@ public abstract class CalendarAssert {
 
 	public static void checkDayOfMonth(Month month, int day) {
 		if (day < 1 || day > month.getLasyDay()) {
-			throw new IllegalArgumentException("Day's range is 1 to " + month.getLasyDay());
+			throw new IllegalArgumentException("Day's range of this month is 1 to " + month.getLasyDay());
 		}
 	}
 

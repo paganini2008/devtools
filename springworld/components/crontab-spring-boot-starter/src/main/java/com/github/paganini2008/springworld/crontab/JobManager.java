@@ -15,16 +15,22 @@ public interface JobManager {
 
 	void setTaskExecutor(TaskExecutor taskExecutor);
 
-	void schedule(Job job);
-	
+	void schedule(Job... jobs);
+
 	boolean hasJob(Job job);
 
+	void pauseJob(Job job);
+
+	void resumeJob(Job job);
+
+	void deleteJob(Job job);
+
 	void runNow();
-	
+
 	int countOfJobs();
-	
+
 	String[] jobNames();
-	
+
 	void close();
 
 }
