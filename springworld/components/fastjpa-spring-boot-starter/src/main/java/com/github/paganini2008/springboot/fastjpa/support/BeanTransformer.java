@@ -52,7 +52,6 @@ public class BeanTransformer<E, T> extends AbstractTransformer<E, T> {
 				int index;
 				if ((index = path.indexOf(".")) > 0) {
 					key = path.substring(0, index);
-					value = path.substring(index + 1);
 				}
 				attributeNames.put(key, value);
 				attributeFields.put(key, field);

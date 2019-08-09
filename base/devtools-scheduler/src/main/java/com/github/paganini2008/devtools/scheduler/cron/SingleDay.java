@@ -7,6 +7,7 @@ import java.util.TreeMap;
 import java.util.function.Function;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
+import com.github.paganini2008.devtools.date.DateUtils;
 
 /**
  * 
@@ -114,5 +115,14 @@ public class SingleDay implements ConcreteDay, Serializable {
 		day.set(Calendar.YEAR, month.getYear());
 		day.set(Calendar.MONTH, month.getMonth());
 		return this;
+	}
+	
+	public static void main(String[] args) {
+		ConcreteWeekDay every= CronBuilder.thisYear().July().andAug().everyWeek().Mon().toFri();
+		while(every.hasNext()) {
+			Day time = every.next();
+			System.out.println(DateUtils.format(time.getTime()));
+		}
+		System.out.println(CronBuilder.thisYear().isLeapYear());
 	}
 }
