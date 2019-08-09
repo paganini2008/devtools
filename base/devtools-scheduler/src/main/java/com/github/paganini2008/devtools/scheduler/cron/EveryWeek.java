@@ -74,6 +74,7 @@ public class EveryWeek implements Week, Serializable {
 				forward = true;
 			}
 		}
+		previous = week.getTime();
 		return this;
 	}
 
@@ -94,13 +95,11 @@ public class EveryWeek implements Week, Serializable {
 	}
 
 	public Date getTime() {
-		previous = week.getTime();
-		return previous;
+		return week.getTime();
 	}
 
 	public long getTimeInMillis() {
-		previous = week.getTime();
-		return previous.getTime();
+		return week.getTimeInMillis();
 	}
 
 	public ConcreteWeekDay weekday(int day) {

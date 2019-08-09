@@ -118,7 +118,7 @@ public class SingleDay implements ConcreteDay, Serializable {
 	}
 	
 	public static void main(String[] args) {
-		ConcreteWeekDay every= CronBuilder.thisYear().July().andAug().everyWeek().Mon().toFri();
+		Day every= CronBuilder.thisYear().July().andAug().toOct().everyWeek().Mon().toFri();
 		while(every.hasNext()) {
 			Day time = every.next();
 			System.out.println(DateUtils.format(time.getTime()));
