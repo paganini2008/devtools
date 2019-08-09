@@ -81,7 +81,7 @@ public class SingleMonth implements ConcreteMonth, Serializable {
 	public int getLasyDay() {
 		return month.getActualMaximum(Calendar.DAY_OF_MONTH);
 	}
-	
+
 	public int getWeekCount() {
 		return month.getActualMaximum(Calendar.WEEK_OF_MONTH);
 	}
@@ -89,7 +89,7 @@ public class SingleMonth implements ConcreteMonth, Serializable {
 	public ConcreteDay day(int day) {
 		return new SingleDay(CollectionUtils.getFirst(this), day);
 	}
-	
+
 	public Day lastDay() {
 		return new LastDay(CollectionUtils.getFirst(this));
 	}
@@ -100,6 +100,10 @@ public class SingleMonth implements ConcreteMonth, Serializable {
 
 	public ConcreteWeek week(int week) {
 		return new SingleWeek(CollectionUtils.getFirst(this), week);
+	}
+
+	public Week lastWeek() {
+		return new LastWeek(CollectionUtils.getFirst(this));
 	}
 
 	public Week everyWeek(Function<Month, Integer> from, Function<Month, Integer> to, int interval) {
@@ -127,11 +131,11 @@ public class SingleMonth implements ConcreteMonth, Serializable {
 	public static void main(String[] args) {
 		ConcreteYear singleYear = new SingleYear(2019);
 		singleYear = singleYear.andYear(2024).andYear(2028);
-		ConcreteMonth singleMonth = singleYear.month(8).andMonth(11);
-		Day singleDay = singleMonth.day(15).andDay(18);
-		while (singleDay.hasNext()) {
-			Day day = singleDay.next();
-			System.out.println(DateUtils.format(day.getTime()));
+		ConcreteMonth singleMonth = singleYear.July().andAug().andMonth(11);
+		Day every = singleMonth.lastWeek().Fri().andSat();
+		while (every.hasNext()) {
+			Day time = every.next();
+			System.out.println(DateUtils.format(time.getTime()));
 		}
 	}
 

@@ -106,6 +106,10 @@ public class EveryMonth implements Month, Serializable {
 		return new SingleWeek(CollectionUtils.getFirst(this), week);
 	}
 
+	public Week lastWeek() {
+		return new LastWeek(CollectionUtils.getFirst(this));
+	}
+
 	public Week everyWeek(Function<Month, Integer> from, Function<Month, Integer> to, int interval) {
 		return new EveryWeek(CollectionUtils.getFirst(this), from, to, interval);
 	}
