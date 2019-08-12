@@ -12,7 +12,6 @@ import com.github.paganini2008.springboot.authorization.EnableOAuth2ResourceServ
 import com.github.paganini2008.springworld.config.EnableApplicationPropertiesKeeper;
 import com.github.paganini2008.springworld.config.GitConfigurationSpringApplication;
 import com.github.paganini2008.springworld.support.Env;
-import com.github.paganini2008.springworld.support.redis.EnableRedisAdvancedFeatures;
 
 /**
  * 
@@ -24,7 +23,6 @@ import com.github.paganini2008.springworld.support.redis.EnableRedisAdvancedFeat
  * @version 1.0
  */
 @EnableOAuth2ResourceServer
-@EnableRedisAdvancedFeatures
 @EnableApplicationPropertiesKeeper
 @EnableAsync
 @SpringBootApplication

@@ -30,13 +30,11 @@ public class ContextMulticastAware implements ApplicationListener<ContextRefresh
 
 	public ContextMulticastAware() {
 		this.id = UUID.randomUUID().toString();
+		log.info("Multicaster ID: " + id);
 	}
 
 	@Autowired
 	private RedisMessagePubSub redisMessager;
-
-	@Autowired
-	private ContextMulticastChannelGroup channelGroup;
 
 	@Value("${spring.redis.pubsub.keyexpired.namespace:springboot:cluster:multicast:member:}")
 	private String namespace;
@@ -45,7 +43,6 @@ public class ContextMulticastAware implements ApplicationListener<ContextRefresh
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
-		channelGroup.registerChannel(id, 1);
 		redisMessager.subcribeChannel("standby", new StandbyMessageHandler(id));
 		redisMessager.subcribeChannel(id, new MulticastMessageHandler(event.getApplicationContext()));
 		redisMessager.subcribeEphemeralChannel(new DeactiveMessageHandler());

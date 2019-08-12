@@ -1,13 +1,11 @@
 package com.github.paganini2008.springworld.cluster.implementor;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
@@ -22,48 +20,41 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
  * @version 1.0
  */
 @Configuration
-@ConditionalOnBean(ContextClusterConfiguration.class)
-@ConditionalOnProperty(value = "spring.cluster.configuration.multicast.enabled", havingValue = "true")
+@ConditionalOnProperty(value = "spring.cluster.multicast.enabled", havingValue = "true")
 public class ContextMulticastConfiguration {
 
 	@Value("${spring.redis.pubsub.channel:defaultChannel}")
 	private String channel;
 
-	@Bean
+	@Bean("cluster-message-listener")
 	public RedisMessageListener redisMessageListener() {
 		return new RedisMessageListener();
 	}
 
-	@Bean
+	@Bean("cluster-ephemeral-message-listener")
 	public RedisEphemeralMessageListener redisEphemeralMessageListener() {
 		return new RedisEphemeralMessageListener();
 	}
 
-	@Bean
+	@Bean("cluster-message-pubsub")
 	public RedisMessagePubSub redisMessagePubSub() {
 		return new RedisMessagePubSub();
 	}
 
-	@Bean("redisMessageEventPublisher")
+	@Bean("cluster-message-event-publisher")
 	public RedisMessageEventPublisher redisMessageEventPublisher() {
 		return new RedisMessageEventPublisher();
 	}
 
-	@DependsOn("redisMessageEventPublisher")
+	@DependsOn("cluster-message-event-publisher")
 	@Bean
-	public MessageListenerAdapter messageListenerAdapter(RedisMessageEventPublisher listenerDelegate) {
-		return new MessageListenerAdapter(listenerDelegate, "publish");
+	public MessageListenerAdapter messageListenerAdapter(RedisMessageListenerContainer messageListenerContainer) {
+		MessageListenerAdapter adapter = new MessageListenerAdapter(redisMessageEventPublisher(), "publish");
+		messageListenerContainer.addMessageListener(adapter, new ChannelTopic(channel));
+		return adapter;
 	}
 
-	@Bean
-	public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory,
-			MessageListenerAdapter messageListenerAdapter) {
-		RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
-		redisMessageListenerContainer.setConnectionFactory(redisConnectionFactory);
-		redisMessageListenerContainer.addMessageListener(messageListenerAdapter, new ChannelTopic(channel));
-		return redisMessageListenerContainer;
-	}
-
+	@DependsOn("messageListenerAdapter")
 	@Bean
 	public ContextMulticastAware contextMulticastAware() {
 		return new ContextMulticastAware();

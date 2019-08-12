@@ -32,7 +32,7 @@ public class StandbyMessageHandler implements RedisMessageHandler {
 	public void handleMessage(String channel, Object message) {
 		final String self = this.id;
 		final String other = (String) message;
-		if (!self.equals(other)) {
+		if (!channelGroup.hasRegistered(other)) {
 			channelGroup.registerChannel(other, 1);
 			redisMessager.sendMessage("standby", self);
 			log.info(self + " connect to: " + other);

@@ -3,6 +3,7 @@ package com.github.paganini2008.springworld.cluster.implementor;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
@@ -31,9 +32,11 @@ public class RedisMessagePubSub {
 	private StringRedisTemplate redisTemplate;
 
 	@Autowired
+	@Qualifier("cluster-message-listener")
 	private RedisMessageListener redisMessageListener;
 
 	@Autowired
+	@Qualifier("cluster-ephemeral-message-listener")
 	private RedisEphemeralMessageListener redisEphemeralMessageListener;
 
 	public void sendMessage(String channel, Object message) {

@@ -35,6 +35,10 @@ public class ContextMulticastChannelGroup {
 		}
 	}
 
+	public boolean hasRegistered(String channel) {
+		return channels.contains(channel);
+	}
+
 	public void removeChannel(String channel) {
 		Assert.hasNoText("Channel is required.");
 		while (channels.contains(channel)) {

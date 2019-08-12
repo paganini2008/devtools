@@ -15,6 +15,8 @@ import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.listener.KeyExpirationEventMessageListener;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
@@ -33,7 +35,7 @@ import redis.clients.jedis.JedisPoolConfig;
  */
 @Slf4j
 @Configuration
-@ConditionalOnProperty(value = "spring.cluster.configuration.enabled", havingValue = "true")
+@ConditionalOnProperty(value = "spring.cluster.enabled", havingValue = "true")
 public class ContextClusterConfiguration {
 
 	@Value("${spring.redis.host:localhost}")
@@ -111,6 +113,22 @@ public class ContextClusterConfiguration {
 	}
 
 	@Bean
+	@ConditionalOnMissingBean(RedisMessageListenerContainer.class)
+	public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory) {
+		RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
+		redisMessageListenerContainer.setConnectionFactory(redisConnectionFactory);
+		return redisMessageListenerContainer;
+	}
+
+	@Bean
+	public KeyExpirationEventMessageListener keyExpirationEventMessageListener(
+			RedisMessageListenerContainer redisMessageListenerContainer) {
+		KeyExpirationEventMessageListener listener = new KeyExpirationEventMessageListener(redisMessageListenerContainer);
+		listener.setKeyspaceNotificationsConfigParameter("Ex");
+		return listener;
+	}
+
+	@Bean
 	public ContextClusterAware contextClusterAware() {
 		return new ContextClusterAware();
 	}
@@ -121,7 +139,7 @@ public class ContextClusterConfiguration {
 	}
 
 	@Bean
-	public ContextClusterDisconnectionListener contextClusterDisconnectionListener() {
-		return new ContextClusterDisconnectionListener();
+	public ContextClusterOfflineListener contextClusterOfflineListener() {
+		return new ContextClusterOfflineListener();
 	}
 }

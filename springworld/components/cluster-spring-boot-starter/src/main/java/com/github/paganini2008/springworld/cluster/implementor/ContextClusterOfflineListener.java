@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
- * ContextClusterDisconnectionListener
+ * ContextClusterOfflineListener
  * 
  * @author Fred Feng
  * @created 2019-08
@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @SuppressWarnings("all")
-public class ContextClusterDisconnectionListener implements ApplicationListener<RedisKeyExpiredEvent>, ApplicationContextAware {
+public class ContextClusterOfflineListener implements ApplicationListener<RedisKeyExpiredEvent>, ApplicationContextAware {
 
 	@Autowired
 	private ContextClusterAware contextClusterAware;

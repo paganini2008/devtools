@@ -42,11 +42,10 @@ public class RedisEphemeralMessageListener implements ApplicationListener<RedisK
 
 	private AutowireCapableBeanFactory beanFactory;
 
-	@Override
 	public void onApplicationEvent(RedisKeyExpiredEvent event) {
 		final String expiredKey = new String(event.getSource());
 		if (log.isTraceEnabled()) {
-			log.trace("Key: {} is expired.");
+			log.trace("Key: {} is expired.", expiredKey);
 		}
 		if (expiredKey.startsWith(namespace)) {
 			final Object expiredValue = getExpiredValue(expiredKey);
