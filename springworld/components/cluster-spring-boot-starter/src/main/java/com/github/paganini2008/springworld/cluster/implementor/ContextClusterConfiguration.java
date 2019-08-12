@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
@@ -16,14 +15,9 @@ import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
-import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
-
-import com.github.paganini2008.springworld.cluster.DecentrationImplementor;
 
 import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.JedisPoolConfig;
@@ -40,7 +34,7 @@ import redis.clients.jedis.JedisPoolConfig;
 @Slf4j
 @Configuration
 @ConditionalOnProperty(value = "spring.cluster.configuration.enabled", havingValue = "true")
-public class ContextClusterConfiguration implements DecentrationImplementor {
+public class ContextClusterConfiguration {
 
 	@Value("${spring.redis.host:localhost}")
 	private String host;
@@ -50,8 +44,6 @@ public class ContextClusterConfiguration implements DecentrationImplementor {
 	private int port;
 	@Value("${spring.redis.dbIndex:0}")
 	private int dbIndex;
-	@Value("${spring.redis.pubsub.channel:defaultChannel}")
-	private String channel;
 	@Value("${spring.application.name}")
 	private String applicationName;
 
@@ -131,35 +123,5 @@ public class ContextClusterConfiguration implements DecentrationImplementor {
 	@Bean
 	public ContextClusterDisconnectionListener contextClusterDisconnectionListener() {
 		return new ContextClusterDisconnectionListener();
-	}
-
-	@Bean
-	public RedisMessageListener redisMessageListener() {
-		return new RedisMessageListener();
-	}
-
-	@Bean("redisMessageEventPublisher")
-	public RedisMessageEventPublisher redisMessageEventPublisher() {
-		return new RedisMessageEventPublisher();
-	}
-
-	@Bean
-	public RedisMessagePubSub redisMessagePubSub() {
-		return new RedisMessagePubSub();
-	}
-
-	@DependsOn("redisMessageEventPublisher")
-	@Bean
-	public MessageListenerAdapter getMessageListenerAdapter(RedisMessageEventPublisher listenerDelegate) {
-		return new MessageListenerAdapter(listenerDelegate, "publish");
-	}
-
-	@Bean
-	public RedisMessageListenerContainer getRedisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory,
-			MessageListenerAdapter messageListenerAdapter) {
-		RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
-		redisMessageListenerContainer.setConnectionFactory(redisConnectionFactory);
-		redisMessageListenerContainer.addMessageListener(messageListenerAdapter, new ChannelTopic(channel));
-		return redisMessageListenerContainer;
 	}
 }

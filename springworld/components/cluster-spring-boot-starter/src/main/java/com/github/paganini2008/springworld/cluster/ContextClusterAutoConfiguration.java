@@ -7,7 +7,7 @@ import com.github.paganini2008.springworld.cluster.implementor.ContextClusterCon
 
 /**
  * 
- * DecentrationAutoConfiguration
+ * ContextClusterAutoConfiguration
  *
  * @author Fred Feng
  * @created 2019-08
@@ -16,5 +16,6 @@ import com.github.paganini2008.springworld.cluster.implementor.ContextClusterCon
  */
 @Configuration
 @Import(ContextClusterConfiguration.class)
-public class DecentrationAutoConfiguration {
+public class ContextClusterAutoConfiguration {
 }
+ 

@@ -49,23 +49,23 @@ public class RedisEphemeralMessageListener implements ApplicationListener<RedisK
 			log.trace("Key: {} is expired.");
 		}
 		if (expiredKey.startsWith(namespace)) {
+			final Object expiredValue = getExpiredValue(expiredKey);
 			final String channel = expiredKey.replace(namespace, "");
 			if (log.isTraceEnabled()) {
 				log.trace("Data into channel '{}'.", channel);
 			}
-			handleMessage(expiredKey, channel);
-			handleMessage(expiredKey, "*");
+			handleMessage(channel, expiredValue);
+			handleMessage("*", expiredValue);
 		}
 	}
 
-	private void handleMessage(String expiredKey, String channel) {
+	private void handleMessage(String channel, Object message) {
 		List<RedisMessageHandler> messageHandlers = channelHandlers.get(channel);
 		if (messageHandlers != null) {
-			final Object expiredValue = getExpiredValue(expiredKey);
 			for (RedisMessageHandler redisMessageHandler : messageHandlers) {
 				try {
 					beanFactory.autowireBean(redisMessageHandler);
-					redisMessageHandler.handleMessage(expiredKey, expiredValue);
+					redisMessageHandler.handleMessage(channel, message);
 				} catch (Exception e) {
 					log.error(e.getMessage(), e);
 				} finally {
@@ -94,10 +94,13 @@ public class RedisEphemeralMessageListener implements ApplicationListener<RedisK
 
 	private Object getExpiredValue(String expiredKey) {
 		final String key = RedisMessagePubSub.EXPIRED_KEY_PREFIX + expiredKey;
-		String jsonResult = redisTemplate.opsForValue().get(key);
-		redisTemplate.delete(key);
-		MessageEntity entity = JacksonUtils.parseJson(jsonResult, MessageEntity.class);
-		return entity.getMessage();
+		if (redisTemplate.hasKey(key)) {
+			String jsonResult = redisTemplate.opsForValue().get(key);
+			redisTemplate.delete(key);
+			MessageEntity entity = JacksonUtils.parseJson(jsonResult, MessageEntity.class);
+			return entity.getMessage();
+		}
+		return null;
 	}
 
 	@Override

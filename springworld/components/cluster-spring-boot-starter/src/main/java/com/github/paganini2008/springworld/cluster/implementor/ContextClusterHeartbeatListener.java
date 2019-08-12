@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
@@ -31,7 +32,7 @@ public class ContextClusterHeartbeatListener implements ApplicationListener<Cont
 	static final String HEART_BEAT_VALUE = "ok";
 
 	@Autowired
-	private RedisMessagePubSub redisMessager;
+	private StringRedisTemplate redisTemplate;
 
 	@Value("${spring.application.name}")
 	private String applicationName;
@@ -68,7 +69,7 @@ public class ContextClusterHeartbeatListener implements ApplicationListener<Cont
 		@Override
 		public boolean execute() {
 			try {
-				redisMessager.sendEphemeralMessage(HEART_BEAT_KEY + applicationName, HEART_BEAT_VALUE, 5, TimeUnit.SECONDS);
+				redisTemplate.opsForValue().set(HEART_BEAT_KEY + applicationName, HEART_BEAT_VALUE, 5, TimeUnit.SECONDS);
 				if (log.isTraceEnabled()) {
 					log.trace("Heartbeat: " + HEART_BEAT_VALUE);
 				}
@@ -80,7 +81,7 @@ public class ContextClusterHeartbeatListener implements ApplicationListener<Cont
 		}
 
 		public void start(long ticket) {
-			redisMessager.sendEphemeralMessage(HEART_BEAT_KEY + applicationName, HEART_BEAT_VALUE, 5, TimeUnit.SECONDS);
+			redisTemplate.opsForValue().set(HEART_BEAT_KEY + applicationName, HEART_BEAT_VALUE, 5, TimeUnit.SECONDS);
 			timer = ThreadUtils.scheduleAtFixedRate(this, 3, TimeUnit.SECONDS);
 		}
 

@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ContextClusterDisconnectionListener implements ApplicationListener<RedisKeyExpiredEvent>, ApplicationContextAware {
 
 	@Autowired
-	private ContextClusterAware contextHeartbeatAware;
+	private ContextClusterAware contextClusterAware;
 
 	@Autowired
 	@Qualifier("serial")
@@ -45,9 +45,9 @@ public class ContextClusterDisconnectionListener implements ApplicationListener<
 		final String heartbeatKey = ContextClusterHeartbeatListener.HEART_BEAT_KEY + applicationName;
 		if (heartbeatKey.equals(expiredKey)) {
 			log.info("One of applications named '" + applicationName + "' is shutdown.");
-			if (contextHeartbeatAware.getTicket() == serialNumber.get() + 1) {
+			if (contextClusterAware.getTicket() == serialNumber.get() + 1) {
 				serialNumber.incrementAndGet();
-				context.publishEvent(new ContextClusterHeartbeatEvent(context, contextHeartbeatAware.getTicket()));
+				context.publishEvent(new ContextClusterHeartbeatEvent(context, contextClusterAware.getTicket()));
 				log.info("Current context is the cluster leader. Context: " + context);
 			}
 		}

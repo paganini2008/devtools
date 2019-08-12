@@ -22,12 +22,15 @@ public class StandbyMessageHandler implements RedisMessageHandler {
 	@Autowired
 	private ContextMulticastChannelGroup channelGroup;
 
-	@Autowired
-	private ContextMulticastAware multicastAware;
+	private final String id;
+
+	public StandbyMessageHandler(String id) {
+		this.id = id;
+	}
 
 	@Override
 	public void handleMessage(String channel, Object message) {
-		final String self = multicastAware.getId();
+		final String self = this.id;
 		final String other = (String) message;
 		if (!self.equals(other)) {
 			channelGroup.registerChannel(other, 1);

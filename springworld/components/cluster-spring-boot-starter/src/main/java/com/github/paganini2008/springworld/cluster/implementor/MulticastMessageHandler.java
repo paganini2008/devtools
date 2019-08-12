@@ -2,7 +2,7 @@ package com.github.paganini2008.springworld.cluster.implementor;
 
 import org.springframework.context.ApplicationContext;
 
-import com.github.paganini2008.springworld.cluster.ContextClusterMulticastEvent;
+import com.github.paganini2008.springworld.cluster.ContextMulticastEvent;
 
 /**
  * 
@@ -22,7 +22,7 @@ public class MulticastMessageHandler implements RedisMessageHandler {
 	}
 
 	public void handleMessage(String channel, Object message) {
-		applicationContext.publishEvent(new ContextClusterMulticastEvent(applicationContext));
+		applicationContext.publishEvent(new ContextMulticastEvent(applicationContext));
 	}
 
 }

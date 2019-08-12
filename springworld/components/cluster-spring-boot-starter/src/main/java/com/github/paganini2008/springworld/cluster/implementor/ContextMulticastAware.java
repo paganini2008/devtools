@@ -28,7 +28,7 @@ public class ContextMulticastAware implements ApplicationListener<ContextRefresh
 
 	private final String id;
 
-	public ContextMulticastAware(String id) {
+	public ContextMulticastAware() {
 		this.id = UUID.randomUUID().toString();
 	}
 
@@ -46,7 +46,7 @@ public class ContextMulticastAware implements ApplicationListener<ContextRefresh
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		channelGroup.registerChannel(id, 1);
-		redisMessager.subcribeChannel("standby", new StandbyMessageHandler());
+		redisMessager.subcribeChannel("standby", new StandbyMessageHandler(id));
 		redisMessager.subcribeChannel(id, new MulticastMessageHandler(event.getApplicationContext()));
 		redisMessager.subcribeEphemeralChannel(new DeactiveMessageHandler());
 
