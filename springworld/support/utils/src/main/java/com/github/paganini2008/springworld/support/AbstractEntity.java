@@ -25,8 +25,8 @@ import com.github.paganini2008.devtools.collection.MapUtils;
 import com.github.paganini2008.devtools.reflection.ConstructorUtils;
 import com.github.paganini2008.devtools.reflection.FieldFilters;
 import com.github.paganini2008.devtools.reflection.FieldUtils;
-import com.github.paganini2008.springboot.fastjpa.support.InjectionHandler;
-import com.github.paganini2008.springboot.fastjpa.support.ReferenceId;
+import com.github.paganini2008.springworld.fastjpa.support.InjectionHandler;
+import com.github.paganini2008.springworld.fastjpa.support.ReferenceId;
 
 /**
  * 

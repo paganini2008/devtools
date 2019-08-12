@@ -82,6 +82,10 @@ public class EveryYear implements Year, Serializable {
 	public ConcreteMonth month(int month) {
 		return new SingleMonth(CollectionUtils.getFirst(this), month);
 	}
+	
+	public Week lastWeek() {
+		return new LastWeekOfYear(CollectionUtils.getFirst(this));
+	}
 
 	public static void main(String[] args) {
 		Day every = CronBuilder.thisYear().toYear(2025).Feb().andAug().toDec().lastDay();

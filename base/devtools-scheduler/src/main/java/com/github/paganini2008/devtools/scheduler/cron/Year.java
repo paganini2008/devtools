@@ -30,9 +30,7 @@ public interface Year extends Iterator<Year>, CronExpression {
 
 	ConcreteWeek week(int week);
 
-	default ConcreteWeek lastWeek() {
-		return week(getWeekCount());
-	}
+	Week lastWeek();
 
 	default boolean isLeapYear() {
 		GregorianCalendar calendar = new GregorianCalendar();

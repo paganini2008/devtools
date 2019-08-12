@@ -19,7 +19,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.github.paganini2008.springboot.fastjpa.support.EntityDaoFactoryBean;
+import com.github.paganini2008.springworld.fastjpa.support.EntityDaoFactoryBean;
 
 /**
  * 

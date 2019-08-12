@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.amber.redis;
+ package com.github.paganini2008.springworld.amber.redis;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

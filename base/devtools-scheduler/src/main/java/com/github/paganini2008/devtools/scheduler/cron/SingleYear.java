@@ -95,6 +95,10 @@ public class SingleYear implements ConcreteYear, Serializable {
 	public ConcreteMonth month(int month) {
 		return new SingleMonth(CollectionUtils.getFirst(this), month);
 	}
+	
+	public Week lastWeek() {
+		return new LastWeekOfYear(CollectionUtils.getFirst(this));
+	}
 
 	public boolean hasNext() {
 		return index < siblings.size();
@@ -108,7 +112,7 @@ public class SingleYear implements ConcreteYear, Serializable {
 	public static void main(String[] args) {
 		ConcreteYear singleYear = new SingleYear(2019);
 		singleYear = singleYear.andYear(2028).andYear(2024);
-		Day day = singleYear.everyMonth().lastDay();
+		Day day = singleYear.lastWeek().Mon().toFri();
 		while (day.hasNext()) {
 			Day time = day.next();
 			System.out.println(DateUtils.format(time.getTime()));

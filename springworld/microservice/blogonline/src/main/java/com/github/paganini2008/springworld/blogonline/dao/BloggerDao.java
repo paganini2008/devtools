@@ -1,7 +1,7 @@
 package com.github.paganini2008.springworld.blogonline.dao;
 
-import com.github.paganini2008.springboot.fastjpa.support.EntityDao;
 import com.github.paganini2008.springworld.blogonline.entity.Blogger;
+import com.github.paganini2008.springworld.fastjpa.support.EntityDao;
 
 /**
  * 

@@ -14,12 +14,12 @@ import org.springframework.data.jpa.domain.Specification;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.jdbc.PageResponse;
-import com.github.paganini2008.springboot.fastjpa.Filter;
-import com.github.paganini2008.springboot.fastjpa.JpaDelete;
-import com.github.paganini2008.springboot.fastjpa.JpaQuery;
-import com.github.paganini2008.springboot.fastjpa.JpaSort;
-import com.github.paganini2008.springboot.fastjpa.JpaUpdate;
-import com.github.paganini2008.springboot.fastjpa.support.EntityDao;
+import com.github.paganini2008.springworld.fastjpa.Filter;
+import com.github.paganini2008.springworld.fastjpa.JpaDelete;
+import com.github.paganini2008.springworld.fastjpa.JpaQuery;
+import com.github.paganini2008.springworld.fastjpa.JpaSort;
+import com.github.paganini2008.springworld.fastjpa.JpaUpdate;
+import com.github.paganini2008.springworld.fastjpa.support.EntityDao;
 
 /**
  * 
