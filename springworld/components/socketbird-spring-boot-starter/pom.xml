@@ -59,6 +59,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.googlecode.concurrentlinkedhashmap</groupId>
+			<artifactId>concurrentlinkedhashmap-lru</artifactId>
+			<version>1.4.2</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 			<exclusions>
@@ -76,6 +82,12 @@
 		<dependency>
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.paganini2008.springworld</groupId>
+			<artifactId>cluster-spring-boot-starter</artifactId>
+			<version>1.0</version>
 		</dependency>
 	</dependencies>
 </project>

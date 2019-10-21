@@ -1,7 +1,6 @@
 package com.github.paganini2008.springworld.cluster.implementor;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
@@ -17,9 +16,6 @@ import com.github.paganini2008.springworld.cluster.redis.RedisMessagePubSub;
  * @version 1.0
  */
 public class ContextClusterMulticastAware implements ApplicationListener<ContextRefreshedEvent> {
-
-	@Value("${spring.application.name}")
-	private String applicationName;
 
 	@Autowired
 	private RedisMessagePubSub redisMessager;

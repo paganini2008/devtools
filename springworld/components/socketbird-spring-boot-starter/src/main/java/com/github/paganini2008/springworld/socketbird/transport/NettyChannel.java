@@ -26,7 +26,7 @@ public class NettyChannel implements ChannelWrapper {
 	}
 
 	public boolean isActive() {
-		return instance.isActive(); 
+		return instance.isActive();
 	}
 
 	public void send(Tuple tuple) {
@@ -36,8 +36,9 @@ public class NettyChannel implements ChannelWrapper {
 			log.error(e.getMessage(), e);
 		}
 	}
-	
+
 	public void disconnect() {
+		log.info("NettyChannel will be disconnected");
 		instance.close();
 	}
 

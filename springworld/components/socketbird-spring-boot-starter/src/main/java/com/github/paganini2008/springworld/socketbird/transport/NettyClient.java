@@ -42,9 +42,6 @@ public class NettyClient implements NioClient {
 	@Value("${socketbird.nioclient.threads:-1}")
 	private int threadCount;
 
-	@Value("${socketbird.store.collection.name}")
-	private String collection;
-
 	@Autowired
 	private NettyClientHandler clientHandler;
 

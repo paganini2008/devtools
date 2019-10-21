@@ -11,10 +11,13 @@ package com.github.paganini2008.springworld.cluster.implementor;
  */
 public interface MulticastChannelListener {
 
-	void onJoin(String instanceId);
+	default void onJoin(String instanceId) {
+	}
 
-	void onLeave(String instanceId);
+	default void onLeave(String instanceId) {
+	}
 	
-	void onData(Object message);
+	default void onData(Object message) {
+	}
 
 }

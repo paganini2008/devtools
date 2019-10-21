@@ -68,6 +68,8 @@ public class LoopProcessor implements Runnable {
 			log.info("LoopProcessor is stoped.");
 		}
 	}
+	
+	
 
 	@Override
 	public void run() {

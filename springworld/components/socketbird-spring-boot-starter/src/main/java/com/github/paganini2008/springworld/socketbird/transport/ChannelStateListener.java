@@ -13,10 +13,13 @@ import java.net.SocketAddress;
  */
 public interface ChannelStateListener {
 
-	void onOpen(SocketAddress address);
+	default void onOpen(SocketAddress address) {
+	}
 
-	void onClose(SocketAddress address);
+	default void onClose(SocketAddress address) {
+	}
 
-	void onError(SocketAddress address, Throwable cause);
+	default void onError(SocketAddress address, Throwable cause) {
+	}
 
 }

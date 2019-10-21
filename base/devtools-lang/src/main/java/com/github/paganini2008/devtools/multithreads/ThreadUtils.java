@@ -22,7 +22,7 @@ import com.github.paganini2008.devtools.RandomUtils;
  * @created 2012-01
  * @version 1.0
  */
-public class ThreadUtils {
+public abstract class ThreadUtils {
 
 	public static boolean randomSleep(long to) {
 		return randomSleep(0, to);
@@ -313,9 +313,6 @@ public class ThreadUtils {
 
 	public static ThreadPool newCommonPool(int maxPoolSize, long timeout, int queueSize) {
 		return ThreadPoolBuilder.common(maxPoolSize).setTimeout(timeout).setQueueSize(queueSize).build();
-	}
-
-	private ThreadUtils() {
 	}
 
 }

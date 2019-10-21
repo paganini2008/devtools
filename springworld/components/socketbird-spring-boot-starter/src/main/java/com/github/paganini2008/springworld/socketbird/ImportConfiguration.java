@@ -1,11 +1,12 @@
 package com.github.paganini2008.springworld.socketbird;
 
-import java.net.SocketAddress;
-
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.annotation.Order;
 
+import com.github.paganini2008.springworld.cluster.implementor.MulticastChannelListener;
 import com.github.paganini2008.springworld.socketbird.store.RedisStoreFactory;
 import com.github.paganini2008.springworld.socketbird.store.Store;
 import com.github.paganini2008.springworld.socketbird.store.StoreFactory;
@@ -26,6 +27,7 @@ import com.github.paganini2008.springworld.socketbird.transport.TransportFactory
  * @revised 2019-10
  * @version 1.0
  */
+@Order(100)
 @Configuration
 public class ImportConfiguration {
 
@@ -62,23 +64,17 @@ public class ImportConfiguration {
 		return transport.getNioClient();
 	}
 
+	@ConditionalOnMissingBean(ChannelStateListener.class)
 	@Bean
 	public ChannelStateListener channelStateListener() {
 		return new ChannelStateListener() {
-
-			@Override
-			public void onOpen(SocketAddress address) {
-			}
-
-			@Override
-			public void onClose(SocketAddress address) {
-			}
-
-			@Override
-			public void onError(SocketAddress address, Throwable cause) {
-			}
-
 		};
+	}
+
+	@Primary
+	@Bean
+	public MulticastChannelListener multicastChannelListener() {
+		return new AutoBindingMulticastChannelListener();
 	}
 
 }

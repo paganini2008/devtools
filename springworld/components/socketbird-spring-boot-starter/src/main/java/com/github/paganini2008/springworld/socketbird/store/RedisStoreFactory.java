@@ -1,16 +1,9 @@
 package com.github.paganini2008.springworld.socketbird.store;
 
-import java.time.Duration;
-
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.RedisPassword;
-import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
-import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -18,9 +11,6 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import lombok.Setter;
-import redis.clients.jedis.JedisPoolConfig;
 
 /**
  * 
@@ -31,42 +21,9 @@ import redis.clients.jedis.JedisPoolConfig;
  * @revised 2019-10
  * @version 1.0
  */
-@Setter
 @ConditionalOnProperty(name = "socketbird.store", havingValue = "redis")
-@ConfigurationProperties(prefix = "socketbird.store.redis")
+@ConditionalOnBean(RedisConnectionFactory.class)
 public class RedisStoreFactory implements StoreFactory {
-
-	private String host;
-	private String password;
-	private int port;
-	private int dbIndex;
-
-	@ConditionalOnMissingBean(RedisConnectionFactory.class)
-	@Bean
-	public RedisConnectionFactory redisConnectionFactory() {
-		RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-		redisStandaloneConfiguration.setHostName(host);
-		redisStandaloneConfiguration.setPort(port);
-		redisStandaloneConfiguration.setDatabase(dbIndex);
-		redisStandaloneConfiguration.setPassword(RedisPassword.of(password));
-		JedisClientConfiguration.JedisClientConfigurationBuilder jedisClientConfiguration = JedisClientConfiguration.builder();
-		jedisClientConfiguration.connectTimeout(Duration.ofMillis(60000)).readTimeout(Duration.ofMillis(60000)).usePooling()
-				.poolConfig(jedisPoolConfig());
-		JedisConnectionFactory factory = new JedisConnectionFactory(redisStandaloneConfiguration, jedisClientConfiguration.build());
-		return factory;
-	}
-
-	@ConditionalOnMissingBean(JedisPoolConfig.class)
-	@Bean
-	public JedisPoolConfig jedisPoolConfig() {
-		JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-		jedisPoolConfig.setMinIdle(1);
-		jedisPoolConfig.setMaxIdle(5);
-		jedisPoolConfig.setMaxTotal(10);
-		jedisPoolConfig.setMaxWaitMillis(-1);
-		jedisPoolConfig.setTestWhileIdle(true);
-		return jedisPoolConfig;
-	}
 
 	@Bean("socketbird.store.redis")
 	public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {

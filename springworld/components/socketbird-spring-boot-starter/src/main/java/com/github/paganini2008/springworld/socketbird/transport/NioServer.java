@@ -11,7 +11,7 @@ package com.github.paganini2008.springworld.socketbird.transport;
  */
 public interface NioServer {
 
-	void start();
+	int start();
 
 	void stop();
 
