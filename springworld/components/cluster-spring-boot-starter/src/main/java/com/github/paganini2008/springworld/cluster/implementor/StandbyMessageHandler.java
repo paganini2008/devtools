@@ -20,22 +20,20 @@ public class StandbyMessageHandler implements RedisMessageHandler {
 	private RedisMessagePubSub redisMessager;
 
 	@Autowired
-	private ContextMulticastChannelGroup channelGroup;
+	private ContextClusterMulticastChannelGroup channelGroup;
 
-	private final String id;
-
-	public StandbyMessageHandler(String id) {
-		this.id = id;
-	}
+	@Autowired
+	private InstanceId instanceId;
 
 	@Override
-	public void handleMessage(String channel, Object message) {
-		final String self = this.id;
-		final String other = (String) message;
-		if (!channelGroup.hasRegistered(other)) {
-			channelGroup.registerChannel(other, 1);
+	public void onMessage(String channel, Object message) {
+		final String self = instanceId.get();
+		final String otherId = (String) message;
+		if (!channelGroup.hasRegistered(otherId)) {
+			channelGroup.registerChannel(otherId, 1);
 			redisMessager.sendMessage("standby", self);
-			log.info(self + " connect to: " + other);
+			log.info(self + " connect to: " + otherId);
+		
 		}
 	}
 

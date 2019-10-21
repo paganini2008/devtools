@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,16 +60,14 @@ public class RedisEphemeralMessageListener implements ApplicationListener<RedisK
 	}
 
 	private void handleMessage(String channel, Object message) {
-		List<RedisMessageHandler> messageHandlers = channelHandlers.get(channel);
+		List<RedisMessageHandler> messageHandlers = channelHandlers.remove(channel);
 		if (messageHandlers != null) {
-			for (RedisMessageHandler redisMessageHandler : messageHandlers) {
+			for (RedisMessageHandler messageHandler : messageHandlers) {
 				try {
-					beanFactory.autowireBean(redisMessageHandler);
-					redisMessageHandler.handleMessage(channel, message);
+					beanFactory.autowireBean(messageHandler);
+					messageHandler.onMessage(channel, message);
 				} catch (Exception e) {
 					log.error(e.getMessage(), e);
-				} finally {
-					messageHandlers.remove(redisMessageHandler);
 				}
 			}
 		}
@@ -95,7 +94,7 @@ public class RedisEphemeralMessageListener implements ApplicationListener<RedisK
 		final String key = RedisMessagePubSub.EXPIRED_KEY_PREFIX + expiredKey;
 		if (redisTemplate.hasKey(key)) {
 			String jsonResult = redisTemplate.opsForValue().get(key);
-			redisTemplate.delete(key);
+			redisTemplate.expire(key, 60, TimeUnit.SECONDS);
 			MessageEntity entity = JacksonUtils.parseJson(jsonResult, MessageEntity.class);
 			return entity.getMessage();
 		}

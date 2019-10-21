@@ -10,16 +10,22 @@ import java.util.EventObject;
  * @revised 2019-05
  * @version 1.0
  */
-public abstract class Event extends EventObject {
+public abstract class Event<T> extends EventObject {
 
 	private static final long serialVersionUID = 1369049759719737665L;
 
-	public Event(Object source) {
+	public Event(Object source, T argument) {
 		super(source);
 		this.timestamp = System.currentTimeMillis();
+		this.argument = argument;
 	}
 
 	private final long timestamp;
+	private final T argument;
+
+	public T getArgument() {
+		return argument;
+	}
 
 	public long getTimestamp() {
 		return timestamp;

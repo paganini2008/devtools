@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
-import com.github.paganini2008.springworld.cluster.ContextClusterStandbyEvent;
+import com.github.paganini2008.springworld.cluster.ContextClusterMasterStandbyEvent;
 
 /**
  * 
@@ -16,13 +16,13 @@ import com.github.paganini2008.springworld.cluster.ContextClusterStandbyEvent;
  * @version 1.0
  */
 @Component
-public class TaskExecutorAware implements ApplicationListener<ContextClusterStandbyEvent> {
+public class TaskExecutorAware implements ApplicationListener<ContextClusterMasterStandbyEvent> {
 
 	@Autowired
 	private JobManager jobManager;
 
 	@Override
-	public void onApplicationEvent(ContextClusterStandbyEvent event) {
+	public void onApplicationEvent(ContextClusterMasterStandbyEvent event) {
 		jobManager.runNow();
 	}
 

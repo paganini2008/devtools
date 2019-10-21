@@ -11,14 +11,14 @@ import com.github.paganini2008.devtools.StringUtils;
 
 /**
  * 
- * ContextMulticastChannelGroup
+ * ContextClusterMulticastChannelGroup
  *
  * @author Fred Feng
  * @revised 2019-08
  * @created 2019-08
  * @version 1.0
  */
-public class ContextMulticastChannelGroup {
+public class ContextClusterMulticastChannelGroup {
 
 	private final List<String> channels = new CopyOnWriteArrayList<String>();
 

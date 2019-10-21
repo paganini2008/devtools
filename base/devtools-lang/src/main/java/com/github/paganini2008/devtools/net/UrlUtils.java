@@ -123,8 +123,7 @@ public class UrlUtils {
 	}
 
 	public static void main(String[] args) throws Exception {
-		Map<String, String> url = getQueryMap(new URL("http://www.aaa.com/1/2/3/4.html?user=123&pwd=111111&a"));
-		System.out.println(url);
+		System.out.println(testConnection("https://video-out.coalchinajy.com/livestream/stream-NMHAe2.m3u8?auth_key=1570851499-0-0-53b7af334c3472c93b5aa05dd7cd4147"));
 	}
 
 	public static String toString(String url, String charset) throws IOException {
@@ -201,6 +200,21 @@ public class UrlUtils {
 			((HttpsURLConnection) connection).setHostnameVerifier(getInsecureVerifier());
 		}
 		return connection.getInputStream();
+	}
+	
+	public static int testConnection(String url) throws IOException{
+		return testConnection(new URL(url));
+	}
+
+	public static int testConnection(URL url) throws IOException {
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		if (connection instanceof HttpsURLConnection) {
+			initUnsecuredTSL();
+			((HttpsURLConnection) connection).setSSLSocketFactory(sslSocketFactory);
+			((HttpsURLConnection) connection).setHostnameVerifier(getInsecureVerifier());
+		}
+		connection.connect();
+		return connection.getResponseCode();
 	}
 
 	private static HostnameVerifier getInsecureVerifier() {

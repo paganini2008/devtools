@@ -17,12 +17,17 @@ import lombok.extern.slf4j.Slf4j;
 public class DeactiveMessageHandler implements RedisMessageHandler {
 
 	@Autowired
-	private ContextMulticastChannelGroup channelGroup;
+	private ContextClusterMulticastChannelGroup channelGroup;
+	
+	@Autowired
+	private RedisMessagePubSub redisMessager;
 
 	@Override
-	public void handleMessage(String channel, Object message) {
-		channelGroup.removeChannel((String) message);
-		log.info("Remove channel: " + message);
+	public void onMessage(String channel, Object message) {
+		final String instanceId = (String) message;
+		channelGroup.removeChannel(instanceId);
+		log.info("Remove instanceId: " + instanceId);
+		redisMessager.subcribeEphemeralChannel(this);
 	}
 
 }

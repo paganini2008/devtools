@@ -75,7 +75,7 @@ public class ThreadPoolBuilder {
 
 	public static ThreadPoolBuilder common(int maxPoolSize) {
 		ThreadPoolBuilder builder = new ThreadPoolBuilder();
-		return builder.setMaxPoolSize(maxPoolSize).setLatch(new CounterLatch(maxPoolSize * 2)).setQueueSize(Integer.MAX_VALUE)
+		return builder.setMaxPoolSize(maxPoolSize).setLatch(new CounterLatch(Integer.MAX_VALUE)).setQueueSize(Integer.MAX_VALUE)
 				.setTimeout(-1L).setThreadFactory(new PooledThreadFactory());
 	}
 

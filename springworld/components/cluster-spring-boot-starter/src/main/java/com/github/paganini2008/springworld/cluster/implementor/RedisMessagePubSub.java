@@ -25,9 +25,6 @@ public class RedisMessagePubSub {
 	@Value("${spring.redis.pubsub.channel:defaultChannel}")
 	private String channel;
 
-	@Value("${spring.redis.pubsub.keyexpired.namespace:springboot:cluster:multicast:member:}")
-	private String namespace;
-
 	@Autowired
 	private StringRedisTemplate redisTemplate;
 

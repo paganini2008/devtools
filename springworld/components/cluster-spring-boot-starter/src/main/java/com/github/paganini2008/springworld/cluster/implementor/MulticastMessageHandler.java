@@ -21,7 +21,7 @@ public class MulticastMessageHandler implements RedisMessageHandler {
 		this.applicationContext = applicationContext;
 	}
 
-	public void handleMessage(String channel, Object message) {
+	public void onMessage(String channel, Object message) {
 		applicationContext.publishEvent(new ContextMulticastEvent(applicationContext));
 	}
 

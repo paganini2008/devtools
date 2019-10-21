@@ -11,6 +11,6 @@ package com.github.paganini2008.springworld.cluster.implementor;
  */
 public interface RedisMessageHandler {
 
-	void handleMessage(String channel, Object message);
+	void onMessage(String channel, Object message);
 
 }

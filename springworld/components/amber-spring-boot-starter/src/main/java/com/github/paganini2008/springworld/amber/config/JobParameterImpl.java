@@ -27,7 +27,7 @@ public class JobParameterImpl implements JobParameter, Serializable {
 		this.name = name;
 		this.jobClass = jobClass;
 		this.description = description;
-		this.tuple = kwargs != null ? TupleImpl.createBy(kwargs) : new TupleImpl();
+		this.tuple = kwargs != null ? Tuple.createBy(kwargs) : new TupleImpl();
 	}
 
 	public String getJobName() {

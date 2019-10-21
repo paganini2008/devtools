@@ -8,7 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import com.github.paganini2008.devtools.Cases;
-import com.github.paganini2008.devtools.beans.TupleImpl;
+import com.github.paganini2008.devtools.collection.Tuple;
 
 /**
  * 
@@ -30,7 +30,7 @@ public abstract class RowMapperResultSetSlice<T> extends GeneralResultSetSlice<T
 		List<T> results = new ArrayList<T>();
 		List<Map<String, Object>> resultList = queryForMap(query);
 		for (Map<String, Object> data : resultList) {
-			T mapped = mapper.mapRow(TupleImpl.createBy(Cases.UNDER_SCORE, data));
+			T mapped = mapper.mapRow(Tuple.createBy(Cases.UNDER_SCORE, data));
 			results.add(mapped);
 		}
 		return results;

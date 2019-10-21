@@ -8,12 +8,12 @@ package com.github.paganini2008.devtools.event;
  * @revised 2019-05
  * @version 1.0
  */
-public interface EventPubSub {
+public interface EventPubSub<E extends Event<T>, T> {
 
-	void publish(Event event);
+	void publish(E event);
 
-	<E extends Event> void subscribe(EventSubscriber<E> subscriber);
+	void subscribe(EventSubscriber<E, T> subscriber);
 
-	<E extends Event> void unsubscribe(EventSubscriber<E> subscriber);
+	void unsubscribe(EventSubscriber<E, T> subscriber);
 
 }

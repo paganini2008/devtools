@@ -6,24 +6,26 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 
 /**
  * 
- * ContextMulticastConfiguration
+ * ContextClusterMulticastConfiguration
  *
  * @author Fred Feng
  * @created 2019-08
  * @revised 2019-08
  * @version 1.0
  */
+@Order(200)
 @Configuration
 @ConditionalOnProperty(value = "spring.cluster.multicast.enabled", havingValue = "true")
-public class ContextMulticastConfiguration {
+public class ContextClusterMulticastConfiguration {
 
-	@Value("${spring.redis.pubsub.channel:defaultChannel}")
+	@Value("${spring.redis.pubsub.channel:multicastChannel}")
 	private String channel;
 
 	@Bean("cluster-message-listener")
@@ -56,19 +58,24 @@ public class ContextMulticastConfiguration {
 
 	@DependsOn("messageListenerAdapter")
 	@Bean
-	public ContextMulticastAware contextMulticastAware() {
-		return new ContextMulticastAware();
+	public ContextClusterMulticastAware multicastAware() {
+		return new ContextClusterMulticastAware();
 	}
 
 	@Bean
-	public ContextMulticastChannelGroup contextMulticastChannelGroup() {
-		return new ContextMulticastChannelGroup();
+	public ContextClusterMulticastChannelGroup multicastChannelGroup() {
+		return new ContextClusterMulticastChannelGroup();
 	}
 
 	@Bean
 	@ConditionalOnMissingBean(LoadBalance.class)
 	public LoadBalance loadBalance() {
 		return new LoadBalanceSelector.RoundrobinLoadBalance();
+	}
+	
+	@Bean(initMethod="start", destroyMethod="stop")
+	public MulticastHeartbeatTask heartbeatTask() {
+		return new MulticastHeartbeatTask();
 	}
 
 }

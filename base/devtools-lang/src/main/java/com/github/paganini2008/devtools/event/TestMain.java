@@ -1,27 +1,30 @@
 package com.github.paganini2008.devtools.event;
 
-import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * 
+ * TestMain
+ * @author Fred Feng
+ * @created 2019-10
+ * @revised 2019-10
+ * @version 1.0
+ */
 public class TestMain {
 
-	static class TestEvent extends Event {
+	public static class TestEvent extends Event<String> {
+
+		private static final long serialVersionUID = 1L;
 
 		public TestEvent(Object source, String msg) {
-			super(source);
-			this.msg = msg;
+			super(source, msg);
 		}
-
-		private final String msg;
-
-		public String getMsg() {
-			return msg;
-		}
-
-		private static final long serialVersionUID = 2380494907997490663L;
 
 	}
 
-	static class TestSubcriber implements EventSubscriber<TestEvent> {
+	private static final AtomicInteger counter = new AtomicInteger();
+
+	public static class TestSubcriber implements EventSubscriber<TestEvent, String> {
 
 		private final String name;
 
@@ -30,27 +33,23 @@ public class TestMain {
 		}
 
 		public void onEventFired(TestEvent event) {
-			System.out.println("Name: " + name + "\t" + event.getMsg());
-			EventBus source = (EventBus) event.getSource();
-			source.subscribe(this);
+			System.out.println("Name: " + name + ", Value: " + event.getArgument());
+			counter.incrementAndGet();
 		}
 
 	}
 
 	public static void main(String[] args) throws Exception {
-		EventBus eventBus = new EventBus(10);
-		for (int i = 0; i < 10; i++) {
-			eventBus.subscribe(new TestSubcriber("Name:" + i));
+		EventBus<TestEvent, String> eventBus = new EventBus<TestEvent, String>(10, true);
+		for (int i = 0; i < 2; i++) {
+			eventBus.subscribe(new TestSubcriber("Name_" + i));
 		}
+		for (int i = 0; i < 100000; i++)
+			// int i = 1;
+			eventBus.publish(new TestEvent(eventBus, String.valueOf(i)));
 		System.in.read();
-
-		for(int i=0;i<10000;i++) {
-			eventBus.publish(new TestEvent(eventBus, UUID.randomUUID().toString()));
-			System.out.println("*****************: " + i);
-			//ThreadUtils.randomSleep(1000L);
-		}
 		eventBus.close();
-		System.out.println("TestMain.main()");
+		System.out.println("TestMain.main(): " + counter);
 	}
 
 }

@@ -2,9 +2,10 @@ package com.github.paganini2008.devtools.event;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.PriorityBlockingQueue;
@@ -21,37 +22,30 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
  * 
  * @author Fred Feng
  * @revised 2019-05
+ * @created 2019-05
  * @version 1.0
  */
-public class EventBus implements EventPubSub {
+public class EventBus<E extends Event<T>, T> implements EventPubSub<E, T> {
 
-	public EventBus(int nThreads) {
-		this(nThreads, nThreads * 2);
+	public EventBus(int nThreads, boolean multicast) {
+		this(ThreadUtils.newCommonPool(nThreads), multicast);
 	}
 
-	public EventBus(int nThreads, int queueLength) {
-		this(nThreads, queueLength, 60);
+	public EventBus(ThreadPool threadPool, boolean multicast) {
+		this.delegate = new EventHandler<E, T>(threadPool, multicast);
 	}
 
-	public EventBus(int nThreads, int queueLength, int timeout) {
-		this.delegate = new EventHandler(nThreads, queueLength, timeout);
-	}
+	private EventHandler<E, T> delegate;
 
-	public EventBus(ThreadPool threadPool, int maxPermits, long timeout) {
-		this.delegate = new EventHandler(threadPool, maxPermits, timeout);
-	}
-
-	private EventHandler delegate;
-
-	public void publish(Event event) {
+	public void publish(E event) {
 		delegate.publish(event);
 	}
 
-	public <E extends Event> void subscribe(EventSubscriber<E> subscriber) {
+	public void subscribe(EventSubscriber<E, T> subscriber) {
 		delegate.subscribe(subscriber);
 	}
 
-	public <E extends Event> void unsubscribe(EventSubscriber<E> subscriber) {
+	public void unsubscribe(EventSubscriber<E, T> subscriber) {
 		delegate.unsubscribe(subscriber);
 	}
 
@@ -68,43 +62,43 @@ public class EventBus implements EventPubSub {
 	 * @version 1.0
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	static class EventHandler implements Consumer<Runnable, Object>, EventPubSub {
+	static class EventHandler<E extends Event<T>, T> implements Consumer<Runnable, Object>, EventPubSub<E, T> {
 
 		final Producer<Runnable, Object> producer;
+		final boolean multicast;
 		final ConcurrentMap<Class<?>, EventGroup> eventGroups = new ConcurrentHashMap<Class<?>, EventGroup>();
 
-		EventHandler(int nThreads, int maxPermits, long timeout) {
-			this(ThreadUtils.newCommonPool(nThreads), maxPermits, timeout);
-		}
-
-		EventHandler(ThreadPool threadPool, int maxPermits, long timeout) {
+		EventHandler(ThreadPool threadPool, boolean multicast) {
 			this.producer = new Producer<Runnable, Object>(threadPool, this);
+			this.multicast = multicast;
 		}
 
-		public void publish(Event event) {
+		public void publish(E event) {
 			if (eventGroups.containsKey(event.getClass())) {
 				eventGroups.get(event.getClass()).onEventFired(event);
 			}
 		}
 
-		public <E extends Event> void subscribe(EventSubscriber<E> subscriber) {
+		public void subscribe(EventSubscriber<E, T> subscriber) {
 			final Class<?> eventClass = findParameterizedType(subscriber.getClass());
-			EventGroup<E> eventGroup = eventGroups.get(eventClass);
+			EventGroup<E, T> eventGroup = eventGroups.get(eventClass);
 			if (eventGroup == null) {
-				eventGroups.putIfAbsent(eventClass, new EventGroup<Event>(producer));
+				eventGroups.putIfAbsent(eventClass, new EventGroup<E, T>(producer, multicast));
 				eventGroup = eventGroups.get(eventClass);
 			}
-			Queue<EventSubscriber<E>> q = eventGroup.subscribers;
-			if (!q.contains(subscriber)) {
-				q.offer(subscriber);
+			if (eventGroup != null) {
+				Queue<EventSubscriber<E, T>> q = eventGroup.q;
+				if (!q.contains(subscriber)) {
+					q.offer(subscriber);
+				}
 			}
 		}
 
-		public <E extends Event> void unsubscribe(EventSubscriber<E> subscriber) {
+		public void unsubscribe(EventSubscriber<E, T> subscriber) {
 			final Class<?> eventClass = findParameterizedType(subscriber.getClass());
 			if (eventGroups.containsKey(eventClass)) {
-				EventGroup<E> eventGroup = eventGroups.get(eventClass);
-				eventGroup.subscribers.remove(subscriber);
+				EventGroup<E, T> eventGroup = eventGroups.get(eventClass);
+				eventGroup.q.remove(subscriber);
 			}
 		}
 
@@ -127,22 +121,36 @@ public class EventBus implements EventPubSub {
 	 * @revised 2019-05
 	 * @version 1.0
 	 */
-	static class EventGroup<E extends Event> implements EventSubscriber<E> {
+	static class EventGroup<E extends Event<T>, T> implements EventSubscriber<E, T> {
 
 		final Producer<Runnable, Object> producer;
-		final Queue<EventSubscriber<E>> subscribers = new PriorityBlockingQueue<EventSubscriber<E>>();
+		final BlockingQueue<EventSubscriber<E, T>> q;
+		final boolean multicast;
 
-		EventGroup(Producer<Runnable, Object> producer) {
+		EventGroup(Producer<Runnable, Object> producer, boolean multicast) {
 			this.producer = producer;
+			this.multicast = multicast;
+			this.q = new PriorityBlockingQueue<EventSubscriber<E, T>>();
 		}
 
 		public void onEventFired(final E event) {
-			producer.produce(() -> {
-				final Queue<EventSubscriber<E>> q = new ArrayDeque<EventSubscriber<E>>(subscribers);
-				while (!q.isEmpty()) {
-					q.poll().onEventFired(event);
+			if (multicast) {
+				q.forEach(subscriber -> {
+					producer.produce(() -> {
+						subscriber.onEventFired(event);
+					});
+				});
+			} else {
+				List<EventSubscriber<E, T>> list = new ArrayList<EventSubscriber<E, T>>();
+				int elements = q.drainTo(list);
+				if (elements > 0) {
+					list.forEach(subscriber -> {
+						producer.produce(() -> {
+							subscriber.onEventFired(event);
+						});
+					});
 				}
-			});
+			}
 		}
 
 	}

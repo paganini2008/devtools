@@ -86,14 +86,4 @@ public class TupleImpl extends KeyCaseInsensitiveMap<Object> implements Tuple {
 		return new LinkedHashMap<String, Object>(this);
 	}
 
-	public static Tuple createBy(Map<String, ?> kwargs) {
-		return createBy(Cases.LOWER, kwargs);
-	}
-
-	public static Tuple createBy(Case caseFormat, Map<String, ?> kwargs) {
-		TupleImpl tuple = new TupleImpl(caseFormat);
-		tuple.putAll(kwargs);
-		return tuple;
-	}
-
 }
