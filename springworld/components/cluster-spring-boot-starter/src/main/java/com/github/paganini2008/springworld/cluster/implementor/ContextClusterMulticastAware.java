@@ -4,9 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.core.Ordered;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
@@ -17,8 +14,7 @@ import lombok.extern.slf4j.Slf4j;
  * @revised 2019-08
  * @version 1.0
  */
-@Slf4j
-public class ContextClusterMulticastAware implements ApplicationListener<ContextRefreshedEvent>, Ordered {
+public class ContextClusterMulticastAware implements ApplicationListener<ContextRefreshedEvent> {
 
 	@Value("${spring.application.name}")
 	private String applicationName;
@@ -37,11 +33,6 @@ public class ContextClusterMulticastAware implements ApplicationListener<Context
 
 		redisMessager.sendMessage("standby", instanceId.get());
 
-	}
-
-	@Override
-	public int getOrder() {
-		return 1000;
 	}
 
 }

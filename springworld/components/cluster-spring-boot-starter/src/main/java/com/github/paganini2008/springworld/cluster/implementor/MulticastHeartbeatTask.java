@@ -5,6 +5,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
@@ -24,6 +25,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MulticastHeartbeatTask implements Executable {
 
+	@Value("${spring.application.name}")
+	private String applicationName;
+
 	@Autowired
 	private RedisMessagePubSub redisMessager;
 
@@ -32,11 +36,7 @@ public class MulticastHeartbeatTask implements Executable {
 
 	private Timer timer;
 
-	private final String channel;
-
-	public MulticastHeartbeatTask() {
-		this.channel = String.format(KeyPatterns.CLUSTER_MULTICAST_KEY, UUID.randomUUID().toString());
-	}
+	private String channel;
 
 	@Override
 	public boolean execute() {
@@ -45,6 +45,7 @@ public class MulticastHeartbeatTask implements Executable {
 	}
 
 	public void start() {
+		this.channel = String.format(KeyPatterns.CLUSTER_MULTICAST_KEY, applicationName, UUID.randomUUID().toString());
 		redisMessager.sendEphemeralMessage(channel, instanceId.get(), 5, TimeUnit.SECONDS);
 		timer = ThreadUtils.scheduleWithFixedDelay(this, 3, 3, TimeUnit.SECONDS);
 		log.info("Start MulticastHeartbeatTask ok.");

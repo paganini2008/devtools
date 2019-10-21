@@ -107,7 +107,7 @@ public class ContextClusterMasterSlavesConfiguration {
 		return listener;
 	}
 
-	@Bean(destroyMethod = "stop")
+	@Bean(name = "masterSlavesHeartbeatTask", destroyMethod = "stop")
 	public MasterSlavesHeartbeatTask heartbeatTask() {
 		return new MasterSlavesHeartbeatTask();
 	}

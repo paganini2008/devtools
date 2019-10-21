@@ -56,7 +56,6 @@ public class ContextClusterMulticastConfiguration {
 		return adapter;
 	}
 
-	@DependsOn("messageListenerAdapter")
 	@Bean
 	public ContextClusterMulticastAware multicastAware() {
 		return new ContextClusterMulticastAware();
@@ -72,8 +71,8 @@ public class ContextClusterMulticastConfiguration {
 	public LoadBalance loadBalance() {
 		return new LoadBalanceSelector.RoundrobinLoadBalance();
 	}
-	
-	@Bean(initMethod="start", destroyMethod="stop")
+
+	@Bean(name = "multicastHeartbeatTask", initMethod = "start", destroyMethod = "stop")
 	public MulticastHeartbeatTask heartbeatTask() {
 		return new MulticastHeartbeatTask();
 	}

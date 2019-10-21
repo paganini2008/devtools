@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.core.Ordered;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.github.paganini2008.springworld.cluster.ContextClusterMasterStandbyEvent;
@@ -24,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
  * @version 1.0
  */
 @Slf4j
-public class ContextClusterMasterSlavesAware implements ApplicationListener<ContextRefreshedEvent>, Ordered {
+public class ContextClusterMasterSlavesAware implements ApplicationListener<ContextRefreshedEvent> {
 
 	@Value("${spring.application.name}")
 	private String applicationName;
@@ -53,11 +52,6 @@ public class ContextClusterMasterSlavesAware implements ApplicationListener<Cont
 			log.info("Slave of context cluster '{}' is you. You can also implement ApplicationListener to listen the event type {}",
 					applicationName, ContextClusterSlaveStandbyEvent.class.getName());
 		}
-	}
-
-	@Override
-	public int getOrder() {
-		return 999;
 	}
 
 }
