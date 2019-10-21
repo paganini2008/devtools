@@ -27,7 +27,7 @@ public final class InstanceId {
 			synchronized (this) {
 				if (id == null) {
 					id = idGenerator.generateInstanceId();
-					log.info("Create instanceId: " + id);
+					log.info("Create instanceId of cluster: " + id);
 				}
 			}
 		}

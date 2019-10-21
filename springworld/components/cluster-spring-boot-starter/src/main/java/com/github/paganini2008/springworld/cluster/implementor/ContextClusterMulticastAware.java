@@ -30,7 +30,7 @@ public class ContextClusterMulticastAware implements ApplicationListener<Context
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		redisMessager.subcribeChannel("standby", new StandbyMessageHandler());
-		redisMessager.subcribeChannel(instanceId.get(), new MulticastMessageHandler(event.getApplicationContext()));
+		redisMessager.subcribeChannel(instanceId.get(), new MulticastMessageHandler());
 		redisMessager.subcribeEphemeralChannel(new DeactiveMessageHandler());
 
 		redisMessager.sendMessage("standby", instanceId.get());

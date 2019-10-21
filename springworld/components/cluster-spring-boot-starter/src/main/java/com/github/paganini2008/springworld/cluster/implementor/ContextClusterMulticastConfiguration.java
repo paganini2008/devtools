@@ -83,4 +83,9 @@ public class ContextClusterMulticastConfiguration {
 		return new MulticastHeartbeatTask();
 	}
 
+	@Bean
+	public MulticastChannelListener multicastChannelListener() {
+		return new LoggingMulticastChannelListener();
+	}
+
 }

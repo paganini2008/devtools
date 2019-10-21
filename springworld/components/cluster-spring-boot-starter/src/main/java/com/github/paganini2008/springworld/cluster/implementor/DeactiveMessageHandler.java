@@ -21,16 +21,19 @@ public class DeactiveMessageHandler implements RedisMessageHandler {
 
 	@Autowired
 	private ContextClusterMulticastChannelGroup channelGroup;
-	
+
 	@Autowired
 	private RedisMessagePubSub redisMessager;
+
+	@Autowired
+	private MulticastChannelListener multicastChannelListener;
 
 	@Override
 	public void onMessage(String channel, Object message) {
 		final String instanceId = (String) message;
 		channelGroup.removeChannel(instanceId);
-		log.info("Remove instanceId: " + instanceId);
 		redisMessager.subcribeEphemeralChannel(this);
+		multicastChannelListener.onLeave(instanceId);
 	}
 
 }
