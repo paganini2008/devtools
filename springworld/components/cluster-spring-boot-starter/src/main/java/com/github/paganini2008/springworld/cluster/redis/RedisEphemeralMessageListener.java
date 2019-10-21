@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.cluster.implementor;
+package com.github.paganini2008.springworld.cluster.redis;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,6 +17,7 @@ import org.springframework.data.redis.core.RedisKeyExpiredEvent;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.github.paganini2008.springworld.cluster.JacksonUtils;
+import com.github.paganini2008.springworld.cluster.implementor.MessageEntity;
 
 import lombok.extern.slf4j.Slf4j;
 

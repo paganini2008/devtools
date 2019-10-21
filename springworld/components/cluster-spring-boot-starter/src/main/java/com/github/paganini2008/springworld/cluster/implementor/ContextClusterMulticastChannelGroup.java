@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.StringUtils;
+import com.github.paganini2008.springworld.cluster.redis.RedisMessagePubSub;
 
 /**
  * 
@@ -47,7 +48,7 @@ public class ContextClusterMulticastChannelGroup {
 	}
 
 	public void unicast(Object message) {
-		String channel = loadBalance.select(channels, message);
+		String channel = loadBalance.select(message, channels);
 		if (StringUtils.isNotBlank(channel)) {
 			redisMessager.sendMessage(channel, message);
 		}

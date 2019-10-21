@@ -1,5 +1,7 @@
 package com.github.paganini2008.springworld.cluster.implementor;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 
  * InstanceId
@@ -9,6 +11,7 @@ package com.github.paganini2008.springworld.cluster.implementor;
  * @revised 2019-10
  * @version 1.0
  */
+@Slf4j
 public final class InstanceId {
 
 	private final InstanceIdGenerator idGenerator;
@@ -21,7 +24,12 @@ public final class InstanceId {
 
 	public String get() {
 		if (id == null) {
-			id = idGenerator.generateInstanceId();
+			synchronized (this) {
+				if (id == null) {
+					id = idGenerator.generateInstanceId();
+					log.info("Create instanceId: " + id);
+				}
+			}
 		}
 		return id;
 	}

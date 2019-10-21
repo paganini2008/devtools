@@ -11,6 +11,11 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 
+import com.github.paganini2008.springworld.cluster.redis.RedisEphemeralMessageListener;
+import com.github.paganini2008.springworld.cluster.redis.RedisMessageEventPublisher;
+import com.github.paganini2008.springworld.cluster.redis.RedisMessageListener;
+import com.github.paganini2008.springworld.cluster.redis.RedisMessagePubSub;
+
 /**
  * 
  * ContextClusterMulticastConfiguration

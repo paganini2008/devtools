@@ -1,8 +1,8 @@
 package com.github.paganini2008.springworld.cluster.implementor;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
-import com.github.paganini2008.devtools.RandomUtils;
 import com.github.paganini2008.devtools.multithreads.AtomicPositiveInteger;
 
 /**
@@ -20,7 +20,7 @@ public abstract class LoadBalanceSelector {
 
 		private final AtomicPositiveInteger counter = new AtomicPositiveInteger();
 
-		public String select(List<String> channels, Object message) {
+		public String select(Object message, List<String> channels) {
 			return channels.get(counter.getAndIncrement() % channels.size());
 		}
 
@@ -28,8 +28,18 @@ public abstract class LoadBalanceSelector {
 
 	public static class RandomLoadBalance implements LoadBalance {
 
-		public String select(List<String> channels, Object message) {
-			return channels.get(RandomUtils.randomInt(0, channels.size()));
+		public String select(Object message, List<String> channels) {
+			return channels.get(ThreadLocalRandom.current().nextInt(0, channels.size()));
+		}
+
+	}
+
+	public static class HashLoadBalance implements LoadBalance {
+
+		public String select(Object message, List<String> channels) {
+			int hash = message.hashCode();
+			hash &= 0x7FFFFFFF;
+			return channels.get(hash % channels.size());
 		}
 
 	}

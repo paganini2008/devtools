@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.cluster.implementor;
+package com.github.paganini2008.springworld.cluster.redis;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;

@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.cluster.implementor;
+package com.github.paganini2008.springworld.cluster.redis;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContextAware;
 
 import com.github.paganini2008.springworld.cluster.JacksonUtils;
 import com.github.paganini2008.springworld.cluster.RedisMessageEvent;
+import com.github.paganini2008.springworld.cluster.implementor.MessageEntity;
 
 /**
  * 

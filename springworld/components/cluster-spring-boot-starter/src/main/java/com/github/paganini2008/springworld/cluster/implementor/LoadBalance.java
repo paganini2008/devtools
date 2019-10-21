@@ -13,6 +13,6 @@ import java.util.List;
  */
 public interface LoadBalance {
 
-	String select(List<String> channels, Object message);
+	String select(Object message, List<String> channels);
 
 }

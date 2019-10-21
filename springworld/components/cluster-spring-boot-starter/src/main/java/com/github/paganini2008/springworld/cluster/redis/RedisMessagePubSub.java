@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.cluster.implementor;
+package com.github.paganini2008.springworld.cluster.redis;
 
 import java.util.concurrent.TimeUnit;
 
@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.github.paganini2008.springworld.cluster.JacksonUtils;
+import com.github.paganini2008.springworld.cluster.implementor.MessageEntity;
 
 /**
  * 

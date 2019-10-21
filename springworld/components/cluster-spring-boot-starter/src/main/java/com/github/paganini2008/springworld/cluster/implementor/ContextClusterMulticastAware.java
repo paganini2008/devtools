@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
+import com.github.paganini2008.springworld.cluster.redis.RedisMessagePubSub;
+
 /**
  * 
  * ContextClusterMulticastAware

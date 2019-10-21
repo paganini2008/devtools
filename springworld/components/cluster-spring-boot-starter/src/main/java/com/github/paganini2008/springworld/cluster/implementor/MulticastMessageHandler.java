@@ -3,6 +3,7 @@ package com.github.paganini2008.springworld.cluster.implementor;
 import org.springframework.context.ApplicationContext;
 
 import com.github.paganini2008.springworld.cluster.ContextMulticastEvent;
+import com.github.paganini2008.springworld.cluster.redis.RedisMessageHandler;
 
 /**
  * 
