@@ -34,12 +34,13 @@ import lombok.extern.slf4j.Slf4j;
 public class RedisEphemeralMessageListener implements ApplicationListener<RedisKeyExpiredEvent>, ApplicationContextAware {
 
 	private final ConcurrentMap<String, List<RedisMessageHandler>> channelHandlers = new ConcurrentHashMap<String, List<RedisMessageHandler>>();
-
-	@Value("${spring.redis.pubsub.keyexpired.namespace:springboot:cluster:multicast:member:}")
-	private String namespace;
+	private final static String CLUSTER_MULTICAST_KEY_PREFIX = "springboot:cluster:%s:multicast";
 
 	@Autowired
 	private StringRedisTemplate redisTemplate;
+
+	@Value("${spring.application.name}")
+	private String applicationName;
 
 	private AutowireCapableBeanFactory beanFactory;
 
@@ -48,6 +49,7 @@ public class RedisEphemeralMessageListener implements ApplicationListener<RedisK
 		if (log.isTraceEnabled()) {
 			log.trace("Key: {} is expired.", expiredKey);
 		}
+		String namespace = String.format(CLUSTER_MULTICAST_KEY_PREFIX, applicationName);
 		if (expiredKey.startsWith(namespace)) {
 			final Object expiredValue = getExpiredValue(expiredKey);
 			final String channel = expiredKey.replace(namespace, "");

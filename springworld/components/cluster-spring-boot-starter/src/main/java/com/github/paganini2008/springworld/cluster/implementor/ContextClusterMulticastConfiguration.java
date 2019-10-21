@@ -25,7 +25,7 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 @ConditionalOnProperty(value = "spring.cluster.multicast.enabled", havingValue = "true")
 public class ContextClusterMulticastConfiguration {
 
-	@Value("${spring.redis.pubsub.channel:multicastChannel}")
+	@Value("${spring.redis.pubsub.channel:pubsub}")
 	private String channel;
 
 	@Bean("cluster-message-listener")
@@ -56,6 +56,7 @@ public class ContextClusterMulticastConfiguration {
 		return adapter;
 	}
 
+	@DependsOn("messageListenerAdapter")
 	@Bean
 	public ContextClusterMulticastAware multicastAware() {
 		return new ContextClusterMulticastAware();

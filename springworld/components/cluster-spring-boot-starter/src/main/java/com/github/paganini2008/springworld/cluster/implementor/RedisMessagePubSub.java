@@ -22,7 +22,7 @@ public class RedisMessagePubSub {
 
 	public static final String EXPIRED_KEY_PREFIX = "__";
 
-	@Value("${spring.redis.pubsub.channel:defaultChannel}")
+	@Value("${spring.redis.pubsub.channel:pubsub}")
 	private String channel;
 
 	@Autowired

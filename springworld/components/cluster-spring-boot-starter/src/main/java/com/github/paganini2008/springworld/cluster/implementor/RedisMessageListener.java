@@ -7,7 +7,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -30,9 +29,6 @@ import lombok.extern.slf4j.Slf4j;
 public class RedisMessageListener implements ApplicationListener<RedisMessageEvent> , ApplicationContextAware{
 
 	private final ConcurrentMap<String, List<RedisMessageHandler>> channelHandlers = new ConcurrentHashMap<String, List<RedisMessageHandler>>();
-
-	@Value("${spring.redis.pubsub.message.namespace:springboot:cluster:multicast:member:}")
-	private String namespace;
 	
 	@Autowired
 	private AutowireCapableBeanFactory beanFactory;
