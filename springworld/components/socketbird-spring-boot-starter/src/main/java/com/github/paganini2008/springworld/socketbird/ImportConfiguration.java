@@ -35,7 +35,7 @@ import com.github.paganini2008.springworld.socketbird.utils.RoundRobinPartitione
  * @version 1.0
  */
 @Order(100)
-@Import(MessageController.class)
+@Import({ HandlerBeanAutoRegistryProcessor.class, MessageController.class })
 @Configuration
 public class ImportConfiguration {
 

@@ -68,12 +68,13 @@ public class LoopProcessor implements Runnable {
 			log.info("LoopProcessor is stoped.");
 		}
 	}
-	
-	
 
 	@Override
 	public void run() {
 		while (running.get()) {
+			if (store == null) {
+				continue;
+			}
 			Tuple tuple = store.get(collection);
 			if (tuple != null) {
 				for (Handler handler : handlers) {
