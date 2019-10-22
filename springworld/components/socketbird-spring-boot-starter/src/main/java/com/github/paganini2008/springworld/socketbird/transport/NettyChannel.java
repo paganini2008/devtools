@@ -49,5 +49,9 @@ public class NettyChannel implements ChannelWrapper {
 	public Object getRawObject() {
 		return instance;
 	}
+	
+	public String toString() {
+		return instance.toString();
+	}
 
 }

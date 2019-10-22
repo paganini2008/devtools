@@ -12,7 +12,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 
 /**
  * 
- * NettyServerHandlerAdapter
+ * NettyServerHandler
  * 
  * @author Fred Feng
  * @created 2019-10

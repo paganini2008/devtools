@@ -1,5 +1,7 @@
 package com.github.paganini2008.springworld.socketbird.transport;
 
+import org.springframework.context.annotation.Configuration;
+
 /**
  * 
  * NettyTransportFactory
@@ -9,6 +11,7 @@ package com.github.paganini2008.springworld.socketbird.transport;
  * @revised 2019-10
  * @version 1.0
  */
+@Configuration
 public class NettyTransportFactory implements TransportFactory {
 
 	@Override

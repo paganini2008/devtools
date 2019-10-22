@@ -9,7 +9,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
-import com.github.paganini2008.springworld.cluster.KeyPatterns;
+import com.github.paganini2008.springworld.cluster.Constants;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,7 +33,7 @@ public class MasterSlavesHeartbeatTask implements Executable {
 
 	@Override
 	public boolean execute() {
-		String key = String.format(KeyPatterns.CLUSTER_KEY, applicationName);
+		String key = String.format(Constants.CLUSTER_KEY, applicationName);
 		redisTemplate.expire(key, 5, TimeUnit.SECONDS);
 		return true;
 	}

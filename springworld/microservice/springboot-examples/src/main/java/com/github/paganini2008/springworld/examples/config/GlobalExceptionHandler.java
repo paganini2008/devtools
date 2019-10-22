@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.github.paganini2008.devtools.ArrayUtils;
 import com.github.paganini2008.devtools.ExceptionUtils;
 import com.github.paganini2008.springworld.examples.pojo.ResultVO;
-import com.github.paganini2008.springworld.support.BizException;
-import com.github.paganini2008.springworld.support.tip.TipInfoUtils;
+import com.github.paganini2008.springworld.examples.utils.BizException;
+import com.github.paganini2008.springworld.examples.utils.TipInfoUtils;
 
 import lombok.extern.slf4j.Slf4j;
 

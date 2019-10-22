@@ -9,7 +9,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.github.paganini2008.springworld.cluster.ContextClusterMasterStandbyEvent;
 import com.github.paganini2008.springworld.cluster.ContextClusterSlaveStandbyEvent;
-import com.github.paganini2008.springworld.cluster.KeyPatterns;
+import com.github.paganini2008.springworld.cluster.Constants;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,7 +40,7 @@ public class ContextClusterMasterSlavesAware implements ApplicationListener<Cont
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		final ApplicationContext context = event.getApplicationContext();
-		String key = String.format(KeyPatterns.CLUSTER_KEY, applicationName);
+		String key = String.format(Constants.CLUSTER_KEY, applicationName);
 		redisTemplate.opsForList().leftPush(key, instanceId.get());
 		if (instanceId.get().equals(redisTemplate.opsForList().index(key, -1))) {
 			heartbeatTask.start();

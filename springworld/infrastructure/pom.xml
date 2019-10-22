@@ -98,10 +98,5 @@
             <name>aliyun</name>
             <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
         </repository>
-		<repository>
-            <id>nexus</id>
-            <name>nexus</name>
-            <url>http://nexus.d-linking.tech/nexus/content/groups/mec-group/</url>
-        </repository>
     </repositories>
 </project>

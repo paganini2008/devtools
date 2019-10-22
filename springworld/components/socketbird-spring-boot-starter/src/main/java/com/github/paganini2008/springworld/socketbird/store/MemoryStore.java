@@ -3,9 +3,6 @@ package com.github.paganini2008.springworld.socketbird.store;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
-
 import com.github.paganini2008.devtools.collection.LruQueue;
 import com.github.paganini2008.springworld.socketbird.Tuple;
 
@@ -18,8 +15,6 @@ import com.github.paganini2008.springworld.socketbird.Tuple;
  * @revised 2019-10
  * @version 1.0
  */
-@Component
-@ConditionalOnProperty(name = "socketbird.store", havingValue = "memory", matchIfMissing = true)
 public class MemoryStore implements Store {
 
 	private final ConcurrentMap<String, LruQueue<Tuple>> cache = new ConcurrentHashMap<String, LruQueue<Tuple>>();

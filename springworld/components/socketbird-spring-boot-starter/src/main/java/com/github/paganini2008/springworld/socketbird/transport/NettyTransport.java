@@ -2,8 +2,6 @@ package com.github.paganini2008.springworld.socketbird.transport;
 
 import java.util.List;
 
-import org.springframework.context.annotation.Bean;
-
 import com.github.paganini2008.springworld.socketbird.Serializer;
 import com.github.paganini2008.springworld.socketbird.Tuple;
 
@@ -29,16 +27,6 @@ public class NettyTransport implements Transport {
 
 	public NioServer getNioServer() {
 		return new NettyServer();
-	}
-
-	@Bean
-	public NettyClientHandler nettyClientHandler() {
-		return new NettyClientHandler();
-	}
-
-	@Bean
-	public NettyServerHandler nettyServerHandler() {
-		return new NettyServerHandler();
 	}
 
 	public static class TupleToByteEncoder extends MessageToByteEncoder<Tuple> {

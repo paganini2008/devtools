@@ -2,7 +2,6 @@ package com.github.paganini2008.springworld.examples.config;
 
 import java.time.Duration;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,8 +20,6 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.paganini2008.springworld.support.IdGenerator;
-import com.github.paganini2008.springworld.support.redis.RedisIdGenerator;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -81,7 +78,7 @@ public class RedisConfig {
 	}
 
 	@Bean
-	public StringRedisTemplate createStringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
+	public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
 		StringRedisTemplate redisTemplate = new StringRedisTemplate(redisConnectionFactory);
 		return redisTemplate;
 	}
@@ -106,10 +103,5 @@ public class RedisConfig {
 		redisTemplate.setConnectionFactory(redisConnectionFactory);
 		redisTemplate.afterPropertiesSet();
 		return redisTemplate;
-	}
-
-	@Bean
-	public IdGenerator idGenerator(@Qualifier("bigint") RedisTemplate<String, Long> redisTemplate) {
-		return new RedisIdGenerator(redisTemplate);
 	}
 }

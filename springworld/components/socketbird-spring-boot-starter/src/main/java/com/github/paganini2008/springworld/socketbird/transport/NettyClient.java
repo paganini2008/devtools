@@ -47,6 +47,9 @@ public class NettyClient implements NioClient {
 
 	@Autowired
 	private Serializer serializer;
+	
+	@Autowired
+	private ChannelContext channelContext;
 
 	public void open() {
 		final int nThreads = threadCount > 0 ? threadCount : Runtime.getRuntime().availableProcessors() * 2;
@@ -80,14 +83,12 @@ public class NettyClient implements NioClient {
 	}
 
 	public void send(Tuple tuple) {
-		ChannelContext channelContext = clientHandler.getChannelContext();
 		for (ChannelWrapper channel : channelContext.getChannels()) {
 			channel.send(tuple);
 		}
 	}
 
 	public void send(Tuple tuple, Partitioner partitioner) {
-		ChannelContext channelContext = clientHandler.getChannelContext();
 		ChannelWrapper channel = channelContext.selectChannel(tuple, partitioner);
 		if (channel != null) {
 			channel.send(tuple);
@@ -95,13 +96,11 @@ public class NettyClient implements NioClient {
 	}
 
 	public boolean isConnected(SocketAddress address) {
-		ChannelContext channelContext = clientHandler.getChannelContext();
 		ChannelWrapper channel = channelContext.getChannel(address);
 		return channel != null && channel.isActive();
 	}
 
 	public void disconnect() {
-		ChannelContext channelContext = clientHandler.getChannelContext();
 		for (ChannelWrapper channel : channelContext.getChannels()) {
 			channel.disconnect();
 		}

@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import com.github.paganini2008.springworld.support.tip.TipInfoService;
+import com.github.paganini2008.springworld.examples.utils.TipInfoService;
 
 /**
  * 

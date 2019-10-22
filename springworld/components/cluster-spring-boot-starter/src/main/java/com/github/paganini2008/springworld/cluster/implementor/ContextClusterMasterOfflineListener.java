@@ -11,7 +11,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.github.paganini2008.springworld.cluster.ContextClusterMasterStandbyEvent;
 import com.github.paganini2008.springworld.cluster.ContextClusterSlaveStandbyEvent;
-import com.github.paganini2008.springworld.cluster.KeyPatterns;
+import com.github.paganini2008.springworld.cluster.Constants;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,10 +45,10 @@ public class ContextClusterMasterOfflineListener implements ApplicationListener<
 	@Override
 	public void onApplicationEvent(RedisKeyExpiredEvent event) {
 		final String expiredKey = new String(event.getSource());
-		final String heartbeatKey = String.format(KeyPatterns.CLUSTER_KEY, applicationName);
+		final String heartbeatKey = String.format(Constants.CLUSTER_KEY, applicationName);
 		if (heartbeatKey.equals(expiredKey)) {
 			log.info("The master of application '" + applicationName + "' is offline.");
-			String key = String.format(KeyPatterns.CLUSTER_KEY, applicationName);
+			String key = String.format(Constants.CLUSTER_KEY, applicationName);
 			redisTemplate.opsForList().leftPush(key, instanceId.get());
 			if (instanceId.get().equals(redisTemplate.opsForList().index(key, -1))) {
 				heartbeatTask.start();

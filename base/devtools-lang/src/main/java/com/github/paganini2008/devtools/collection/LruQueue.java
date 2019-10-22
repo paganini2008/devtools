@@ -82,5 +82,17 @@ public class LruQueue<E> extends AbstractQueue<E> implements Queue<E>, Serializa
 	public String toString() {
 		return delegate.toString();
 	}
+	
+	public static void main(String[] args) {
+		LruQueue<String> q = new LruQueue<String>(1000);
+		for(int i=0;i<1000000;i++) {
+			q.add(String.valueOf(i));
+		}
+		System.out.println(q.poll());
+		System.out.println(q.poll());
+		System.out.println(q.poll());
+		System.out.println(q.poll());
+		System.out.println(q.poll());
+	}
 
 }

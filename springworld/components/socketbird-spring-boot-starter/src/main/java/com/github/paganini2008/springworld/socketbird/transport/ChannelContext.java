@@ -7,6 +7,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import com.github.paganini2008.springworld.socketbird.Tuple;
 import com.github.paganini2008.springworld.socketbird.utils.Partitioner;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 
  * ChannelContext
@@ -16,6 +18,7 @@ import com.github.paganini2008.springworld.socketbird.utils.Partitioner;
  * @revised 2019-10
  * @version 1.0
  */
+@Slf4j
 public final class ChannelContext {
 
 	private final List<ChannelWrapper> channels = new CopyOnWriteArrayList<ChannelWrapper>();
@@ -28,6 +31,7 @@ public final class ChannelContext {
 		for (int i = 0; i < weight; i++) {
 			channels.add(channel);
 		}
+		log.info("add channel " + channel);
 	}
 
 	public ChannelWrapper getChannel(SocketAddress address) {
@@ -43,6 +47,8 @@ public final class ChannelContext {
 		for (ChannelWrapper channel : channels) {
 			if (channel.getRemoteAddr().equals(address)) {
 				channels.remove(channel);
+				log.info("remove channel " + channel);
+				break;
 			}
 		}
 	}

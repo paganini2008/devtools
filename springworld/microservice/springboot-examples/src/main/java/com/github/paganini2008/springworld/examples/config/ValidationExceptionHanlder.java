@@ -24,7 +24,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.regex.RegexUtils;
 import com.github.paganini2008.springworld.examples.pojo.ResultVO;
-import com.github.paganini2008.springworld.support.tip.TipInfoService;
+import com.github.paganini2008.springworld.examples.utils.TipInfoService;
 
 /**
  * 

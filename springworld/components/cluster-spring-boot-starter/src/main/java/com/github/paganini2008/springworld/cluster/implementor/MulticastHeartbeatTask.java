@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
-import com.github.paganini2008.springworld.cluster.KeyPatterns;
+import com.github.paganini2008.springworld.cluster.Constants;
 import com.github.paganini2008.springworld.cluster.redis.RedisMessagePubSub;
 
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +46,7 @@ public class MulticastHeartbeatTask implements Executable {
 	}
 
 	public void start() {
-		this.channel = String.format(KeyPatterns.CLUSTER_MULTICAST_KEY, applicationName, UUID.randomUUID().toString());
+		this.channel = String.format(Constants.CLUSTER_MULTICAST_KEY, applicationName, UUID.randomUUID().toString());
 		redisMessager.sendEphemeralMessage(channel, instanceId.get(), 5, TimeUnit.SECONDS);
 		timer = ThreadUtils.scheduleWithFixedDelay(this, 3, 3, TimeUnit.SECONDS);
 		log.info("Start MulticastHeartbeatTask ok.");

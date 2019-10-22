@@ -1,5 +1,8 @@
 package com.github.paganini2008.springworld.socketbird.store;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
+
 /**
  * 
  * MemoryStoreFactory
@@ -9,6 +12,8 @@ package com.github.paganini2008.springworld.socketbird.store;
  * @revised 2019-10
  * @version 1.0
  */
+@Component
+@ConditionalOnProperty(name = "socketbird.store", havingValue = "memory", matchIfMissing = true)
 public class MemoryStoreFactory implements StoreFactory {
 
 	@Override
