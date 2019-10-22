@@ -28,12 +28,12 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
 
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		channelContext.addChannel(new NettyChannel(ctx.channel()));
-		channelStateListener.onOpen(ctx.channel().remoteAddress());
+		channelStateListener.onServerConnected(ctx.channel().remoteAddress());
 	}
 
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		channelContext.removeChannel(ctx.channel().remoteAddress());
-		channelStateListener.onClose(ctx.channel().remoteAddress());
+		channelStateListener.onServerClosed(ctx.channel().remoteAddress());
 	}
 
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable e) throws Exception {
@@ -42,7 +42,7 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
 			ctx.channel().close();
 		} finally {
 			channelContext.removeChannel(ctx.channel().remoteAddress());
-			channelStateListener.onError(ctx.channel().remoteAddress(), e);
+			channelStateListener.onServerError(ctx.channel().remoteAddress(), e);
 		}
 	}
 

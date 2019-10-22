@@ -27,15 +27,26 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter{
 
 	@Value("${socketbird.store.collection.name}")
 	private String collection;
+	
+	@Autowired
+	private ChannelStateListener channelStateListener;
 
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		super.channelActive(ctx);
+		channelStateListener.onClientConnected(ctx.channel().remoteAddress());
 	}
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		super.channelInactive(ctx);
+		channelStateListener.onClientClosed(ctx.channel().remoteAddress());
+	}
+	
+	@Override
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+		super.exceptionCaught(ctx, cause);
+		channelStateListener.onClientError(ctx.channel().remoteAddress(), cause);
 	}
 
 	@Override

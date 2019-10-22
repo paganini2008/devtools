@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
- * AutoBindingMulticastChannelListener
+ * SocketIoMulticastChannelListener
  * 
  * @author Fred Feng
  * @created 2019-10
@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
  * @version 1.0
  */
 @Slf4j
-public class AutoBindingMulticastChannelListener implements MulticastChannelListener {
+public class SocketIoMulticastChannelListener implements MulticastChannelListener {
 
 	@Autowired
 	private NioClient nioClient;

@@ -1,5 +1,6 @@
 package com.github.paganini2008.springworld.socketbird;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -22,6 +23,13 @@ public interface Tuple {
 	void fill(Object object);
 
 	Map<String, Object> toMap();
+
+	public static Tuple createBy(String content) {
+		Map<String, Object> kwargs = new HashMap<String, Object>();
+		kwargs.put("content", content);
+		kwargs.put("timestamp", System.currentTimeMillis());
+		return createBy(kwargs);
+	}
 
 	public static Tuple createBy(Map<String, ?> kwargs) {
 		return new TupleImpl(kwargs);
