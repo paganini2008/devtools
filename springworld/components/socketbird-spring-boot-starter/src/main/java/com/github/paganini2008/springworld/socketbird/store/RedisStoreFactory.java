@@ -40,7 +40,7 @@ public class RedisStoreFactory implements StoreFactory {
 		redisTemplate.setHashKeySerializer(stringSerializer);
 		redisTemplate.setHashValueSerializer(jackson2JsonRedisSerializer);
 		redisTemplate.afterPropertiesSet();
-		return redisTemplate.opsForValue().setBit(key, offset, value);
+		return redisTemplate;
 	}
 
 	public Store getObject() {
