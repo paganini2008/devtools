@@ -44,6 +44,7 @@ public class RedisConfig {
 	private String password;
 	private int port;
 	private int dbIndex;
+	private String bloomFilterKey;
 
 	@Bean
 	public RedisConnectionFactory redisConnectionFactory() {
@@ -79,16 +80,15 @@ public class RedisConfig {
 
 	@Bean
 	public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
-		StringRedisTemplate redisTemplate = new StringRedisTemplate(redisConnectionFactory);
-		return redisTemplate;
+		return new StringRedisTemplate(redisConnectionFactory);
 	}
 
 	@Bean
 	public JedisPoolConfig jedisPoolConfig() {
 		JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-		jedisPoolConfig.setMinIdle(1);
-		jedisPoolConfig.setMaxIdle(5);
-		jedisPoolConfig.setMaxTotal(10);
+		jedisPoolConfig.setMinIdle(2);
+		jedisPoolConfig.setMaxIdle(10);
+		jedisPoolConfig.setMaxTotal(50);
 		jedisPoolConfig.setMaxWaitMillis(-1);
 		jedisPoolConfig.setTestWhileIdle(true);
 		return jedisPoolConfig;
@@ -103,5 +103,10 @@ public class RedisConfig {
 		redisTemplate.setConnectionFactory(redisConnectionFactory);
 		redisTemplate.afterPropertiesSet();
 		return redisTemplate;
+	}
+
+	@Bean
+	public RedisBloomFilter redisBloomFilter(StringRedisTemplate redisTemplate) {
+		return new RedisBloomFilter(bloomFilterKey, 100000000, 0.03d, redisTemplate);
 	}
 }

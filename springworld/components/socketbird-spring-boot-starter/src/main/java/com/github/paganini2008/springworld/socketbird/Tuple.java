@@ -27,7 +27,6 @@ public interface Tuple {
 	public static Tuple createBy(String content) {
 		Map<String, Object> kwargs = new HashMap<String, Object>();
 		kwargs.put("content", content);
-		kwargs.put("timestamp", System.currentTimeMillis());
 		return createBy(kwargs);
 	}
 
