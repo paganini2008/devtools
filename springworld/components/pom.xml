@@ -21,6 +21,7 @@
 		<module>crontab-spring-boot-starter</module>
 		<module>cluster-spring-boot-starter</module>
 		<module>socketbird-spring-boot-starter</module>
+		<module>scheduler-spring-boot-starter</module>
     </modules>
 	
     <packaging>pom</packaging>

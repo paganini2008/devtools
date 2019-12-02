@@ -2,6 +2,7 @@ package com.github.paganini2008.springworld.crontab;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -18,6 +19,7 @@ import com.github.paganini2008.springworld.cluster.implementor.ContextClusterMas
  * @version 1.0
  */
 @Configuration
+@ConditionalOnProperty(name = "spring.cluster.scheduler", havingValue = "crontab", matchIfMissing = true)
 @ConditionalOnBean(ContextClusterMasterSlavesConfiguration.class)
 @Import({ JobBeanAware.class, TaskExecutorAware.class, HealthCheckJob.class })
 public class CrontabAutoConfiguration {

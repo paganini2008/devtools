@@ -1,9 +1,9 @@
 package com.github.paganini2008.devtools.collection;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import com.github.paganini2008.devtools.Case;
-import com.github.paganini2008.devtools.Cases;
+import com.github.paganini2008.devtools.GeneralCase;
 import com.github.paganini2008.devtools.beans.TupleImpl;
 
 /**
@@ -23,13 +23,13 @@ public interface Tuple {
 
 	int size();
 
-	Object[] toArray();
-
 	Object get(String key);
 
 	void set(String key, Object value);
 
 	String[] keys();
+
+	Object[] valueArray();
 
 	String getProperty(String key);
 
@@ -46,15 +46,15 @@ public interface Tuple {
 	<T> T toBean(Class<T> requiredType);
 
 	Map<String, Object> toMap();
+	
+	void append(Map<String, Object> m);
 
-	static Tuple createBy(Map<String, ?> kwargs) {
-		return createBy(Cases.LOWER, kwargs);
+	static Tuple newTuple() {
+		return wrap(new HashMap<String, Object>());
 	}
 
-	static Tuple createBy(Case caseFormat, Map<String, ?> kwargs) {
-		TupleImpl tuple = new TupleImpl(caseFormat);
-		tuple.putAll(kwargs);
-		return tuple;
+	static Tuple wrap(Map<String, Object> kwargs) {
+		return new TupleImpl(kwargs, GeneralCase.LOWER_CAMEL);
 	}
 
 }

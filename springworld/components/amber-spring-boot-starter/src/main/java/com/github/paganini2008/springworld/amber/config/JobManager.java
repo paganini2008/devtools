@@ -50,7 +50,7 @@ public class JobManager {
 	}
 
 	public void addJob(String name, Class<?> jobClass, String description, long delayInMs, long intervalInMs, int repeatCount,
-			Map<String, ?> kwargs) throws Exception {
+			Map<String, Object> kwargs) throws Exception {
 		JobDetail jobDetail = JobBuilder.newJob(DispatcherJobBean.class).withIdentity(name, defaultJobGroupName)
 				.withDescription(description).build();
 		JobDataMap dataMap = jobDetail.getJobDataMap();
@@ -64,7 +64,7 @@ public class JobManager {
 		logger.info("Add job '{}' successfully.", name);
 	}
 
-	public void addDelayedJob(String name, Class<?> jobClass, String description, long delayInMs, Map<String, ?> kwargs) throws Exception {
+	public void addDelayedJob(String name, Class<?> jobClass, String description, long delayInMs, Map<String, Object> kwargs) throws Exception {
 		JobDetail jobDetail = JobBuilder.newJob(DispatcherJobBean.class).withIdentity(name, defaultJobGroupName)
 				.withDescription(description).build();
 		JobDataMap dataMap = jobDetail.getJobDataMap();
@@ -77,7 +77,7 @@ public class JobManager {
 		logger.info("Add job '{}' successfully.", name);
 	}
 
-	public void addCronJob(String name, Class<?> jobClass, String description, String cron, Map<String, ?> kwargs) throws Exception {
+	public void addCronJob(String name, Class<?> jobClass, String description, String cron, Map<String, Object> kwargs) throws Exception {
 		JobDetail jobDetail = JobBuilder.newJob(DispatcherJobBean.class).withIdentity(name, defaultJobGroupName)
 				.withDescription(description).build();
 		JobDataMap dataMap = jobDetail.getJobDataMap();

@@ -3,7 +3,6 @@ package com.github.paganini2008.devtools.collection;
 import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,12 +22,14 @@ public abstract class KeyConversionMap<T, K, V> extends AbstractMap<K, V> implem
 	private final Map<K, V> delegate;
 	private final Map<T, K> keys = new HashMap<T, K>();
 
-	protected KeyConversionMap() {
-		this(new LinkedHashMap<K, V>());
-	}
-
 	protected KeyConversionMap(Map<K, V> delegate) {
+		if (delegate == null) {
+			delegate = new HashMap<K, V>();
+		}
 		this.delegate = delegate;
+		for (K key : delegate.keySet()) {
+			keys.put(convertKey(key), key);
+		}
 	}
 
 	public boolean containsKey(Object key) {

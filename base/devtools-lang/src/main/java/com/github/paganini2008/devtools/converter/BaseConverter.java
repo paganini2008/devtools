@@ -12,13 +12,13 @@ import java.util.Map;
 public abstract class BaseConverter<T> implements Converter<Object, T>, ConverterManager<T> {
 
 	private final Map<Class<?>, Converter<?, T>> converterRegistry = new HashMap<Class<?>, Converter<?, T>>();
-	protected Config config = new Config();
+	protected ConverterConfig config = new ConverterConfig();
 
-	public void setConfig(Config config) {
+	public void setConfig(ConverterConfig config) {
 		this.config = config;
 	}
 
-	public Config getConfig() {
+	public ConverterConfig getConfig() {
 		return config;
 	}
 

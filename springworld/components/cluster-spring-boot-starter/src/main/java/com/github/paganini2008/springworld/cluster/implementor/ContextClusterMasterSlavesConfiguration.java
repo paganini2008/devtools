@@ -33,7 +33,7 @@ import redis.clients.jedis.JedisPoolConfig;
 @Setter
 @Order(100)
 @Configuration
-@ConditionalOnProperty(value = "spring.cluster.enabled", havingValue = "true")
+@ConditionalOnProperty(value = "spring.cluster.mode.master-slaves.enabled", havingValue = "true")
 @ConfigurationProperties(prefix = "spring.redis")
 public class ContextClusterMasterSlavesConfiguration {
 

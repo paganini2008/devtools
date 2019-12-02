@@ -27,7 +27,7 @@ import com.github.paganini2008.springworld.cluster.redis.RedisMessagePubSub;
  */
 @Order(200)
 @Configuration
-@ConditionalOnProperty(value = "spring.cluster.multicast.enabled", havingValue = "true")
+@ConditionalOnProperty(value = "spring.cluster.mode.multicast.enabled", havingValue = "true")
 public class ContextClusterMulticastConfiguration {
 
 	@Value("${spring.redis.pubsub.channel:pubsub}")

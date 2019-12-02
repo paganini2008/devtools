@@ -31,7 +31,7 @@ public class JsonToTupleMapping implements Mapping<Tuple> {
 	public Tuple map(String data) {
 		try {
 			Map<String, Object> map = mapper.readValue(data, HashMap.class);
-			return Tuple.createBy(map);
+			return Tuple.wrap(map);
 		} catch (Exception e) {
 			throw new TransformerException(e.getMessage(), e);
 		}

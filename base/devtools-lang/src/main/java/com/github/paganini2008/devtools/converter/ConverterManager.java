@@ -8,9 +8,9 @@ package com.github.paganini2008.devtools.converter;
  */
 public interface ConverterManager<T> {
 	
-	void setConfig(Config config);
+	void setConfig(ConverterConfig config);
 	
-	Config getConfig();
+	ConverterConfig getConfig();
 
 	void put(Class<?> requiredType, Converter<?, T> converter);
 

@@ -12,10 +12,8 @@ import java.sql.Statement;
 import java.util.Iterator;
 import java.util.List;
 
-import com.github.paganini2008.devtools.Cases;
 import com.github.paganini2008.devtools.Observable;
 import com.github.paganini2008.devtools.Observer;
-import com.github.paganini2008.devtools.beans.TupleImpl;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.Tuple;
 
@@ -217,7 +215,7 @@ public abstract class DBUtils {
 	public static Object executeOneResultQuery(Connection connection, String sql) throws SQLException {
 		Iterator<Tuple> iterator = executeQuery(connection, sql);
 		Tuple first = CollectionUtils.getFirst(iterator);
-		return first != null && !first.isEmpty() ? first.toArray()[0] : null;
+		return first != null && !first.isEmpty() ? first.valueArray()[0] : null;
 	}
 
 	public static Iterator<Tuple> executeQuery(Connection connection, String sql) throws SQLException {
@@ -236,7 +234,7 @@ public abstract class DBUtils {
 	public static Object executeOneResultQuery(Connection connection, String sql, Object[] args) throws SQLException {
 		Iterator<Tuple> iterator = executeQuery(connection, sql, args);
 		Tuple first = CollectionUtils.getFirst(iterator);
-		return first != null && !first.isEmpty() ? first.toArray()[0] : null;
+		return first != null && !first.isEmpty() ? first.valueArray()[0] : null;
 	}
 
 	public static Iterator<Tuple> executeQuery(Connection connection, String sql, Object[] args) throws SQLException {
@@ -271,11 +269,11 @@ public abstract class DBUtils {
 	private static Tuple toTuple(ResultSet rs) throws SQLException {
 		ResultSetMetaData rsmd = rs.getMetaData();
 		int columnCount = rsmd.getColumnCount();
-		TupleImpl tuple = new TupleImpl(Cases.UNDER_SCORE);
+		Tuple tuple = Tuple.newTuple();
 		for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
 			String columnName = rsmd.getColumnLabel(columnIndex);
 			Object value = rs.getObject(columnIndex);
-			tuple.put(columnName, value);
+			tuple.set(columnName, value);
 		}
 		return tuple;
 	}

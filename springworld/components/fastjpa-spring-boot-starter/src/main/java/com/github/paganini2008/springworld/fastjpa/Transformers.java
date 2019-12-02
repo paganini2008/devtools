@@ -5,8 +5,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.github.paganini2008.devtools.Cases;
-import com.github.paganini2008.devtools.beans.TupleImpl;
 import com.github.paganini2008.devtools.collection.Tuple;
 import com.github.paganini2008.springworld.fastjpa.support.BeanTransformer;
 
@@ -76,7 +74,7 @@ public abstract class Transformers {
 		}
 
 		protected Tuple createObject(int columns) {
-			return new TupleImpl(Cases.UNDER_SCORE);
+			return Tuple.newTuple();
 		}
 
 		protected void setAsValue(String attributeName, Object attributeValue, Tuple data) {

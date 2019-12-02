@@ -5,12 +5,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 
  * ExecutorUtils
  * 
  * @author Fred Feng
+ * @created 2014-05
+ * @revised 2019-11
  * @version 1.0
  */
-public class ExecutorUtils {
+public abstract class ExecutorUtils {
 
 	public static boolean isTerminated(Executor executor) {
 		if (executor instanceof ExecutorService) {

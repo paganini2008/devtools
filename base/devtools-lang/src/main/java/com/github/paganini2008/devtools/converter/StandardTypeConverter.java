@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.paganini2008.devtools.ClassUtils;
 
@@ -92,12 +93,18 @@ public class StandardTypeConverter implements TypeConverter {
 		}
 	};
 
-	public static final TypeConverter DEFALT = new StandardTypeConverter();
-
 	private final Map<Type, BaseConverter<?>> converters;
+	private final ConverterConfig config = new ConverterConfig();
 
 	public StandardTypeConverter() {
-		this.converters = new HashMap<Type, BaseConverter<?>>(preparedConverters);
+		this.converters = new ConcurrentHashMap<Type, BaseConverter<?>>(preparedConverters);
+		for (BaseConverter<?> baseConverter : converters.values()) {
+			baseConverter.setConfig(config);
+		}
+	}
+
+	public ConverterConfig getConfig() {
+		return config;
 	}
 
 	public <T> void register(Class<T> javaType, BaseConverter<T> converter) {

@@ -1,12 +1,13 @@
 package com.github.paganini2008.devtools.beans;
 
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.github.paganini2008.devtools.Case;
-import com.github.paganini2008.devtools.Cases;
+import com.github.paganini2008.devtools.CaseFormat;
 import com.github.paganini2008.devtools.MissingKeyException;
-import com.github.paganini2008.devtools.collection.KeyCaseInsensitiveMap;
+import com.github.paganini2008.devtools.StringUtils;
+import com.github.paganini2008.devtools.collection.KeyConversionMap;
 import com.github.paganini2008.devtools.collection.MapUtils;
 import com.github.paganini2008.devtools.collection.Tuple;
 
@@ -18,19 +19,26 @@ import com.github.paganini2008.devtools.collection.Tuple;
  * @revised 2019-07
  * @created 2019-03
  */
-public class TupleImpl extends KeyCaseInsensitiveMap<Object> implements Tuple {
+public class TupleImpl extends KeyConversionMap<String, String, Object> implements Tuple {
 
-	private static final long serialVersionUID = 3578053139527863010L;
+	private static final long serialVersionUID = 507463156717310533L;
 
-	public TupleImpl() {
-		this(Cases.LOWER);
+	public TupleImpl(Map<String, Object> kwargs, CaseFormat format) {
+		super(kwargs);
+		this.caseFormat = format;
 	}
 
-	public TupleImpl(Case format) {
-		super(format);
+	private final CaseFormat caseFormat;
+
+	protected String convertKey(Object key) {
+		String str = key != null ? key.toString() : null;
+		if (StringUtils.isNotBlank(str)) {
+			str = caseFormat.toCase(str);
+		}
+		return str;
 	}
 
-	public Object[] toArray() {
+	public Object[] valueArray() {
 		return values().toArray();
 	}
 
@@ -82,8 +90,21 @@ public class TupleImpl extends KeyCaseInsensitiveMap<Object> implements Tuple {
 		}
 	}
 
+	public void append(Map<String, Object> m) {
+		if (m != null) {
+			putAll(m);
+		}
+	}
+
 	public Map<String, Object> toMap() {
 		return new LinkedHashMap<String, Object>(this);
+	}
+
+	public static void main(String[] args) {
+		Tuple tuple = Tuple.newTuple();
+		tuple.set("last_modified", new Date());
+		System.out.println(tuple);
+		System.out.println(tuple.getProperty("lastModified"));
 	}
 
 }

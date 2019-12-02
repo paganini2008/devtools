@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import com.github.paganini2008.devtools.beans.TupleImpl;
 import com.github.paganini2008.devtools.collection.Tuple;
 
 /**
@@ -23,11 +22,11 @@ public class JobParameterImpl implements JobParameter, Serializable {
 	private final String description;
 	private final Tuple tuple;
 
-	public JobParameterImpl(String name, Class<?> jobClass, String description, Map<String, ?> kwargs) {
+	public JobParameterImpl(String name, Class<?> jobClass, String description, Map<String, Object> kwargs) {
 		this.name = name;
 		this.jobClass = jobClass;
 		this.description = description;
-		this.tuple = kwargs != null ? Tuple.createBy(kwargs) : new TupleImpl();
+		this.tuple = kwargs != null ? Tuple.wrap(kwargs) : Tuple.newTuple();
 	}
 
 	public String getJobName() {
