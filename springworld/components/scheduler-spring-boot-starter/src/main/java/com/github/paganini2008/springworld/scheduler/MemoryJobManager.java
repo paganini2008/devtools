@@ -31,7 +31,7 @@ public class MemoryJobManager implements JobManager {
 	@Autowired
 	private ThreadPoolTaskScheduler taskScheduler;
 
-	@Value("${spring.scheduler.failedjob.retries:0}")
+	@Value("${spring.task-scheduler.failedjob.retries:0}")
 	private int retries;
 
 	@Override
