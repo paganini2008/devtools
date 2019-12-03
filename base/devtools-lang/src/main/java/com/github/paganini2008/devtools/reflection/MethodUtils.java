@@ -2,6 +2,7 @@ package com.github.paganini2008.devtools.reflection;
 
 import static com.github.paganini2008.devtools.ArrayUtils.EMPTY_OBJECT_ARRAY;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -156,6 +157,12 @@ public class MethodUtils {
 		}
 	}
 
+	public static List<Method> getDeclaredMethodsWithAnnotation(Class<?> cls, final Class<? extends Annotation> annotationClass) {
+		return getDeclaredMethods(cls, (name, method) -> {
+			return method.isAnnotationPresent(annotationClass);
+		});
+	}
+
 	public static List<Method> getDeclaredMethods(Class<?> cls, MethodFilter methodFilter) {
 		List<Method> methods = new ArrayList<Method>();
 		for (Method method : CollectionUtils.forEach(new DeclaredMethodIterator(cls))) {
@@ -174,6 +181,12 @@ public class MethodUtils {
 			}
 		}
 		return methods;
+	}
+
+	public static List<Method> getMethodsWithAnnotation(Class<?> cls, final Class<? extends Annotation> annotationClass) {
+		return getMethods(cls, (name, method) -> {
+			return method.isAnnotationPresent(annotationClass);
+		});
 	}
 
 	/**

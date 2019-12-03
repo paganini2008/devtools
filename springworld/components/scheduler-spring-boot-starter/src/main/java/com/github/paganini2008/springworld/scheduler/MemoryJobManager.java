@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 
@@ -30,13 +31,16 @@ public class MemoryJobManager implements JobManager {
 	@Autowired
 	private ThreadPoolTaskScheduler taskScheduler;
 
+	@Value("${spring.scheduler.failedjob.retries:0}")
+	private int retries;
+
 	@Override
 	public void scheduleJob(final Object bean, String jobName, String description, String cronExpression) {
 		if (hasScheduled(jobName)) {
 			throw new IllegalStateException("Job: " + jobName + " has scheduled now.");
 		}
 		observable.addObserver((ob, arg) -> {
-			jobBeanCache.put(jobName, new JobBeanProxy(bean, jobName, this));
+			jobBeanCache.put(jobName, new JobBeanProxy(bean, jobName, retries, this));
 			jobFutureCache.put(jobName, taskScheduler.schedule(jobBeanCache.get(jobName), new CronTrigger(cronExpression)));
 			log.info("Start to schedule job: " + jobName + "/" + bean.getClass().getName());
 		});

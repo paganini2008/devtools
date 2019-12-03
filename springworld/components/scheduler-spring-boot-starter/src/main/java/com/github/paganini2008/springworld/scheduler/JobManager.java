@@ -10,7 +10,7 @@ package com.github.paganini2008.springworld.scheduler;
  */
 public interface JobManager {
 
-	void scheduleJob(Object bean, String jobName, String description, String cronExpression, int retries) throws Exception;
+	void scheduleJob(Object bean, String jobName, String description, String cronExpression) throws Exception;
 
 	void unscheduleJob(String jobName) throws Exception;
 

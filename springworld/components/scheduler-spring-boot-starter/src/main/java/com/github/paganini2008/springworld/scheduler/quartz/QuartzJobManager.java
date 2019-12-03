@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.quartz;
+package com.github.paganini2008.springworld.scheduler.quartz;
 
 import java.util.Set;
 
@@ -27,7 +27,8 @@ import lombok.extern.slf4j.Slf4j;
  * QuartzJobManager
  * 
  * @author Fred Feng
- * @created 2019-11
+ * @created 2018-03
+ * @revised 2019-11
  * @version 1.0
  */
 @Slf4j

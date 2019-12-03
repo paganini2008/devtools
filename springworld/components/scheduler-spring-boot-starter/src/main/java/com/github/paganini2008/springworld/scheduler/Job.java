@@ -28,6 +28,4 @@ public @interface Job {
 
 	String description();
 
-	int retries() default 0;
-
 }
