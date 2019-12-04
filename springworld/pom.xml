@@ -77,15 +77,4 @@
             <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
         </repository>
     </repositories>
-
-	<distributionManagement>
-		<repository>
-			<id>allyes-nexus-releases</id>
-			<url>http://nexus.d-linking.tech/nexus/content/repositories/mec-releases/</url>
-		</repository>
-		<snapshotRepository>
-			<id>allyes-nexus-snapshots</id>
-			<url>http://nexus.d-linking.tech/nexus/content/repositories/mec-snapshots/</url>
-		</snapshotRepository>
-	</distributionManagement>
 </project>

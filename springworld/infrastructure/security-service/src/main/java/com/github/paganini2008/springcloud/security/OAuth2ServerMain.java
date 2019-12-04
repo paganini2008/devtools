@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.paganini2008.springboot.authorization.EnableOAuth2Server;
-import com.github.paganini2008.springboot.config.GitConfigurationSpringApplication;
 import com.github.paganini2008.springcloud.security.utils.Env;
+import com.github.paganini2008.springworld.config.GitConfigurationSpringApplication;
 
 /**
  * 

@@ -46,7 +46,7 @@ public class RestTemplateConfig {
 	@Value("${webcrawler.httpclient.proxy.host:}")
 	private String proxyHost;
 
-	@Value("${webcrawler.httpclient.proxy.port:}")
+	@Value("${webcrawler.httpclient.proxy.port:0}")
 	private int proxyPort;
 
 	@Bean

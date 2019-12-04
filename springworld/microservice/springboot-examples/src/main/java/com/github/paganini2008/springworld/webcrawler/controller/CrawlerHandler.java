@@ -46,7 +46,7 @@ public class CrawlerHandler implements Handler {
 	private RestTemplate restTemplate;
 
 	@Autowired
-	private JdbcResourceService dataService;
+	private JdbcResourceService resourceService;
 
 	@Autowired
 	private NioClient nioClient;
@@ -58,7 +58,7 @@ public class CrawlerHandler implements Handler {
 	@Autowired
 	private PathMatcher pathMather;
 
-	@Value("${webcrawler.crawl.depth:}")
+	@Value("${webcrawler.crawl.depth:3}")
 	private int depth;
 
 	@Override
@@ -86,7 +86,7 @@ public class CrawlerHandler implements Handler {
 		resource.setContent(body);
 		resource.setPath(path);
 		resource.setCreateDate(new Date());
-		dataService.saveResource(resource);
+		resourceService.saveResource(resource);
 
 		Elements elements = dom.body().select("a");
 		if (CollectionUtils.isNotEmpty(elements)) {

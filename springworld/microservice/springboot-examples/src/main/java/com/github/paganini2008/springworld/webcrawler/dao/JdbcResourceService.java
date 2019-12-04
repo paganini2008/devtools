@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcDaoSupport;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.stereotype.Component;
 
 import com.github.paganini2008.springworld.webcrawler.utils.Resource;
 
@@ -18,6 +19,7 @@ import com.github.paganini2008.springworld.webcrawler.utils.Resource;
  * @revised 2019-10
  * @version 1.0
  */
+@Component
 public class JdbcResourceService extends NamedParameterJdbcDaoSupport implements ResourceService {
 
 	private static final String SQL_INSERT = "insert into crawler_resource (title,content,path,create_date) values (?,?,?,?)";

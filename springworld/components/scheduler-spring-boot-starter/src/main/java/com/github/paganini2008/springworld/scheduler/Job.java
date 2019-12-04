@@ -22,10 +22,10 @@ import org.springframework.stereotype.Component;
 @Component
 public @interface Job {
 
-	String name();
-
+	String name() default "";
+	
 	String cron();
 
-	String description();
+	String description() default "";
 
 }
