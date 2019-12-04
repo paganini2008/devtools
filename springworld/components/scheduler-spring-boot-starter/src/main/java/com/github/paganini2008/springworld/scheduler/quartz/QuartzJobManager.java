@@ -52,20 +52,31 @@ public class QuartzJobManager implements JobManager {
 	@Override
 	public void scheduleJob(Object bean, String jobName, String description, String cronExpression) throws SchedulerException {
 		observable.addObserver((ob, arg) -> {
-			JobDetail jobDetail = JobBuilder.newJob(QuartzJobBeanProxy.class).withIdentity(jobName, defaultJobGroupName)
-					.withDescription(description).build();
-			JobDataMap dataMap = jobDetail.getJobDataMap();
-			dataMap.put("jobBeanName", jobName);
-			dataMap.put("jobBeanClassName", bean.getClass().getName());
-			CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression)
-					.withMisfireHandlingInstructionDoNothing();
-			CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(jobName, defaultTriggerGroupName).withSchedule(scheduleBuilder)
-					.build();
+			boolean jobExists;
 			try {
-				getScheduler().scheduleJob(jobDetail, trigger);
-				log.info("Start to schedule job: {}/{}" + jobName, bean.getClass().getName());
+				JobKey jobKey = JobKey.jobKey(jobName, defaultJobGroupName);
+				jobExists = getScheduler().checkExists(jobKey);
 			} catch (SchedulerException e) {
-				log.error(e.getMessage(), e);
+				jobExists = false;
+			}
+			if (jobExists) {
+				log.info("Recover to schedule job: {}/{}" + jobName, bean.getClass().getName());
+			} else {
+				JobDetail jobDetail = JobBuilder.newJob(QuartzJobBeanProxy.class).withIdentity(jobName, defaultJobGroupName)
+						.withDescription(description).build();
+				JobDataMap dataMap = jobDetail.getJobDataMap();
+				dataMap.put("jobBeanName", jobName);
+				dataMap.put("jobBeanClassName", bean.getClass().getName());
+				CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression)
+						.withMisfireHandlingInstructionDoNothing();
+				CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(jobName, defaultTriggerGroupName)
+						.withSchedule(scheduleBuilder).build();
+				try {
+					getScheduler().scheduleJob(jobDetail, trigger);
+					log.info("Start to schedule job: {}/{}" + jobName, bean.getClass().getName());
+				} catch (SchedulerException e) {
+					log.error(e.getMessage(), e);
+				}
 			}
 		});
 		log.info("Add job: {}/{} to schedule.", jobName, bean.getClass().getName());

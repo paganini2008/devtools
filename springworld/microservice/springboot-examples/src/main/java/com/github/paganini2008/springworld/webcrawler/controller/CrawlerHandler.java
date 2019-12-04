@@ -58,7 +58,7 @@ public class CrawlerHandler implements Handler {
 	@Autowired
 	private PathMatcher pathMather;
 
-	@Value("${webcrawler.crawl.depth:3}")
+	@Value("${webcrawler.crawl.depth:-1}")
 	private int depth;
 
 	@Override
