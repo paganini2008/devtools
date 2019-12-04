@@ -21,7 +21,7 @@ import com.github.paganini2008.devtools.net.NetUtils;
  */
 @EnableAsync
 @SpringBootApplication
-@ComponentScan(basePackages = { "com.github.paganini2008.springworld.examples" })
+@ComponentScan(basePackages = { "com.github.paganini2008.springworld.webcrawler" })
 public class Application {
 
 	static {
