@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.scheduler.quartz;
+package com.github.paganini2008.springworld.scheduler;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -6,39 +6,42 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.quartz.Job;
-import org.quartz.JobDataMap;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
 
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.reflection.MethodUtils;
 import com.github.paganini2008.springworld.cluster.ApplicationContextUtils;
-import com.github.paganini2008.springworld.scheduler.CancellationException;
+import com.github.paganini2008.springworld.cluster.implementor.MulticastChannelListener;
 import com.github.paganini2008.springworld.scheduler.JobAnnotations.Executable;
 import com.github.paganini2008.springworld.scheduler.JobAnnotations.OnEnd;
 import com.github.paganini2008.springworld.scheduler.JobAnnotations.OnError;
 import com.github.paganini2008.springworld.scheduler.JobAnnotations.OnStart;
-import com.github.paganini2008.springworld.scheduler.JobManager;
 
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
- * QuartzJobBeanProxy
+ * LoadBalancedJobBeanProcessor
  * 
  * @author Fred Feng
- * @created 2018-03
+ * @created 2019-11
  * @revised 2019-11
  * @version 1.0
  */
 @Slf4j
-public class QuartzJobBeanProxy implements Job {
+@ConditionalOnProperty(prefix = "spring.task-scheduler", name = "job.loadbalanced", havingValue = "true")
+@Component
+public class LoadBalancedJobBeanProcessor implements MulticastChannelListener {
 
 	private static final Map<String, Type> jobClassCache = Collections.synchronizedMap(new HashMap<String, Type>());
 	private static final Map<Type, Method[]> jobClassMetaDataCache = Collections.synchronizedMap(new HashMap<Type, Method[]>());
+
+	public LoadBalancedJobBeanProcessor() {
+		System.out.println("LoadBalancedJobBeanProcessor.LoadBalancedJobBeanProcessor()");
+	}
 
 	private static Class<?> getJobClassIfAvailable(String className) {
 		Type type = jobClassCache.get(className);
@@ -94,10 +97,10 @@ public class QuartzJobBeanProxy implements Job {
 	private JobManager jobManager;
 
 	@Override
-	public void execute(JobExecutionContext context) throws JobExecutionException {
-		JobDataMap dataMap = context.getJobDetail().getJobDataMap();
-		String jobBeanName = (String) dataMap.get("jobBeanName");
-		String jobBeanClassName = (String) dataMap.get("jobBeanClassName");
+	public void onData(Object message) {
+		Map<String, Object> data = (Map<String, Object>) message;
+		String jobBeanName = (String) data.get("jobBeanName");
+		String jobBeanClassName = (String) data.get("jobBeanClassName");
 		Class<?> jobClass = null;
 		if (StringUtils.isNotBlank(jobBeanClassName)) {
 			jobClass = getJobClassIfAvailable(jobBeanClassName);

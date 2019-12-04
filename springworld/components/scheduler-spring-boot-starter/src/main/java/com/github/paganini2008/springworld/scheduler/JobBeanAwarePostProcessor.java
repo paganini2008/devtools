@@ -11,15 +11,16 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
- * JobBeanAwareProcessor
+ * JobBeanAwarePostProcessor
  * 
  * @author Fred Feng
  * @created 2019-11
+ * @revised 2019-11
  * @version 1.0
  */
 @Slf4j
 @Component
-public class JobBeanAwareProcessor implements BeanPostProcessor {
+public class JobBeanAwarePostProcessor implements BeanPostProcessor {
 
 	@Autowired
 	private JobManager jobManager;

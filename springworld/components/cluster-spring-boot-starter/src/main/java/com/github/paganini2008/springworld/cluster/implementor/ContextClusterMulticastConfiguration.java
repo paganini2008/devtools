@@ -83,8 +83,7 @@ public class ContextClusterMulticastConfiguration {
 		return new MulticastHeartbeatTask();
 	}
 
-	@Bean("default")
-	@ConditionalOnMissingBean(MulticastChannelListener.class)
+	@Bean("logging")
 	public MulticastChannelListener multicastChannelListener() {
 		return new LoggingMulticastChannelListener();
 	}

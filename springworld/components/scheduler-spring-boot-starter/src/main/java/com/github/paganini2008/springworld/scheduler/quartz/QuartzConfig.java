@@ -84,9 +84,8 @@ public class QuartzConfig {
 		}
 
 		protected Object createJobInstance(final TriggerFiredBundle bundle) throws Exception {
-			final QuartzJobBeanProxy jobBeanProxy = (QuartzJobBeanProxy) super.createJobInstance(bundle);
+			final Object jobBeanProxy = super.createJobInstance(bundle);
 			beanFactory.autowireBean(jobBeanProxy);
-			jobBeanProxy.setApplicationContext(applicationContext);
 			return jobBeanProxy;
 		}
 

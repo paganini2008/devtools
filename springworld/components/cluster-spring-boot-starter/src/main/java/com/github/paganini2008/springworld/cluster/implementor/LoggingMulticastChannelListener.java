@@ -16,17 +16,17 @@ public class LoggingMulticastChannelListener implements MulticastChannelListener
 
 	@Override
 	public void onJoin(String instanceId) {
-		log.info("Application: " + instanceId + " joined.");
+		log.trace("Application: " + instanceId + " joined.");
 	}
 
 	@Override
 	public void onLeave(String instanceId) {
-		log.info("Application: " + instanceId + " left.");
+		log.trace("Application: " + instanceId + " left.");
 	}
 
 	@Override
 	public void onData(Object message) {
-		log.info("Application message: " + message);
+		log.trace("Application send message: " + message);
 	}
 
 }

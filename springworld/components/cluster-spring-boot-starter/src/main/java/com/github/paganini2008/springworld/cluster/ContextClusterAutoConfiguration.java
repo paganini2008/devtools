@@ -16,6 +16,7 @@ import com.github.paganini2008.springworld.cluster.implementor.ContextClusterMul
  * @version 1.0
  */
 @Configuration
-@Import({ ContextClusterMasterSlavesConfiguration.class, ContextClusterMulticastConfiguration.class, MulticastMessageDelivery.class })
+@Import({ ContextClusterMasterSlavesConfiguration.class, ContextClusterMulticastConfiguration.class, MulticastMessageDelivery.class,
+		ApplicationContextUtils.class })
 public class ContextClusterAutoConfiguration {
 }

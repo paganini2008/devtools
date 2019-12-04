@@ -1,7 +1,6 @@
 package com.github.paganini2008.springworld.cluster.implementor;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
+import com.github.paganini2008.springworld.cluster.ApplicationContextUtils;
 import com.github.paganini2008.springworld.cluster.redis.RedisMessageHandler;
 
 /**
@@ -14,12 +13,11 @@ import com.github.paganini2008.springworld.cluster.redis.RedisMessageHandler;
  * @version 1.0
  */
 public class MulticastMessageHandler implements RedisMessageHandler {
-	
-	@Autowired
-	private MulticastChannelListener multicastChannelListener;
 
 	public void onMessage(String channel, Object message) {
-		multicastChannelListener.onData(message);
+		ApplicationContextUtils.getBeansOfType(MulticastChannelListener.class).values().forEach(multicastChannelListener -> {
+			multicastChannelListener.onData(message);
+		});
 	}
 
 }

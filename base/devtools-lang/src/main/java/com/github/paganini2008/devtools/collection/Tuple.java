@@ -3,7 +3,7 @@ package com.github.paganini2008.devtools.collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.github.paganini2008.devtools.GeneralCase;
+import com.github.paganini2008.devtools.CaseFormat;
 import com.github.paganini2008.devtools.beans.TupleImpl;
 
 /**
@@ -46,7 +46,7 @@ public interface Tuple {
 	<T> T toBean(Class<T> requiredType);
 
 	Map<String, Object> toMap();
-	
+
 	void append(Map<String, Object> m);
 
 	static Tuple newTuple() {
@@ -54,7 +54,7 @@ public interface Tuple {
 	}
 
 	static Tuple wrap(Map<String, Object> kwargs) {
-		return new TupleImpl(kwargs, GeneralCase.LOWER_CAMEL);
+		return new TupleImpl(kwargs, CaseFormat.DEFAULT);
 	}
 
 }

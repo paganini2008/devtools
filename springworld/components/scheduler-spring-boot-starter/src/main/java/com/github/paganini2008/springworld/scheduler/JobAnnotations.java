@@ -11,6 +11,7 @@ import java.lang.annotation.Target;
  * 
  * @author Fred Feng
  * @created 2019-11
+ * @revised 2019-11
  * @version 1.0
  */
 public abstract class JobAnnotations {

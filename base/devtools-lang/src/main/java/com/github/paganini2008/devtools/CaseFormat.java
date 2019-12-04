@@ -12,4 +12,8 @@ public interface CaseFormat {
 
 	String toCase(CharSequence str);
 
+	public static CaseFormat DEFAULT = (str) -> {
+		return str.toString();
+	};
+
 }

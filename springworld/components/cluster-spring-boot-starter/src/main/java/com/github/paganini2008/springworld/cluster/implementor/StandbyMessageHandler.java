@@ -2,6 +2,7 @@ package com.github.paganini2008.springworld.cluster.implementor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.github.paganini2008.springworld.cluster.ApplicationContextUtils;
 import com.github.paganini2008.springworld.cluster.redis.RedisMessageHandler;
 import com.github.paganini2008.springworld.cluster.redis.RedisMessagePubSub;
 
@@ -25,9 +26,6 @@ public class StandbyMessageHandler implements RedisMessageHandler {
 	@Autowired
 	private InstanceId instanceId;
 
-	@Autowired
-	private MulticastChannelListener multicastChannelListener;
-
 	@Override
 	public void onMessage(String channel, Object message) {
 		final String selfId = instanceId.get();
@@ -35,7 +33,10 @@ public class StandbyMessageHandler implements RedisMessageHandler {
 		if (!channelGroup.hasRegistered(otherId)) {
 			channelGroup.registerChannel(otherId, 1);
 			redisMessager.sendMessage("standby", selfId);
-			multicastChannelListener.onJoin(otherId);
+
+			ApplicationContextUtils.getBeansOfType(MulticastChannelListener.class).values().forEach(multicastChannelListener -> {
+				multicastChannelListener.onJoin(otherId);
+			});
 		}
 	}
 

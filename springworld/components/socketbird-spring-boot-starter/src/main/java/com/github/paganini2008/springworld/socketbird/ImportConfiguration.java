@@ -5,7 +5,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
 
 import com.github.paganini2008.springworld.cluster.implementor.MulticastChannelListener;
@@ -35,7 +34,7 @@ import com.github.paganini2008.springworld.socketbird.utils.RoundRobinPartitione
  * @version 1.0
  */
 @Order(100)
-@Import({ HandlerBeanAutoRegistryProcessor.class, MessageController.class })
+@Import({ HandlerBeanAutoRegistryPostProcessor.class, MessageController.class })
 @Configuration
 public class ImportConfiguration {
 
@@ -73,7 +72,6 @@ public class ImportConfiguration {
 		return new LoggingChannelStateListener();
 	}
 
-	@Primary
 	@Bean("autobinding")
 	public MulticastChannelListener multicastChannelListener() {
 		return new SocketIoMulticastChannelListener();

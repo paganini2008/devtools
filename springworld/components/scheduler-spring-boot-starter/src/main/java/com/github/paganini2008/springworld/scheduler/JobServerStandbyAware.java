@@ -8,15 +8,16 @@ import com.github.paganini2008.springworld.cluster.ContextClusterMasterStandbyEv
 
 /**
  * 
- * JobExecutionAware
+ * JobServerStandbyAware
  * 
  * @author Fred Feng
  * @created 2019-11
+ * @revised 2019-11
  * @version 1.0
  */
 @Component
-public class JobExecutionAware implements ApplicationListener<ContextClusterMasterStandbyEvent> {
-	
+public class JobServerStandbyAware implements ApplicationListener<ContextClusterMasterStandbyEvent> {
+
 	@Autowired
 	private JobManager jobManager;
 

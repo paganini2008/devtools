@@ -3,6 +3,8 @@ package com.github.paganini2008.springworld.scheduler;
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.github.paganini2008.devtools.reflection.MethodUtils;
 import com.github.paganini2008.springworld.scheduler.JobAnnotations.Executable;
 import com.github.paganini2008.springworld.scheduler.JobAnnotations.OnEnd;
@@ -20,44 +22,45 @@ import lombok.extern.slf4j.Slf4j;
  * @version 1.0
  */
 @Slf4j
-public class JobBeanProxy implements Runnable {
+public class JobBeanProxy implements Runnable, JobRunningControl {
 
-	private final Object bean;
-	private final String jobName;
-	private final JobManager jobManager;
-	private final AtomicBoolean running = new AtomicBoolean(true);
+	private final Object jobBean;
+	private final String jobBeanName;
 	private final int retries;
 
-	JobBeanProxy(Object bean, String jobName, int retries, JobManager jobManager) {
-		this.bean = bean;
-		this.jobName = jobName;
+	public JobBeanProxy(Object jobBean, String jobBeanName, int retries) {
+		this.jobBean = jobBean;
+		this.jobBeanName = jobBeanName;
 		this.retries = retries;
-		this.jobManager = jobManager;
-
+		this.running = new AtomicBoolean(true);
 		reflectJobBean();
 	}
+
+	@Autowired
+	private JobManager jobManager;
 
 	private Method onStart;
 	private Method onEnd;
 	private Method onError;
 	private Method executable;
+	private final AtomicBoolean running;
 
 	private void reflectJobBean() {
 		try {
-			executable = MethodUtils.getDeclaredMethodsWithAnnotation(bean.getClass(), Executable.class).get(0);
+			executable = MethodUtils.getDeclaredMethodsWithAnnotation(jobBean.getClass(), Executable.class).get(0);
 		} catch (RuntimeException e) {
 			throw new IllegalStateException("Executable method is required.", e);
 		}
 		try {
-			onStart = MethodUtils.getDeclaredMethodsWithAnnotation(bean.getClass(), OnStart.class).get(0);
+			onStart = MethodUtils.getDeclaredMethodsWithAnnotation(jobBean.getClass(), OnStart.class).get(0);
 		} catch (RuntimeException ignored) {
 		}
 		try {
-			onEnd = MethodUtils.getDeclaredMethodsWithAnnotation(bean.getClass(), OnEnd.class).get(0);
+			onEnd = MethodUtils.getDeclaredMethodsWithAnnotation(jobBean.getClass(), OnEnd.class).get(0);
 		} catch (RuntimeException ignored) {
 		}
 		try {
-			onError = MethodUtils.getDeclaredMethodsWithAnnotation(bean.getClass(), OnError.class).get(0);
+			onError = MethodUtils.getDeclaredMethodsWithAnnotation(jobBean.getClass(), OnError.class).get(0);
 		} catch (RuntimeException ignored) {
 		}
 	}
@@ -68,20 +71,20 @@ public class JobBeanProxy implements Runnable {
 
 	public void pause() {
 		running.set(false);
-		log.trace("Pause job: " + jobName + "/" + bean.getClass().getName());
+		log.trace("Pause job: " + jobBeanName + "/" + jobBean.getClass().getName());
 	}
 
 	public void resume() {
 		running.set(true);
-		log.trace("Resume job: " + jobName + "/" + bean.getClass().getName());
+		log.trace("Resume job: " + jobBeanName + "/" + jobBean.getClass().getName());
 	}
 
 	public String getJobName() {
-		return jobName;
+		return jobBeanName;
 	}
 
 	public Object getJobBean() {
-		return bean;
+		return jobBean;
 	}
 
 	@Override
@@ -90,10 +93,10 @@ public class JobBeanProxy implements Runnable {
 			return;
 		}
 		int n = 0;
-		log.trace("Execute job: " + bean.getClass().getName());
+		log.trace("Execute job: " + jobBean.getClass().getName());
 		if (onStart != null) {
 			try {
-				MethodUtils.invokeMethod(bean, onStart);
+				MethodUtils.invokeMethod(jobBean, onStart);
 			} catch (Exception e) {
 				log.error(e.getMessage(), e);
 			}
@@ -102,10 +105,10 @@ public class JobBeanProxy implements Runnable {
 		Throwable cause = null;
 		do {
 			if (n > 0) {
-				log.trace("Retry this job: " + jobName + "/" + bean.getClass().getName());
+				log.trace("Retry this job: " + jobBeanName + "/" + jobBean.getClass().getName());
 			}
 			try {
-				result = MethodUtils.invokeMethod(bean, executable);
+				result = MethodUtils.invokeMethod(jobBean, executable);
 				break;
 			} catch (Exception e) {
 				cause = e;
@@ -115,7 +118,7 @@ public class JobBeanProxy implements Runnable {
 
 		if (result instanceof Boolean && !(Boolean) result) {
 			try {
-				jobManager.unscheduleJob(jobName);
+				jobManager.unscheduleJob(jobBeanName);
 			} catch (Exception e) {
 				log.error(e.getMessage(), e);
 			}
@@ -124,11 +127,11 @@ public class JobBeanProxy implements Runnable {
 		if (cause != null) {
 			if (onError != null) {
 				try {
-					MethodUtils.invokeMethod(bean, onError, cause);
+					MethodUtils.invokeMethod(jobBean, onError, cause);
 				} catch (Exception e) {
 					if (e instanceof CancellationException) {
 						try {
-							jobManager.unscheduleJob(jobName);
+							jobManager.unscheduleJob(jobBeanName);
 						} catch (Exception ee) {
 							log.error(ee.getMessage(), ee);
 						}
@@ -140,12 +143,12 @@ public class JobBeanProxy implements Runnable {
 		}
 		if (onEnd != null) {
 			try {
-				MethodUtils.invokeMethod(bean, onEnd);
+				MethodUtils.invokeMethod(jobBean, onEnd);
 			} catch (Exception e) {
 				log.error(e.getMessage(), e);
 			}
 		}
-		log.trace("Finish job: " + bean.getClass().getName());
+		log.trace("Finish job: " + jobBean.getClass().getName());
 	}
 
 }

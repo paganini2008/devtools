@@ -45,6 +45,9 @@ public class QuartzJobManager implements JobManager {
 	@Value("${spring.quartz.job.trigger.groupName:defaultTriggerGroup}")
 	private String defaultTriggerGroupName;
 
+	@Value("${spring.task-scheduler.job.loadbalanced:false}")
+	private boolean loadbalanced;
+
 	public Scheduler getScheduler() {
 		return schedulerFactoryBean.getScheduler();
 	}
@@ -62,8 +65,8 @@ public class QuartzJobManager implements JobManager {
 			if (jobExists) {
 				log.info("Recover to schedule job: {}/{}" + jobName, bean.getClass().getName());
 			} else {
-				JobDetail jobDetail = JobBuilder.newJob(QuartzJobBeanProxy.class).withIdentity(jobName, defaultJobGroupName)
-						.withDescription(description).build();
+				JobDetail jobDetail = JobBuilder.newJob(loadbalanced ? LoadBalancedQuartzJobBeanProxy.class : QuartzJobBeanProxy.class)
+						.withIdentity(jobName, defaultJobGroupName).withDescription(description).build();
 				JobDataMap dataMap = jobDetail.getJobDataMap();
 				dataMap.put("jobBeanName", jobName);
 				dataMap.put("jobBeanClassName", bean.getClass().getName());

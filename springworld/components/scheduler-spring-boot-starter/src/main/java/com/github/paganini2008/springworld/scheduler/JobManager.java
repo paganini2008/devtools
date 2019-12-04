@@ -10,15 +10,15 @@ package com.github.paganini2008.springworld.scheduler;
  */
 public interface JobManager {
 
-	void scheduleJob(Object bean, String jobName, String description, String cronExpression) throws Exception;
+	void scheduleJob(Object jobBean, String jobBeanName, String description, String cronExpression) throws Exception;
 
-	void unscheduleJob(String jobName) throws Exception;
+	void unscheduleJob(String jobBeanName) throws Exception;
 
-	void pauseJob(String jobName) throws Exception;
+	void pauseJob(String jobBeanName) throws Exception;
 
-	void resumeJob(String jobName) throws Exception;
+	void resumeJob(String jobBeanName) throws Exception;
 
-	boolean hasScheduled(String jobName) throws Exception;
+	boolean hasScheduled(String jobBeanName) throws Exception;
 
 	int countOfJobs() throws Exception;
 
