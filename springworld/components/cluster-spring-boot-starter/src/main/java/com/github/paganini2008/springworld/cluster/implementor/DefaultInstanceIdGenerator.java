@@ -4,8 +4,6 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 
-import com.github.paganini2008.devtools.StringUtils;
-
 /**
  * 
  * DefaultInstanceIdGenerator
@@ -17,12 +15,12 @@ import com.github.paganini2008.devtools.StringUtils;
  */
 public class DefaultInstanceIdGenerator implements InstanceIdGenerator {
 
-	@Value("${spring.application.instanceId:}")
-	private String instanceId;
+	@Value("${spring.application.name}")
+	private String applicationName;
 
 	@Override
 	public String generateInstanceId() {
-		return StringUtils.isNotBlank(instanceId) ? instanceId : UUID.randomUUID().toString();
+		return applicationName + "@" + UUID.randomUUID().toString().replace("-", "");
 	}
 
 }

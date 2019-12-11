@@ -9,7 +9,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.github.paganini2008.springworld.cluster.ContextMasterStandbyEvent;
 import com.github.paganini2008.springworld.cluster.ContextSlaveStandbyEvent;
-import com.github.paganini2008.springworld.cluster.Constants;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,6 +27,9 @@ public class ContextClusterAware implements ApplicationListener<ContextRefreshed
 	@Value("${spring.application.name}")
 	private String applicationName;
 
+	@Value("${spring.application.cluster.namespace:application:cluster:}")
+	private String namespace;
+
 	@Autowired
 	private InstanceId instanceId;
 
@@ -35,15 +37,15 @@ public class ContextClusterAware implements ApplicationListener<ContextRefreshed
 	private StringRedisTemplate redisTemplate;
 
 	@Autowired
-	private ContextClusterHeartbeatTask heartbeatTask;
+	private ContextClusterHeartbeatThread heartbeatTask;
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		final ApplicationContext context = event.getApplicationContext();
-		final String key = String.format(Constants.CLUSTER_KEY, applicationName);
+		final String key = namespace + applicationName;
 		redisTemplate.opsForList().leftPush(key, instanceId.get());
 		if (instanceId.get().equals(redisTemplate.opsForList().index(key, -1))) {
-			instanceId.setMaster(true); 
+			instanceId.setMaster(true);
 			heartbeatTask.start();
 			context.publishEvent(new ContextMasterStandbyEvent(context));
 			log.info("Master of context cluster '{}' is you. You can also implement ApplicationListener to listen the event type {}",

@@ -44,11 +44,9 @@ public class RedisMessageSender {
 
 	public void sendEphemeralMessage(String channel, Object message, long delay, TimeUnit timeUnit) {
 		String expiredKey = namespace + channel;
-		if (!redisTemplate.hasKey(expiredKey)) {
-			String json = JacksonUtils.toJsonString(RedisMessageEntity.of(channel, message));
-			redisTemplate.opsForValue().set(expiredKey, json, delay, timeUnit);
-			setExpiredValue(expiredKey);
-		}
+		String json = JacksonUtils.toJsonString(RedisMessageEntity.of(channel, message));
+		redisTemplate.opsForValue().set(expiredKey, json, delay, timeUnit);
+		setExpiredValue(expiredKey);
 	}
 
 	private void setExpiredValue(String expiredKey) {
@@ -58,11 +56,10 @@ public class RedisMessageSender {
 	}
 
 	public void subscribeChannel(String name, RedisMessageHandler messageListener) {
-		String channel = messageListener.getChannel();
 		if (messageListener.isEphemeral()) {
-			redisEphemeralMessageListener.addHandler(channel, name, messageListener);
+			redisEphemeralMessageListener.addHandler(name, messageListener);
 		} else {
-			redisMessageListener.addHandler(channel, name, messageListener);
+			redisMessageListener.addHandler(name, messageListener);
 		}
 	}
 

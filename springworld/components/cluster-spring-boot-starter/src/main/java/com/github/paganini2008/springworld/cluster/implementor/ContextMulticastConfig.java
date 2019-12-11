@@ -53,9 +53,9 @@ public class ContextMulticastConfig {
 		return new LoadBalanceSelector.RoundrobinLoadBalance();
 	}
 
-	@Bean(name = "multicastHeartbeatTask", initMethod = "start", destroyMethod = "stop")
-	public ContextMulticastHeartbeatTask heartbeatTask() {
-		return new ContextMulticastHeartbeatTask();
+	@Bean(name = "multicastHeartbeatThread", initMethod = "start", destroyMethod = "stop")
+	public ContextMulticastHeartbeatThread heartbeatThread() {
+		return new ContextMulticastHeartbeatThread();
 	}
 
 	@Bean

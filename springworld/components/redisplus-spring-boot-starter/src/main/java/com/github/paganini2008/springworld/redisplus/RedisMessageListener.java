@@ -42,10 +42,7 @@ public class RedisMessageListener implements ApplicationListener<RedisMessageEve
 	}
 
 	public void addHandler(String name, RedisMessageHandler handler) {
-		addHandler("*", name, handler);
-	}
-
-	public void addHandler(String channel, String name, RedisMessageHandler handler) {
+		String channel = handler.getChannel();
 		Map<String, RedisMessageHandler> handlers = MapUtils.get(channelHandlers, channel, () -> {
 			return new ConcurrentHashMap<String, RedisMessageHandler>();
 		});

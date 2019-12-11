@@ -29,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RedisEphemeralMessageListener implements ApplicationListener<RedisKeyExpiredEvent> {
 
 	private final ConcurrentMap<String, Map<String, RedisMessageHandler>> channelHandlers = new ConcurrentHashMap<String, Map<String, RedisMessageHandler>>();
+	private final ConcurrentMap<String, Map<String, RedisMessageHandler>> channelPatternHandlers = new ConcurrentHashMap<String, Map<String, RedisMessageHandler>>();
 
 	@Autowired
 	private StringRedisTemplate redisTemplate;
@@ -57,17 +58,60 @@ public class RedisEphemeralMessageListener implements ApplicationListener<RedisK
 					}
 				}
 			}
+			for (String keyPattern : channelPatternHandlers.keySet()) {
+				if (matchesChannel(keyPattern, channel)) {
+					handlers = channelPatternHandlers.get(keyPattern);
+					if (handlers != null) {
+						for (RedisMessageHandler handler : handlers.values()) {
+							try {
+								handler.onMessage(expiredValue);
+							} catch (Exception e) {
+								log.error(e.getMessage(), e);
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 
-	public void addHandler(String name, RedisMessageHandler handler) {
-		addHandler("*", name, handler);
+	private boolean matchesChannel(String keyPattern, String channel) {
+		String key;
+		int index = keyPattern.lastIndexOf('*');
+		if (index == keyPattern.length() - 1) {
+			key = keyPattern.substring(0, index);
+			return channel.startsWith(key);
+		} else if (index == 0) {
+			key = keyPattern.substring(1);
+			return channel.endsWith(key);
+		} else {
+			String[] args = keyPattern.split("\\*");
+			for (String arg : args) {
+				if (!channel.contains(arg)) {
+					return false;
+				}
+			}
+			return true;
+		}
 	}
 
-	public void addHandler(String channel, String name, RedisMessageHandler handler) {
-		Map<String, RedisMessageHandler> handlers = MapUtils.get(channelHandlers, channel, () -> {
-			return new ConcurrentHashMap<String, RedisMessageHandler>();
-		});
+	private String getCheckedChannel(String channel) {
+		return channel.replaceAll("[\\*]+", "*");
+	}
+
+	public void addHandler(String name, RedisMessageHandler handler) {
+		Map<String, RedisMessageHandler> handlers;
+		String channel = handler.getChannel();
+		if (channel.contains("*")) {
+			channel = getCheckedChannel(channel);
+			handlers = MapUtils.get(channelPatternHandlers, channel, () -> {
+				return new ConcurrentHashMap<String, RedisMessageHandler>();
+			});
+		} else {
+			handlers = MapUtils.get(channelHandlers, channel, () -> {
+				return new ConcurrentHashMap<String, RedisMessageHandler>();
+			});
+		}
 		handlers.putIfAbsent(name, handler);
 	}
 

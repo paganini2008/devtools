@@ -9,7 +9,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.data.redis.core.RedisKeyExpiredEvent;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-import com.github.paganini2008.springworld.cluster.Constants;
 import com.github.paganini2008.springworld.cluster.ContextMasterStandbyEvent;
 import com.github.paganini2008.springworld.cluster.ContextSlaveStandbyEvent;
 
@@ -32,7 +31,7 @@ public class ContextMasterBreakdownListener implements ApplicationListener<Redis
 	private InstanceId instanceId;
 
 	@Autowired
-	private ContextClusterHeartbeatTask heartbeatTask;
+	private ContextClusterHeartbeatThread heartbeatThread;
 
 	@Autowired
 	private StringRedisTemplate redisTemplate;
@@ -42,17 +41,20 @@ public class ContextMasterBreakdownListener implements ApplicationListener<Redis
 	@Value("${spring.application.name}")
 	private String applicationName;
 
+	@Value("${spring.application.cluster.namespace:application:cluster:}")
+	private String namespace;
+
 	@Override
 	public void onApplicationEvent(RedisKeyExpiredEvent event) {
 		final String expiredKey = new String(event.getSource());
-		final String heartbeatKey = String.format(Constants.CLUSTER_KEY, applicationName);
+		final String heartbeatKey = namespace + applicationName;
 		if (heartbeatKey.equals(expiredKey)) {
-			log.info("The master of application '" + applicationName + "' is offline.");
-			final String key = String.format(Constants.CLUSTER_KEY, applicationName);
+			log.info("The master of application '" + applicationName + "' is breakdown.");
+			final String key = heartbeatKey;
 			redisTemplate.opsForList().leftPush(key, instanceId.get());
 			if (instanceId.get().equals(redisTemplate.opsForList().index(key, -1))) {
 				instanceId.setMaster(true);
-				heartbeatTask.start();
+				heartbeatThread.start();
 				context.publishEvent(new ContextMasterStandbyEvent(context));
 				log.info("Master of context cluster '{}' is you. You can also implement ApplicationListener to listen the event type {}",
 						applicationName, ContextMasterStandbyEvent.class.getName());

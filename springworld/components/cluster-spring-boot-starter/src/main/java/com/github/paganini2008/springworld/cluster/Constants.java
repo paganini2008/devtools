@@ -10,9 +10,4 @@ package com.github.paganini2008.springworld.cluster;
  * @version 1.0
  */
 public abstract class Constants {
-
-	public static final String CLUSTER_KEY = "application:cluster:%s";
-
-	public static final String CLUSTER_MULTICAST_KEY = "application:cluster:%s:multicast:%s";
-
 }
