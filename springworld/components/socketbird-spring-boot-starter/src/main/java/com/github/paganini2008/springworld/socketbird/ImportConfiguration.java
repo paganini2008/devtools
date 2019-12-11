@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
 
-import com.github.paganini2008.springworld.cluster.implementor.MulticastChannelListener;
+import com.github.paganini2008.springworld.cluster.implementor.ContextMulticastEventHandler;
 import com.github.paganini2008.springworld.socketbird.store.MemoryStoreFactory;
 import com.github.paganini2008.springworld.socketbird.store.Store;
 import com.github.paganini2008.springworld.socketbird.store.StoreFactory;
@@ -73,7 +73,7 @@ public class ImportConfiguration {
 	}
 
 	@Bean("autobinding")
-	public MulticastChannelListener multicastChannelListener() {
+	public ContextMulticastEventHandler multicastChannelListener() {
 		return new SocketIoMulticastChannelListener();
 	}
 

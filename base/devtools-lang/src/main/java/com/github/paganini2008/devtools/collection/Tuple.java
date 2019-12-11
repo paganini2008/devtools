@@ -1,6 +1,5 @@
 package com.github.paganini2008.devtools.collection;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.github.paganini2008.devtools.CaseFormat;
@@ -50,11 +49,21 @@ public interface Tuple {
 	void append(Map<String, Object> m);
 
 	static Tuple newTuple() {
-		return wrap(new HashMap<String, Object>());
+		return newTuple(CaseFormat.DEFAULT);
+	}
+
+	static Tuple newTuple(CaseFormat caseFormat) {
+		return new TupleImpl(caseFormat);
 	}
 
 	static Tuple wrap(Map<String, Object> kwargs) {
-		return new TupleImpl(kwargs, CaseFormat.DEFAULT);
+		return wrap(kwargs, CaseFormat.DEFAULT);
+	}
+
+	static Tuple wrap(Map<String, Object> kwargs, CaseFormat caseFormat) {
+		Tuple tuple = newTuple(caseFormat);
+		tuple.append(kwargs);
+		return tuple;
 	}
 
 }

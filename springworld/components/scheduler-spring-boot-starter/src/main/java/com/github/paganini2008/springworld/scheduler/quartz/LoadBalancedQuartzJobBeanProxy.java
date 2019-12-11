@@ -6,8 +6,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.github.paganini2008.devtools.collection.Tuple;
-import com.github.paganini2008.springworld.cluster.implementor.ContextClusterMulticastChannelGroup;
+import com.github.paganini2008.springworld.cluster.implementor.ContextMulticastGroup;
 
 /**
  * 
@@ -21,17 +20,15 @@ import com.github.paganini2008.springworld.cluster.implementor.ContextClusterMul
 public class LoadBalancedQuartzJobBeanProxy implements Job {
 
 	@Autowired
-	private ContextClusterMulticastChannelGroup multicastChannelGroup;
+	private ContextMulticastGroup multicastGroup;
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		JobDataMap dataMap = context.getJobDetail().getJobDataMap();
 		String jobBeanName = (String) dataMap.get("jobBeanName");
 		String jobBeanClassName = (String) dataMap.get("jobBeanClassName");
-		Tuple tuple = Tuple.newTuple();
-		tuple.set("jobBeanClassName", jobBeanClassName);
-		tuple.set("jobBeanName", jobBeanName);
-		multicastChannelGroup.unicast(tuple);
+		String message = jobBeanClassName.concat("#").concat(jobBeanName);
+		multicastGroup.unicast("scheduler", message);
 	}
 
 }

@@ -3,7 +3,6 @@ package com.github.paganini2008.devtools.jdbc.mapper;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.github.paganini2008.devtools.collection.CaseInsensitiveMap;
 import com.github.paganini2008.devtools.jdbc.JdbcType;
 import com.github.paganini2008.devtools.jdbc.TypeHandlerRegistry;
 
@@ -20,7 +19,7 @@ public class MapRowMapper extends BasicRowMapper<Map<String, Object>> {
 	}
 
 	protected Map<String, Object> createObject(int columnCount) {
-		return new CaseInsensitiveMap<Object>(new LinkedHashMap<String, Object>(columnCount));
+		return new LinkedHashMap<String, Object>(columnCount);
 	}
 
 	protected void setValue(Map<String, Object> object, int columnIndex, String columnName, String columnDisplayName,

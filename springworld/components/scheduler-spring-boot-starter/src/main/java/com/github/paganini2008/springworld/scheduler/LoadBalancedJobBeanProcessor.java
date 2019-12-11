@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.reflection.MethodUtils;
 import com.github.paganini2008.springworld.cluster.ApplicationContextUtils;
-import com.github.paganini2008.springworld.cluster.implementor.MulticastChannelListener;
+import com.github.paganini2008.springworld.cluster.implementor.ContextMulticastEventHandler;
 import com.github.paganini2008.springworld.scheduler.JobAnnotations.Executable;
 import com.github.paganini2008.springworld.scheduler.JobAnnotations.OnEnd;
 import com.github.paganini2008.springworld.scheduler.JobAnnotations.OnError;
@@ -33,15 +33,11 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @ConditionalOnProperty(prefix = "spring.task-scheduler", name = "job.loadbalanced", havingValue = "true")
-@Component
-public class LoadBalancedJobBeanProcessor implements MulticastChannelListener {
+@Component("scheduler")
+public class LoadBalancedJobBeanProcessor implements ContextMulticastEventHandler {
 
 	private static final Map<String, Type> jobClassCache = Collections.synchronizedMap(new HashMap<String, Type>());
 	private static final Map<Type, Method[]> jobClassMetaDataCache = Collections.synchronizedMap(new HashMap<Type, Method[]>());
-
-	public LoadBalancedJobBeanProcessor() {
-		System.out.println("LoadBalancedJobBeanProcessor.LoadBalancedJobBeanProcessor()");
-	}
 
 	private static Class<?> getJobClassIfAvailable(String className) {
 		Type type = jobClassCache.get(className);
@@ -97,10 +93,10 @@ public class LoadBalancedJobBeanProcessor implements MulticastChannelListener {
 	private JobManager jobManager;
 
 	@Override
-	public void onData(Object message) {
-		Map<String, Object> data = (Map<String, Object>) message;
-		String jobBeanName = (String) data.get("jobBeanName");
-		String jobBeanClassName = (String) data.get("jobBeanClassName");
+	public void onMessage(String instanceId, String message) {
+		String[] args = message.split("#", 2);
+		String jobBeanClassName = args[0];
+		String jobBeanName = args[1];
 		Class<?> jobClass = null;
 		if (StringUtils.isNotBlank(jobBeanClassName)) {
 			jobClass = getJobClassIfAvailable(jobBeanClassName);

@@ -8,7 +8,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
-import com.github.paganini2008.springworld.cluster.implementor.MulticastChannelListener;
+import com.github.paganini2008.springworld.cluster.implementor.ContextMulticastEventHandler;
 import com.github.paganini2008.springworld.socketbird.transport.NioClient;
 
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
  * @version 1.0
  */
 @Slf4j
-public class SocketIoMulticastChannelListener implements MulticastChannelListener {
+public class SocketIoMulticastChannelListener implements ContextMulticastEventHandler {
 
 	@Autowired
 	private NioClient nioClient;

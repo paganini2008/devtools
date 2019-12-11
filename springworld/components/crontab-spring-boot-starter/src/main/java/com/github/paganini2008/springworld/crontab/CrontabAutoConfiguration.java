@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import com.github.paganini2008.springworld.cluster.implementor.ContextClusterMasterSlavesConfiguration;
+import com.github.paganini2008.springworld.cluster.implementor.ContextClusterConfig;
 
 /**
  * 
@@ -20,7 +20,7 @@ import com.github.paganini2008.springworld.cluster.implementor.ContextClusterMas
  */
 @Configuration
 @ConditionalOnProperty(name = "spring.cluster.scheduler", havingValue = "crontab", matchIfMissing = true)
-@ConditionalOnBean(ContextClusterMasterSlavesConfiguration.class)
+@ConditionalOnBean(ContextClusterConfig.class)
 @Import({ JobBeanAware.class, TaskExecutorAware.class, HealthCheckJob.class })
 public class CrontabAutoConfiguration {
 

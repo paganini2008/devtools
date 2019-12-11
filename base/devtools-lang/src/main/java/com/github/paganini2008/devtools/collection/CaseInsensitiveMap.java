@@ -1,6 +1,7 @@
 package com.github.paganini2008.devtools.collection;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -19,11 +20,11 @@ public class CaseInsensitiveMap<V> extends KeyConversionMap<String, String, V> {
 	private static final String NULL = "NULL";
 
 	public CaseInsensitiveMap() {
-		super(new HashMap<String, V>());
+		this(new LinkedHashMap<String, V>());
 	}
 
-	public CaseInsensitiveMap(Map<String, V> m) {
-		super(m);
+	protected CaseInsensitiveMap(Map<String, V> delegate) {
+		super(delegate);
 	}
 
 	protected String convertKey(Object key) {
@@ -37,7 +38,8 @@ public class CaseInsensitiveMap<V> extends KeyConversionMap<String, String, V> {
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("abc", 1);
 		result.put("Ghj", 2);
-		CaseInsensitiveMap<Object> data = new CaseInsensitiveMap<Object>(result);
+		CaseInsensitiveMap<Object> data = new CaseInsensitiveMap<Object>();
+		data.putAll(result);
 		System.out.println(data);
 		System.out.println(data.get("AbC"));
 	}

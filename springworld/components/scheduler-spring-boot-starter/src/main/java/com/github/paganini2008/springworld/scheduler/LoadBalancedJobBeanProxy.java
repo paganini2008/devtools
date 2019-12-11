@@ -4,8 +4,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.github.paganini2008.devtools.collection.Tuple;
-import com.github.paganini2008.springworld.cluster.implementor.ContextClusterMulticastChannelGroup;
+import com.github.paganini2008.springworld.cluster.implementor.ContextMulticastGroup;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 public class LoadBalancedJobBeanProxy implements Runnable, JobRunningControl {
 
 	@Autowired
-	private ContextClusterMulticastChannelGroup multicastChannelGroup;
+	private ContextMulticastGroup multicastGroup;
 
 	private final Class<?> jobBeanClass;
 	private final String jobBeanName;
@@ -39,10 +38,8 @@ public class LoadBalancedJobBeanProxy implements Runnable, JobRunningControl {
 		if (!isRunning()) {
 			return;
 		}
-		Tuple tuple = Tuple.newTuple();
-		tuple.set("jobBeanClassName", jobBeanClass.getName());
-		tuple.set("jobBeanName", jobBeanName);
-		multicastChannelGroup.unicast(tuple);
+		String sending = jobBeanClass.getName().concat("#").concat(jobBeanName);
+		multicastGroup.unicast("scheduler", sending);
 	}
 
 	public boolean isRunning() {

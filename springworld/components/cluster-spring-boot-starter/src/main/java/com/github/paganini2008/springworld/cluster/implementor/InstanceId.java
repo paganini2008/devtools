@@ -1,5 +1,7 @@
 package com.github.paganini2008.springworld.cluster.implementor;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -15,9 +17,11 @@ import lombok.extern.slf4j.Slf4j;
 public final class InstanceId {
 
 	private final InstanceIdGenerator idGenerator;
+	private final AtomicBoolean master;
 
 	public InstanceId(InstanceIdGenerator idGenerator) {
 		this.idGenerator = idGenerator;
+		this.master = new AtomicBoolean(false);
 	}
 
 	private String id;
@@ -32,6 +36,14 @@ public final class InstanceId {
 			}
 		}
 		return id;
+	}
+
+	public boolean isMaster() {
+		return master.get();
+	}
+
+	public void setMaster(boolean master) {
+		this.master.set(master);
 	}
 
 }

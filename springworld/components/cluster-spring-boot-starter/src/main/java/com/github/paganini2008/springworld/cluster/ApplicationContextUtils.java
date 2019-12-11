@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 
 import com.github.paganini2008.devtools.Assert;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 
  * ApplicationContextUtils
@@ -23,6 +25,7 @@ import com.github.paganini2008.devtools.Assert;
  */
 @SuppressWarnings("unchecked")
 @Component
+@Slf4j
 public class ApplicationContextUtils implements ApplicationContextAware {
 
 	private static final SpringContextHolder contextHolder = new SpringContextHolder();
@@ -71,7 +74,7 @@ public class ApplicationContextUtils implements ApplicationContextAware {
 	public static <T> Map<String, T> getBeansOfType(Class<T> requiredType) {
 		try {
 			return getApplicationContext().getBeansOfType(requiredType);
-		} catch (BeansException e) {
+		} catch (RuntimeException e) {
 			return new HashMap<String, T>();
 		}
 	}
@@ -81,11 +84,21 @@ public class ApplicationContextUtils implements ApplicationContextAware {
 	}
 
 	public static <T> T getBean(Class<T> requiredType) {
-		return getApplicationContext().getBean(requiredType);
+		try {
+			return getApplicationContext().getBean(requiredType);
+		} catch (RuntimeException e) {
+			log.warn("Unable to get bean because " + e.getMessage());
+			return null;
+		}
 	}
 
 	public static <T> T getBean(String name, Class<T> requiredType) {
-		return getApplicationContext().getBean(name, requiredType);
+		try {
+			return getApplicationContext().getBean(name, requiredType);
+		} catch (RuntimeException e) {
+			log.warn("Unable to get bean because " + e.getMessage());
+			return null;
+		}
 	}
 
 	public static <T> T autowireBean(T object) {

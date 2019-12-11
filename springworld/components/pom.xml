@@ -19,6 +19,7 @@
 		<module>config-spring-boot-starter</module>
 		<module>authorization-spring-boot-starter</module>
 		<module>crontab-spring-boot-starter</module>
+		<module>redisplus-spring-boot-starter</module>
 		<module>cluster-spring-boot-starter</module>
 		<module>socketbird-spring-boot-starter</module>
 		<module>scheduler-spring-boot-starter</module>

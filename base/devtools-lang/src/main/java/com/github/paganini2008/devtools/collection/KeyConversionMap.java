@@ -23,13 +23,7 @@ public abstract class KeyConversionMap<T, K, V> extends AbstractMap<K, V> implem
 	private final Map<T, K> keys = new HashMap<T, K>();
 
 	protected KeyConversionMap(Map<K, V> delegate) {
-		if (delegate == null) {
-			delegate = new HashMap<K, V>();
-		}
 		this.delegate = delegate;
-		for (K key : delegate.keySet()) {
-			keys.put(convertKey(key), key);
-		}
 	}
 
 	public boolean containsKey(Object key) {

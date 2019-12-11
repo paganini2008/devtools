@@ -3,6 +3,7 @@ package com.github.paganini2008.springworld.cluster.implementor;
 /**
  * 
  * InstanceIdGenerator
+ * 
  * @author Fred Feng
  * @created 2019-10
  * @revised 2019-10
@@ -11,5 +12,5 @@ package com.github.paganini2008.springworld.cluster.implementor;
 public interface InstanceIdGenerator {
 
 	String generateInstanceId();
-	
+
 }

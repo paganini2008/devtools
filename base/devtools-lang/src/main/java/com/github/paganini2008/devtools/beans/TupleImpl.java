@@ -23,8 +23,8 @@ public class TupleImpl extends KeyConversionMap<String, String, Object> implemen
 
 	private static final long serialVersionUID = 507463156717310533L;
 
-	public TupleImpl(Map<String, Object> kwargs, CaseFormat format) {
-		super(kwargs);
+	public TupleImpl(CaseFormat format) {
+		super(new LinkedHashMap<String, Object>());
 		this.caseFormat = format;
 	}
 

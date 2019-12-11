@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import com.github.paganini2008.devtools.ArrayUtils;
 import com.github.paganini2008.devtools.Assert;
@@ -22,13 +24,12 @@ import com.github.paganini2008.devtools.converter.ConvertUtils;
  * MapUtils
  * 
  * @author Fred Feng
+ * @created 2011-05
+ * @revised 2019-01
  * @version 1.0
  */
 @SuppressWarnings("all")
-public class MapUtils {
-
-	private MapUtils() {
-	}
+public abstract class MapUtils {
 
 	public static boolean isMap(Object obj) {
 		return obj == null ? false : obj instanceof Map;
@@ -62,6 +63,24 @@ public class MapUtils {
 			return value;
 		}
 		return defaultValue;
+	}
+
+	public static <K, V> V get(Map<K, V> map, K key, Supplier<V> supplier) {
+		V value = map.get(key);
+		if (value == null) {
+			map.putIfAbsent(key, supplier.get());
+			value = map.get(key);
+		}
+		return value;
+	}
+
+	public static <K, V> V get(Map<K, V> map, K key, Function<K, V> function) {
+		V value = map.get(key);
+		if (value == null) {
+			map.putIfAbsent(key, function.apply(key));
+			value = map.get(key);
+		}
+		return value;
 	}
 
 	public static <E> List<E> toList(Map<E, E> map) {

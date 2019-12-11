@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.paganini2008.springworld.cluster.implementor.ContextClusterMulticastChannelGroup;
+import com.github.paganini2008.springworld.cluster.implementor.ContextMulticastGroup;
 
 /**
  * 
@@ -25,23 +25,29 @@ import com.github.paganini2008.springworld.cluster.implementor.ContextClusterMul
 public class MulticastMessageDelivery {
 
 	@Autowired
-	private ContextClusterMulticastChannelGroup channelGroup;
+	private ContextMulticastGroup multicastGroup;
+
+	@GetMapping("/info")
+	public Map<String, Object> info() {
+		String content = multicastGroup.getClusterInfo();
+		return resultMap(content);
+	}
 
 	@GetMapping("/multicast")
 	public Map<String, Object> multicast(@RequestParam("c") String content) {
-		channelGroup.multicast(content);
+		multicastGroup.multicast(content);
 		return resultMap(content);
 	}
 
 	@GetMapping("/unicast")
 	public Map<String, Object> unicast(@RequestParam("c") String content) {
-		channelGroup.unicast(content);
+		multicastGroup.unicast(content);
 		return resultMap(content);
 	}
-	
+
 	private Map<String, Object> resultMap(String content) {
 		Map<String, Object> data = new HashMap<String, Object>();
-		data.put("content", content);
+		data.put("data", content);
 		data.put("success", true);
 		return data;
 	}

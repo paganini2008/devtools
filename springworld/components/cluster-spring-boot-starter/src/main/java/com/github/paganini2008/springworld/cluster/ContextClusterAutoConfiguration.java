@@ -3,8 +3,8 @@ package com.github.paganini2008.springworld.cluster;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import com.github.paganini2008.springworld.cluster.implementor.ContextClusterMasterSlavesConfiguration;
-import com.github.paganini2008.springworld.cluster.implementor.ContextClusterMulticastConfiguration;
+import com.github.paganini2008.springworld.cluster.implementor.ContextClusterConfig;
+import com.github.paganini2008.springworld.cluster.implementor.ContextMulticastConfig;
 
 /**
  * 
@@ -16,7 +16,7 @@ import com.github.paganini2008.springworld.cluster.implementor.ContextClusterMul
  * @version 1.0
  */
 @Configuration
-@Import({ ContextClusterMasterSlavesConfiguration.class, ContextClusterMulticastConfiguration.class, MulticastMessageDelivery.class,
+@Import({ ContextClusterConfig.class, ContextMulticastConfig.class, MulticastMessageDelivery.class,
 		ApplicationContextUtils.class })
 public class ContextClusterAutoConfiguration {
 }
