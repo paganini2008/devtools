@@ -81,7 +81,7 @@ public class ContextClusterConfig {
 		return jedisPoolConfig;
 	}
 
-	@Bean(name = "masterSlavesHeartbeatTask", destroyMethod = "stop")
+	@Bean(name = "clusterHeartbeatTask", destroyMethod = "stop")
 	public ContextClusterHeartbeatTask heartbeatTask() {
 		return new ContextClusterHeartbeatTask();
 	}
