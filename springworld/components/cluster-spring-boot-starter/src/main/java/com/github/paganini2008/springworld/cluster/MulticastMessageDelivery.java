@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +23,7 @@ import com.github.paganini2008.springworld.cluster.implementor.ContextMulticastG
  */
 @RequestMapping("/app/cluster")
 @RestController
+@ConditionalOnProperty(value = "spring.application.cluster.multicast.enabled", havingValue = "true")
 public class MulticastMessageDelivery {
 
 	@Autowired

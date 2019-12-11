@@ -19,7 +19,7 @@ import com.github.paganini2008.springworld.redisplus.RedisMessageHandler;
  */
 @Order(200)
 @Configuration
-@ConditionalOnProperty(value = "spring.cluster.mode.multicast.enabled", havingValue = "true")
+@ConditionalOnProperty(value = "spring.application.cluster.multicast.enabled", havingValue = "true")
 public class ContextMulticastConfig {
 
 	@Bean
@@ -31,12 +31,12 @@ public class ContextMulticastConfig {
 	public RedisMessageHandler standbyEventProcessor() {
 		return new StandbyEventProcessor();
 	}
-	
+
 	@Bean
 	public RedisMessageHandler breakdownEventProcessor() {
 		return new BreakdownEventProcessor();
 	}
-	
+
 	@Bean
 	public RedisMessageHandler multicastEventProcessor() {
 		return new MulticastEventProcessor();
@@ -56,6 +56,11 @@ public class ContextMulticastConfig {
 	@Bean(name = "multicastHeartbeatThread", initMethod = "start", destroyMethod = "stop")
 	public ContextMulticastHeartbeatThread heartbeatThread() {
 		return new ContextMulticastHeartbeatThread();
+	}
+	
+	@Bean
+	public ContextMulticastEventListener multicastEventListener() {
+		return new ContextMulticastEventListener();
 	}
 
 	@Bean

@@ -30,7 +30,7 @@ import redis.clients.jedis.JedisPoolConfig;
 @Setter
 @Order(100)
 @Configuration
-@ConditionalOnProperty(value = "spring.application.cluster.mode.master-slaves.enabled", havingValue = "true")
+@ConditionalOnProperty(value = "spring.application.cluster.enabled", havingValue = "true", matchIfMissing = true)
 @ConfigurationProperties(prefix = "spring.redis")
 public class ContextClusterConfig {
 
@@ -82,7 +82,7 @@ public class ContextClusterConfig {
 	}
 
 	@Bean(name = "clusterHeartbeatThread", destroyMethod = "stop")
-	public ContextClusterHeartbeatThread clusterHeartbeatThread() {
+	public ContextClusterHeartbeatThread heartbeatThread() {
 		return new ContextClusterHeartbeatThread();
 	}
 

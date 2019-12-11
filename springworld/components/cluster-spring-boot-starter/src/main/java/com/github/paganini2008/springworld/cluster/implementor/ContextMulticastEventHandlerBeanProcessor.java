@@ -3,6 +3,7 @@ package com.github.paganini2008.springworld.cluster.implementor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  */
 @Component
+@ConditionalOnProperty(value = "spring.application.cluster.multicast.enabled", havingValue = "true")
 public class ContextMulticastEventHandlerBeanProcessor implements BeanPostProcessor {
 
 	@Autowired

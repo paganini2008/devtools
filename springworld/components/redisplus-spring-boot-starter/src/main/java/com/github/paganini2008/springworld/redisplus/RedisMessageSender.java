@@ -55,11 +55,11 @@ public class RedisMessageSender {
 		redisTemplate.opsForValue().set(key, jsonResult);
 	}
 
-	public void subscribeChannel(String name, RedisMessageHandler messageListener) {
-		if (messageListener.isEphemeral()) {
-			redisEphemeralMessageListener.addHandler(name, messageListener);
+	public void subscribeChannel(String name, RedisMessageHandler messageHandler) {
+		if (messageHandler.isEphemeral()) {
+			redisEphemeralMessageListener.addHandler(name, messageHandler);
 		} else {
-			redisMessageListener.addHandler(name, messageListener);
+			redisMessageListener.addHandler(name, messageHandler);
 		}
 	}
 
