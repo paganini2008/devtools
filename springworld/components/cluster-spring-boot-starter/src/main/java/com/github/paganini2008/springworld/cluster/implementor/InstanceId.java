@@ -46,4 +46,8 @@ public final class InstanceId {
 		this.master.set(master);
 	}
 
+	public String toString() {
+		return "InstanceId: " + get() + ", Master: " + isMaster();
+	}
+
 }

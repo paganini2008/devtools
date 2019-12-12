@@ -33,9 +33,6 @@ public class ContextMulticastGroup {
 	@Autowired
 	private LoadBalance loadBalance;
 
-	@Autowired
-	private InstanceId instanceId;
-
 	public void registerChannel(String channel, int weight) {
 		Assert.hasNoText("Channel is required.");
 		for (int i = 0; i < weight; i++) {
@@ -75,16 +72,6 @@ public class ContextMulticastGroup {
 		for (String channel : new HashSet<String>(channels)) {
 			messageSender.sendMessage(channel, topic + "#" + message);
 		}
-	}
-
-	public String getClusterInfo() {
-		final String newLine = System.getProperty("line.separator");
-		StringBuilder str = new StringBuilder();
-		for (String channel : new HashSet<String>(channels)) {
-			str.append(applicationName).append("/").append(channel).append("/").append(instanceId.isMaster());
-			str.append(newLine);
-		}
-		return str.toString();
 	}
 
 }

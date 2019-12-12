@@ -45,7 +45,7 @@ public class QuartzJobManager implements JobManager {
 	@Value("${spring.quartz.job.trigger.groupName:defaultTriggerGroup}")
 	private String defaultTriggerGroupName;
 
-	@Value("${spring.task-scheduler.job.loadbalanced:false}")
+	@Value("${spring.task-scheduler.loadbalance.enabled:false}")
 	private boolean loadbalanced;
 
 	public Scheduler getScheduler() {

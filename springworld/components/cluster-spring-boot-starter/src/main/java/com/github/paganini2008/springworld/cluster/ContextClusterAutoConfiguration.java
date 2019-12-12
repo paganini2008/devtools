@@ -18,6 +18,6 @@ import com.github.paganini2008.springworld.cluster.implementor.ContextMulticastE
  */
 @Configuration
 @Import({ ContextClusterConfig.class, ContextMulticastConfig.class, ContextMulticastEventHandlerBeanProcessor.class,
-		MulticastMessageDelivery.class, ApplicationContextUtils.class })
+		ContextClusterController.class, ContextMulticastController.class, ApplicationContextUtils.class })
 public class ContextClusterAutoConfiguration {
 }

@@ -19,9 +19,9 @@ import com.github.paganini2008.springworld.cluster.implementor.ContextClusterCon
  * @version 1.0
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.cluster.scheduler", havingValue = "crontab", matchIfMissing = true)
+@ConditionalOnProperty(name = "spring.task-scheduler.engine", havingValue = "crontab")
 @ConditionalOnBean(ContextClusterConfig.class)
-@Import({ JobBeanAware.class, TaskExecutorAware.class, HealthCheckJob.class })
+@Import({ JobBeanPostProcessor.class, JobServerStandbyAware.class, MemoryUsageCheckJob.class })
 public class CrontabAutoConfiguration {
 
 	@Bean

@@ -14,26 +14,20 @@ import com.github.paganini2008.springworld.cluster.implementor.ContextMulticastG
 
 /**
  * 
- * MulticastMessageDelivery
+ * ContextMulticastController
  * 
  * @author Fred Feng
  * @created 2019-10
  * @revised 2019-10
  * @version 1.0
  */
-@RequestMapping("/app/cluster")
+@RequestMapping("/application/cluster")
 @RestController
 @ConditionalOnProperty(value = "spring.application.cluster.multicast.enabled", havingValue = "true")
-public class MulticastMessageDelivery {
+public class ContextMulticastController {
 
 	@Autowired
 	private ContextMulticastGroup multicastGroup;
-
-	@GetMapping("/info")
-	public Map<String, Object> info() {
-		String content = multicastGroup.getClusterInfo();
-		return resultMap(content);
-	}
 
 	@GetMapping("/multicast")
 	public Map<String, Object> multicast(@RequestParam("c") String content) {

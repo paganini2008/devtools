@@ -39,7 +39,7 @@ public class LoadBalancedJobBeanProxy implements Runnable, JobRunningControl {
 			return;
 		}
 		String sending = jobBeanClass.getName().concat("#").concat(jobBeanName);
-		multicastGroup.unicast("scheduler", sending);
+		multicastGroup.unicast("loadbalance", sending);
 	}
 
 	public boolean isRunning() {

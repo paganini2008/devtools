@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * 
- * JobBeanAware
+ * JobBeanPostProcessor
  *
  * @author Fred Feng
  * @created 2019-08
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  */
 @Component
-public class JobBeanAware implements BeanPostProcessor {
+public class JobBeanPostProcessor implements BeanPostProcessor {
 
 	@Autowired
 	private JobManager jobManager;

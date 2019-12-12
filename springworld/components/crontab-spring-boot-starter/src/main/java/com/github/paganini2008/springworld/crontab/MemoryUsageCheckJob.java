@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
- * HealthCheckJob
+ * MemoryUsageCheckJob
  *
  * @author Fred Feng
  * @created 2019-08
@@ -21,9 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class HealthCheckJob implements Job {
+public class MemoryUsageCheckJob implements Job {
 
-	private static final String NAME = "HealthCheck";
+	private static final String NAME = "MemoryUsageCheck";
 
 	@Autowired
 	private JobManager jobManager;

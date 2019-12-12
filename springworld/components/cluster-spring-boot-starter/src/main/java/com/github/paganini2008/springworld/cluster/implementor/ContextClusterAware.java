@@ -37,7 +37,7 @@ public class ContextClusterAware implements ApplicationListener<ContextRefreshed
 	private StringRedisTemplate redisTemplate;
 
 	@Autowired
-	private ContextClusterHeartbeatThread heartbeatTask;
+	private ContextClusterHeartbeatThread heartbeatThread;
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -46,7 +46,7 @@ public class ContextClusterAware implements ApplicationListener<ContextRefreshed
 		redisTemplate.opsForList().leftPush(key, instanceId.get());
 		if (instanceId.get().equals(redisTemplate.opsForList().index(key, -1))) {
 			instanceId.setMaster(true);
-			heartbeatTask.start();
+			heartbeatThread.start();
 			context.publishEvent(new ContextMasterStandbyEvent(context));
 			log.info("Master of context cluster '{}' is you. You can also implement ApplicationListener to listen the event type {}",
 					applicationName, ContextMasterStandbyEvent.class.getName());

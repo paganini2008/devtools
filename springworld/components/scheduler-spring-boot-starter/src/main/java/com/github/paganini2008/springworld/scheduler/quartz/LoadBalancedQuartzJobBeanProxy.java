@@ -28,7 +28,7 @@ public class LoadBalancedQuartzJobBeanProxy implements Job {
 		String jobBeanName = (String) dataMap.get("jobBeanName");
 		String jobBeanClassName = (String) dataMap.get("jobBeanClassName");
 		String message = jobBeanClassName.concat("#").concat(jobBeanName);
-		multicastGroup.unicast("scheduler", message);
+		multicastGroup.unicast("loadbalance", message);
 	}
 
 }

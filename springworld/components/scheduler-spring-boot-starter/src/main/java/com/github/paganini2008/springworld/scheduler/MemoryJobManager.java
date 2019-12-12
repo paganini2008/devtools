@@ -35,7 +35,7 @@ public class MemoryJobManager implements JobManager {
 	@Value("${spring.task-scheduler.failedjob.retries:0}")
 	private int retries;
 
-	@Value("${spring.task-scheduler.job.loadbalanced:false}")
+	@Value("${spring.task-scheduler.loadbalance.enabled:false}")
 	private boolean loadbalanced;
 
 	@Override

@@ -32,8 +32,8 @@ import lombok.extern.slf4j.Slf4j;
  * @version 1.0
  */
 @Slf4j
-@ConditionalOnProperty(prefix = "spring.task-scheduler", name = "job.loadbalanced", havingValue = "true")
-@Component("scheduler")
+@ConditionalOnProperty(prefix = "spring.task-scheduler", name = "loadbalance.enabled", havingValue = "true")
+@Component
 public class LoadBalancedJobBeanProcessor implements ContextMulticastEventHandler {
 
 	private static final Map<String, Type> jobClassCache = Collections.synchronizedMap(new HashMap<String, Type>());
@@ -168,6 +168,11 @@ public class LoadBalancedJobBeanProcessor implements ContextMulticastEventHandle
 			}
 		}
 		log.trace("Finish job: " + jobBean.getClass().getName());
+	}
+
+	@Override
+	public String getTopic() {
+		return "loadbalance";
 	}
 
 }
