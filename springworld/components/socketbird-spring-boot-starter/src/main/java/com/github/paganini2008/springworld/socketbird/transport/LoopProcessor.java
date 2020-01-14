@@ -28,7 +28,7 @@ public class LoopProcessor implements Runnable {
 	@Autowired
 	private Store store;
 
-	@Value("${socketbird.store.collection.name}")
+	@Value("${socketbird.store.collectionName}")
 	private String collection;
 
 	private final List<Handler> handlers = new CopyOnWriteArrayList<Handler>();

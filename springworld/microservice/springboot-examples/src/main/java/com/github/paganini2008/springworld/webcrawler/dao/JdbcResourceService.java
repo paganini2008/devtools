@@ -1,5 +1,7 @@
 package com.github.paganini2008.springworld.webcrawler.dao;
 
+import java.util.UUID;
+
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,8 @@ import org.springframework.stereotype.Component;
 
 import com.github.paganini2008.springworld.webcrawler.utils.Resource;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 
  * JdbcResourceService
@@ -17,12 +21,12 @@ import com.github.paganini2008.springworld.webcrawler.utils.Resource;
  * @author Fred Feng
  * @created 2019-10
  * @revised 2019-10
- * @version 1.0
  */
+@Slf4j
 @Component
 public class JdbcResourceService extends NamedParameterJdbcDaoSupport implements ResourceService {
 
-	private static final String SQL_INSERT = "insert into crawler_resource (title,content,path,create_date) values (?,?,?,?)";
+	private static final String SQL_INSERTION = "insert into crawler_resources (id,title,html,url,create_date,version) values (:id,:title,:html,:url,:createDate,:version)";
 
 	@Autowired
 	public void setSuperDataSource(final DataSource dataSource) {
@@ -30,7 +34,13 @@ public class JdbcResourceService extends NamedParameterJdbcDaoSupport implements
 	}
 
 	public int saveResource(Resource resource) {
+		resource.setId(UUID.randomUUID().toString().replace("-", ""));
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(resource);
-		return getNamedParameterJdbcTemplate().update(SQL_INSERT, paramSource);
+		try {
+			return getNamedParameterJdbcTemplate().update(SQL_INSERTION, paramSource);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			return 0;
+		}
 	}
 }

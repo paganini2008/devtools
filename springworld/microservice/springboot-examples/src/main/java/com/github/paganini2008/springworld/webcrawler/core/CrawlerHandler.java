@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.webcrawler.controller;
+package com.github.paganini2008.springworld.webcrawler.core;
 
 import java.util.Date;
 
@@ -11,16 +11,16 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.PathMatcher;
-import org.springframework.web.client.RestTemplate;
 
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.springworld.socketbird.Tuple;
-import com.github.paganini2008.springworld.socketbird.TupleImpl;
+import com.github.paganini2008.springworld.socketbird.transport.Handler;
 import com.github.paganini2008.springworld.socketbird.transport.NioClient;
 import com.github.paganini2008.springworld.socketbird.utils.Partitioner;
 import com.github.paganini2008.springworld.webcrawler.config.RedisBloomFilter;
 import com.github.paganini2008.springworld.webcrawler.dao.JdbcResourceService;
+import com.github.paganini2008.springworld.webcrawler.utils.PageSource;
 import com.github.paganini2008.springworld.webcrawler.utils.Resource;
 
 import lombok.extern.slf4j.Slf4j;
@@ -36,13 +36,13 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
-public class CrawlerHandler {
+public class CrawlerHandler implements Handler {
 
 	@Autowired
 	private RedisBloomFilter bloomFilter;
 
 	@Autowired
-	private RestTemplate restTemplate;
+	private PageSource pageSource;
 
 	@Autowired
 	private JdbcResourceService resourceService;
@@ -57,34 +57,41 @@ public class CrawlerHandler {
 	@Autowired
 	private PathMatcher pathMather;
 
-	@Value("${webcrawler.crawl.depth:-1}")
+	@Value("${webcrawler.crawler.depth:-1}")
 	private int depth;
 
 	public void onData(Tuple tuple) {
-		log.info("Handle: " + tuple.toString());
 		final String refer = (String) tuple.getField("refer");
 		final String path = (String) tuple.getField("path");
-		if (bloomFilter.mightContain(path)) {
+		final int version = (Integer) tuple.getField("version");
+
+		String fullContent = refer + "$" + path + "$" + version;
+		if (bloomFilter.mightContain(fullContent)) {
+			log.trace("Path '{}/{}' has saved.", refer, path);
 			return;
+		} else {
+			bloomFilter.put(fullContent);
+			log.info("Handle: " + tuple.toString());
 		}
 		String html = null;
 		try {
-			html = restTemplate.getForObject(path, String.class);
+			html = pageSource.getHtml(path);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
 		if (StringUtils.isBlank(html)) {
 			return;
 		}
+
 		Document dom = Jsoup.parse(html);
-		String title = dom.title();
-		String body = dom.body().text();
 		Resource resource = new Resource();
-		resource.setTitle(title);
-		resource.setContent(body);
-		resource.setPath(path);
+		resource.setTitle(dom.title());
+		resource.setHtml(dom.body().html());
+		resource.setUrl(path);
 		resource.setCreateDate(new Date());
+		resource.setVersion(version);
 		resourceService.saveResource(resource);
+		log.trace("Save: " + resource);
 
 		Elements elements = dom.body().select("a");
 		if (CollectionUtils.isNotEmpty(elements)) {
@@ -92,7 +99,7 @@ public class CrawlerHandler {
 			for (Element element : elements) {
 				href = element.absUrl("href");
 				if (StringUtils.isNotBlank(href) && acceptedPath(refer, href)) {
-					sendRecursively(refer, href);
+					sendRecursively(refer, href, version);
 				}
 			}
 		}
@@ -100,8 +107,14 @@ public class CrawlerHandler {
 	}
 
 	private boolean acceptedPath(String refer, String path) {
-		if (!path.startsWith(refer)) {
-			return false;
+		if (refer.contains("*")) {
+			if (!pathMather.match(refer, path)) {
+				return false;
+			}
+		} else {
+			if (!path.startsWith(refer)) {
+				return false;
+			}
 		}
 		if (!testDepth(refer, path)) {
 			return false;
@@ -126,11 +139,12 @@ public class CrawlerHandler {
 		return n <= depth;
 	}
 
-	private void sendRecursively(String refer, String href) {
-//		Tuple tuple = new TupleImpl();
-//		tuple.setField("refer", refer);
-//		tuple.setField("path", href);
-//		nioClient.send(tuple, partitioner);
+	private void sendRecursively(String refer, String href, int version) {
+		Tuple tuple = Tuple.newTuple();
+		tuple.setField("refer", refer);
+		tuple.setField("path", href);
+		tuple.setField("version", version);
+		nioClient.send(tuple, partitioner);
 	}
 
 }

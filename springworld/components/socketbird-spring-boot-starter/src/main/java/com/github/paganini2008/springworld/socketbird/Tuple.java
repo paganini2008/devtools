@@ -23,6 +23,10 @@ public interface Tuple {
 	void fill(Object object);
 
 	Map<String, Object> toMap();
+	
+	public static Tuple newTuple() {
+		return new TupleImpl();
+	}
 
 	public static Tuple createBy(String content) {
 		Map<String, Object> kwargs = new HashMap<String, Object>();

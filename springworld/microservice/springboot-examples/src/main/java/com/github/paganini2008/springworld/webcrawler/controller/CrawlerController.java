@@ -32,12 +32,14 @@ public class CrawlerController {
 	private Partitioner partitioner;
 
 	@GetMapping("/crawler/submit")
-	public RestResult submit(@RequestParam("url") String url) {
+	public RestResult submit(@RequestParam("url") String url,
+			@RequestParam(name = "version", required = false, defaultValue = "1") int version) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put("refer", url);
 		data.put("path", url);
+		data.put("version", version);
 		nioClient.send(Tuple.wrap(data), partitioner);
-		return RestResult.success("Submit url ok", null);
+		return RestResult.success("Submit OK.", null);
 	}
 
 }

@@ -25,7 +25,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter{
 	@Autowired
 	private Store store;
 
-	@Value("${socketbird.store.collection.name}")
+	@Value("${socketbird.store.collectionName}")
 	private String collection;
 	
 	@Autowired

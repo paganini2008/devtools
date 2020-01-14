@@ -43,8 +43,7 @@ public class RedisConfig {
 	private String host;
 	private String password;
 	private int port;
-	private int dbIndex;
-	private String bloomFilterKey;
+	private int dbIndex = 0;
 
 	@Bean
 	public RedisConnectionFactory redisConnectionFactory() {
@@ -103,10 +102,5 @@ public class RedisConfig {
 		redisTemplate.setConnectionFactory(redisConnectionFactory);
 		redisTemplate.afterPropertiesSet();
 		return redisTemplate;
-	}
-
-	@Bean
-	public RedisBloomFilter redisBloomFilter(StringRedisTemplate redisTemplate) {
-		return new RedisBloomFilter(bloomFilterKey, 100000000, 0.03d, redisTemplate);
 	}
 }

@@ -40,6 +40,7 @@ public class TipProperties extends RefreshingProperties {
 				Tuple t = iterator.next();
 				p.setProperty((String) t.get("code"), (String) t.get("msg"));
 			}
+		} catch (Exception ignored) {
 		} finally {
 			DBUtils.closeQuietly(connection);
 		}

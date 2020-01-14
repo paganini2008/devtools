@@ -4,7 +4,6 @@ import java.util.Date;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 /**
  * 
@@ -17,12 +16,17 @@ import lombok.ToString;
  */
 @Getter
 @Setter
-@ToString
 public class Resource {
 
+	private String id;
 	private String title;
-	private String content;
-	private String path;
+	private String html;
+	private String url;
 	private Date createDate;
+	private Integer version;
+
+	public String toString() {
+		return "[Resource] title: " + title + ", url: " + url + ", version: " + version;
+	}
 
 }
