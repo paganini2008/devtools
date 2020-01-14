@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.reflection.MethodUtils;
 import com.github.paganini2008.springworld.cluster.ApplicationContextUtils;
-import com.github.paganini2008.springworld.cluster.implementor.ContextMulticastEventHandler;
+import com.github.paganini2008.springworld.cluster.multicast.ContextMulticastEventHandler;
 import com.github.paganini2008.springworld.scheduler.JobAnnotations.Executable;
 import com.github.paganini2008.springworld.scheduler.JobAnnotations.OnEnd;
 import com.github.paganini2008.springworld.scheduler.JobAnnotations.OnError;

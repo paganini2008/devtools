@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.cluster.implementor;
+package com.github.paganini2008.springworld.cluster.multicast;
 
 import java.util.List;
 

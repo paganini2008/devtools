@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.cluster.implementor;
+package com.github.paganini2008.springworld.cluster;
 
 import java.time.Duration;
 
@@ -49,7 +49,6 @@ public class ContextClusterConfig {
 	}
 
 	@Bean
-	@ConditionalOnMissingBean(InstanceId.class)
 	public InstanceId instanceId() {
 		return new InstanceId(instanceIdGenerator());
 	}

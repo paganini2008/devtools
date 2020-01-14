@@ -4,7 +4,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.github.paganini2008.springworld.cluster.implementor.ContextMulticastGroup;
+import com.github.paganini2008.springworld.cluster.multicast.ContextMulticastGroup;
 
 import lombok.extern.slf4j.Slf4j;
 

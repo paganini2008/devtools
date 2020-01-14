@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
 
-import com.github.paganini2008.springworld.cluster.implementor.ContextMulticastEventHandler;
+import com.github.paganini2008.springworld.cluster.multicast.ContextMulticastEventHandler;
 import com.github.paganini2008.springworld.socketbird.store.MemoryStoreFactory;
 import com.github.paganini2008.springworld.socketbird.store.Store;
 import com.github.paganini2008.springworld.socketbird.store.StoreFactory;

@@ -1,9 +1,10 @@
-package com.github.paganini2008.springworld.cluster.implementor;
+package com.github.paganini2008.springworld.cluster.multicast;
 
-import static com.github.paganini2008.springworld.cluster.implementor.ContextMulticastEventNames.STANDBY;
+import static com.github.paganini2008.springworld.cluster.multicast.ContextMulticastEventNames.STANDBY;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.github.paganini2008.springworld.cluster.InstanceId;
 import com.github.paganini2008.springworld.redisplus.RedisMessageHandler;
 import com.github.paganini2008.springworld.redisplus.RedisMessageSender;
 
@@ -32,10 +33,12 @@ public class StandbyEventProcessor implements RedisMessageHandler {
 
 	@Override
 	public void onMessage(Object message) {
-		final String thatId = (String) message;
+		String[] args = ((String) message).split(":", 2);
+		final String thatId = args[0];
+		final int weight = Integer.parseInt(args[1]);
 		if (!multicastGroup.hasRegistered(thatId)) {
-			multicastGroup.registerChannel(thatId, 1);
-			messageSender.sendMessage(STANDBY, instanceId.get());
+			multicastGroup.registerChannel(thatId, weight);
+			messageSender.sendMessage(STANDBY, instanceId.get() + ":" + instanceId.getWeight());
 
 			multicastEventListener.fireOnJoin(thatId);
 		}

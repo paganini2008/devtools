@@ -14,7 +14,7 @@ import com.github.paganini2008.devtools.date.DateUtils;
 public class Example {
 
 	public static void main(String[] args) {
-		Day every = CronBuilder.everyYear().everyMonth(6, 11, 1).everyDay();
+		OneHour every = CronBuilder.thisYear().everyMonth(6, 8, 1).everyDay().pm();
 		int i = 1;
 		while (every.hasNext()) {
 			String str = DateUtils.format(every.next().getTime());

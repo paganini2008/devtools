@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.cluster.implementor;
+package com.github.paganini2008.springworld.cluster.multicast;
 
 import lombok.extern.slf4j.Slf4j;
 

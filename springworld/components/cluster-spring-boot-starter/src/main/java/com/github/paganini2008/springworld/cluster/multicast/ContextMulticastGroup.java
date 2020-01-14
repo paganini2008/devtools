@@ -1,5 +1,6 @@
-package com.github.paganini2008.springworld.cluster.implementor;
+package com.github.paganini2008.springworld.cluster.multicast;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -38,6 +39,7 @@ public class ContextMulticastGroup {
 		for (int i = 0; i < weight; i++) {
 			channels.add(channel);
 		}
+		Collections.sort(channels);
 	}
 
 	public boolean hasRegistered(String channel) {

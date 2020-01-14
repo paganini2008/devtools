@@ -6,7 +6,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.github.paganini2008.springworld.cluster.implementor.ContextMulticastGroup;
+import com.github.paganini2008.springworld.cluster.multicast.ContextMulticastGroup;
 
 /**
  * 

@@ -1,8 +1,9 @@
-package com.github.paganini2008.springworld.cluster.implementor;
+package com.github.paganini2008.springworld.cluster.multicast;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.paganini2008.devtools.StringUtils;
+import com.github.paganini2008.springworld.cluster.InstanceId;
 import com.github.paganini2008.springworld.redisplus.RedisMessageHandler;
 
 /**

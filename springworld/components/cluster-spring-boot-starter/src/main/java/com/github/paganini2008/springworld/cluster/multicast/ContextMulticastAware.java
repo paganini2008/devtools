@@ -1,9 +1,10 @@
-package com.github.paganini2008.springworld.cluster.implementor;
+package com.github.paganini2008.springworld.cluster.multicast;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
+import com.github.paganini2008.springworld.cluster.InstanceId;
 import com.github.paganini2008.springworld.redisplus.RedisMessageSender;
 
 /**
@@ -19,15 +20,13 @@ public class ContextMulticastAware implements ApplicationListener<ContextRefresh
 
 	@Autowired
 	private RedisMessageSender redisMessageSender;
-	
+
 	@Autowired
 	private InstanceId instanceId;
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
-		redisMessageSender.sendMessage(ContextMulticastEventNames.STANDBY, instanceId.get());
+		redisMessageSender.sendMessage(ContextMulticastEventNames.STANDBY, instanceId.get() + ":" + instanceId.getWeight());
 	}
-	
-	
 
 }

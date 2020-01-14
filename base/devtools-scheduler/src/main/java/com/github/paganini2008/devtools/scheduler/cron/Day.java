@@ -19,11 +19,11 @@ public interface Day extends Iterator<Day>, CronExpression {
 	int getMonth();
 
 	int getDay();
-	
+
 	int getWeekDay();
-	
+
 	int getDayOfYear();
-	
+
 	default Hour everyHour() {
 		return everyHour(1);
 	}
@@ -35,7 +35,15 @@ public interface Day extends Iterator<Day>, CronExpression {
 	default Hour everyHour(int from, int to, int interval) {
 		return everyHour(d -> from, d -> to, interval);
 	}
-	
+
+	default OneHour am() {
+		return hour(0).toHour(12);
+	}
+
+	default OneHour pm() {
+		return hour(12).toHour(23);
+	}
+
 	OneHour hour(int hour);
 
 	Hour everyHour(Function<Day, Integer> from, Function<Day, Integer> to, int interval);

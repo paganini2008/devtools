@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.cluster.implementor;
+package com.github.paganini2008.springworld.cluster;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,9 +8,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationListener;
 import org.springframework.data.redis.core.RedisKeyExpiredEvent;
 import org.springframework.data.redis.core.StringRedisTemplate;
-
-import com.github.paganini2008.springworld.cluster.ContextMasterStandbyEvent;
-import com.github.paganini2008.springworld.cluster.ContextSlaveStandbyEvent;
 
 import lombok.extern.slf4j.Slf4j;
 

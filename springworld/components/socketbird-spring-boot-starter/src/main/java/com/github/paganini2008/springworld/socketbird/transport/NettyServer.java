@@ -10,7 +10,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.net.NetUtils;
-import com.github.paganini2008.springworld.cluster.implementor.InstanceId;
+import com.github.paganini2008.springworld.cluster.InstanceId;
 import com.github.paganini2008.springworld.socketbird.Constants;
 import com.github.paganini2008.springworld.socketbird.Serializer;
 import com.github.paganini2008.springworld.socketbird.transport.NettyTransport.ByteToTupleDecorder;
