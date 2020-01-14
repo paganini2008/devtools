@@ -8,9 +8,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
 
 import com.github.paganini2008.springworld.cluster.multicast.ContextMulticastEventHandler;
-import com.github.paganini2008.springworld.socketbird.store.MemoryStoreFactory;
+import com.github.paganini2008.springworld.socketbird.store.MemoryStore;
 import com.github.paganini2008.springworld.socketbird.store.Store;
-import com.github.paganini2008.springworld.socketbird.store.StoreFactory;
 import com.github.paganini2008.springworld.socketbird.transport.ChannelContext;
 import com.github.paganini2008.springworld.socketbird.transport.ChannelStateListener;
 import com.github.paganini2008.springworld.socketbird.transport.LoggingChannelStateListener;
@@ -34,7 +33,7 @@ import com.github.paganini2008.springworld.socketbird.utils.RoundRobinPartitione
  * @version 1.0
  */
 @Order(100)
-@Import({ HandlerBeanAutoRegistryPostProcessor.class, MessageController.class })
+@Import({ HandlerBeanPostProcessor.class, MessageController.class })
 @Configuration
 public class ImportConfiguration {
 
@@ -44,15 +43,15 @@ public class ImportConfiguration {
 		return new KryoSerializer();
 	}
 
-	@Bean(initMethod = "start", destroyMethod = "stop")
+	@Bean(destroyMethod = "stop")
 	public LoopProcessor loopProcessor() {
 		return new LoopProcessor();
 	}
 
 	@ConditionalOnMissingBean(Store.class)
 	@Bean
-	public StoreFactory storeFactory() {
-		return new MemoryStoreFactory();
+	public Store store() {
+		return new MemoryStore();
 	}
 
 	@Bean
@@ -72,9 +71,9 @@ public class ImportConfiguration {
 		return new LoggingChannelStateListener();
 	}
 
-	@Bean("autobinding")
-	public ContextMulticastEventHandler multicastChannelListener() {
-		return new SocketIoMulticastChannelListener();
+	@Bean
+	public ContextMulticastEventHandler autoConnectionEventListener() {
+		return new AutoConnectionEventListener();
 	}
 
 	@Configuration

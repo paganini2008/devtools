@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
- * SocketIoMulticastChannelListener
+ * AutoConnectionEventListener
  * 
  * @author Fred Feng
  * @created 2019-10
@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
  * @version 1.0
  */
 @Slf4j
-public class SocketIoMulticastChannelListener implements ContextMulticastEventHandler {
+public class AutoConnectionEventListener implements ContextMulticastEventHandler {
 
 	@Autowired
 	private NioClient nioClient;
@@ -52,7 +52,7 @@ public class SocketIoMulticastChannelListener implements ContextMulticastEventHa
 
 	@Override
 	public void onLeave(String instanceId) {
-		log.info("{} leave the spring application cluster: {}", instanceId, applicationName);
+		log.info("{} leave the spring application cluster {}", instanceId, applicationName);
 	}
 	
 	

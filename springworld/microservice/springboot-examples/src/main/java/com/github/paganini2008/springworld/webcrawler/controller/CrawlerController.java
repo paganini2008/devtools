@@ -36,7 +36,7 @@ public class CrawlerController {
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put("refer", url);
 		data.put("path", url);
-		nioClient.send(Tuple.createBy(data), partitioner);
+		nioClient.send(Tuple.wrap(data), partitioner);
 		return RestResult.success("Submit url ok", null);
 	}
 

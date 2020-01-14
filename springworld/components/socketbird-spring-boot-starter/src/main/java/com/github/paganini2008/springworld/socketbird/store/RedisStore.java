@@ -1,7 +1,6 @@
 package com.github.paganini2008.springworld.socketbird.store;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import com.github.paganini2008.springworld.socketbird.Tuple;
@@ -17,7 +16,6 @@ import com.github.paganini2008.springworld.socketbird.Tuple;
  */
 public class RedisStore implements Store {
 
-	@Qualifier("socketbird.store.redis")
 	@Autowired
 	private RedisTemplate<String, Object> template;
 

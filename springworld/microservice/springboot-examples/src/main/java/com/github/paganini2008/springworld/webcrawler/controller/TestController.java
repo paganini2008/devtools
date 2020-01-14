@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.github.paganini2008.springworld.socketbird.Tuple;
+import com.github.paganini2008.springworld.socketbird.transport.NioClient;
+import com.github.paganini2008.springworld.socketbird.utils.Partitioner;
 import com.github.paganini2008.springworld.webcrawler.config.RedisBloomFilter;
 
 /**
@@ -25,6 +28,12 @@ public class TestController {
 	@Autowired
 	private RedisBloomFilter bloomFilter;
 
+	@Autowired
+	private NioClient nioClient;
+
+	@Autowired
+	private Partitioner partitioner;
+
 	@GetMapping("/index")
 	public Map<String, Object> echo() {
 		Map<String, Object> data = new HashMap<String, Object>();
@@ -41,6 +50,14 @@ public class TestController {
 		if (!contain) {
 			bloomFilter.put(content);
 		}
+		return result;
+	}
+
+	@GetMapping("/test/socket")
+	public Map<String, Object> testSocket(@RequestParam("q") String content) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		nioClient.send(Tuple.createBy(content), partitioner);
+		result.put("success", true);
 		return result;
 	}
 

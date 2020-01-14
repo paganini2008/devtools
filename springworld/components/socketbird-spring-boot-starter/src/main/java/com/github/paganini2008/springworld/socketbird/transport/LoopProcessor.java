@@ -73,7 +73,7 @@ public class LoopProcessor implements Runnable {
 	public void run() {
 		while (running.get()) {
 			if (store == null) {
-				continue;
+				break;
 			}
 			Tuple tuple = store.get(collection);
 			if (tuple != null) {

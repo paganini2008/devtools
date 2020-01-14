@@ -20,7 +20,8 @@ public class TupleImpl extends HashMap<String, Object> implements Tuple {
 
 	private static final long serialVersionUID = -3458553128530299260L;
 
-	public TupleImpl() {
+	TupleImpl() {
+		setField("timestamp", System.currentTimeMillis());
 	}
 
 	TupleImpl(Map<String, ?> kwargs) {

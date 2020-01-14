@@ -12,7 +12,7 @@ import com.github.paganini2008.springworld.socketbird.transport.LoopProcessor;
 
 /**
  * 
- * HandlerBeanAutoRegistryPostProcessor
+ * HandlerBeanPostProcessor
  * 
  * @author Fred Feng
  * @created 2019-10
@@ -20,7 +20,7 @@ import com.github.paganini2008.springworld.socketbird.transport.LoopProcessor;
  * @version 1.0
  */
 @Component
-public class HandlerBeanAutoRegistryPostProcessor implements BeanPostProcessor, ApplicationListener<ContextRefreshedEvent> {
+public class HandlerBeanPostProcessor implements BeanPostProcessor, ApplicationListener<ContextRefreshedEvent> {
 
 	private final Observable handlerObservable = Observable.unrepeatable();
 
@@ -38,6 +38,7 @@ public class HandlerBeanAutoRegistryPostProcessor implements BeanPostProcessor, 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		LoopProcessor loopProcessor = event.getApplicationContext().getBean(LoopProcessor.class);
+		loopProcessor.start();
 		handlerObservable.notifyObservers(loopProcessor);
 	}
 

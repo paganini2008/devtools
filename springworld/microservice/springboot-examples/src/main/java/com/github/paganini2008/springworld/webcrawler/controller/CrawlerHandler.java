@@ -17,7 +17,6 @@ import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.springworld.socketbird.Tuple;
 import com.github.paganini2008.springworld.socketbird.TupleImpl;
-import com.github.paganini2008.springworld.socketbird.transport.Handler;
 import com.github.paganini2008.springworld.socketbird.transport.NioClient;
 import com.github.paganini2008.springworld.socketbird.utils.Partitioner;
 import com.github.paganini2008.springworld.webcrawler.config.RedisBloomFilter;
@@ -37,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
-public class CrawlerHandler implements Handler {
+public class CrawlerHandler {
 
 	@Autowired
 	private RedisBloomFilter bloomFilter;
@@ -61,7 +60,6 @@ public class CrawlerHandler implements Handler {
 	@Value("${webcrawler.crawl.depth:-1}")
 	private int depth;
 
-	@Override
 	public void onData(Tuple tuple) {
 		log.info("Handle: " + tuple.toString());
 		final String refer = (String) tuple.getField("refer");
@@ -129,10 +127,10 @@ public class CrawlerHandler implements Handler {
 	}
 
 	private void sendRecursively(String refer, String href) {
-		Tuple tuple = new TupleImpl();
-		tuple.setField("refer", refer);
-		tuple.setField("path", href);
-		nioClient.send(tuple, partitioner);
+//		Tuple tuple = new TupleImpl();
+//		tuple.setField("refer", refer);
+//		tuple.setField("path", href);
+//		nioClient.send(tuple, partitioner);
 	}
 
 }
