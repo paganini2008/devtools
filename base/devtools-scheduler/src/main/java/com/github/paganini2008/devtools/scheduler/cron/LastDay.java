@@ -58,7 +58,7 @@ public class LastDay implements Day, Serializable {
 		return day.get(Calendar.DAY_OF_YEAR);
 	}
 
-	public ConcreteHour hour(int hour) {
+	public OneHour hour(int hour) {
 		return new SingleHour(CollectionUtils.getFirst(this), hour);
 	}
 

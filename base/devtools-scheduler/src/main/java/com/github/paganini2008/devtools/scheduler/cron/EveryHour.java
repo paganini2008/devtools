@@ -91,7 +91,7 @@ public class EveryHour implements Hour, Serializable {
 		return hour.getTimeInMillis();
 	}
 
-	public ConcreteMinute minute(int minute) {
+	public OneMinute minute(int minute) {
 		return new SingleMinute(CollectionUtils.getFirst(this), minute);
 	}
 

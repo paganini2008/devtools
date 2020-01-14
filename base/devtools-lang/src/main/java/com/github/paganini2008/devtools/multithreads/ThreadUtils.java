@@ -245,6 +245,10 @@ public abstract class ThreadUtils {
 		return scheduleWithFixedDelay(e, firstTime.getTime() - System.currentTimeMillis(), interval);
 	}
 
+	public static Timer scheduleWithFixedDelay(Executable e, long interval, TimeUnit timeUnit) {
+		return scheduleWithFixedDelay(e, interval, interval, timeUnit);
+	}
+
 	public static Timer scheduleWithFixedDelay(final Executable e, long delay, long interval, TimeUnit timeUnit) {
 		return scheduleWithFixedDelay(e, delay, timeUnit, interval, timeUnit);
 	}

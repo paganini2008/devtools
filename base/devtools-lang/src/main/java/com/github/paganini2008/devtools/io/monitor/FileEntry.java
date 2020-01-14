@@ -2,20 +2,20 @@ package com.github.paganini2008.devtools.io.monitor;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 文件快照信息
  * 
- * @author yan.feng
+ * FileEntry
+ * 
+ * @author Fred Feng
+ * @created 2014-07
+ * @revised 2019-12
  * @version 1.0
  */
 public class FileEntry implements Serializable {
 
 	private static final long serialVersionUID = 3996349246044345894L;
-
-	static final Map<String, FileEntry> EMPTY_ENTRIES = new HashMap<String, FileEntry>(1);
 
 	private final FileEntry parent;
 	private transient final File file;
@@ -64,8 +64,8 @@ public class FileEntry implements Serializable {
 		long otherLastModified = otherExists ? otherEntry.getLastModified() : 0;
 		long otherLength = otherDirectory ? 0 : otherEntry.getLength();
 		boolean otherHidden = otherExists ? otherEntry.isHidden() : false;
-		return (exists == otherExists) && (lastModified != otherLastModified || directory != otherDirectory
-				|| length != otherLength || hidden != otherHidden);
+		return (exists == otherExists)
+				&& (lastModified != otherLastModified || directory != otherDirectory || length != otherLength || hidden != otherHidden);
 	}
 
 	public Map<String, FileEntry> getChildEntries() {
@@ -133,8 +133,8 @@ public class FileEntry implements Serializable {
 	}
 
 	public String toString() {
-		return "[FileEntry] file=" + file + ", name=" + name + ", exists=" + exists + ", directory=" + directory
-				+ ", lastModified=" + lastModified + ", length=" + length + ", hidden=" + hidden;
+		return "[FileEntry] file=" + file + ", name=" + name + ", exists=" + exists + ", directory=" + directory + ", lastModified="
+				+ lastModified + ", length=" + length + ", hidden=" + hidden;
 	}
 
 }

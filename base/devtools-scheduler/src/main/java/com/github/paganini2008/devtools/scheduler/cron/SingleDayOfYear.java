@@ -17,7 +17,7 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * @revised 2019-07
  * @version 1.0
  */
-public class SingleDayOfYear implements ConcreteDay, Serializable {
+public class SingleDayOfYear implements OneDay, Serializable {
 
 	private static final long serialVersionUID = -8235489088108418524L;
 	private final TreeMap<Integer, Calendar> siblings;
@@ -55,7 +55,7 @@ public class SingleDayOfYear implements ConcreteDay, Serializable {
 		return day.get(Calendar.DAY_OF_YEAR);
 	}
 
-	public ConcreteHour hour(int hour) {
+	public OneHour hour(int hour) {
 		return new SingleHour(CollectionUtils.getFirst(this), hour);
 	}
 
@@ -71,7 +71,7 @@ public class SingleDayOfYear implements ConcreteDay, Serializable {
 		return day.getTimeInMillis();
 	}
 
-	public ConcreteDay andDay(int day) {
+	public OneDay andDay(int day) {
 		CalendarAssert.checkDayOfYear(year, day);
 		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.DAY_OF_YEAR, day);
 		siblings.put(day, calendar);
@@ -79,7 +79,7 @@ public class SingleDayOfYear implements ConcreteDay, Serializable {
 		return this;
 	}
 
-	public ConcreteDay andNextDays(int days) {
+	public OneDay andNextDays(int days) {
 		CalendarAssert.checkDayOfYear(year, lastDay + days);
 		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.DAY_OF_YEAR, lastDay + days);
 		int day = calendar.get(Calendar.DAY_OF_YEAR);
@@ -88,7 +88,7 @@ public class SingleDayOfYear implements ConcreteDay, Serializable {
 		return this;
 	}
 
-	public ConcreteDay toDay(int day, int interval) {
+	public OneDay toDay(int day, int interval) {
 		CalendarAssert.checkDayOfYear(year, day);
 		for (int i = lastDay + interval; i < day; i += interval) {
 			andDay(i);

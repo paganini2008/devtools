@@ -18,7 +18,7 @@ import com.github.paganini2008.devtools.date.DateUtils;
  * @created 2019-07
  * @version 1.0
  */
-public class SingleYear implements ConcreteYear, Serializable {
+public class SingleYear implements OneYear, Serializable {
 
 	private static final long serialVersionUID = -5316436238766770045L;
 	private final TreeMap<Integer, Calendar> siblings;
@@ -35,7 +35,7 @@ public class SingleYear implements ConcreteYear, Serializable {
 		this.lastYear = year;
 	}
 
-	public ConcreteYear andYear(int year) {
+	public OneYear andYear(int year) {
 		CalendarAssert.checkYear(year);
 		Calendar calendar = CalendarUtils.setField(new Date(), Calendar.YEAR, year);
 		siblings.put(year, calendar);
@@ -43,7 +43,7 @@ public class SingleYear implements ConcreteYear, Serializable {
 		return this;
 	}
 
-	public ConcreteYear andNextYears(int years) {
+	public OneYear andNextYears(int years) {
 		CalendarAssert.checkYear(lastYear + years);
 		Calendar calendar = CalendarUtils.setField(new Date(), Calendar.YEAR, lastYear + years);
 		int year = calendar.get(Calendar.YEAR);
@@ -52,7 +52,7 @@ public class SingleYear implements ConcreteYear, Serializable {
 		return this;
 	}
 
-	public ConcreteYear toYear(int year, int interval) {
+	public OneYear toYear(int year, int interval) {
 		CalendarAssert.checkYear(year);
 		for (int i = lastYear + interval; i <= year; i += interval) {
 			andYear(i);
@@ -84,15 +84,15 @@ public class SingleYear implements ConcreteYear, Serializable {
 		return new EveryMonth(CollectionUtils.getFirst(this), from, to, interval);
 	}
 
-	public ConcreteDay day(int day) {
+	public OneDay day(int day) {
 		return new SingleDayOfYear(CollectionUtils.getFirst(this), day);
 	}
 
-	public ConcreteWeek week(int week) {
+	public OneWeek week(int week) {
 		return new SingleWeekOfYear(CollectionUtils.getFirst(this), week);
 	}
 
-	public ConcreteMonth month(int month) {
+	public OneMonth month(int month) {
 		return new SingleMonth(CollectionUtils.getFirst(this), month);
 	}
 	
@@ -110,7 +110,7 @@ public class SingleYear implements ConcreteYear, Serializable {
 	}
 
 	public static void main(String[] args) {
-		ConcreteYear singleYear = new SingleYear(2019);
+		OneYear singleYear = new SingleYear(2019);
 		singleYear = singleYear.andYear(2028).andYear(2024);
 		Day day = singleYear.lastWeek().Mon().toFri();
 		while (day.hasNext()) {

@@ -27,10 +27,10 @@ public interface Tuple {
 	public static Tuple createBy(String content) {
 		Map<String, Object> kwargs = new HashMap<String, Object>();
 		kwargs.put("content", content);
-		return createBy(kwargs);
+		return wrap(kwargs);
 	}
 
-	public static Tuple createBy(Map<String, ?> kwargs) {
+	public static Tuple wrap(Map<String, ?> kwargs) {
 		return new TupleImpl(kwargs);
 	}
 

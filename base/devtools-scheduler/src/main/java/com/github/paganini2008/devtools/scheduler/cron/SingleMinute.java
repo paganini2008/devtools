@@ -17,7 +17,7 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * @created 2019-07
  * @version 1.0
  */
-public class SingleMinute implements ConcreteMinute, Serializable {
+public class SingleMinute implements OneMinute, Serializable {
 
 	private static final long serialVersionUID = 7090607807516357598L;
 	private final TreeMap<Integer, Calendar> siblings;
@@ -44,7 +44,7 @@ public class SingleMinute implements ConcreteMinute, Serializable {
 		return this;
 	}
 
-	public ConcreteMinute toMinute(int minute, int interval) {
+	public OneMinute toMinute(int minute, int interval) {
 		CalendarAssert.checkMinute(minute);
 		for (int i = lastMinute + interval; i < minute; i += interval) {
 			andMinute(i);
@@ -80,7 +80,7 @@ public class SingleMinute implements ConcreteMinute, Serializable {
 		return minute.get(Calendar.MINUTE);
 	}
 
-	public ConcreteSecond second(int second) {
+	public OneSecond second(int second) {
 		return new SingleSecond(CollectionUtils.getFirst(this), second);
 	}
 

@@ -14,9 +14,12 @@ import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.io.FileUtils;
 
 /**
+ * 
  * HttpRequestImpl
  * 
  * @author Fred Feng
+ * @created 2016-11
+ * @revised 2019-12
  * @version 1.0
  */
 public class HttpRequestImpl extends HttpBaseImpl<HttpRequest> implements HttpRequest {
@@ -25,24 +28,24 @@ public class HttpRequestImpl extends HttpBaseImpl<HttpRequest> implements HttpRe
 	private int connectTimeoutMillis;
 	private int readTimeoutMillis;
 	private boolean followRedirects;
+	private boolean doOutput;
 	private List<NameValuePair> data;
 	private boolean ignoreHttpErrors = false;
 	private boolean ignoreContentType = false;
 	private boolean validateTSLCertificates = false;
-	private boolean retryRequests = false;
+	private boolean retryRequestsIfError = false;
 	private String baseUrl;
 	private int maxBodySizeBytes;
 	private SocketAddress proxy;
 	private int maxRequests;
 	private int maxRedirects;
 
-	public HttpRequestImpl() {
-		connectTimeoutMillis = 10 * 1000;
-		readTimeoutMillis = 10 * 1000;
+	HttpRequestImpl() {
+		connectTimeoutMillis = 60 * 1000;
+		readTimeoutMillis = 60 * 1000;
 		maxBodySizeBytes = 1 * 1024 * 1024;
-		followRedirects = true;
+		followRedirects = false;
 		data = new ArrayList<NameValuePair>();
-		method = HttpMethod.GET;
 		headers.put("Accept-Encoding", "gzip");
 		maxRequests = 3;
 		maxRedirects = 10;
@@ -82,6 +85,15 @@ public class HttpRequestImpl extends HttpBaseImpl<HttpRequest> implements HttpRe
 	public HttpRequest followRedirects(boolean followRedirects) {
 		this.followRedirects = followRedirects;
 		return this;
+	}
+
+	public HttpRequest doOutput(boolean value) {
+		this.doOutput = value;
+		return this;
+	}
+
+	public boolean doOutput() {
+		return doOutput;
 	}
 
 	public int readTimeout() {
@@ -193,12 +205,12 @@ public class HttpRequestImpl extends HttpBaseImpl<HttpRequest> implements HttpRe
 		return this;
 	}
 
-	public boolean retryRequests() {
-		return retryRequests;
+	public boolean retryRequestsIfError() {
+		return retryRequestsIfError;
 	}
 
-	public HttpRequest retryRequests(boolean retryRequests) {
-		this.retryRequests = retryRequests;
+	public HttpRequest retryRequestsIfError(boolean retryRequests) {
+		this.retryRequestsIfError = retryRequests;
 		return this;
 	}
 

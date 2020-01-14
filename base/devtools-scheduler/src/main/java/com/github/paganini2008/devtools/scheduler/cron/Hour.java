@@ -30,7 +30,7 @@ public interface Hour extends Iterator<Hour>, CronExpression {
 		return everyMinute(h -> from, h -> to, interval);
 	}
 	
-	ConcreteMinute minute(int minute);
+	OneMinute minute(int minute);
 
 	Minute everyMinute(Function<Hour, Integer> from, Function<Hour, Integer> to, int interval);
 

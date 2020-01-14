@@ -2,20 +2,20 @@ package com.github.paganini2008.devtools.scheduler.cron;
 
 /**
  * 
- * ConcreteWeek
+ * OneWeek
  *
  * @author Fred Feng
  * @revised 2019-07
  * @created 2019-07
  * @version 1.0
  */
-public interface ConcreteWeek extends Week {
+public interface OneWeek extends Week {
 
-	ConcreteWeek andWeek(int week);
-	
-	default ConcreteWeek toWeek(int week) {
+	OneWeek andWeek(int week);
+
+	default OneWeek toWeek(int week) {
 		return toWeek(week, 1);
 	}
 
-	ConcreteWeek toWeek(int week, int interval);
+	OneWeek toWeek(int week, int interval);
 }

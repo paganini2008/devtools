@@ -102,7 +102,7 @@ public class EveryWeek implements Week, Serializable {
 		return week.getTimeInMillis();
 	}
 
-	public ConcreteWeekDay weekday(int day) {
+	public OneWeekDay weekday(int day) {
 		return new SingleDayOfWeek(CollectionUtils.getFirst(this), day);
 	}
 

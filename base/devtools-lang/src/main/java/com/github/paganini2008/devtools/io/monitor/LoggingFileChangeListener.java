@@ -4,14 +4,16 @@ import com.github.paganini2008.devtools.logging.Log;
 import com.github.paganini2008.devtools.logging.LogFactory;
 
 /**
- * 文件变化监听器，仅供测试
  * 
- * @author yan.feng
+ * LoggingFileChangeListener
+ * 
+ * @author Fred Feng
+ * @created 2019-12
  * @version 1.0
  */
-public class TestFileChangeListener implements FileChangeListener {
+public class LoggingFileChangeListener implements FileChangeListener {
 
-	private static final Log logger = LogFactory.getLog(TestFileChangeListener.class);
+	private static final Log logger = LogFactory.getLog(LoggingFileChangeListener.class);
 
 	public void onStart(FileWatcher fileMonitor) {
 		logger.info("onStart!");
@@ -43,8 +45,8 @@ public class TestFileChangeListener implements FileChangeListener {
 		logger.info("onFileUpdate new: " + fileEntry);
 	}
 
-	public void onStop(FileWatcher fileMonitor) {
-		logger.info("onStop!");
+	public void onEnd(FileWatcher fileMonitor) {
+		logger.info("onEnd!");
 	}
 
 }

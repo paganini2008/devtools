@@ -36,7 +36,7 @@ public interface Day extends Iterator<Day>, CronExpression {
 		return everyHour(d -> from, d -> to, interval);
 	}
 	
-	ConcreteHour hour(int hour);
+	OneHour hour(int hour);
 
 	Hour everyHour(Function<Day, Integer> from, Function<Day, Integer> to, int interval);
 

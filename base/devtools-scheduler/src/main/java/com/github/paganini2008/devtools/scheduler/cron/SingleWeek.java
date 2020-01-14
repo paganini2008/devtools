@@ -17,7 +17,7 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * @created 2019-07
  * @version 1.0
  */
-public class SingleWeek implements ConcreteWeek, Serializable {
+public class SingleWeek implements OneWeek, Serializable {
 
 	private static final long serialVersionUID = -4563991137870265612L;
 	private final TreeMap<Integer, Calendar> siblings;
@@ -44,7 +44,7 @@ public class SingleWeek implements ConcreteWeek, Serializable {
 		return this;
 	}
 
-	public ConcreteWeek toWeek(int week, int interval) {
+	public OneWeek toWeek(int week, int interval) {
 		CalendarAssert.checkWeekOfMonth(month, week);
 		for (int i = lastWeek + interval; i < week; i += interval) {
 			andWeek(i);
@@ -76,7 +76,7 @@ public class SingleWeek implements ConcreteWeek, Serializable {
 		return week.get(Calendar.WEEK_OF_YEAR);
 	}
 
-	public ConcreteWeekDay weekday(int day) {
+	public OneWeekDay weekday(int day) {
 		return new SingleDayOfWeek(CollectionUtils.getFirst(this), day);
 	}
 

@@ -17,7 +17,7 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * @created 2019-07
  * @version 1.0
  */
-public class SingleHour implements ConcreteHour , Serializable{
+public class SingleHour implements OneHour , Serializable{
 
 	private static final long serialVersionUID = 8124589572544886753L;
 	private final TreeMap<Integer, Calendar> siblings;
@@ -44,7 +44,7 @@ public class SingleHour implements ConcreteHour , Serializable{
 		return this;
 	}
 
-	public ConcreteHour toHour(int hour, int interval) {
+	public OneHour toHour(int hour, int interval) {
 		CalendarAssert.checkHourOfDay(hour);
 		for (int i = lastHour + interval; i < hour; i += interval) {
 			andHour(i);
@@ -76,7 +76,7 @@ public class SingleHour implements ConcreteHour , Serializable{
 		return hour.get(Calendar.HOUR_OF_DAY);
 	}
 
-	public ConcreteMinute minute(int minute) {
+	public OneMinute minute(int minute) {
 		return new SingleMinute(CollectionUtils.getFirst(this), minute);
 	}
 

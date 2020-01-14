@@ -17,35 +17,35 @@ public abstract class CronBuilder {
 
 	private static final int END_YEAR_OF_THE_WORLD = 9999;
 
-	public static ConcreteYear thisYear() {
+	public static OneYear thisYear() {
 		return year(DateUtils.getYear());
 	}
 
-	public static ConcreteYear year(int year) {
+	public static OneYear year(int year) {
 		return new SingleYear(year);
 	}
 
-	public static ConcreteMonth thisMonth() {
+	public static OneMonth thisMonth() {
 		return thisYear().month(DateUtils.getMonth());
 	}
 
-	public static ConcreteMonth month(int year, int month) {
+	public static OneMonth month(int year, int month) {
 		return year(year).month(month);
 	}
 
-	public static ConcreteWeek thisWeek() {
+	public static OneWeek thisWeek() {
 		return thisMonth().week(DateUtils.getWeekOfMonth());
 	}
 
-	public static ConcreteWeek week(int year, int month, int week) {
+	public static OneWeek week(int year, int month, int week) {
 		return month(year, month).week(week);
 	}
 
-	public static ConcreteDay today() {
+	public static OneDay today() {
 		return thisMonth().day(DateUtils.getDate());
 	}
 
-	public static ConcreteDay day(int year, int month, int day) {
+	public static OneDay day(int year, int month, int day) {
 		return month(year, month).day(day);
 	}
 

@@ -17,7 +17,7 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * @created 2019-07
  * @version 1.0
  */
-public class SingleDayOfWeek implements ConcreteWeekDay, Serializable {
+public class SingleDayOfWeek implements OneWeekDay, Serializable {
 
 	private static final long serialVersionUID = -5353496894925284106L;
 	private final TreeMap<Integer, Calendar> siblings;
@@ -35,7 +35,7 @@ public class SingleDayOfWeek implements ConcreteWeekDay, Serializable {
 		this.lastDay = day;
 	}
 
-	public ConcreteWeekDay andDay(int day) {
+	public OneWeekDay andDay(int day) {
 		CalendarAssert.checkDayOfWeek(day);
 		Calendar calendar = CalendarUtils.setField(week.getTime(), Calendar.DAY_OF_WEEK, day);
 		siblings.put(day, calendar);
@@ -43,7 +43,7 @@ public class SingleDayOfWeek implements ConcreteWeekDay, Serializable {
 		return this;
 	}
 
-	public ConcreteWeekDay toDay(int day, int interval) {
+	public OneWeekDay toDay(int day, int interval) {
 		CalendarAssert.checkDayOfWeek(day);
 		for (int i = lastDay + interval; i <= day; i += interval) {
 			andDay(i);
@@ -79,7 +79,7 @@ public class SingleDayOfWeek implements ConcreteWeekDay, Serializable {
 		return day.get(Calendar.DAY_OF_YEAR);
 	}
 
-	public ConcreteHour hour(int hour) {
+	public OneHour hour(int hour) {
 		return new SingleHour(CollectionUtils.getFirst(this), hour);
 	}
 

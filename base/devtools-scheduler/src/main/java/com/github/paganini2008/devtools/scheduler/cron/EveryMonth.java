@@ -90,7 +90,7 @@ public class EveryMonth implements Month, Serializable {
 		return month.getTimeInMillis();
 	}
 
-	public ConcreteDay day(int day) {
+	public OneDay day(int day) {
 		return new SingleDay(CollectionUtils.getFirst(this), day);
 	}
 
@@ -102,7 +102,7 @@ public class EveryMonth implements Month, Serializable {
 		return new EveryDay(CollectionUtils.getFirst(this), from, to, interval);
 	}
 
-	public ConcreteWeek week(int week) {
+	public OneWeek week(int week) {
 		return new SingleWeek(CollectionUtils.getFirst(this), week);
 	}
 

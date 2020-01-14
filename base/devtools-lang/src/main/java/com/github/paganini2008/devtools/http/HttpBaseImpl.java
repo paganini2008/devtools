@@ -11,9 +11,12 @@ import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.collection.CaseInsensitiveMap;
 
 /**
+ * 
  * HttpBaseImpl
  * 
  * @author Fred Feng
+ * @created 2016-11
+ * @revised 2019-12
  * @version 1.0
  */
 @SuppressWarnings("unchecked")
@@ -21,7 +24,7 @@ public abstract class HttpBaseImpl<T extends HttpBase<T>> implements HttpBase<T>
 
 	private static final long serialVersionUID = 6403400581804405562L;
 	protected URL url;
-	protected HttpMethod method;
+	protected String method;
 	protected String charset = DEFAULT_CHARSET;
 	protected Map<String, String> headers;
 	protected Map<String, String> cookies;
@@ -41,12 +44,12 @@ public abstract class HttpBaseImpl<T extends HttpBase<T>> implements HttpBase<T>
 		return (T) this;
 	}
 
-	public HttpMethod method() {
+	public String method() {
 		return method;
 	}
 
-	public T method(HttpMethod method) {
-		Assert.isNull(method, "HttpMethod must not be null.");
+	public T method(String method) {
+		Assert.hasNoText(method, "Http method name must not be empty.");
 		this.method = method;
 		return (T) this;
 	}
@@ -88,7 +91,7 @@ public abstract class HttpBaseImpl<T extends HttpBase<T>> implements HttpBase<T>
 	public T cookies(Map<String, String> cookies) {
 		if (cookies != null) {
 			for (Map.Entry<String, String> entry : cookies.entrySet()) {
-				this.headers.put(entry.getKey(), entry.getValue());
+				this.cookies.put(entry.getKey(), entry.getValue());
 			}
 		}
 		return (T) this;

@@ -1,174 +1,103 @@
 package com.github.paganini2008.devtools.io.monitor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.github.paganini2008.devtools.logging.Log;
-import com.github.paganini2008.devtools.logging.LogFactory;
+import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
-
-
+import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 
 /**
- * 文件变化监视器，拥有一到多个文件变化观察者
  * 
- * @author yan.feng
+ * FileMonitor
+ * 
+ * @author Fred Feng
+ * @created 2014-07
+ * @revised 2019-12
  * @version 1.0
  */
-public class FileMonitor extends TimerTask {
-
-	private static final Log logger = LogFactory.getLog(FileMonitor.class);
-
-	private static int nextSerialNumber = 0;
-
-	private static synchronized int serialNumber() {
-		return nextSerialNumber++;
-	}
+public class FileMonitor implements Executable {
 
 	private final List<FileWatcher> watchers = new CopyOnWriteArrayList<FileWatcher>();
-	private Timer timer;
-	private long interval = 3000L;
-	private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
-	private volatile boolean running = false;
-	private boolean blocking = false;
+	private final long interval;
+	private final TimeUnit timeUnit;
+	private final AtomicBoolean running = new AtomicBoolean(false);
+	private Executor executor;
 
-	private final AtomicLong count = new AtomicLong(0);
-	private volatile long art = 0;
-
-	private ExecutorService threadPool;
-
-	public FileMonitor(FileWatcher... fileWatchers) {
-		this.threadPool = getThreadPool();
-		if (fileWatchers != null) {
-			this.watchers.addAll(Arrays.asList(fileWatchers));
-		}
-	}
-
-	protected ExecutorService getThreadPool() {
-		return Executors.newCachedThreadPool();
-	}
-
-	public long getCompletedCount() {
-		return count.get();
-	}
-
-	private void countUp() {
-		long l = count.incrementAndGet();
-		if (l < 0) {
-			count.set(0);
-		}
-	}
-
-	public List<FileWatcher> getWatchers() {
-		return watchers;
-	}
-
-	public void setInterval(long interval) {
+	public FileMonitor(long interval, TimeUnit timeUnit) {
 		this.interval = interval;
-	}
-
-	public void setTimeUnit(TimeUnit timeUnit) {
 		this.timeUnit = timeUnit;
 	}
 
-	public void setBlocking(boolean blocking) {
-		this.blocking = blocking;
+	public void addWatchers(FileWatcher... fileWatchers) {
+		if (fileWatchers != null) {
+			for (FileWatcher fileWatcher : fileWatchers) {
+				watchers.add(fileWatcher);
+			}
+		}
 	}
 
-	public synchronized void start() {
-		if (running) {
+	public void removeWatchers(FileWatcher... fileWatchers) {
+		if (fileWatchers != null) {
+			for (FileWatcher fileWatcher : fileWatchers) {
+				watchers.remove(fileWatcher);
+			}
+		}
+	}
+
+	public void start() {
+		if (isRunning()) {
 			throw new IllegalStateException("FileMonitor is already running.");
 		}
-		running = true;
+		running.set(true);
 		for (FileWatcher watcher : watchers) {
 			watcher.start();
 		}
-		timer = new Timer(getClass().getSimpleName() + "-" + serialNumber());
-		long period = TimeUnit.MILLISECONDS.convert(interval, timeUnit);
-		timer.scheduleAtFixedRate(this, period, period);
-		logger.info("FileMonitor is started.");
+		ThreadUtils.scheduleWithFixedDelay(this, interval, timeUnit);
 	}
 
-	public synchronized void stop() {
-		if (running == false) {
+	public void stop() {
+		if (!isRunning()) {
 			throw new IllegalStateException("FileMonitor is not running");
 		}
-		running = false;
-		if (timer != null) {
-			try {
-				timer.cancel();
-			} catch (Exception e) {
-			}
-			timer = null;
-		}
-		for (FileWatcher watcher : watchers) {
-			watcher.stop();
-		}
-		logger.info("FileMonitor is stopped.");
+		running.set(false);
+	}
+
+	public void setExecutor(Executor executor) {
+		this.executor = executor;
 	}
 
 	public boolean isRunning() {
-		return running;
+		return running.get();
 	}
 
-	private void pendingOnFuture(List<Future<Long>> futures) {
-		long sum = 0;
-		for (Future<Long> future : futures) {
-			try {
-				sum += future.get();
-			} catch (Exception ignored) {
+	public boolean execute() {
+		beforeRunning();
+		watchers.forEach(fileWatcher -> {
+			if (executor != null) {
+				executor.execute(() -> {
+					fileWatcher.checkAndNotify();
+				});
+			} else {
+				fileWatcher.checkAndNotify();
 			}
-		}
-		this.art = sum / futures.size();
-		completeRunning();
+		});
+		afterRunning();
+		return isRunning();
 	}
 
-	public void run() {
-		logger.debug("[FileMonitor] Check and notify ...");
-		prepareRunning();
-		final List<Future<Long>> futures = new ArrayList<Future<Long>>();
-		for (final FileWatcher watcher : watchers) {
-			futures.add(threadPool.submit(new Callable<Long>() {
-				public Long call() throws Exception {
-					long start = System.currentTimeMillis();
-					watcher.checkAndNotify();
-					return System.currentTimeMillis() - start;
-				}
-			}));
+	public void onCancellation() {
+		if (executor != null) {
+			ExecutorUtils.gracefulShutdown(executor, 60000);
 		}
-		if (blocking) {
-			pendingOnFuture(futures);
-		} else {
-			threadPool.execute(new Runnable() {
-				public void run() {
-					pendingOnFuture(futures);
-				}
-			});
-		}
-		countUp();
-		logger.debug("[FileMonitor] Completed: " + getCompletedCount() + ", Art: " + art);
-		logger.debug("[FileMonitor] Check and notify completed.");
 	}
 
-	protected void prepareRunning() {
+	protected void beforeRunning() {
 	}
 
-	protected void completeRunning() {
-	}
-
-	public void releaseOtherResources() {
-		if (threadPool != null) {
-			ExecutorUtils.gracefulShutdown(threadPool, 60000L);
-		}
+	protected void afterRunning() {
 	}
 }

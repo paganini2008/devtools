@@ -6,6 +6,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -38,8 +39,9 @@ public class HttpResponseImpl extends HttpBaseImpl<HttpResponse> implements Http
 	private long length;
 	private ByteBuffer byteData;
 	private int numRedirects = 0;
+	private long elapsedTime;
 
-	public HttpResponseImpl() {
+	HttpResponseImpl() {
 	}
 
 	protected HttpResponseImpl(HttpResponse response) {
@@ -62,6 +64,14 @@ public class HttpResponseImpl extends HttpBaseImpl<HttpResponse> implements Http
 		return length;
 	}
 
+	public long elapsedTime() {
+		return elapsedTime;
+	}
+
+	public void elapsedTime(long time) {
+		this.elapsedTime = time;
+	}
+
 	public String toString() {
 		StringBuilder str = new StringBuilder();
 		str.append("URL: ").append(url()).append(NEWLINE);
@@ -76,7 +86,7 @@ public class HttpResponseImpl extends HttpBaseImpl<HttpResponse> implements Http
 	}
 
 	public String body() {
-		if(charset == null){
+		if (charset == null) {
 			charset = "UTF-8";
 		}
 		String body = Charset.forName(charset).decode(byteData).toString();
@@ -97,7 +107,7 @@ public class HttpResponseImpl extends HttpBaseImpl<HttpResponse> implements Http
 	}
 
 	public void refresh(HttpURLConnection connection) throws IOException {
-		method = HttpMethod.valueOf(connection.getRequestMethod());
+		method = connection.getRequestMethod();
 		url = connection.getURL();
 		statusCode = connection.getResponseCode();
 		statusMessage = connection.getResponseMessage();
@@ -176,11 +186,21 @@ public class HttpResponseImpl extends HttpBaseImpl<HttpResponse> implements Http
 		}
 	}
 
-	public void output(OutputStream os, int maxSize) throws IOException {
+	public void saveAs(Writer writer, String charset) throws IOException {
 		InputStream in = null;
 		try {
 			in = new ByteArrayInputStream(bytes());
-			IOUtils.copy(in, os, maxSize);
+			IOUtils.copy(in, writer, charset);
+		} finally {
+			IOUtils.closeQuietly(in);
+		}
+	}
+
+	public void saveAs(OutputStream os) throws IOException {
+		InputStream in = null;
+		try {
+			in = new ByteArrayInputStream(bytes());
+			IOUtils.copy(in, os);
 		} finally {
 			IOUtils.closeQuietly(in);
 		}

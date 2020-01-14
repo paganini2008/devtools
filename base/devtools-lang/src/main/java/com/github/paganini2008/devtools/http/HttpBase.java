@@ -4,9 +4,12 @@ import java.net.URL;
 import java.util.Map;
 
 /**
+ * 
  * HttpBase
  * 
  * @author Fred Feng
+ * @created 2016-11
+ * @revised 2019-12
  * @version 1.0
  */
 public interface HttpBase<T extends HttpBase<T>> {
@@ -17,10 +20,10 @@ public interface HttpBase<T extends HttpBase<T>> {
 
 	T url(URL url);
 
-	HttpMethod method();
+	String method();
 
-	T method(HttpMethod method);
-	
+	T method(String method);
+
 	T charset(String charset);
 
 	String charset();

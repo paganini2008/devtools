@@ -4,68 +4,68 @@ import java.util.Calendar;
 
 /**
  * 
- * ConcreteWeekDay
+ * OneWeekDay
  *
  * @author Fred Feng
  * @revised 2019-07
  * @created 2019-07
  * @version 1.0
  */
-public interface ConcreteWeekDay extends Day {
+public interface OneWeekDay extends Day {
 
-	ConcreteWeekDay andDay(int day);
+	OneWeekDay andDay(int day);
 
-	default ConcreteWeekDay toDay(int day) {
+	default OneWeekDay toDay(int day) {
 		return toDay(day, 1);
 	}
 
-	ConcreteWeekDay toDay(int day, int interval);
+	OneWeekDay toDay(int day, int interval);
 
-	default ConcreteWeekDay toTues() {
+	default OneWeekDay toTues() {
 		return toDay(Calendar.TUESDAY);
 	}
 
-	default ConcreteWeekDay toWed() {
+	default OneWeekDay toWed() {
 		return toDay(Calendar.WEDNESDAY);
 	}
 
-	default ConcreteWeekDay toThur() {
+	default OneWeekDay toThur() {
 		return toDay(Calendar.THURSDAY);
 	}
 
-	default ConcreteWeekDay toFri() {
+	default OneWeekDay toFri() {
 		return toDay(Calendar.FRIDAY);
 	}
 
-	default ConcreteWeekDay toSat() {
+	default OneWeekDay toSat() {
 		return toDay(Calendar.SATURDAY);
 	}
 
-	default ConcreteWeekDay andSun() {
+	default OneWeekDay andSun() {
 		return andDay(Calendar.SUNDAY);
 	}
 
-	default ConcreteWeekDay andMon() {
+	default OneWeekDay andMon() {
 		return andDay(Calendar.MONDAY);
 	}
 
-	default ConcreteWeekDay andTues() {
+	default OneWeekDay andTues() {
 		return andDay(Calendar.TUESDAY);
 	}
 
-	default ConcreteWeekDay andWed() {
+	default OneWeekDay andWed() {
 		return andDay(Calendar.WEDNESDAY);
 	}
 
-	default ConcreteWeekDay andThur() {
+	default OneWeekDay andThur() {
 		return andDay(Calendar.THURSDAY);
 	}
 
-	default ConcreteWeekDay andFri() {
+	default OneWeekDay andFri() {
 		return andDay(Calendar.FRIDAY);
 	}
 
-	default ConcreteWeekDay andSat() {
+	default OneWeekDay andSat() {
 		return andDay(Calendar.SATURDAY);
 	}
 }

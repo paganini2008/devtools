@@ -23,20 +23,20 @@ import com.github.paganini2008.devtools.primitives.Floats;
 
 /**
  * 
- * RecursiveDirectoryWalker
+ * EnhancedDirectoryWalker
  * 
  * @author Fred Feng
  * @revised 2019-05
  * @created 2016-11
  * @version 1.0
  */
-public class RecursiveDirectoryWalker {
+public class EnhancedDirectoryWalker {
 
 	private final File directory;
 	private final int maxDepth;
 	private final FileFilter fileFilter;
 
-	public RecursiveDirectoryWalker(File directory, int maxDepth, FileFilter fileFilter) {
+	public EnhancedDirectoryWalker(File directory, int maxDepth, FileFilter fileFilter) {
 		this.directory = directory;
 		this.maxDepth = maxDepth;
 		this.fileFilter = fileFilter;
@@ -129,6 +129,7 @@ public class RecursiveDirectoryWalker {
 		}
 
 		public float getCompletedRatio() {
+			System.out.println("fileSize: " + fileSize + ", files.size(): " + files.size());
 			float value = (fileSize - files.size()) / (float) fileSize;
 			return Floats.toFixed(value, 3);
 		}
@@ -356,8 +357,8 @@ public class RecursiveDirectoryWalker {
 	}
 
 	public static void main(String[] args) throws Exception {
-		File directory = new File("H:\\Pingansec2016");
-		RecursiveDirectoryWalker walker = new RecursiveDirectoryWalker(directory, -1, null);
+		File directory = new File("D:\\work\\gitlab_0613");
+		EnhancedDirectoryWalker walker = new EnhancedDirectoryWalker(directory, -1, null);
 		FileInfo fileInfo = walker.walk(10, new Progressable() {
 
 			public void progress(int fileCount, int folderCount, long length, float completedRatio, long elapsed) {

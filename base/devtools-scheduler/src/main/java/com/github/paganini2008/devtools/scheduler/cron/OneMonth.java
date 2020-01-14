@@ -4,114 +4,114 @@ import java.util.Calendar;
 
 /**
  * 
- * ConcreteMonth
+ * OneMonth
  *
  * @author Fred Feng
  * @revised 2019-07
  * @created 2019-07
  * @version 1.0
  */
-public interface ConcreteMonth extends Month {
+public interface OneMonth extends Month {
 
-	ConcreteMonth andMonth(int andMonth);
+	OneMonth andMonth(int andMonth);
 
-	default ConcreteMonth andNextMonth() {
+	default OneMonth andNextMonth() {
 		return andNextMonths(1);
 	}
 
-	ConcreteMonth andNextMonths(int months);
+	OneMonth andNextMonths(int months);
 
-	default ConcreteMonth toMonth(int andMonth) {
+	default OneMonth toMonth(int andMonth) {
 		return toMonth(andMonth, 1);
 	}
 
-	ConcreteMonth toMonth(int andMonth, int interval);
+	OneMonth toMonth(int andMonth, int interval);
 
-	default ConcreteMonth toMar() {
+	default OneMonth toMar() {
 		return toMonth(Calendar.MARCH);
 	}
 
-	default ConcreteMonth toApr() {
+	default OneMonth toApr() {
 		return toMonth(Calendar.APRIL);
 	}
 
-	default ConcreteMonth toMay() {
+	default OneMonth toMay() {
 		return toMonth(Calendar.MAY);
 	}
 
-	default ConcreteMonth toJune() {
+	default OneMonth toJune() {
 		return toMonth(Calendar.JUNE);
 	}
 
-	default ConcreteMonth toJuly() {
+	default OneMonth toJuly() {
 		return toMonth(Calendar.JULY);
 	}
 
-	default ConcreteMonth toAug() {
+	default OneMonth toAug() {
 		return toMonth(Calendar.AUGUST);
 	}
 
-	default ConcreteMonth toSept() {
+	default OneMonth toSept() {
 		return toMonth(Calendar.SEPTEMBER);
 	}
 
-	default ConcreteMonth toOct() {
+	default OneMonth toOct() {
 		return toMonth(Calendar.OCTOBER);
 	}
 
-	default ConcreteMonth toNov() {
+	default OneMonth toNov() {
 		return toMonth(Calendar.NOVEMBER);
 	}
 
-	default ConcreteMonth toDec() {
+	default OneMonth toDec() {
 		return toMonth(Calendar.DECEMBER);
 	}
 
-	default ConcreteMonth andJan() {
+	default OneMonth andJan() {
 		return andMonth(Calendar.JANUARY);
 	}
 
-	default ConcreteMonth andFeb() {
+	default OneMonth andFeb() {
 		return andMonth(Calendar.FEBRUARY);
 	}
 
-	default ConcreteMonth andMar() {
+	default OneMonth andMar() {
 		return andMonth(Calendar.MARCH);
 	}
 
-	default ConcreteMonth andApr() {
+	default OneMonth andApr() {
 		return andMonth(Calendar.APRIL);
 	}
 
-	default ConcreteMonth andMay() {
+	default OneMonth andMay() {
 		return andMonth(Calendar.MAY);
 	}
 
-	default ConcreteMonth andJune() {
+	default OneMonth andJune() {
 		return andMonth(Calendar.JUNE);
 	}
 
-	default ConcreteMonth andJuly() {
+	default OneMonth andJuly() {
 		return andMonth(Calendar.JULY);
 	}
 
-	default ConcreteMonth andAug() {
+	default OneMonth andAug() {
 		return andMonth(Calendar.AUGUST);
 	}
 
-	default ConcreteMonth andSept() {
+	default OneMonth andSept() {
 		return andMonth(Calendar.SEPTEMBER);
 	}
 
-	default ConcreteMonth andOct() {
+	default OneMonth andOct() {
 		return andMonth(Calendar.OCTOBER);
 	}
 
-	default ConcreteMonth andNov() {
+	default OneMonth andNov() {
 		return andMonth(Calendar.NOVEMBER);
 	}
 
-	default ConcreteMonth andDec() {
+	default OneMonth andDec() {
 		return andMonth(Calendar.DECEMBER);
 	}
 }

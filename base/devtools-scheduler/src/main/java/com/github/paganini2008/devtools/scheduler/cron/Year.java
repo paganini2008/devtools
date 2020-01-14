@@ -22,13 +22,13 @@ public interface Year extends Iterator<Year>, CronExpression {
 
 	int getLastDay();
 
-	ConcreteDay day(int day);
+	OneDay day(int day);
 
 	default Day lastDay() {
 		return day(getLastDay());
 	}
 
-	ConcreteWeek week(int week);
+	OneWeek week(int week);
 
 	Week lastWeek();
 
@@ -51,53 +51,53 @@ public interface Year extends Iterator<Year>, CronExpression {
 		return everyMonth(y -> from, y -> to, interval);
 	}
 
-	ConcreteMonth month(int month);
+	OneMonth month(int month);
 
-	default ConcreteMonth Jan() {
+	default OneMonth Jan() {
 		return month(Calendar.JANUARY);
 	}
 
-	default ConcreteMonth Feb() {
+	default OneMonth Feb() {
 		return month(Calendar.FEBRUARY);
 	}
 
-	default ConcreteMonth Mar() {
+	default OneMonth Mar() {
 		return month(Calendar.MARCH);
 	}
 
-	default ConcreteMonth Apr() {
+	default OneMonth Apr() {
 		return month(Calendar.APRIL);
 	}
 
-	default ConcreteMonth May() {
+	default OneMonth May() {
 		return month(Calendar.MAY);
 	}
 
-	default ConcreteMonth June() {
+	default OneMonth June() {
 		return month(Calendar.JUNE);
 	}
 
-	default ConcreteMonth July() {
+	default OneMonth July() {
 		return month(Calendar.JULY);
 	}
 
-	default ConcreteMonth Aug() {
+	default OneMonth Aug() {
 		return month(Calendar.AUGUST);
 	}
 
-	default ConcreteMonth Sept() {
+	default OneMonth Sept() {
 		return month(Calendar.SEPTEMBER);
 	}
 
-	default ConcreteMonth Oct() {
+	default OneMonth Oct() {
 		return month(Calendar.OCTOBER);
 	}
 
-	default ConcreteMonth Nov() {
+	default OneMonth Nov() {
 		return month(Calendar.NOVEMBER);
 	}
 
-	default ConcreteMonth Dec() {
+	default OneMonth Dec() {
 		return month(Calendar.DECEMBER);
 	}
 }

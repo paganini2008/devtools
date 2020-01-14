@@ -13,30 +13,31 @@ import javax.net.ssl.SSLSocketFactory;
 import com.github.paganini2008.devtools.net.UrlUtils;
 
 /**
+ * 
  * DefaultHttpConnectionFactory
  * 
  * @author Fred Feng
+ * @created 2016-11
+ * @revised 2019-12
  * @version 1.0
  */
 public class DefaultHttpConnectionFactory implements HttpConnectionFactory {
 
 	private SSLSocketFactory sslSocketFactory;
 
-	public HttpURLConnection createHttpConnection(HttpRequest httpRequest) throws IOException {
+	public HttpURLConnection openConnection(HttpRequest httpRequest) throws IOException {
 		HttpURLConnection connection;
 		if (httpRequest.proxy() != null) {
-			connection = (HttpURLConnection) httpRequest.url()
-					.openConnection(new Proxy(Proxy.Type.HTTP, httpRequest.proxy()));
+			connection = (HttpURLConnection) httpRequest.url().openConnection(new Proxy(Proxy.Type.HTTP, httpRequest.proxy()));
 		} else {
 			connection = (HttpURLConnection) httpRequest.url().openConnection();
 		}
-		connection.setRequestMethod(httpRequest.method().name());
-		connection.setInstanceFollowRedirects(false);
+		connection.setRequestMethod(httpRequest.method());
 		connection.setConnectTimeout(httpRequest.connectTimeout());
 		connection.setReadTimeout(httpRequest.readTimeout());
-		if (httpRequest.method().hasBody()) {
-			connection.setDoOutput(true);
-		}
+		connection.setDoOutput(httpRequest.doOutput());
+		connection.setInstanceFollowRedirects(httpRequest.followRedirects());
+
 		if (httpRequest.cookies().size() > 0) {
 			connection.addRequestProperty("Cookie", httpRequest.cookie());
 		}

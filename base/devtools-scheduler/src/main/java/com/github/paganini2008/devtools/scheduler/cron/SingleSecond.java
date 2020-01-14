@@ -16,7 +16,7 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * @created 2019-07
  * @version 1.0
  */
-public class SingleSecond implements ConcreteSecond, Serializable {
+public class SingleSecond implements OneSecond, Serializable {
 
 	private static final long serialVersionUID = 6264419114715870528L;
 	private final TreeMap<Integer, Calendar> siblings;
@@ -43,7 +43,7 @@ public class SingleSecond implements ConcreteSecond, Serializable {
 		return this;
 	}
 
-	public ConcreteSecond toSecond(int second, int interval) {
+	public OneSecond toSecond(int second, int interval) {
 		CalendarAssert.checkSecond(second);
 		for (int i = lastSecond + interval; i < second; i += interval) {
 			andSecond(i);

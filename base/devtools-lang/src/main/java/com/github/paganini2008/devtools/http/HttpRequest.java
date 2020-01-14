@@ -7,9 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 
  * HttpRequest
  * 
  * @author Fred Feng
+ * @created 2016-11
+ * @revised 2019-12
  * @version 1.0
  */
 public interface HttpRequest extends HttpBase<HttpRequest> {
@@ -21,14 +24,18 @@ public interface HttpRequest extends HttpBase<HttpRequest> {
 	boolean validateTLSCertificates();
 
 	HttpRequest validateTLSCertificates(boolean value);
+	
+	HttpRequest doOutput(boolean value);
+	
+	boolean doOutput();
 
 	boolean followRedirects();
 
 	HttpRequest followRedirects(boolean followRedirects);
 
-	boolean retryRequests();
+	boolean retryRequestsIfError();
 
-	HttpRequest retryRequests(boolean retryRequests);
+	HttpRequest retryRequestsIfError(boolean retryRequests);
 
 	int readTimeout();
 
@@ -73,5 +80,50 @@ public interface HttpRequest extends HttpBase<HttpRequest> {
 	int maxRequests();
 
 	HttpRequest maxRequests(int requests);
+
+	interface Builder {
+
+		Builder userAgent(String userAgent);
+
+		Builder timeout(int millis);
+
+		Builder connectTimeout(int millis);
+
+		Builder readTimeout(int millis);
+
+		Builder maxBodySize(int bytes);
+
+		Builder referer(String referrer);
+
+		Builder maxRedirects(int redirects);
+		
+		Builder retryRequestsIfError(boolean retryRequests);
+
+		Builder ignoreHttpErrors(boolean ignoreHttpErrors);
+
+		Builder ignoreContentType(boolean ignoreContentType);
+
+		Builder validateTLSCertificates(boolean value);
+
+		Builder data(String key, String value);
+
+		Builder data(String key, String filename, InputStream inputStream);
+
+		Builder data(Map<String, String> data);
+
+		Builder data(String... nameValues);
+
+		Builder header(String name, String value);
+
+		Builder headers(Map<String, String> headers);
+
+		Builder cookie(String name, String value);
+
+		Builder cookies(Map<String, String> cookies);
+
+		Builder charset(String charset);
+
+		HttpRequest build();
+	}
 
 }

@@ -95,7 +95,7 @@ public class EveryDay implements Day, Serializable {
 		return day.getTimeInMillis();
 	}
 
-	public ConcreteHour hour(int hour) {
+	public OneHour hour(int hour) {
 		return new SingleHour(CollectionUtils.getFirst(this), hour);
 	}
 

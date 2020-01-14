@@ -2,21 +2,21 @@ package com.github.paganini2008.devtools.scheduler.cron;
 
 /**
  * 
- * ConcreteHour
+ * OneHour
  *
  * @author Fred Feng
  * @revised 2019-07
  * @created 2019-07
  * @version 1.0
  */
-public interface ConcreteHour extends Hour {
+public interface OneHour extends Hour {
 
-	ConcreteHour andHour(int hour);
+	OneHour andHour(int hour);
 
-	default ConcreteHour toHour(int hour) {
+	default OneHour toHour(int hour) {
 		return toHour(hour, 1);
 	}
 
-	ConcreteHour toHour(int hour, int interval);
+	OneHour toHour(int hour, int interval);
 
 }

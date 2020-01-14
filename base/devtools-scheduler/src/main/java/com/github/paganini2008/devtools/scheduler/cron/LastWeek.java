@@ -53,7 +53,7 @@ public class LastWeek implements Week, Serializable {
 		return week.get(Calendar.WEEK_OF_YEAR);
 	}
 
-	public ConcreteWeekDay weekday(int day) {
+	public OneWeekDay weekday(int day) {
 		return new SingleDayOfWeek(CollectionUtils.getFirst(this), day);
 	}
 

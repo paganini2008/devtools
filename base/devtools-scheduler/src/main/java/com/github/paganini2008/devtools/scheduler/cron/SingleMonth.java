@@ -18,7 +18,7 @@ import com.github.paganini2008.devtools.date.DateUtils;
  * @created 2019-07
  * @version 1.0
  */
-public class SingleMonth implements ConcreteMonth, Serializable {
+public class SingleMonth implements OneMonth, Serializable {
 
 	private static final long serialVersionUID = 229203112866380942L;
 	private final TreeMap<Integer, Calendar> siblings;
@@ -37,7 +37,7 @@ public class SingleMonth implements ConcreteMonth, Serializable {
 		this.lastMonth = month;
 	}
 
-	public ConcreteMonth andMonth(int month) {
+	public OneMonth andMonth(int month) {
 		CalendarAssert.checkMonth(month);
 		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.MONTH, month);
 		siblings.put(month, calendar);
@@ -45,7 +45,7 @@ public class SingleMonth implements ConcreteMonth, Serializable {
 		return this;
 	}
 
-	public ConcreteMonth andNextMonths(int months) {
+	public OneMonth andNextMonths(int months) {
 		CalendarAssert.checkMonth(lastMonth + months);
 		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.MONTH, lastMonth + months);
 		int month = calendar.get(Calendar.MONTH);
@@ -54,7 +54,7 @@ public class SingleMonth implements ConcreteMonth, Serializable {
 		return this;
 	}
 
-	public ConcreteMonth toMonth(int month, int interval) {
+	public OneMonth toMonth(int month, int interval) {
 		CalendarAssert.checkMonth(month);
 		for (int i = lastMonth + interval; i <= month; i += interval) {
 			andMonth(i);
@@ -86,7 +86,7 @@ public class SingleMonth implements ConcreteMonth, Serializable {
 		return month.getActualMaximum(Calendar.WEEK_OF_MONTH);
 	}
 
-	public ConcreteDay day(int day) {
+	public OneDay day(int day) {
 		return new SingleDay(CollectionUtils.getFirst(this), day);
 	}
 
@@ -98,7 +98,7 @@ public class SingleMonth implements ConcreteMonth, Serializable {
 		return new EveryDay(CollectionUtils.getFirst(this), from, to, interval);
 	}
 
-	public ConcreteWeek week(int week) {
+	public OneWeek week(int week) {
 		return new SingleWeek(CollectionUtils.getFirst(this), week);
 	}
 
@@ -129,9 +129,9 @@ public class SingleMonth implements ConcreteMonth, Serializable {
 	}
 
 	public static void main(String[] args) {
-		ConcreteYear singleYear = new SingleYear(2019);
+		OneYear singleYear = new SingleYear(2019);
 		singleYear = singleYear.andYear(2024).andYear(2028);
-		ConcreteMonth singleMonth = singleYear.July().andAug().andMonth(11);
+		OneMonth singleMonth = singleYear.July().andAug().andMonth(11);
 		Day every = singleMonth.lastWeek().Fri().andSat();
 		while (every.hasNext()) {
 			Day time = every.next();

@@ -18,35 +18,35 @@ public enum SizeUnit {
 		}
 
 		public BigDecimal toKB(long size) {
-			return goDown(size, MB_BIG);
+			return goDown(size, UNIT_MB);
 		}
 
 		public BigDecimal toMB(long size) {
-			return goDown(size, MB_BIG);
+			return goDown(size, UNIT_MB);
 		}
 
 		public BigDecimal toGB(long size) {
-			return goDown(size, GB_BIG);
+			return goDown(size, UNIT_GB);
 		}
 
 		public BigDecimal toTB(long size) {
-			return goDown(size, TB_BIG);
+			return goDown(size, UNIT_TB);
 		}
 
 		public BigDecimal toPB(long size) {
-			return goDown(size, PB_BIG);
+			return goDown(size, UNIT_PB);
 		}
 
 		public BigDecimal toEB(long size) {
-			return goDown(size, EB_BIG);
+			return goDown(size, UNIT_EB);
 		}
 
 		public BigDecimal toZB(long size) {
-			return goDown(size, ZB_BIG);
+			return goDown(size, UNIT_ZB);
 		}
 
 		public BigDecimal toYB(long size) {
-			return goDown(size, YB_BIG);
+			return goDown(size, UNIT_YB);
 		}
 
 		public BigDecimal convert(long size, SizeUnit sizeUnit) {
@@ -58,7 +58,7 @@ public enum SizeUnit {
 	KB {
 
 		public BigDecimal toBytes(long size) {
-			return goUp(size, KB_BIG);
+			return goUp(size, UNIT_KB);
 		}
 
 		public BigDecimal toKB(long size) {
@@ -66,31 +66,31 @@ public enum SizeUnit {
 		}
 
 		public BigDecimal toMB(long size) {
-			return goDown(size, MB_BIG, KB_BIG);
+			return goDown(size, UNIT_MB, UNIT_KB);
 		}
 
 		public BigDecimal toGB(long size) {
-			return goDown(size, GB_BIG, KB_BIG);
+			return goDown(size, UNIT_GB, UNIT_KB);
 		}
 
 		public BigDecimal toTB(long size) {
-			return goDown(size, TB_BIG, KB_BIG);
+			return goDown(size, UNIT_TB, UNIT_KB);
 		}
 
 		public BigDecimal toPB(long size) {
-			return goDown(size, PB_BIG, KB_BIG);
+			return goDown(size, UNIT_PB, UNIT_KB);
 		}
 
 		public BigDecimal toEB(long size) {
-			return goDown(size, EB_BIG, KB_BIG);
+			return goDown(size, UNIT_EB, UNIT_KB);
 		}
 
 		public BigDecimal toZB(long size) {
-			return goDown(size, ZB_BIG, KB_BIG);
+			return goDown(size, UNIT_ZB, UNIT_KB);
 		}
 
 		public BigDecimal toYB(long size) {
-			return goDown(size, YB_BIG, KB_BIG);
+			return goDown(size, UNIT_YB, UNIT_KB);
 		}
 
 		public BigDecimal convert(long size, SizeUnit sizeUnit) {
@@ -101,11 +101,11 @@ public enum SizeUnit {
 	MB {
 
 		public BigDecimal toBytes(long size) {
-			return goUp(size, MB_BIG);
+			return goUp(size, UNIT_MB);
 		}
 
 		public BigDecimal toKB(long size) {
-			return goUp(size, MB_BIG, KB_BIG);
+			return goUp(size, UNIT_MB, UNIT_KB);
 		}
 
 		public BigDecimal toMB(long size) {
@@ -113,27 +113,27 @@ public enum SizeUnit {
 		}
 
 		public BigDecimal toGB(long size) {
-			return goDown(size, GB_BIG, MB_BIG);
+			return goDown(size, UNIT_GB, UNIT_MB);
 		}
 
 		public BigDecimal toTB(long size) {
-			return goDown(size, TB_BIG, MB_BIG);
+			return goDown(size, UNIT_TB, UNIT_MB);
 		}
 
 		public BigDecimal toPB(long size) {
-			return goDown(size, PB_BIG, MB_BIG);
+			return goDown(size, UNIT_PB, UNIT_MB);
 		}
 
 		public BigDecimal toEB(long size) {
-			return goDown(size, EB_BIG, MB_BIG);
+			return goDown(size, UNIT_EB, UNIT_MB);
 		}
 
 		public BigDecimal toZB(long size) {
-			return goDown(size, ZB_BIG, MB_BIG);
+			return goDown(size, UNIT_ZB, UNIT_MB);
 		}
 
 		public BigDecimal toYB(long size) {
-			return goDown(size, YB_BIG, MB_BIG);
+			return goDown(size, UNIT_YB, UNIT_MB);
 		}
 
 		public BigDecimal convert(long size, SizeUnit sizeUnit) {
@@ -143,15 +143,15 @@ public enum SizeUnit {
 	},
 	GB {
 		public BigDecimal toBytes(long size) {
-			return goUp(size, GB_BIG);
+			return goUp(size, UNIT_GB);
 		}
 
 		public BigDecimal toKB(long size) {
-			return goUp(size, GB_BIG, KB_BIG);
+			return goUp(size, UNIT_GB, UNIT_KB);
 		}
 
 		public BigDecimal toMB(long size) {
-			return goUp(size, GB_BIG, MB_BIG);
+			return goUp(size, UNIT_GB, UNIT_MB);
 		}
 
 		public BigDecimal toGB(long size) {
@@ -159,23 +159,23 @@ public enum SizeUnit {
 		}
 
 		public BigDecimal toTB(long size) {
-			return goDown(size, TB_BIG, GB_BIG);
+			return goDown(size, UNIT_TB, UNIT_GB);
 		}
 
 		public BigDecimal toPB(long size) {
-			return goDown(size, PB_BIG, GB_BIG);
+			return goDown(size, UNIT_PB, UNIT_GB);
 		}
 
 		public BigDecimal toEB(long size) {
-			return goDown(size, EB_BIG, GB_BIG);
+			return goDown(size, UNIT_EB, UNIT_GB);
 		}
 
 		public BigDecimal toZB(long size) {
-			return goDown(size, ZB_BIG, GB_BIG);
+			return goDown(size, UNIT_ZB, UNIT_GB);
 		}
 
 		public BigDecimal toYB(long size) {
-			return goDown(size, YB_BIG, GB_BIG);
+			return goDown(size, UNIT_YB, UNIT_GB);
 		}
 
 		public BigDecimal convert(long size, SizeUnit sizeUnit) {
@@ -184,19 +184,19 @@ public enum SizeUnit {
 	},
 	TB {
 		public BigDecimal toBytes(long size) {
-			return goUp(size, TB_BIG);
+			return goUp(size, UNIT_TB);
 		}
 
 		public BigDecimal toKB(long size) {
-			return goUp(size, TB_BIG, KB_BIG);
+			return goUp(size, UNIT_TB, UNIT_KB);
 		}
 
 		public BigDecimal toMB(long size) {
-			return goUp(size, TB_BIG, MB_BIG);
+			return goUp(size, UNIT_TB, UNIT_MB);
 		}
 
 		public BigDecimal toGB(long size) {
-			return goUp(size, TB_BIG, GB_BIG);
+			return goUp(size, UNIT_TB, UNIT_GB);
 		}
 
 		public BigDecimal toTB(long size) {
@@ -204,19 +204,19 @@ public enum SizeUnit {
 		}
 
 		public BigDecimal toPB(long size) {
-			return goDown(size, PB_BIG, TB_BIG);
+			return goDown(size, UNIT_PB, UNIT_TB);
 		}
 
 		public BigDecimal toEB(long size) {
-			return goDown(size, EB_BIG, TB_BIG);
+			return goDown(size, UNIT_EB, UNIT_TB);
 		}
 
 		public BigDecimal toZB(long size) {
-			return goDown(size, ZB_BIG, TB_BIG);
+			return goDown(size, UNIT_ZB, UNIT_TB);
 		}
 
 		public BigDecimal toYB(long size) {
-			return goDown(size, YB_BIG, TB_BIG);
+			return goDown(size, UNIT_YB, UNIT_TB);
 		}
 
 		public BigDecimal convert(long size, SizeUnit sizeUnit) {
@@ -225,23 +225,23 @@ public enum SizeUnit {
 	},
 	PB {
 		public BigDecimal toBytes(long size) {
-			return goUp(size, PB_BIG);
+			return goUp(size, UNIT_PB);
 		}
 
 		public BigDecimal toKB(long size) {
-			return goUp(size, PB_BIG, KB_BIG);
+			return goUp(size, UNIT_PB, UNIT_KB);
 		}
 
 		public BigDecimal toMB(long size) {
-			return goUp(size, PB_BIG, MB_BIG);
+			return goUp(size, UNIT_PB, UNIT_MB);
 		}
 
 		public BigDecimal toGB(long size) {
-			return goUp(size, PB_BIG, GB_BIG);
+			return goUp(size, UNIT_PB, UNIT_GB);
 		}
 
 		public BigDecimal toTB(long size) {
-			return goUp(size, PB_BIG, TB_BIG);
+			return goUp(size, UNIT_PB, UNIT_TB);
 		}
 
 		public BigDecimal toPB(long size) {
@@ -249,15 +249,15 @@ public enum SizeUnit {
 		}
 
 		public BigDecimal toEB(long size) {
-			return goDown(size, EB_BIG, PB_BIG);
+			return goDown(size, UNIT_EB, UNIT_PB);
 		}
 
 		public BigDecimal toZB(long size) {
-			return goDown(size, ZB_BIG, PB_BIG);
+			return goDown(size, UNIT_ZB, UNIT_PB);
 		}
 
 		public BigDecimal toYB(long size) {
-			return goDown(size, YB_BIG, PB_BIG);
+			return goDown(size, UNIT_YB, UNIT_PB);
 		}
 
 		public BigDecimal convert(long size, SizeUnit sizeUnit) {
@@ -266,27 +266,27 @@ public enum SizeUnit {
 	},
 	EB {
 		public BigDecimal toBytes(long size) {
-			return goUp(size, EB_BIG);
+			return goUp(size, UNIT_EB);
 		}
 
 		public BigDecimal toKB(long size) {
-			return goUp(size, EB_BIG, KB_BIG);
+			return goUp(size, UNIT_EB, UNIT_KB);
 		}
 
 		public BigDecimal toMB(long size) {
-			return goUp(size, EB_BIG, MB_BIG);
+			return goUp(size, UNIT_EB, UNIT_MB);
 		}
 
 		public BigDecimal toGB(long size) {
-			return goUp(size, EB_BIG, GB_BIG);
+			return goUp(size, UNIT_EB, UNIT_GB);
 		}
 
 		public BigDecimal toTB(long size) {
-			return goUp(size, EB_BIG, TB_BIG);
+			return goUp(size, UNIT_EB, UNIT_TB);
 		}
 
 		public BigDecimal toPB(long size) {
-			return goUp(size, EB_BIG, PB_BIG);
+			return goUp(size, UNIT_EB, UNIT_PB);
 		}
 
 		public BigDecimal toEB(long size) {
@@ -294,11 +294,11 @@ public enum SizeUnit {
 		}
 
 		public BigDecimal toZB(long size) {
-			return goDown(size, ZB_BIG, EB_BIG);
+			return goDown(size, UNIT_ZB, UNIT_EB);
 		}
 
 		public BigDecimal toYB(long size) {
-			return goDown(size, YB_BIG, EB_BIG);
+			return goDown(size, UNIT_YB, UNIT_EB);
 		}
 
 		public BigDecimal convert(long size, SizeUnit sizeUnit) {
@@ -307,31 +307,31 @@ public enum SizeUnit {
 	},
 	ZB {
 		public BigDecimal toBytes(long size) {
-			return goUp(size, ZB_BIG);
+			return goUp(size, UNIT_ZB);
 		}
 
 		public BigDecimal toKB(long size) {
-			return goUp(size, ZB_BIG, KB_BIG);
+			return goUp(size, UNIT_ZB, UNIT_KB);
 		}
 
 		public BigDecimal toMB(long size) {
-			return goUp(size, ZB_BIG, MB_BIG);
+			return goUp(size, UNIT_ZB, UNIT_MB);
 		}
 
 		public BigDecimal toGB(long size) {
-			return goUp(size, ZB_BIG, GB_BIG);
+			return goUp(size, UNIT_ZB, UNIT_GB);
 		}
 
 		public BigDecimal toTB(long size) {
-			return goUp(size, ZB_BIG, TB_BIG);
+			return goUp(size, UNIT_ZB, UNIT_TB);
 		}
 
 		public BigDecimal toPB(long size) {
-			return goUp(size, ZB_BIG, PB_BIG);
+			return goUp(size, UNIT_ZB, UNIT_PB);
 		}
 
 		public BigDecimal toEB(long size) {
-			return goUp(size, ZB_BIG, EB_BIG);
+			return goUp(size, UNIT_ZB, UNIT_EB);
 		}
 
 		public BigDecimal toZB(long size) {
@@ -339,7 +339,7 @@ public enum SizeUnit {
 		}
 
 		public BigDecimal toYB(long size) {
-			return goDown(size, YB_BIG, ZB_BIG);
+			return goDown(size, UNIT_YB, UNIT_ZB);
 		}
 
 		public BigDecimal convert(long size, SizeUnit sizeUnit) {
@@ -349,35 +349,35 @@ public enum SizeUnit {
 	YB {
 
 		public BigDecimal toBytes(long size) {
-			return goUp(size, YB_BIG);
+			return goUp(size, UNIT_YB);
 		}
 
 		public BigDecimal toKB(long size) {
-			return goUp(size, YB_BIG, KB_BIG);
+			return goUp(size, UNIT_YB, UNIT_KB);
 		}
 
 		public BigDecimal toMB(long size) {
-			return goUp(size, YB_BIG, MB_BIG);
+			return goUp(size, UNIT_YB, UNIT_MB);
 		}
 
 		public BigDecimal toGB(long size) {
-			return goUp(size, YB_BIG, GB_BIG);
+			return goUp(size, UNIT_YB, UNIT_GB);
 		}
 
 		public BigDecimal toTB(long size) {
-			return goUp(size, YB_BIG, TB_BIG);
+			return goUp(size, UNIT_YB, UNIT_TB);
 		}
 
 		public BigDecimal toPB(long size) {
-			return goUp(size, YB_BIG, PB_BIG);
+			return goUp(size, UNIT_YB, UNIT_PB);
 		}
 
 		public BigDecimal toEB(long size) {
-			return goUp(size, YB_BIG, EB_BIG);
+			return goUp(size, UNIT_YB, UNIT_EB);
 		}
 
 		public BigDecimal toZB(long size) {
-			return goUp(size, YB_BIG, ZB_BIG);
+			return goUp(size, UNIT_YB, UNIT_ZB);
 		}
 
 		public BigDecimal toYB(long size) {
@@ -390,14 +390,14 @@ public enum SizeUnit {
 
 	};
 
-	static final BigDecimal KB_BIG = BigDecimal.valueOf(1024L);
-	static final BigDecimal MB_BIG = KB_BIG.multiply(KB_BIG);
-	static final BigDecimal GB_BIG = KB_BIG.multiply(MB_BIG);
-	static final BigDecimal TB_BIG = KB_BIG.multiply(GB_BIG);
-	static final BigDecimal PB_BIG = KB_BIG.multiply(TB_BIG);
-	static final BigDecimal EB_BIG = KB_BIG.multiply(PB_BIG);
-	static final BigDecimal ZB_BIG = KB_BIG.multiply(EB_BIG);
-	static final BigDecimal YB_BIG = KB_BIG.multiply(ZB_BIG);
+	static final BigDecimal UNIT_KB = BigDecimal.valueOf(1024L);
+	static final BigDecimal UNIT_MB = UNIT_KB.multiply(UNIT_KB);
+	static final BigDecimal UNIT_GB = UNIT_KB.multiply(UNIT_MB);
+	static final BigDecimal UNIT_TB = UNIT_KB.multiply(UNIT_GB);
+	static final BigDecimal UNIT_PB = UNIT_KB.multiply(UNIT_TB);
+	static final BigDecimal UNIT_EB = UNIT_KB.multiply(UNIT_PB);
+	static final BigDecimal UNIT_ZB = UNIT_KB.multiply(UNIT_EB);
+	static final BigDecimal UNIT_YB = UNIT_KB.multiply(UNIT_ZB);
 
 	private static BigDecimal goUp(long size, BigDecimal left, BigDecimal right) {
 		return BigDecimal.valueOf(size).multiply(left.divide(right));
@@ -437,6 +437,6 @@ public enum SizeUnit {
 	public abstract BigDecimal convert(long size, SizeUnit sizeUnit);
 
 	public static void main(String[] args) {
-		System.out.println(SizeUnit.MB.convert(8665871 , SizeUnit.BYTES));
+		System.out.println(SizeUnit.MB.convert(8665871, SizeUnit.BYTES));
 	}
 }

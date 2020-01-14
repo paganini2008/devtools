@@ -2,6 +2,7 @@ package com.github.paganini2008.devtools.io.monitor;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,37 +13,43 @@ import com.github.paganini2008.devtools.collection.MapUtils;
 import com.github.paganini2008.devtools.io.FileUtils;
 
 /**
+ * 
  * FileWatcher
  * 
  * @author Fred Feng
+ * @created 2014-07
+ * @revised 2019-12
  * @version 1.0
  */
+@SuppressWarnings("unchecked")
 public class FileWatcher {
 
-	public FileWatcher(File directory) {
+	public FileWatcher(File directory, int depth, FileFilter fileFilter) {
 		this.directory = directory;
-	}
-
-	private FileEntry rootEntry;
-
-	private File directory;
-
-	private FileFilter fileFilter;
-
-	private int depth = -1;
-
-	private final List<FileChangeListener> listeners = new CopyOnWriteArrayList<FileChangeListener>();
-
-	public void setDepth(int depth) {
 		this.depth = depth;
-	}
-
-	public void setFileFilter(FileFilter fileFilter) {
 		this.fileFilter = fileFilter;
 	}
 
-	public List<FileChangeListener> getListeners() {
-		return listeners;
+	private FileEntry rootEntry;
+	private final File directory;
+	private final FileFilter fileFilter;
+	private final int depth;
+	private final List<FileChangeListener> listeners = new CopyOnWriteArrayList<FileChangeListener>();
+
+	public void addListeners(FileChangeListener... l) {
+		if (l != null) {
+			for (FileChangeListener listener : l) {
+				listeners.add(listener);
+			}
+		}
+	}
+
+	public void removeListeners(FileChangeListener... l) {
+		if (l != null) {
+			for (FileChangeListener listener : l) {
+				listeners.remove(listener);
+			}
+		}
 	}
 
 	public void start() {
@@ -61,15 +68,14 @@ public class FileWatcher {
 	private FileEntry createFileEntry(FileEntry parentEntry, File childFile) {
 		final FileEntry childEntry = parentEntry.newChildEntry(childFile);
 		List<File> childFiles;
-		if ((depth < 0 || childEntry.getDepth() <= depth)
-				&& (ListUtils.isNotEmpty(childFiles = listFiles(childEntry.getFile())))) {
+		if ((depth < 0 || childEntry.getDepth() <= depth) && (ListUtils.isNotEmpty(childFiles = listFiles(childEntry.getFile())))) {
 			final Map<String, FileEntry> childEntries = new LinkedHashMap<String, FileEntry>();
 			for (final File file : childFiles) {
 				childEntries.put(file.getAbsolutePath(), createFileEntry(childEntry, file));
 			}
 			childEntry.setChildEntries(childEntries);
 		} else {
-			childEntry.setChildEntries(FileEntry.EMPTY_ENTRIES);
+			childEntry.setChildEntries(Collections.EMPTY_MAP);
 		}
 		return childEntry;
 	}
@@ -77,8 +83,7 @@ public class FileWatcher {
 	private FileEntry createFileEntry(FileEntry parentEntry, File childFile, Map<String, FileEntry> lastChildEntries) {
 		FileEntry childEntry = parentEntry.newChildEntry(childFile);
 		List<File> listChildFiles;
-		if ((depth < 0 || childEntry.getDepth() <= depth)
-				&& (ListUtils.isNotEmpty(listChildFiles = listFiles(childEntry.getFile())))) {
+		if ((depth < 0 || childEntry.getDepth() <= depth) && (ListUtils.isNotEmpty(listChildFiles = listFiles(childEntry.getFile())))) {
 			Map<String, FileEntry> childEntries = new LinkedHashMap<String, FileEntry>();
 			Map<String, FileEntry> comparedChildEntries = getChildFileChildEntries(childFile, lastChildEntries);
 			for (File file : listChildFiles) {
@@ -87,7 +92,7 @@ public class FileWatcher {
 			compareAndCall(childEntries, comparedChildEntries);
 			childEntry.setChildEntries(childEntries);
 		} else {
-			childEntry.setChildEntries(FileEntry.EMPTY_ENTRIES);
+			childEntry.setChildEntries(Collections.EMPTY_MAP);
 		}
 		return childEntry;
 	}
@@ -110,9 +115,9 @@ public class FileWatcher {
 	private Map<String, FileEntry> getChildFileChildEntries(File childFile, Map<String, FileEntry> lastChildEntries) {
 		if (lastChildEntries != null) {
 			FileEntry fileEntry = lastChildEntries.get(childFile.getAbsolutePath());
-			return fileEntry != null ? fileEntry.getChildEntries() : FileEntry.EMPTY_ENTRIES;
+			return fileEntry != null ? fileEntry.getChildEntries() : Collections.EMPTY_MAP;
 		}
-		return FileEntry.EMPTY_ENTRIES;
+		return Collections.EMPTY_MAP;
 	}
 
 	private void compareAndCall(Map<String, FileEntry> childEntries, Map<String, FileEntry> lastChildEntries) {
@@ -191,13 +196,12 @@ public class FileWatcher {
 		if (ListUtils.isNotEmpty(childFiles)) {
 			Map<String, FileEntry> childEntries = new LinkedHashMap<String, FileEntry>();
 			for (File childFile : childFiles) {
-				childEntries.put(childFile.getAbsolutePath(),
-						createFileEntry(rootEntry, childFile, lastRootEntry.getChildEntries()));
+				childEntries.put(childFile.getAbsolutePath(), createFileEntry(rootEntry, childFile, lastRootEntry.getChildEntries()));
 			}
 			compareAndCall(childEntries, lastRootEntry.getChildEntries());
 			rootEntry.setChildEntries(childEntries);
 		} else {
-			rootEntry.setChildEntries(FileEntry.EMPTY_ENTRIES);
+			rootEntry.setChildEntries(Collections.EMPTY_MAP);
 		}
 	}
 
@@ -207,7 +211,7 @@ public class FileWatcher {
 		}
 		refresh();
 		for (FileChangeListener listener : listeners) {
-			listener.onStop(this);
+			listener.onEnd(this);
 		}
 	}
 
@@ -221,10 +225,6 @@ public class FileWatcher {
 
 	public File getDirectory() {
 		return directory;
-	}
-
-	public void stop() {
-		rootEntry = null;
 	}
 
 }
