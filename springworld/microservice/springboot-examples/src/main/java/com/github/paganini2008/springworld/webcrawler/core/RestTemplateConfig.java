@@ -1,5 +1,6 @@
-package com.github.paganini2008.springworld.webcrawler.config;
+package com.github.paganini2008.springworld.webcrawler.core;
 
+import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +27,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import com.github.paganini2008.devtools.StringUtils;
+import com.github.paganini2008.springworld.webcrawler.utils.FreeProxyPool;
 
 /**
  * 
@@ -42,19 +44,13 @@ public class RestTemplateConfig {
 	@Value("${webcrawler.httpclient.pool.maxTotal:200}")
 	private int maxTotal;
 
-	@Value("${webcrawler.httpclient.connectTimeout:60000}")
-	private int connectTimeout;
-
 	@Value("${webcrawler.httpclient.requestRetries:3}")
 	private int requestRetries;
 
-	@Value("${webcrawler.httpclient.proxy.host:}")
-	private String proxyHost;
+	@Value("${webcrawler.httpclient.connectTimeout:60000}")
+	private int connectTimeout;
 
-	@Value("${webcrawler.httpclient.proxy.port:0}")
-	private int proxyPort;
-
-	@Bean
+	@Bean("default")
 	public RestTemplate restTemplate() {
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory());
 		List<HttpMessageConverter<?>> messageConverters = restTemplate.getMessageConverters();
@@ -84,14 +80,30 @@ public class RestTemplateConfig {
 		RequestConfig.Builder requestConfigBuilder = RequestConfig.custom().setCookieSpec(CookieSpecs.DEFAULT)
 				.setCircularRedirectsAllowed(false).setRedirectsEnabled(false).setSocketTimeout(connectTimeout)
 				.setConnectTimeout(connectTimeout).setConnectionRequestTimeout(connectTimeout);
-		if (StringUtils.isNotBlank(proxyHost)) {
-			requestConfigBuilder.setProxy(new HttpHost(proxyHost, proxyPort));
-		}
-		RequestConfig requestConfig = requestConfigBuilder.build();
-
-		HttpClientBuilder builder = HttpClients.custom().setDefaultRequestConfig(requestConfig)
-				.setRetryHandler(new DefaultHttpRequestRetryHandler(requestRetries, true)).setConnectionManager(connectionManager);
+		HttpClientBuilder builder = HttpClients.custom().setRetryHandler(new DefaultHttpRequestRetryHandler(requestRetries, true))
+				.setConnectionManager(connectionManager).setDefaultRequestConfig(requestConfigBuilder.build());
 		return builder.build();
+	}
+
+	@Configuration
+	public static class RequestConfigBuilder {
+
+		@Value("${webcrawler.httpclient.connectTimeout:60000}")
+		private int connectTimeout;
+
+		@Autowired
+		private FreeProxyPool freeProxyPool;
+
+		public RequestConfig build() {
+			RequestConfig.Builder requestConfigBuilder = RequestConfig.custom().setCookieSpec(CookieSpecs.DEFAULT)
+					.setCircularRedirectsAllowed(false).setRedirectsEnabled(false).setSocketTimeout(connectTimeout)
+					.setConnectTimeout(connectTimeout).setConnectionRequestTimeout(connectTimeout);
+			InetSocketAddress socketAddress = (InetSocketAddress) freeProxyPool.getRandomProxy();
+			if (socketAddress != null) {
+				requestConfigBuilder.setProxy(new HttpHost(socketAddress.getAddress()));
+			}
+			return requestConfigBuilder.build();
+		}
 	}
 
 }

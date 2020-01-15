@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.github.paganini2008.springworld.socketbird.Tuple;
 import com.github.paganini2008.springworld.socketbird.transport.NioClient;
 import com.github.paganini2008.springworld.socketbird.utils.Partitioner;
+import com.github.paganini2008.springworld.webcrawler.utils.FreeProxyPool;
 import com.github.paganini2008.springworld.webcrawler.utils.RestResult;
 
 /**
@@ -31,6 +32,15 @@ public class CrawlerController {
 	@Autowired
 	private Partitioner partitioner;
 
+	@Autowired
+	private FreeProxyPool freeProxyPool;
+
+	@GetMapping("/crawler/freeproxy/update")
+	public RestResult updateFreeProxyIp() {
+		freeProxyPool.update();
+		return RestResult.success("Operation OK.", null);
+	}
+
 	@GetMapping("/crawler/submit")
 	public RestResult submit(@RequestParam("url") String url,
 			@RequestParam(name = "version", required = false, defaultValue = "1") int version) {
@@ -39,7 +49,7 @@ public class CrawlerController {
 		data.put("path", url);
 		data.put("version", version);
 		nioClient.send(Tuple.wrap(data), partitioner);
-		return RestResult.success("Submit OK.", null);
+		return RestResult.success("Operation OK.", null);
 	}
 
 }

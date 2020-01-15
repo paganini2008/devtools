@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import com.github.paganini2008.devtools.RandomUtils;
 import com.github.paganini2008.devtools.StringUtils;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -33,9 +34,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SeleniumPageSource implements PageSource {
 
+	@Setter
 	@Value("${webcrawler.crawler.selenium.webdriverExecutionPath}")
 	private String webdriverExecutionPath;
 
+	@Setter
 	@Value("${webcrawler.crawler.requestRetries:3}")
 	private int requestRetries;
 
@@ -67,51 +70,45 @@ public class SeleniumPageSource implements PageSource {
 		if (StringUtils.isBlank(url)) {
 			throw new IllegalArgumentException("Url must not be blank.");
 		}
-		WebDriver webDriver = null;
+		WebDriver webDriver = objectPool.borrowObject();
 		int retries = 1;
 		boolean failed = false;
+		String html = null;
 		do {
 			try {
-				webDriver = objectPool.borrowObject();
-				log.info("Request to: " + url);
 				webDriver.get(url);
-				return function.apply(webDriver);
+				html = function.apply(webDriver);
 			} catch (Exception e) {
 				failed = true;
-				if (retries++ > requestRetries) {
-					throw e;
-				}
-				log.error("Retries: " + retries + ", Cause: " + e.getMessage(), e);
-			} finally {
-				if (webDriver != null) {
-					if (retries > requestRetries) {
-						objectPool.invalidateObject(webDriver);
-					} else {
-						objectPool.returnObject(webDriver);
-					}
-				}
+				log.error(e.getMessage(), e);
 			}
-		} while (failed);
-		throw new IllegalStateException("Exceed max request times.");
+		} while (failed && retries++ < requestRetries);
+		if (failed) {
+			objectPool.invalidateObject(webDriver);
+		} else {
+			objectPool.returnObject(webDriver);
+		}
+		return html;
 	}
 
-	private static class WebDriverObjectFactory extends BasePooledObjectFactory<WebDriver> {
+	class WebDriverObjectFactory extends BasePooledObjectFactory<WebDriver> {
 
 		WebDriverObjectFactory() {
 		}
 
 		public WebDriver create() throws Exception {
-			DesiredCapabilities cap = DesiredCapabilities.chrome();
-			String userAgent = RandomUtils.randomChoice(userAgents);
-			cap.setCapability("User-Agent", userAgent);
-			cap.setCapability("X-Forwarded-For", IpUtils.getRandomIp());
 			ChromeOptions options = new ChromeOptions();
-			options.merge(cap);
+			DesiredCapabilities cap = DesiredCapabilities.chrome();
+			cap.setCapability(ChromeOptions.CAPABILITY, options);
+
+			options.addArguments("lang=zh_CN.UTF-8");
+			options.addArguments("user-agent=" + RandomUtils.randomChoice(userAgents));
 			options.addArguments("--test-type", "--ignore-certificate-errors", "--start-maximized", "no-default-browser-check");
 			options.addArguments("--headless", "--disable-gpu");
 			ChromeDriver driver = new ChromeDriver(options);
 			driver.setLogLevel(Level.OFF);
-			driver.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS).implicitlyWait(60, TimeUnit.SECONDS);
+			driver.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS).implicitlyWait(60, TimeUnit.SECONDS).setScriptTimeout(60,
+					TimeUnit.SECONDS);
 			return driver;
 		}
 
@@ -123,6 +120,17 @@ public class SeleniumPageSource implements PageSource {
 			return new DefaultPooledObject<WebDriver>(object);
 		}
 
+	}
+
+	public static void main(String[] args) throws Exception {
+		String webdriverExecutionPath = "D:\\software\\chromedriver_win32\\chromedriver.exe";
+		SeleniumPageSource pageSource = new SeleniumPageSource();
+		pageSource.setRequestRetries(3);
+		pageSource.setWebdriverExecutionPath(webdriverExecutionPath);
+		pageSource.configure();
+		System.out.println(pageSource.getHtml("https://www.howbuy.com"));
+		System.in.read();
+		pageSource.destroy();
 	}
 
 }

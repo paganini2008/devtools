@@ -26,7 +26,7 @@ import com.github.paganini2008.springworld.webcrawler.utils.PageSource;
 @Configuration
 public class CrawlerConfig {
 	
-	@Value("${webcrawler.crawler.bloomFilterRedisKey}")
+	@Value("${webcrawler.redis-key.bloomFilter}")
 	private String bloomFilterRedisKey;
 
 	@Bean("crawlerPathMatcher")
