@@ -22,7 +22,7 @@ import io.netty.handler.codec.MessageToByteEncoder;
 public class NettyTransport implements Transport {
 
 	public NioClient getNioClient() {
-		return new NettyClient();
+		return new InternalNettyClient();
 	}
 
 	public NioServer getNioServer() {

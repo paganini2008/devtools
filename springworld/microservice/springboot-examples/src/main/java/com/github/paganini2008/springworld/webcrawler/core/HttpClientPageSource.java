@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.webcrawler.utils;
+package com.github.paganini2008.springworld.webcrawler.core;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import com.github.paganini2008.devtools.RandomUtils;
+import com.github.paganini2008.springworld.webcrawler.utils.IpUtils;
 
 import lombok.extern.slf4j.Slf4j;
 

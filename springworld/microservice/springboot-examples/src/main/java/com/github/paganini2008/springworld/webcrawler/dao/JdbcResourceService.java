@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class JdbcResourceService extends NamedParameterJdbcDaoSupport implements ResourceService {
 
-	private static final String SQL_INSERTION = "insert into crawler_resources (id,title,html,url,create_date,version) values (:id,:title,:html,:url,:createDate,:version)";
+	private static final String SQL_INSERTION = "insert into crawler_resources (id,title,html,url,type,create_date,version) values (:id,:title,:html,:url,:type,:createDate,:version)";
 
 	@Autowired
 	public void setSuperDataSource(final DataSource dataSource) {

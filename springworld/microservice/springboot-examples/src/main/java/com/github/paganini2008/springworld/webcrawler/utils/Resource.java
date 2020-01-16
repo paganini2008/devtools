@@ -22,6 +22,7 @@ public class Resource {
 	private String title;
 	private String html;
 	private String url;
+	private String type;
 	private Date createDate;
 	private Integer version;
 

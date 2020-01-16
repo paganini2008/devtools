@@ -13,7 +13,6 @@ import com.github.paganini2008.springworld.socketbird.utils.Partitioner;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -27,25 +26,30 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
- * NettyClient
+ * InternalNettyClient
  * 
  * @author Fred Feng
  * @created 2019-10
- * @revised 2019-12
+ * @revised 2019-10
  * @version 1.0
  */
 @Slf4j
-public class NettyClient implements NioClient {
+public class InternalNettyClient implements NioClient {
 
 	private EventLoopGroup workerGroup;
 	private Bootstrap bootstrap;
-	private Channel channel;
 
 	@Value("${socketbird.nioclient.threads:-1}")
 	private int threadCount;
 
 	@Autowired
+	private NettyClientHandler clientHandler;
+
+	@Autowired
 	private Serializer serializer;
+
+	@Autowired
+	private ChannelContext channelContext;
 
 	public void open() {
 		final int nThreads = threadCount > 0 ? threadCount : Runtime.getRuntime().availableProcessors() * 2;
@@ -58,6 +62,7 @@ public class NettyClient implements NioClient {
 			public void initChannel(SocketChannel ch) throws Exception {
 				ChannelPipeline pipeline = ch.pipeline();
 				pipeline.addLast(new TupleToByteEncoder(serializer), new ByteToTupleDecorder(serializer));
+				pipeline.addLast("handler", clientHandler);
 			}
 		});
 	}
@@ -67,30 +72,38 @@ public class NettyClient implements NioClient {
 			return;
 		}
 		try {
-			channel = bootstrap.connect(address).addListener(new GenericFutureListener<ChannelFuture>() {
+			bootstrap.connect(address).addListener(new GenericFutureListener<ChannelFuture>() {
 				public void operationComplete(ChannelFuture future) throws Exception {
 					log.info("NettyClient connect to: " + address);
 				}
-			}).sync().channel();
+			}).sync();
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
 	}
 
 	public void send(Tuple tuple) {
-		channel.writeAndFlush(tuple);
+		for (ChannelWrapper channel : channelContext.getChannels()) {
+			channel.send(tuple);
+		}
 	}
 
 	public void send(Tuple tuple, Partitioner partitioner) {
-		throw new UnsupportedOperationException();
+		ChannelWrapper channel = channelContext.selectChannel(tuple, partitioner);
+		if (channel != null) {
+			channel.send(tuple);
+		}
 	}
 
 	public boolean isConnected(SocketAddress address) {
+		ChannelWrapper channel = channelContext.getChannel(address);
 		return channel != null && channel.isActive();
 	}
 
 	public void disconnect() {
-		channel.close();
+		for (ChannelWrapper channel : channelContext.getChannels()) {
+			channel.disconnect();
+		}
 	}
 
 	public void close() {
@@ -104,4 +117,5 @@ public class NettyClient implements NioClient {
 			log.error(e.getMessage(), e);
 		}
 	}
+
 }

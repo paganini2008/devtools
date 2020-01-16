@@ -4,7 +4,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.stereotype.Component;
 
 import com.github.paganini2008.devtools.Observable;
 import com.github.paganini2008.springworld.socketbird.transport.Handler;
@@ -19,7 +18,6 @@ import com.github.paganini2008.springworld.socketbird.transport.LoopProcessor;
  * @revised 2019-10
  * @version 1.0
  */
-@Component
 public class HandlerBeanPostProcessor implements BeanPostProcessor, ApplicationListener<ContextRefreshedEvent> {
 
 	private final Observable handlerObservable = Observable.unrepeatable();
@@ -38,7 +36,7 @@ public class HandlerBeanPostProcessor implements BeanPostProcessor, ApplicationL
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		LoopProcessor loopProcessor = event.getApplicationContext().getBean(LoopProcessor.class);
-		loopProcessor.start();
+		loopProcessor.startDaemon();
 		handlerObservable.notifyObservers(loopProcessor);
 	}
 

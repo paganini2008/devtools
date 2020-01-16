@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
+import com.github.paganini2008.springworld.webcrawler.core.PageSource;
 
 import lombok.extern.slf4j.Slf4j;
 

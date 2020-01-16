@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.webcrawler.utils;
+package com.github.paganini2008.springworld.webcrawler.core;
 
 import java.util.Arrays;
 import java.util.Collections;

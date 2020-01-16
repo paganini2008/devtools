@@ -27,19 +27,15 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.lmax</groupId>
-			<artifactId>disruptor</artifactId>
-			<version>3.4.2</version>
-		</dependency>
-
-		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
@@ -49,12 +45,6 @@
 			<groupId>com.esotericsoftware</groupId>
 			<artifactId>kryo</artifactId>
 			<version>5.0.0-RC1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.googlecode.concurrentlinkedhashmap</groupId>
-			<artifactId>concurrentlinkedhashmap-lru</artifactId>
-			<version>1.4.2</version>
 		</dependency>
 
 		<dependency>
@@ -81,6 +71,13 @@
 			<groupId>com.github.paganini2008.springworld</groupId>
 			<artifactId>cluster-spring-boot-starter</artifactId>
 			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.googlecode.xmemcached</groupId>
+			<artifactId>xmemcached</artifactId>
+			<version>2.4.6</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>

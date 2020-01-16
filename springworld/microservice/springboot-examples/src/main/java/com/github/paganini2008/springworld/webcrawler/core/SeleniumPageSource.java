@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.webcrawler.utils;
+package com.github.paganini2008.springworld.webcrawler.core;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;

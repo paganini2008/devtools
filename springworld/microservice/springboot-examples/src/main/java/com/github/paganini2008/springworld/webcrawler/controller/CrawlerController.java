@@ -47,6 +47,7 @@ public class CrawlerController {
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put("refer", url);
 		data.put("path", url);
+		data.put("type", "美食");
 		data.put("version", version);
 		nioClient.send(Tuple.wrap(data), partitioner);
 		return RestResult.success("Operation OK.", null);

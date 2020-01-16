@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 import com.github.paganini2008.springworld.socketbird.Tuple;
-import com.github.paganini2008.springworld.socketbird.store.Store;
+import com.github.paganini2008.springworld.socketbird.buffer.BufferZone;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class LoopProcessor implements Runnable {
 
 	@Autowired
-	private Store store;
+	private BufferZone bufferZone;
 
 	@Value("${socketbird.store.collectionName}")
 	private String collection;
@@ -51,7 +51,7 @@ public class LoopProcessor implements Runnable {
 		return handlers.size();
 	}
 
-	public void start() {
+	public void startDaemon() {
 		running.set(true);
 		runner = ThreadUtils.runAsThread(this);
 		log.info("LoopProcessor is started.");
@@ -72,10 +72,17 @@ public class LoopProcessor implements Runnable {
 	@Override
 	public void run() {
 		while (running.get()) {
-			if (store == null) {
+			if (bufferZone == null) {
 				break;
 			}
-			Tuple tuple = store.get(collection);
+			Tuple tuple = null;
+			try {
+				tuple = bufferZone.get(collection);
+			} catch (Exception e) {
+				if (log.isTraceEnabled()) {
+					log.trace(e.getMessage(), e);
+				}
+			}
 			if (tuple != null) {
 				for (Handler handler : handlers) {
 					handler.onData(tuple);

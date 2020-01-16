@@ -15,12 +15,10 @@ import org.springframework.util.PathMatcher;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.springworld.socketbird.Tuple;
-import com.github.paganini2008.springworld.socketbird.transport.Handler;
 import com.github.paganini2008.springworld.socketbird.transport.NioClient;
 import com.github.paganini2008.springworld.socketbird.utils.Partitioner;
 import com.github.paganini2008.springworld.webcrawler.config.RedisBloomFilter;
 import com.github.paganini2008.springworld.webcrawler.dao.JdbcResourceService;
-import com.github.paganini2008.springworld.webcrawler.utils.PageSource;
 import com.github.paganini2008.springworld.webcrawler.utils.Resource;
 
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
-public class CrawlerHandler implements Handler {
+public class CrawlerHandler {
 
 	@Autowired
 	private RedisBloomFilter bloomFilter;
@@ -63,6 +61,7 @@ public class CrawlerHandler implements Handler {
 	public void onData(Tuple tuple) {
 		final String refer = (String) tuple.getField("refer");
 		final String path = (String) tuple.getField("path");
+		final String type = (String) tuple.getField("type");
 		final int version = (Integer) tuple.getField("version");
 
 		String fullContent = refer + "$" + path + "$" + version;
@@ -88,6 +87,7 @@ public class CrawlerHandler implements Handler {
 		resource.setTitle(dom.title());
 		resource.setHtml(dom.body().html());
 		resource.setUrl(path);
+		resource.setType(type);
 		resource.setCreateDate(new Date());
 		resource.setVersion(version);
 		resourceService.saveResource(resource);
@@ -99,7 +99,7 @@ public class CrawlerHandler implements Handler {
 			for (Element element : elements) {
 				href = element.absUrl("href");
 				if (StringUtils.isNotBlank(href) && acceptedPath(refer, href)) {
-					sendRecursively(refer, href, version);
+					sendRecursively(refer, href, type, version);
 				}
 			}
 		}
@@ -139,10 +139,11 @@ public class CrawlerHandler implements Handler {
 		return n <= depth;
 	}
 
-	private void sendRecursively(String refer, String href, int version) {
+	private void sendRecursively(String refer, String href, String type, int version) {
 		Tuple tuple = Tuple.newTuple();
 		tuple.setField("refer", refer);
 		tuple.setField("path", href);
+		tuple.setField("type", type);
 		tuple.setField("version", version);
 		nioClient.send(tuple, partitioner);
 	}

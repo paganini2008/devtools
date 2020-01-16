@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.github.paganini2008.springworld.socketbird.Tuple;
-import com.github.paganini2008.springworld.socketbird.store.Store;
+import com.github.paganini2008.springworld.socketbird.buffer.BufferZone;
 
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
@@ -23,7 +23,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 public class NettyServerHandler extends ChannelInboundHandlerAdapter{
 
 	@Autowired
-	private Store store;
+	private BufferZone store;
 
 	@Value("${socketbird.store.collectionName}")
 	private String collection;

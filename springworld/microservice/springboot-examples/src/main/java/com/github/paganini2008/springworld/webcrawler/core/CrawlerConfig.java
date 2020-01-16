@@ -12,8 +12,6 @@ import org.springframework.util.PathMatcher;
 import com.github.paganini2008.springworld.webcrawler.config.RedisBloomFilter;
 import com.github.paganini2008.springworld.webcrawler.dao.JdbcResourceService;
 import com.github.paganini2008.springworld.webcrawler.dao.ResourceService;
-import com.github.paganini2008.springworld.webcrawler.utils.HttpClientPageSource;
-import com.github.paganini2008.springworld.webcrawler.utils.PageSource;
 
 /**
  * 
