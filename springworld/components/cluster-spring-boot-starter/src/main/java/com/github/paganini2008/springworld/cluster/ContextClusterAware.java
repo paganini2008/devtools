@@ -38,10 +38,15 @@ public class ContextClusterAware implements ApplicationListener<ContextRefreshed
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
-		final ApplicationContext context = event.getApplicationContext();
 		final String key = namespace + applicationName;
-		redisTemplate.opsForList().leftPush(key, instanceId.get());
-		if (instanceId.get().equals(redisTemplate.opsForList().index(key, -1))) {
+		if (redisTemplate.hasKey(key) && redisTemplate.getExpire(key) < 0) {
+			redisTemplate.delete(key);
+		}
+
+		final ApplicationContext context = event.getApplicationContext();
+		final String id = this.instanceId.get();
+		redisTemplate.opsForList().leftPush(key, id);
+		if (id.equals(redisTemplate.opsForList().index(key, -1))) {
 			instanceId.setMaster(true);
 			heartbeatThread.start();
 			context.publishEvent(new ContextMasterStandbyEvent(context));

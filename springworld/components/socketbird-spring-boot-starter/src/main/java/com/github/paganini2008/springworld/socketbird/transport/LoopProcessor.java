@@ -1,13 +1,16 @@
 package com.github.paganini2008.springworld.socketbird.transport;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Queue;
+import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
+import com.github.paganini2008.springworld.socketbird.Counter;
 import com.github.paganini2008.springworld.socketbird.Tuple;
 import com.github.paganini2008.springworld.socketbird.buffer.BufferZone;
 
@@ -28,12 +31,16 @@ public class LoopProcessor implements Runnable {
 	@Autowired
 	private BufferZone bufferZone;
 
+	@Autowired
+	private Counter counter;
+
 	@Value("${socketbird.store.collectionName}")
 	private String collection;
 
-	private final List<Handler> handlers = new CopyOnWriteArrayList<Handler>();
+	private final Queue<Handler> handlers = new PriorityBlockingQueue<Handler>();
 	private final AtomicBoolean running = new AtomicBoolean(false);
 	private Thread runner;
+	private LoggingThread loggingThread = new LoggingThread();
 
 	public void addHandler(Handler handler) {
 		if (handler != null) {
@@ -54,6 +61,7 @@ public class LoopProcessor implements Runnable {
 	public void startDaemon() {
 		running.set(true);
 		runner = ThreadUtils.runAsThread(this);
+		loggingThread.start();
 		log.info("LoopProcessor is started.");
 	}
 
@@ -84,6 +92,7 @@ public class LoopProcessor implements Runnable {
 				}
 			}
 			if (tuple != null) {
+				counter.incrementCount();
 				for (Handler handler : handlers) {
 					handler.onData(tuple);
 				}
@@ -91,7 +100,27 @@ public class LoopProcessor implements Runnable {
 				ThreadUtils.randomSleep(1000L);
 			}
 		}
-		log.info("Ending Loop");
+		log.info("Ending Loop!");
+	}
+
+	class LoggingThread implements Executable {
+
+		public void start() {
+			ThreadUtils.scheduleAtFixedRate(this, 3, TimeUnit.SECONDS);
+		}
+
+		@Override
+		public boolean execute() {
+			if (log.isTraceEnabled()) {
+				try {
+					log.trace("[Snapshot] count=" + counter.getLocal() + "/" + counter.get() + ", tps=" + counter.getLocalTps() + "/"
+							+ counter.getTps() + ", buffer=" + bufferZone.size(collection));
+				} catch (Exception ignored) {
+				}
+			}
+			return running.get();
+		}
+
 	}
 
 }

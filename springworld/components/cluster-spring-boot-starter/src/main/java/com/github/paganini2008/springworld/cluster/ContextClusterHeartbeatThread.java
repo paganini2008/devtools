@@ -43,6 +43,8 @@ public class ContextClusterHeartbeatThread implements Executable {
 	private Timer timer;
 
 	public void start() {
+		String key = namespace + applicationName;
+		redisTemplate.expire(key, 5, TimeUnit.SECONDS);
 		timer = ThreadUtils.scheduleAtFixedRate(this, 3, 3, TimeUnit.SECONDS);
 		log.info("Start ContextClusterHeartbeatTask ok.");
 	}

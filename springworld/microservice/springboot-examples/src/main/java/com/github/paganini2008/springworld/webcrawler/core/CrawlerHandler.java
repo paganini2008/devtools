@@ -15,6 +15,7 @@ import org.springframework.util.PathMatcher;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.springworld.socketbird.Tuple;
+import com.github.paganini2008.springworld.socketbird.transport.Handler;
 import com.github.paganini2008.springworld.socketbird.transport.NioClient;
 import com.github.paganini2008.springworld.socketbird.utils.Partitioner;
 import com.github.paganini2008.springworld.webcrawler.config.RedisBloomFilter;
@@ -34,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
-public class CrawlerHandler {
+public class CrawlerHandler implements Handler {
 
 	@Autowired
 	private RedisBloomFilter bloomFilter;
@@ -55,10 +56,24 @@ public class CrawlerHandler {
 	@Autowired
 	private PathMatcher pathMather;
 
+	@Autowired
+	private ResourceCounter resourceCounter;
+
+	@Autowired
+	private BatchCondition batchCondition;
+
 	@Value("${webcrawler.crawler.depth:-1}")
 	private int depth;
 
 	public void onData(Tuple tuple) {
+
+		if (batchCondition.finish(tuple)) {
+			log.info("The batch is finished by condition: " + batchCondition.getClass().getName());
+			batchCondition.afterFinish(tuple);
+			return;
+		}
+
+		final Long sourceId = (Long) tuple.getField("sourceId");
 		final String refer = (String) tuple.getField("refer");
 		final String path = (String) tuple.getField("path");
 		final String type = (String) tuple.getField("type");
@@ -66,7 +81,9 @@ public class CrawlerHandler {
 
 		String fullContent = refer + "$" + path + "$" + version;
 		if (bloomFilter.mightContain(fullContent)) {
-			log.trace("Path '{}/{}' has saved.", refer, path);
+			if (log.isTraceEnabled()) {
+				log.trace("Path '{}' has saved.", tuple.toString());
+			}
 			return;
 		} else {
 			bloomFilter.put(fullContent);
@@ -91,18 +108,21 @@ public class CrawlerHandler {
 		resource.setCreateDate(new Date());
 		resource.setVersion(version);
 		resourceService.saveResource(resource);
-		log.trace("Save: " + resource);
-
+		if (log.isTraceEnabled()) {
+			log.trace("Save: " + resource);
+		}
 		Elements elements = dom.body().select("a");
 		if (CollectionUtils.isNotEmpty(elements)) {
 			String href;
 			for (Element element : elements) {
 				href = element.absUrl("href");
 				if (StringUtils.isNotBlank(href) && acceptedPath(refer, href)) {
-					sendRecursively(refer, href, type, version);
+					sendRecursively(sourceId, refer, href, type, version);
 				}
 			}
 		}
+
+		resourceCounter.incrementCount(sourceId);
 
 	}
 
@@ -139,8 +159,9 @@ public class CrawlerHandler {
 		return n <= depth;
 	}
 
-	private void sendRecursively(String refer, String href, String type, int version) {
+	private void sendRecursively(Long sourceId, String refer, String href, String type, int version) {
 		Tuple tuple = Tuple.newTuple();
+		tuple.setField("sourceId", sourceId);
 		tuple.setField("refer", refer);
 		tuple.setField("path", href);
 		tuple.setField("type", type);

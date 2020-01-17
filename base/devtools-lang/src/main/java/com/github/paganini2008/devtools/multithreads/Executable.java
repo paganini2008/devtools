@@ -9,6 +9,7 @@ package com.github.paganini2008.devtools.multithreads;
  * @created 2013-10
  * @version 1.0
  */
+@FunctionalInterface
 public interface Executable {
 
 	boolean execute();

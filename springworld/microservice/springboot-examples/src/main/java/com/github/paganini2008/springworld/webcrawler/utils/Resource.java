@@ -1,5 +1,6 @@
 package com.github.paganini2008.springworld.webcrawler.utils;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import lombok.Getter;
@@ -16,18 +17,20 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class Resource {
+public class Resource implements Serializable {
 
-	private String id;
+	private static final long serialVersionUID = -4629236151028422706L;
+	private Long id;
 	private String title;
 	private String html;
 	private String url;
 	private String type;
 	private Date createDate;
 	private Integer version;
+	private Long sourceId;
 
 	public String toString() {
-		return "[Resource] title: " + title + ", url: " + url + ", version: " + version;
+		return "[Resource] title: " + title + ", url: " + url;
 	}
 
 }

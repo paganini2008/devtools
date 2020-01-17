@@ -61,7 +61,7 @@ public class MemcachedBufferZone implements BufferZone {
 
 	@Override
 	public void set(String name, Tuple tuple) throws Exception {
-		String key = name + ":" + instanceId.get() + ":" + setter.getAndIncrement();
+		String key = keyFor(name) + "-" + setter.getAndIncrement();
 		byte[] data = serializer.serialize(tuple);
 		client.set(key, DEFAULT_STORE_EXPIRATION, data);
 	}
@@ -69,7 +69,7 @@ public class MemcachedBufferZone implements BufferZone {
 	@Override
 	public Tuple get(String name) throws Exception {
 		if (setter.get() > getter.get()) {
-			String key = name + ":" + instanceId.get() + ":" + getter.getAndIncrement();
+			String key = keyFor(name) + "-" + getter.getAndIncrement();
 			byte[] data;
 			if ((data = (byte[]) client.getAndTouch(key, 3)) != null) {
 				return serializer.deserialize(data);
@@ -83,6 +83,10 @@ public class MemcachedBufferZone implements BufferZone {
 		Map<String, String> slabs = client.stats(CollectionUtils.getFirst(client.getAvailableServers()));
 		log.info(slabs.toString());
 		return 0;
+	}
+
+	String keyFor(String name) {
+		return name + "-" + instanceId.get();
 	}
 
 }

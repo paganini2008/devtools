@@ -23,7 +23,7 @@ import com.github.paganini2008.springworld.webcrawler.dao.ResourceService;
  */
 @Configuration
 public class CrawlerConfig {
-	
+
 	@Value("${webcrawler.redis-key.bloomFilter}")
 	private String bloomFilterRedisKey;
 
@@ -43,10 +43,21 @@ public class CrawlerConfig {
 	public PageSource pageSource() {
 		return new HttpClientPageSource();
 	}
-	
+
 	@Bean
 	public RedisBloomFilter redisBloomFilter(StringRedisTemplate redisTemplate) {
 		return new RedisBloomFilter(bloomFilterRedisKey, 100000000, 0.03d, redisTemplate);
+	}
+
+	@Bean
+	public ResourceCounter resourceCounter() {
+		return new ResourceCounter();
+	}
+
+	@ConditionalOnMissingBean(BatchCondition.class)
+	@Bean
+	public BatchCondition countLimited(ResourceCounter resourceCounter) {
+		return new CountLimitedCondition(resourceCounter);
 	}
 
 }

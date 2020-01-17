@@ -1,18 +1,24 @@
 package com.github.paganini2008.springworld.socketbird;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.GenericToStringSerializer;
+import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 
 import com.github.paganini2008.springworld.cluster.multicast.ContextMulticastEventHandler;
 import com.github.paganini2008.springworld.socketbird.buffer.BufferZone;
 import com.github.paganini2008.springworld.socketbird.buffer.RedisBufferZone;
 import com.github.paganini2008.springworld.socketbird.transport.ChannelContext;
 import com.github.paganini2008.springworld.socketbird.transport.ChannelStateListener;
+import com.github.paganini2008.springworld.socketbird.transport.InternalNettyClient;
 import com.github.paganini2008.springworld.socketbird.transport.LoggingChannelStateListener;
 import com.github.paganini2008.springworld.socketbird.transport.LoopProcessor;
-import com.github.paganini2008.springworld.socketbird.transport.InternalNettyClient;
 import com.github.paganini2008.springworld.socketbird.transport.NettyClientHandler;
 import com.github.paganini2008.springworld.socketbird.transport.NettyServer;
 import com.github.paganini2008.springworld.socketbird.transport.NettyServerHandler;
@@ -74,8 +80,34 @@ public class ImportServerConfiguration {
 	}
 	
 	@Bean
+	public CounterCleaningEventListener counterCleaningEventListener() {
+		return new CounterCleaningEventListener();
+	}
+
+	@Bean
 	public HandlerBeanPostProcessor handlerBeanPostProcessor() {
 		return new HandlerBeanPostProcessor();
+	}
+
+	@Bean("redistemplate-bigint")
+	public RedisTemplate<String, Long> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+		RedisTemplate<String, Long> redisTemplate = new RedisTemplate<String, Long>();
+		redisTemplate.setKeySerializer(RedisSerializer.string());
+		redisTemplate.setValueSerializer(new GenericToStringSerializer<Long>(Long.class));
+		redisTemplate.setExposeConnection(true);
+		redisTemplate.setConnectionFactory(redisConnectionFactory);
+		redisTemplate.afterPropertiesSet();
+		return redisTemplate;
+	}
+
+	@Bean("counter-bigint")
+	public RedisAtomicLong redisAtomicLong(@Qualifier("redistemplate-bigint") RedisTemplate<String, Long> redisTemplate) {
+		return new RedisAtomicLong("socketbird:counter", redisTemplate);
+	}
+
+	@Bean(initMethod = "start", destroyMethod = "stop")
+	public Counter counter(@Qualifier("counter-bigint") RedisAtomicLong redisAtomicLong) {
+		return new Counter(redisAtomicLong);
 	}
 
 	@Configuration

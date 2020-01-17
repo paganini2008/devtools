@@ -6,9 +6,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.github.paganini2008.devtools.io.FileUtils;
-import com.github.paganini2008.devtools.net.NetUtils;
 
 /**
  * 
@@ -19,6 +19,7 @@ import com.github.paganini2008.devtools.net.NetUtils;
  * @revised 2019-08
  * @version 1.0
  */
+@EnableScheduling
 @EnableAsync
 @SpringBootApplication
 @ComponentScan(basePackages = { "com.github.paganini2008.springworld.webcrawler" })
@@ -35,7 +36,7 @@ public class Application {
 
 	public static void main(String[] args) {
 		//final int port = NetUtils.getRandomPort(Constants.MICROSERVICE_RANDOM_PORT_START, Constants.MICROSERVICE_BIZ_RANDOM_PORT_END);
-		int port = 8021;
+		int port = 8022;
 		System.out.println("Server Port: " + port);
 		System.setProperty("server.port", String.valueOf(port));
 		SpringApplication.run(Application.class, args);
