@@ -1,6 +1,7 @@
 package com.github.paganini2008.springworld.webcrawler.utils;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -25,5 +26,6 @@ public class Source implements Serializable {
 	private String name;
 	private String type;
 	private String url;
+	private Date createDate;
 
 }

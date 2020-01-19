@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.webcrawler.config;
+package com.github.paganini2008.springworld.webcrawler.utils;
 
 import org.springframework.data.redis.core.RedisOperations;
 

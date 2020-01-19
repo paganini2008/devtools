@@ -36,7 +36,7 @@ public class Application {
 
 	public static void main(String[] args) {
 		//final int port = NetUtils.getRandomPort(Constants.MICROSERVICE_RANDOM_PORT_START, Constants.MICROSERVICE_BIZ_RANDOM_PORT_END);
-		int port = 8022;
+		int port = 8020;
 		System.out.println("Server Port: " + port);
 		System.setProperty("server.port", String.valueOf(port));
 		SpringApplication.run(Application.class, args);

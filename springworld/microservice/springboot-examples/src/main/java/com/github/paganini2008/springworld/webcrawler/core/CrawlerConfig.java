@@ -1,17 +1,19 @@
 package com.github.paganini2008.springworld.webcrawler.core;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
-import com.github.paganini2008.springworld.webcrawler.config.RedisBloomFilter;
 import com.github.paganini2008.springworld.webcrawler.dao.JdbcResourceService;
 import com.github.paganini2008.springworld.webcrawler.dao.ResourceService;
+import com.github.paganini2008.springworld.webcrawler.utils.RedisBloomFilter;
+import com.github.paganini2008.springworld.webcrawler.utils.RedisUUID;
 
 /**
  * 
@@ -24,15 +26,15 @@ import com.github.paganini2008.springworld.webcrawler.dao.ResourceService;
 @Configuration
 public class CrawlerConfig {
 
-	@Value("${webcrawler.redis-key.bloomFilter}")
-	private String bloomFilterRedisKey;
+	@Value("${spring.application.name}")
+	private String applicationName;
 
 	@Bean("crawlerPathMatcher")
 	public PathMatcher crawlerPathMatcher() {
 		return new AntPathMatcher();
 	}
 
-	@ConditionalOnProperty(name = "webcrawler.resources.service", havingValue = "jdbc", matchIfMissing = true)
+	@ConditionalOnMissingBean(ResourceService.class)
 	@Bean
 	public ResourceService resourceService() {
 		return new JdbcResourceService();
@@ -46,7 +48,12 @@ public class CrawlerConfig {
 
 	@Bean
 	public RedisBloomFilter redisBloomFilter(StringRedisTemplate redisTemplate) {
-		return new RedisBloomFilter(bloomFilterRedisKey, 100000000, 0.03d, redisTemplate);
+		return new RedisBloomFilter("bloomFiter:" + applicationName, 100000000, 0.03d, redisTemplate);
+	}
+
+	@Bean
+	public RedisUUID redisUuid(@Qualifier("bigint") RedisTemplate<String, Long> redisTemplate) {
+		return new RedisUUID("uuid:" + applicationName + ":timestamp", redisTemplate);
 	}
 
 	@Bean
@@ -54,9 +61,9 @@ public class CrawlerConfig {
 		return new ResourceCounter();
 	}
 
-	@ConditionalOnMissingBean(BatchCondition.class)
+	@ConditionalOnMissingBean(FinishCondition.class)
 	@Bean
-	public BatchCondition countLimited(ResourceCounter resourceCounter) {
+	public FinishCondition countLimited(ResourceCounter resourceCounter) {
 		return new CountLimitedCondition(resourceCounter);
 	}
 

@@ -11,7 +11,7 @@ import com.github.paganini2008.springworld.socketbird.Tuple;
  * @revised 2019-12
  * @version 1.0
  */
-public class CountLimitedCondition implements BatchCondition {
+public class CountLimitedCondition implements FinishCondition {
 
 	private final long countLimit;
 	private final ResourceCounter resourceCounter;
@@ -26,10 +26,10 @@ public class CountLimitedCondition implements BatchCondition {
 	}
 
 	@Override
-	public boolean finish(Tuple tuple) {
+	public boolean shouldFinish(Tuple tuple) {
 		Long sourceId = (Long) tuple.getField("sourceId");
 		long count = resourceCounter.get(sourceId);
-		return countLimit > count;
+		return count >= countLimit;
 	}
 
 }

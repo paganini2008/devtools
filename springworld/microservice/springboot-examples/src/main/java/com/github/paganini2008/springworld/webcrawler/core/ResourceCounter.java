@@ -2,6 +2,7 @@ package com.github.paganini2008.springworld.webcrawler.core;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,6 +33,8 @@ public class ResourceCounter {
 			info = cache.get(id);
 		}
 		info.counter.set(0);
+		info.startTime = System.currentTimeMillis();
+		info.running.set(true);
 	}
 
 	public long incrementCount(Long id) {
@@ -60,11 +63,13 @@ public class ResourceCounter {
 
 	private static class Info {
 
-		final RedisAtomicLong counter;
-		final long startTime;
+		RedisAtomicLong counter;
+		AtomicBoolean running;
+		long startTime;
 
 		Info(RedisAtomicLong counter) {
 			this.counter = counter;
+			this.running = new AtomicBoolean(false);
 			this.startTime = System.currentTimeMillis();
 		}
 

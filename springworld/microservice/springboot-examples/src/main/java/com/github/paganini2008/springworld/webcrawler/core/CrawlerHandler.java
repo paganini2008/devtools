@@ -18,8 +18,8 @@ import com.github.paganini2008.springworld.socketbird.Tuple;
 import com.github.paganini2008.springworld.socketbird.transport.Handler;
 import com.github.paganini2008.springworld.socketbird.transport.NioClient;
 import com.github.paganini2008.springworld.socketbird.utils.Partitioner;
-import com.github.paganini2008.springworld.webcrawler.config.RedisBloomFilter;
 import com.github.paganini2008.springworld.webcrawler.dao.JdbcResourceService;
+import com.github.paganini2008.springworld.webcrawler.utils.RedisBloomFilter;
 import com.github.paganini2008.springworld.webcrawler.utils.Resource;
 
 import lombok.extern.slf4j.Slf4j;
@@ -60,16 +60,15 @@ public class CrawlerHandler implements Handler {
 	private ResourceCounter resourceCounter;
 
 	@Autowired
-	private BatchCondition batchCondition;
+	private FinishCondition finishCondition;
 
 	@Value("${webcrawler.crawler.depth:-1}")
 	private int depth;
 
 	public void onData(Tuple tuple) {
 
-		if (batchCondition.finish(tuple)) {
-			log.info("The batch is finished by condition: " + batchCondition.getClass().getName());
-			batchCondition.afterFinish(tuple);
+		if (finishCondition.shouldFinish(tuple)) {
+			log.info("This batch is finished by specified condition: " + finishCondition.getClass().getName());
 			return;
 		}
 
@@ -79,7 +78,7 @@ public class CrawlerHandler implements Handler {
 		final String type = (String) tuple.getField("type");
 		final int version = (Integer) tuple.getField("version");
 
-		String fullContent = refer + "$" + path + "$" + version;
+		String fullContent = sourceId + "$" + refer + "$" + path + "$" + version;
 		if (bloomFilter.mightContain(fullContent)) {
 			if (log.isTraceEnabled()) {
 				log.trace("Path '{}' has saved.", tuple.toString());
@@ -107,6 +106,7 @@ public class CrawlerHandler implements Handler {
 		resource.setType(type);
 		resource.setCreateDate(new Date());
 		resource.setVersion(version);
+		resource.setSourceId(sourceId);
 		resourceService.saveResource(resource);
 		if (log.isTraceEnabled()) {
 			log.trace("Save: " + resource);

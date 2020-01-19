@@ -1,6 +1,7 @@
 package com.github.paganini2008.springworld.socketbird.buffer;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import com.github.paganini2008.springworld.cluster.InstanceId;
@@ -23,6 +24,9 @@ public class RedisBufferZone implements BufferZone {
 	@Autowired
 	private InstanceId instanceId;
 
+	@Value("${spring.application.name}")
+	private String applicationName;
+
 	@Override
 	public void set(String name, Tuple tuple) {
 		template.opsForList().leftPush(keyForName(name), tuple);
@@ -39,7 +43,7 @@ public class RedisBufferZone implements BufferZone {
 	}
 
 	String keyForName(String name) {
-		return name + ":" + instanceId.get();
+		return name + ":" + applicationName + ":" + instanceId.get();
 	}
 
 }

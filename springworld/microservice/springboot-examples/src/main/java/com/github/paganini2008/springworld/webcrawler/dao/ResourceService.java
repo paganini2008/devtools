@@ -16,21 +16,25 @@ import com.github.paganini2008.springworld.webcrawler.utils.SourceIndex;
  * @version 1.0
  */
 public interface ResourceService {
-	
+
 	PageBean<Source> pageForSource(int page, int size);
-	
+
 	int updateSourceIndex(SourceIndex sourceIndex);
-	
+
 	int saveSourceIndex(SourceIndex sourceIndex);
 
 	int saveSource(Source source);
+
+	void deleteSource(long id);
+
+	Source getSource(long id);
 	
-	void deleteSource(String id);
-	
-	Source getSource(String id);
-	
+	SourceIndex getSourceIndex(long id);
+
 	int saveResource(Resource resource);
+
+	PageResponse<Resource> queryForResource(long id, int page, int size);
 	
-	PageResponse<Resource> queryForResource(int page, int size);
+	int updateResourceVersion(long sourceId, int version);
 
 }

@@ -31,11 +31,11 @@ public class HttpClientPageSource implements PageSource {
 	@Autowired
 	private RestTemplate restTemplate;
 
-	@Value("${webcrawler.crawler.requestRetries:3}")
+	@Value("${webcrawler.pagesource.requestRetries:3}")
 	private int requestRetries;
 
 	public String getHtml(String url) throws Exception {
-		int retries = 1;
+		int retries = 0;
 		boolean failed = false;
 		do {
 			HttpHeaders headers = new HttpHeaders();

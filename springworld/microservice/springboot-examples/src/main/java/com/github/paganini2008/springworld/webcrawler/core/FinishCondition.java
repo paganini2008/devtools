@@ -4,16 +4,16 @@ import com.github.paganini2008.springworld.socketbird.Tuple;
 
 /**
  * 
- * BatchCondition
+ * FinishCondition
  * 
  * @author Fred Feng
  * @created 2019-10
  * @revised 2019-12
  * @version 1.0
  */
-public interface BatchCondition {
+public interface FinishCondition {
 
-	boolean finish(Tuple tuple);
+	boolean shouldFinish(Tuple tuple);
 
 	default void afterFinish(Tuple tuple) {
 	}

@@ -35,11 +35,11 @@ import lombok.extern.slf4j.Slf4j;
 public class SeleniumPageSource implements PageSource {
 
 	@Setter
-	@Value("${webcrawler.crawler.selenium.webdriverExecutionPath}")
+	@Value("${webcrawler.pagesource.selenium.webdriverExecutionPath}")
 	private String webdriverExecutionPath;
 
 	@Setter
-	@Value("${webcrawler.crawler.requestRetries:3}")
+	@Value("${webcrawler.pagesource.requestRetries:3}")
 	private int requestRetries;
 
 	private ObjectPool<WebDriver> objectPool;
@@ -50,7 +50,7 @@ public class SeleniumPageSource implements PageSource {
 		GenericObjectPoolConfig<WebDriver> poolConfig = new GenericObjectPoolConfig<WebDriver>();
 		poolConfig.setMinIdle(1);
 		poolConfig.setMaxIdle(5);
-		poolConfig.setMaxTotal(10);
+		poolConfig.setMaxTotal(20);
 		objectPool = new GenericObjectPool<WebDriver>(new WebDriverObjectFactory(), poolConfig);
 	}
 
@@ -71,24 +71,24 @@ public class SeleniumPageSource implements PageSource {
 			throw new IllegalArgumentException("Url must not be blank.");
 		}
 		WebDriver webDriver = objectPool.borrowObject();
-		int retries = 1;
+		int retries = 0;
 		boolean failed = false;
-		String html = null;
 		do {
 			try {
 				webDriver.get(url);
-				html = function.apply(webDriver);
+				return function.apply(webDriver);
 			} catch (Exception e) {
 				failed = true;
 				log.error(e.getMessage(), e);
 			}
 		} while (failed && retries++ < requestRetries);
+
 		if (failed) {
 			objectPool.invalidateObject(webDriver);
 		} else {
 			objectPool.returnObject(webDriver);
 		}
-		return html;
+		return "";
 	}
 
 	class WebDriverObjectFactory extends BasePooledObjectFactory<WebDriver> {

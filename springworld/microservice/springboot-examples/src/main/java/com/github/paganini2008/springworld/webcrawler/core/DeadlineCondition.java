@@ -15,7 +15,7 @@ import com.github.paganini2008.springworld.socketbird.Tuple;
  * @revised 2019-12
  * @version 1.0
  */
-public class DeadlineCondition implements BatchCondition {
+public class DeadlineCondition implements FinishCondition {
 
 	private final long time;
 	private final TimeUnit timeUnit;
@@ -30,7 +30,7 @@ public class DeadlineCondition implements BatchCondition {
 	private final ConcurrentMap<Long, Long> endTimes = new ConcurrentHashMap<Long, Long>();
 
 	@Override
-	public boolean finish(Tuple tuple) {
+	public boolean shouldFinish(Tuple tuple) {
 		Long sourceId = (Long) tuple.getField("sourceId");
 		if (resourceCounter.getStartTime(sourceId) == 0) {
 			return false;
