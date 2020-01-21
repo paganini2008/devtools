@@ -37,6 +37,7 @@ public class HttpClientPageSource implements PageSource {
 	public String getHtml(String url) throws Exception {
 		int retries = 0;
 		boolean failed = false;
+		String html = "";
 		do {
 			HttpHeaders headers = new HttpHeaders();
 			headers.add("User-Agent", RandomUtils.randomChoice(userAgents));
@@ -44,13 +45,13 @@ public class HttpClientPageSource implements PageSource {
 			ResponseEntity<String> responseEntity;
 			try {
 				responseEntity = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
-				return responseEntity.getStatusCode() == HttpStatus.OK ? responseEntity.getBody() : "";
+				html = responseEntity.getStatusCode() == HttpStatus.OK ? responseEntity.getBody() : "";
 			} catch (Exception e) {
 				failed = true;
 				log.error(e.getMessage(), e);
 			}
 		} while (failed && retries++ < requestRetries);
-		return "";
+		return html;
 	}
 
 }

@@ -41,7 +41,7 @@ public class CrawlerConfig {
 	@ConditionalOnMissingBean(PageSource.class)
 	@Bean(initMethod = "configure", destroyMethod = "destroy")
 	public PageSource pageSource() {
-		return new HttpClientPageSource();
+		return new HtmlUnitPageSource();
 	}
 
 	@Bean

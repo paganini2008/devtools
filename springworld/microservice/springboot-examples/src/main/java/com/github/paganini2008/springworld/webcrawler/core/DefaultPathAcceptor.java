@@ -41,9 +41,6 @@ public class DefaultPathAcceptor implements PathAcceptor {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean accept(String refer, String path, Tuple tuple) {
-		if (!path.startsWith(refer)) {
-			return false;
-		}
 		long sourceId = (Long) tuple.getField("sourceId");
 		List<String> pathPatterns = MapUtils.get(pathPatternCache, sourceId, () -> {
 			Source source = resourceService.getSource(sourceId);
@@ -53,7 +50,7 @@ public class DefaultPathAcceptor implements PathAcceptor {
 			return Arrays.asList(source.getPathPattern().split(","));
 		});
 		if (CollectionUtils.isEmpty(pathPatterns)) {
-			return true;
+			return path.startsWith(refer);
 		}
 		for (String pathPattern : pathPatterns) {
 			if (pathMather.match(pathPattern, path)) {

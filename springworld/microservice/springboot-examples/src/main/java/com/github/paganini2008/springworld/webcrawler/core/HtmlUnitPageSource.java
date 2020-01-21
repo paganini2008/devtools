@@ -92,13 +92,10 @@ public class HtmlUnitPageSource implements PageSource {
 			} catch (Exception e) {
 				failed = true;
 				log.error(e.getMessage(), e);
+			} finally {
+				objectPool.returnObject(webClient);
 			}
 		} while (failed && retries++ < requestRetries);
-		if (failed) {
-			objectPool.invalidateObject(webClient);
-		} else {
-			objectPool.returnObject(webClient);
-		}
 		return "";
 	}
 

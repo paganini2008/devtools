@@ -80,14 +80,10 @@ public class SeleniumPageSource implements PageSource {
 			} catch (Exception e) {
 				failed = true;
 				log.error(e.getMessage(), e);
+			}finally {
+				objectPool.returnObject(webDriver);
 			}
 		} while (failed && retries++ < requestRetries);
-
-		if (failed) {
-			objectPool.invalidateObject(webDriver);
-		} else {
-			objectPool.returnObject(webDriver);
-		}
 		return "";
 	}
 

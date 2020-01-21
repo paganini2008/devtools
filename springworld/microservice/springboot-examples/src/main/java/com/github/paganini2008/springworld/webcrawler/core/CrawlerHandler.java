@@ -108,6 +108,9 @@ public class CrawlerHandler implements Handler {
 			case "crawl":
 				doCrawl(tuple);
 				break;
+			case "update":
+				doUpdate(tuple);
+				break;
 			case "index":
 				doIndex(tuple);
 				break;
@@ -144,11 +147,14 @@ public class CrawlerHandler implements Handler {
 		if (StringUtils.isBlank(html)) {
 			return;
 		}
+		Document document = Jsoup.parse(html);
+		if (document == null) {
+			return;
+		}
 
-		Document dom = Jsoup.parse(html);
 		Resource resource = new Resource();
-		resource.setTitle(dom.title());
-		resource.setHtml(dom.html());
+		resource.setTitle(document.title());
+		resource.setHtml(document.html());
 		resource.setUrl(path);
 		resource.setType(type);
 		resource.setCreateDate(new Date());
@@ -159,7 +165,7 @@ public class CrawlerHandler implements Handler {
 		if (log.isInfoEnabled()) {
 			log.info("Save: " + resource);
 		}
-		
+
 		if (version > 0) {
 			sendIndex(sourceId, resource.getId());
 		}
@@ -167,13 +173,90 @@ public class CrawlerHandler implements Handler {
 			postHandle(sourceId, resource.getId());
 		}
 
-		Elements elements = dom.body().select("a");
+		Elements elements = document.body().select("a");
 		if (CollectionUtils.isNotEmpty(elements)) {
 			String href;
 			for (Element element : elements) {
 				href = element.absUrl("href");
+				if (StringUtils.isBlank(href)) {
+					href = element.attr("href");
+					if (!href.startsWith("/")) {
+						href = "/" + href;
+					}
+					href = refer + href;
+				}
 				if (StringUtils.isNotBlank(href) && acceptedPath(refer, href, tuple)) {
-					sendRecursively(sourceId, refer, href, type, version);
+					sendRecursively(sourceId, refer, href, type, version, bloomFilter, false);
+				}
+			}
+		}
+	}
+
+	private void doUpdate(Tuple tuple) {
+		if (finishCondition.shouldFinish(tuple)) {
+			return;
+		}
+		final long sourceId = (Long) tuple.getField("sourceId");
+		final String refer = (String) tuple.getField("refer");
+		final String path = (String) tuple.getField("path");
+		final String type = (String) tuple.getField("type");
+		final int version = (Integer) tuple.getField("version");
+
+		String html = null;
+		try {
+			html = pageSource.getHtml(path);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+		if (StringUtils.isBlank(html)) {
+			return;
+		}
+		Document document = Jsoup.parse(html);
+		if (document == null) {
+			return;
+		}
+
+		RedisBloomFilter bloomFilter = getBloomFilter(sourceId);
+		String fullContent = sourceId + "$" + refer + "$" + path + "$" + version;
+		if (!bloomFilter.mightContain(fullContent)) {
+			bloomFilter.put(fullContent);
+
+			Resource resource = new Resource();
+			resource.setTitle(document.title());
+			resource.setHtml(document.html());
+			resource.setUrl(path);
+			resource.setType(type);
+			resource.setCreateDate(new Date());
+			resource.setVersion(version);
+			resource.setSourceId(sourceId);
+			resourceService.saveResource(resource);
+			resourceCounter.incrementCount(sourceId);
+			if (log.isInfoEnabled()) {
+				log.info("Save: " + resource);
+			}
+
+			if (version > 0) {
+				sendIndex(sourceId, resource.getId());
+			}
+			if (customizedServiceEnabled) {
+				postHandle(sourceId, resource.getId());
+			}
+		}
+
+		Elements elements = document.body().select("a");
+		if (CollectionUtils.isNotEmpty(elements)) {
+			String href;
+			for (Element element : elements) {
+				href = element.absUrl("href");
+				if (StringUtils.isBlank(href)) {
+					href = element.attr("href");
+					if (!href.startsWith("/")) {
+						href = "/" + href;
+					}
+					href = refer + href;
+				}
+				if (StringUtils.isNotBlank(href) && acceptedPath(refer, href, tuple)) {
+					sendRecursively(sourceId, refer, href, type, version, bloomFilter, true);
 				}
 			}
 		}
@@ -233,10 +316,10 @@ public class CrawlerHandler implements Handler {
 		return n <= depth;
 	}
 
-	private void sendRecursively(long sourceId, String refer, String href, String type, int version) {
+	private void sendRecursively(long sourceId, String refer, String href, String type, int version, RedisBloomFilter bloomFilter,
+			boolean update) {
 		String fullContent = sourceId + "$" + refer + "$" + href + "$" + version;
-		RedisBloomFilter bloomFilter = getBloomFilter(sourceId);
-		if (!bloomFilter.mightContain(fullContent)) {
+		if (update || !bloomFilter.mightContain(fullContent)) {
 			Tuple tuple = Tuple.newTuple();
 			tuple.setField("action", "crawl");
 			tuple.setField("sourceId", sourceId);

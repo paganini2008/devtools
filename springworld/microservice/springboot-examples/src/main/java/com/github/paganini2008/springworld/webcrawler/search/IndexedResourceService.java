@@ -36,12 +36,12 @@ public class IndexedResourceService {
 	@Autowired
 	private ElasticsearchTemplate elasticsearchTemplate;
 
-	public void createIndex() {
-		elasticsearchTemplate.createIndex("crawler_resources");
+	public void createIndex(String indexName) {
+		elasticsearchTemplate.createIndex(indexName);
 	}
 
-	public void deleteIndex() {
-		elasticsearchTemplate.deleteIndex("ind_webcrawler_resource");
+	public void deleteIndex(String indexName) {
+		elasticsearchTemplate.deleteIndex(indexName);
 	}
 
 	public void saveResource(IndexedResource indexedResource) {

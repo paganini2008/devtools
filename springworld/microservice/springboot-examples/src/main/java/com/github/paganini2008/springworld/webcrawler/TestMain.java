@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import org.apache.commons.codec.cli.Digest;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
 
 import com.github.paganini2008.devtools.CharsetUtils;
 import com.github.paganini2008.devtools.io.FileUtils;
@@ -60,8 +62,10 @@ public class TestMain {
 	}
 
 	public static void main(String[] args) throws IOException {
-		String unicode = FileUtils.toString("d:/json.txt", CharsetUtils.UTF_8);
-		System.out.println(decodeUnicode(unicode));
+		//String unicode = FileUtils.toString("d:/json.txt", CharsetUtils.UTF_8);
+		//System.out.println(decodeUnicode(unicode));
+		PathMatcher pathMatcher = new AntPathMatcher();
+		System.out.println(pathMatcher.match("http://*.haochi123.com/", "http://caipu.haochi123.com/"));
 	}
 
 }

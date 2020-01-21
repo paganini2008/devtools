@@ -18,6 +18,7 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 import com.github.paganini2008.springworld.socketbird.Tuple;
 import com.github.paganini2008.springworld.socketbird.transport.NioClient;
 import com.github.paganini2008.springworld.socketbird.utils.Partitioner;
+import com.github.paganini2008.springworld.webcrawler.core.PageSource;
 import com.github.paganini2008.springworld.webcrawler.core.ResourceCounter;
 import com.github.paganini2008.springworld.webcrawler.jdbc.ResourceService;
 import com.github.paganini2008.springworld.webcrawler.search.IndexedResourceService;
@@ -53,6 +54,9 @@ public class CrawlerController {
 
 	@Autowired
 	private ResourceCounter resourceCounter;
+
+	@Autowired
+	private PageSource pageSource;
 
 	@Value("${webcrawler.indexer.synchronization.enabled:true}")
 	private boolean index;
@@ -96,15 +100,20 @@ public class CrawlerController {
 		return Reply.success("Operation OK.");
 	}
 
+	@GetMapping("/test/request")
+	public String testRequest(@RequestParam("url") String url) throws Exception {
+		return pageSource.getHtml(url);
+	}
+
 	@GetMapping("/index/create")
-	public Reply createIndex() {
-		indexedResourceService.createIndex();
+	public Reply createIndex(@RequestParam("indexName") String indexName) {
+		indexedResourceService.createIndex(indexName);
 		return Reply.success("Operation OK.");
 	}
 
 	@GetMapping("/index/delete")
-	public Reply deleteIndex() {
-		indexedResourceService.deleteIndex();
+	public Reply deleteIndex(@RequestParam("indexName") String indexName) {
+		indexedResourceService.deleteIndex(indexName);
 		return Reply.success("Operation OK.");
 	}
 
