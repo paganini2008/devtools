@@ -106,7 +106,7 @@ public class HtmlUnitPageSource implements PageSource {
 		HtmlUnitPageSource pageSource = new HtmlUnitPageSource();
 		pageSource.configure();
 		// System.out.println(pageSource.getHtml("https://blog.csdn.net/u010814849/article/details/52526705"));
-		System.out.println(pageSource.getHtml("https://www.tuniu.com/drive/210713457"));
+		System.out.println(pageSource.getHtml("http://www.ttmeishi.com/CaiXi/tese/"));
 		System.in.read();
 		pageSource.destroy();
 	}

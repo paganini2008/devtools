@@ -128,7 +128,7 @@ public class SeleniumPageSource implements PageSource {
 		pageSource.setRequestRetries(3);
 		pageSource.setWebdriverExecutionPath(webdriverExecutionPath);
 		pageSource.configure();
-		System.out.println(pageSource.getHtml("https://www.howbuy.com"));
+		System.out.println(pageSource.getHtml("http://www.ttmeishi.com/CaiXi/tese/"));
 		System.in.read();
 		pageSource.destroy();
 	}

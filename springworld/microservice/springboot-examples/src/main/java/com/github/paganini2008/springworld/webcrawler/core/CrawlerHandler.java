@@ -1,8 +1,10 @@
 package com.github.paganini2008.springworld.webcrawler.core;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -10,6 +12,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import com.github.paganini2008.devtools.StringUtils;
@@ -41,7 +44,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CrawlerHandler implements Handler {
 
 	@Autowired
-	private RedisBloomFilter bloomFilter;
+	private StringRedisTemplate redisTemplate;
 
 	@Autowired
 	private PageSource pageSource;
@@ -67,10 +70,36 @@ public class CrawlerHandler implements Handler {
 	@Autowired
 	private IndexedResourceService indexService;
 
-	private final Map<Long, Source> sourceCache = new ConcurrentHashMap<Long, Source>();
+	@Value("${spring.application.name}")
+	private String applicationName;
 
-	@Value("${webcrawler.crawler.depth:-1}")
+	@Value("${webcrawler.crawling.depth:-1}")
 	private int depth;
+
+	@Value("${webcrawler.crawling.customized:false}")
+	private boolean customizedServiceEnabled;
+
+	private final Map<Long, Source> sourceCache = new ConcurrentHashMap<Long, Source>();
+	private final List<CustomizedService> customizedServices = new CopyOnWriteArrayList<CustomizedService>();
+	private final Map<Long, RedisBloomFilter> bloomFilters = new ConcurrentHashMap<Long, RedisBloomFilter>();
+
+	public void addCustomizedService(CustomizedService customizedService) {
+		if (customizedService != null) {
+			customizedServices.add(customizedService);
+		}
+	}
+
+	public void removeCustomizedService(CustomizedService customizedService) {
+		while (customizedServices.contains(customizedService)) {
+			customizedServices.remove(customizedService);
+		}
+	}
+
+	private RedisBloomFilter getBloomFilter(long id) {
+		return MapUtils.get(bloomFilters, id, () -> {
+			return new RedisBloomFilter("bloomFiter:" + applicationName + ":source:" + id, 100000000, 0.03d, redisTemplate);
+		});
+	}
 
 	public void onData(Tuple tuple) {
 		final String action = (String) tuple.getField("action");
@@ -81,6 +110,9 @@ public class CrawlerHandler implements Handler {
 				break;
 			case "index":
 				doIndex(tuple);
+				break;
+			case "customize":
+				doCustomize(tuple);
 				break;
 			}
 		}
@@ -96,12 +128,12 @@ public class CrawlerHandler implements Handler {
 		final String type = (String) tuple.getField("type");
 		final int version = (Integer) tuple.getField("version");
 
+		RedisBloomFilter bloomFilter = getBloomFilter(sourceId);
 		String fullContent = sourceId + "$" + refer + "$" + path + "$" + version;
 		if (bloomFilter.mightContain(fullContent)) {
 			return;
 		} else {
 			bloomFilter.put(fullContent);
-			log.info("Crawl: " + tuple.toString());
 		}
 		String html = null;
 		try {
@@ -123,9 +155,18 @@ public class CrawlerHandler implements Handler {
 		resource.setVersion(version);
 		resource.setSourceId(sourceId);
 		resourceService.saveResource(resource);
-		if (log.isTraceEnabled()) {
-			log.trace("Save: " + resource);
+		resourceCounter.incrementCount(sourceId);
+		if (log.isInfoEnabled()) {
+			log.info("Save: " + resource);
 		}
+		
+		if (version > 0) {
+			sendIndex(sourceId, resource.getId());
+		}
+		if (customizedServiceEnabled) {
+			postHandle(sourceId, resource.getId());
+		}
+
 		Elements elements = dom.body().select("a");
 		if (CollectionUtils.isNotEmpty(elements)) {
 			String href;
@@ -135,12 +176,6 @@ public class CrawlerHandler implements Handler {
 					sendRecursively(sourceId, refer, href, type, version);
 				}
 			}
-		}
-
-		resourceCounter.incrementCount(sourceId);
-
-		if (version > 0) {
-			sendIndex(sourceId, resource.getId());
 		}
 	}
 
@@ -155,6 +190,22 @@ public class CrawlerHandler implements Handler {
 		log.info("Index: " + resource.toString());
 	}
 
+	private void doCustomize(Tuple tuple) {
+		long sourceId = (Long) tuple.getField("sourceId");
+		Source source = MapUtils.get(sourceCache, sourceId, () -> {
+			return resourceService.getSource(sourceId);
+		});
+		long resourceId = (Long) tuple.getField("resourceId");
+		Resource resource = resourceService.getResource(resourceId);
+		for (CustomizedService customizedService : customizedServices) {
+			try {
+				customizedService.customize(source, resource);
+			} catch (Exception e) {
+				log.error(e.getMessage(), e);
+			}
+		}
+	}
+
 	private boolean acceptedPath(String refer, String path, Tuple tuple) {
 		if (!pathAcceptor.accept(refer, path, tuple)) {
 			return false;
@@ -166,7 +217,7 @@ public class CrawlerHandler implements Handler {
 	}
 
 	private boolean testDepth(String refer, String path) {
-		if (depth <= 0) {
+		if (depth < 0) {
 			return true;
 		}
 		String part = path.replace(refer, "");
@@ -184,6 +235,7 @@ public class CrawlerHandler implements Handler {
 
 	private void sendRecursively(long sourceId, String refer, String href, String type, int version) {
 		String fullContent = sourceId + "$" + refer + "$" + href + "$" + version;
+		RedisBloomFilter bloomFilter = getBloomFilter(sourceId);
 		if (!bloomFilter.mightContain(fullContent)) {
 			Tuple tuple = Tuple.newTuple();
 			tuple.setField("action", "crawl");
@@ -199,6 +251,14 @@ public class CrawlerHandler implements Handler {
 	private void sendIndex(long sourceId, long resourceId) {
 		Tuple tuple = Tuple.newTuple();
 		tuple.setField("action", "index");
+		tuple.setField("sourceId", sourceId);
+		tuple.setField("resourceId", resourceId);
+		nioClient.send(tuple, partitioner);
+	}
+
+	private void postHandle(long sourceId, long resourceId) {
+		Tuple tuple = Tuple.newTuple();
+		tuple.setField("action", "customize");
 		tuple.setField("sourceId", sourceId);
 		tuple.setField("resourceId", resourceId);
 		nioClient.send(tuple, partitioner);

@@ -19,7 +19,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@Document(indexName = "crawler_resources_0", type = "docs", shards = 1, replicas = 0)
+@Document(indexName = "crawler_resources_1", type = "docs", shards = 1, replicas = 0)
 public class IndexedResource {
 
 	@Id

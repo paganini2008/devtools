@@ -33,7 +33,7 @@ public final class ClusterId {
 			synchronized (this) {
 				if (StringUtils.isBlank(configProperties.getId())) {
 					configProperties.setId(idGenerator.generateClusterId());
-					log.info("ClusterId: " + configProperties.getId());
+					log.info("\n\tClusterId: " + configProperties.getId());
 				}
 			}
 		}

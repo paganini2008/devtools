@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.github.paganini2008.springworld.socketbird.Tuple;
 import com.github.paganini2008.springworld.socketbird.transport.NioClient;
 import com.github.paganini2008.springworld.socketbird.utils.Partitioner;
-import com.github.paganini2008.springworld.webcrawler.utils.RedisBloomFilter;
 import com.github.paganini2008.springworld.webcrawler.utils.Source;
 
 /**
@@ -27,9 +26,6 @@ import com.github.paganini2008.springworld.webcrawler.utils.Source;
  */
 @RestController
 public class TestController {
-
-	@Autowired
-	private RedisBloomFilter bloomFilter;
 
 	@Autowired
 	private NioClient nioClient;
@@ -49,18 +45,6 @@ public class TestController {
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put("data", source.toString());
 		return data;
-	}
-
-	@GetMapping("/test/bloom")
-	public Map<String, Object> testBloomFilter(@RequestParam("content") String content) {
-		Map<String, Object> result = new HashMap<String, Object>();
-		boolean contain = bloomFilter.mightContain(content);
-		result.put("contain", contain);
-		result.put("success", true);
-		if (!contain) {
-			bloomFilter.put(content);
-		}
-		return result;
 	}
 
 	@GetMapping("/test/socket")

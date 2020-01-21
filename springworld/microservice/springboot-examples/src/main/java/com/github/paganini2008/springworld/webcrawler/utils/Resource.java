@@ -30,7 +30,7 @@ public class Resource implements Serializable {
 	private Long sourceId;
 
 	public String toString() {
-		return "[Resource] title: " + title + ", url: " + url;
+		return "[Resource] id: " + id + ", title: " + title + ", url: " + url;
 	}
 
 }

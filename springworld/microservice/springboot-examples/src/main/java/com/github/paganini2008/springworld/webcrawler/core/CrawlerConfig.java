@@ -6,13 +6,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
 import com.github.paganini2008.springworld.webcrawler.jdbc.JdbcResourceService;
 import com.github.paganini2008.springworld.webcrawler.jdbc.ResourceService;
-import com.github.paganini2008.springworld.webcrawler.utils.RedisBloomFilter;
 import com.github.paganini2008.springworld.webcrawler.utils.RedisIdentifier;
 
 /**
@@ -47,11 +45,6 @@ public class CrawlerConfig {
 	}
 
 	@Bean
-	public RedisBloomFilter redisBloomFilter(StringRedisTemplate redisTemplate) {
-		return new RedisBloomFilter("bloomFiter:" + applicationName, 100000000, 0.03d, redisTemplate);
-	}
-
-	@Bean
 	public RedisIdentifier redisIdentifier(@Qualifier("bigint") RedisTemplate<String, Long> redisTemplate) {
 		return new RedisIdentifier("serial:" + applicationName, redisTemplate);
 	}
@@ -71,7 +64,7 @@ public class CrawlerConfig {
 	public CrawlerContextInitializer crawlerContextInitializer() {
 		return new CrawlerContextInitializer();
 	}
-	
+
 	@ConditionalOnMissingBean(PathAcceptor.class)
 	@Bean
 	public PathAcceptor pathAcceptor() {
