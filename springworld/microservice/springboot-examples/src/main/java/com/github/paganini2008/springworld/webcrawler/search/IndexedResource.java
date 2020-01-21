@@ -1,7 +1,5 @@
 package com.github.paganini2008.springworld.webcrawler.search;
 
-import java.util.Date;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -21,12 +19,12 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@Document(indexName = "ind_webcrawler_resource", type = "resource")
+@Document(indexName = "crawler_resources_0", type = "docs", shards = 1, replicas = 0)
 public class IndexedResource {
 
 	@Id
-	@Field(type = FieldType.Keyword, store = true, index = false)
-	private String id;
+	@Field(type = FieldType.Long, store = true, index = false)
+	private Long id;
 
 	@Field(type = FieldType.Text, store = true, index = true, analyzer = "ik_smart", searchAnalyzer = "ik_smart")
 	private String title;
@@ -36,16 +34,22 @@ public class IndexedResource {
 
 	@Field(type = FieldType.Keyword, store = true, index = false)
 	private String url;
+	
+	@Field(type = FieldType.Keyword, store = true, index = false)
+	private String path;
 
 	@Field(type = FieldType.Keyword, store = true, index = false)
 	private String type;
 
+	@Field(type = FieldType.Keyword, store = true, index = false)
+	private String source;
+
 	@Field(type = FieldType.Integer, store = true, index = false)
 	private Integer order;
 
-	@Field(type = FieldType.Date, store = true, index = false)
-	private Date createDate;
-	
+	@Field(type = FieldType.Long, store = true, index = false)
+	private Long createDate;
+
 	public String toString() {
 		return "[IndexedResource] title: " + title + ", url: " + url;
 	}

@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericToStringSerializer;
@@ -79,9 +80,10 @@ public class ImportServerConfiguration {
 		return new AutoConnectionEventListener();
 	}
 	
+	@Primary
 	@Bean
-	public CounterCleaningEventListener counterCleaningEventListener() {
-		return new CounterCleaningEventListener();
+	public ContextInitializer contextInitializer() {
+		return new ContextInitializer();
 	}
 
 	@Bean

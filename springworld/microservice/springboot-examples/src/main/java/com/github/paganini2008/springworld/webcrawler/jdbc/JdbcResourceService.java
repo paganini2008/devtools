@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.webcrawler.dao;
+package com.github.paganini2008.springworld.webcrawler.jdbc;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -18,7 +18,7 @@ import com.github.paganini2008.devtools.jdbc.PageRequest;
 import com.github.paganini2008.devtools.jdbc.PageResponse;
 import com.github.paganini2008.devtools.jdbc.ResultSetSlice;
 import com.github.paganini2008.springworld.webcrawler.utils.PageBean;
-import com.github.paganini2008.springworld.webcrawler.utils.RedisUUID;
+import com.github.paganini2008.springworld.webcrawler.utils.RedisIdentifier;
 import com.github.paganini2008.springworld.webcrawler.utils.Resource;
 import com.github.paganini2008.springworld.webcrawler.utils.Source;
 import com.github.paganini2008.springworld.webcrawler.utils.SourceIndex;
@@ -37,15 +37,16 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class JdbcResourceService extends EnhancedNamedParameterJdbcDaoSupport implements ResourceService {
 
-	private static final String SQL_SOURCE_INSERTION = "insert into crawler_source (id,name,url,type,create_date) values (:id,:name,:url,:type,:createDate)";
+	private static final String SQL_SOURCE_INSERTION = "insert into crawler_source (id,name,url,path_pattern,type,create_date) values (:id,:name,:url,:pathPattern,:type,:createDate)";
 	private static final String SQL_SOURCE_INDEX_INSERTION = "insert into crawler_source_index (id,source_id,version) values (:id,:sourceId,:version)";
 	private static final String SQL_SOURCE_INDEX_UPDATE = "update crawler_source_index set version=:version where id=:id";
 	private static final String SQL_SOURCE_ONE_SELECTION = "select * from crawler_source where id=:id limit 1";
-	private static final String SQL_SOURCE_INDEX_ONE_SELECTION = "select * from crawler_source_index where source_id=:id";
+	private static final String SQL_SOURCE_INDEX_ONE_SELECTION = "select * from crawler_source_index where source_id=:sourceId";
 	private static final String SQL_SOURCE_DELETION = "delete from crawler_source where id=:id";
 	private static final String SQL_SOURCE_SELECTION = "select * from crawler_source";
 	private static final String SQL_RESOURCE_INSERTION = "insert into crawler_resources (id,title,html,url,type,create_date,version,source_id) values (:id,:title,:html,:url,:type,:createDate,:version,:sourceId)";
 	private static final String SQL_RESOURCE_SELECTION = "select * from crawler_resources where source_id=:sourceId and version<(select version from crawler_source_index where source_id=:sourceId)";
+	private static final String SQL_RESOURCE_ONE_SELECTION = "select * from crawler_resources where id=:id";
 	private static final String SQL_RESOURCE_VERSION_UPDATE = "update crawler_resources set version=:version where source_id=:sourceId and version!=:version";
 
 	@Autowired
@@ -54,7 +55,12 @@ public class JdbcResourceService extends EnhancedNamedParameterJdbcDaoSupport im
 	}
 
 	@Autowired
-	private RedisUUID redisUUID;
+	private RedisIdentifier redisId;
+
+	public PageResponse<Source> queryForSource(int page, int size) {
+		ResultSetSlice<Source> resultSetSlice = getNamedParameterJdbcTemplate().slice(SQL_SOURCE_SELECTION, null, Source.class);
+		return resultSetSlice.list(PageRequest.of(page, size));
+	}
 
 	public PageBean<Source> pageForSource(int page, int size) {
 		ResultSetSlice<Source> resultSetSlice = getNamedParameterJdbcTemplate().slice(SQL_SOURCE_SELECTION, null, Source.class);
@@ -81,7 +87,7 @@ public class JdbcResourceService extends EnhancedNamedParameterJdbcDaoSupport im
 	}
 
 	public int saveSourceIndex(SourceIndex sourceIndex) {
-		sourceIndex.setId(redisUUID.createTimeBasedUUID().timestamp());
+		sourceIndex.setId(redisId.nextValue());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(sourceIndex);
 		try {
 			return getNamedParameterJdbcTemplate().update(SQL_SOURCE_INDEX_INSERTION, paramSource);
@@ -92,7 +98,7 @@ public class JdbcResourceService extends EnhancedNamedParameterJdbcDaoSupport im
 	}
 
 	public int saveSource(Source source) {
-		source.setId(redisUUID.createTimeBasedUUID().timestamp());
+		source.setId(redisId.nextValue());
 		source.setCreateDate(new Date());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(source);
 		try {
@@ -122,7 +128,7 @@ public class JdbcResourceService extends EnhancedNamedParameterJdbcDaoSupport im
 	}
 
 	public int saveResource(Resource resource) {
-		resource.setId(redisUUID.createTimeBasedUUID().timestamp());
+		resource.setId(redisId.nextValue());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(resource);
 		try {
 			return getNamedParameterJdbcTemplate().update(SQL_RESOURCE_INSERTION, paramSource);
@@ -130,6 +136,11 @@ public class JdbcResourceService extends EnhancedNamedParameterJdbcDaoSupport im
 			log.error(e.getMessage(), e);
 			return 0;
 		}
+	}
+
+	public Resource getResource(long id) {
+		return getNamedParameterJdbcTemplate().queryForObject(SQL_RESOURCE_ONE_SELECTION, new MapSqlParameterSource("id", id),
+				new BeanPropertyRowMapper<>(Resource.class));
 	}
 
 	public int updateResourceVersion(long sourceId, int version) {

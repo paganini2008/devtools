@@ -6,20 +6,20 @@ import org.springframework.beans.factory.annotation.Value;
 
 /**
  * 
- * DefaultInstanceIdGenerator
+ * DefaultClusterIdGenerator
  * 
  * @author Fred Feng
  * @created 2019-10
  * @revised 2019-10
  * @version 1.0
  */
-public class DefaultInstanceIdGenerator implements InstanceIdGenerator {
+public class DefaultClusterIdGenerator implements ClusterIdGenerator {
 
 	@Value("${spring.application.name}")
 	private String applicationName;
 
 	@Override
-	public String generateInstanceId() {
+	public String generateClusterId() {
 		return applicationName + "@" + UUID.randomUUID().toString().replace("-", "");
 	}
 

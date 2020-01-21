@@ -15,23 +15,23 @@ import lombok.extern.slf4j.Slf4j;
 public class LoggingContextMulticastEventHandler implements ContextMulticastEventHandler {
 
 	@Override
-	public void onJoin(String instanceId) {
+	public void onJoin(String clusterId) {
 		if (log.isTraceEnabled()) {
-			log.trace("Application '{}' joined.", instanceId);
+			log.trace("Application '{}' joined.", clusterId);
 		}
 	}
 
 	@Override
-	public void onLeave(String instanceId) {
+	public void onLeave(String clusterId) {
 		if (log.isTraceEnabled()) {
-			log.trace("Application '{}' left.", instanceId);
+			log.trace("Application '{}' left.", clusterId);
 		}
 	}
 
 	@Override
-	public void onMessage(String instanceId, String message) {
+	public void onMessage(String clusterId, String message) {
 		if (log.isTraceEnabled()) {
-			log.trace("Application '{}' send: {}", instanceId, message);
+			log.trace("Application '{}' send: {}", clusterId, message);
 		}
 	}
 

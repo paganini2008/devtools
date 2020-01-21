@@ -4,7 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
-import com.github.paganini2008.springworld.cluster.InstanceId;
+import com.github.paganini2008.springworld.cluster.ContextClusterConfigProperties;
+import com.github.paganini2008.springworld.cluster.ClusterId;
 import com.github.paganini2008.springworld.redisplus.RedisMessageSender;
 
 /**
@@ -22,11 +23,14 @@ public class ContextMulticastAware implements ApplicationListener<ContextRefresh
 	private RedisMessageSender redisMessageSender;
 
 	@Autowired
-	private InstanceId instanceId;
+	private ClusterId clusterId;
+
+	@Autowired
+	private ContextClusterConfigProperties configProperties;
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
-		redisMessageSender.sendMessage(ContextMulticastEventNames.STANDBY, instanceId.get() + ":" + instanceId.getWeight());
+		redisMessageSender.sendMessage(ContextMulticastEventNames.STANDBY, clusterId.get() + ":" + configProperties.getWeight());
 	}
 
 }

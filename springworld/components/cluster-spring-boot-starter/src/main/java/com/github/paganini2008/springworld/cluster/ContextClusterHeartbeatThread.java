@@ -4,7 +4,6 @@ import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.github.paganini2008.devtools.multithreads.Executable;
@@ -24,27 +23,26 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ContextClusterHeartbeatThread implements Executable {
 
-	@Value("${spring.application.name}")
-	private String applicationName;
+	static final int DEFAULT_LIFESPAN_TTL = 5;
 
-	@Value("${spring.application.cluster.namespace:application:cluster:}")
-	private String namespace;
+	@Autowired
+	private ContextClusterConfigProperties configProperties;
 
 	@Autowired
 	private StringRedisTemplate redisTemplate;
 
 	@Override
 	public boolean execute() {
-		String key = namespace + applicationName;
-		redisTemplate.expire(key, 5, TimeUnit.SECONDS);
+		String key = configProperties.getApplicationClusterName();
+		redisTemplate.expire(key, DEFAULT_LIFESPAN_TTL, TimeUnit.SECONDS);
 		return true;
 	}
 
 	private Timer timer;
 
 	public void start() {
-		String key = namespace + applicationName;
-		redisTemplate.expire(key, 5, TimeUnit.SECONDS);
+		String key = configProperties.getApplicationClusterName();
+		redisTemplate.expire(key, DEFAULT_LIFESPAN_TTL, TimeUnit.SECONDS);
 		timer = ThreadUtils.scheduleAtFixedRate(this, 3, 3, TimeUnit.SECONDS);
 		log.info("Start ContextClusterHeartbeatTask ok.");
 	}

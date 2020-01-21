@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +19,7 @@ import com.github.paganini2008.springworld.socketbird.Tuple;
 import com.github.paganini2008.springworld.socketbird.transport.NioClient;
 import com.github.paganini2008.springworld.socketbird.utils.Partitioner;
 import com.github.paganini2008.springworld.webcrawler.core.ResourceCounter;
-import com.github.paganini2008.springworld.webcrawler.dao.ResourceService;
+import com.github.paganini2008.springworld.webcrawler.jdbc.ResourceService;
 import com.github.paganini2008.springworld.webcrawler.search.IndexedResourceService;
 import com.github.paganini2008.springworld.webcrawler.utils.PageBean;
 import com.github.paganini2008.springworld.webcrawler.utils.Reply;
@@ -53,6 +54,9 @@ public class CrawlerController {
 	@Autowired
 	private ResourceCounter resourceCounter;
 
+	@Value("${webcrawler.indexer.synchronization.enabled:true}")
+	private boolean index;
+
 	@GetMapping("/source/{id}/delete")
 	public Reply deleteSource(@PathVariable("id") Long id) {
 		resourceService.deleteSource(id);
@@ -82,12 +86,25 @@ public class CrawlerController {
 		resourceCounter.reset(source.getId());
 
 		Map<String, Object> data = new HashMap<String, Object>();
+		data.put("action", "crawl");
 		data.put("sourceId", source.getId());
 		data.put("refer", source.getUrl());
 		data.put("path", source.getUrl());
 		data.put("type", source.getType());
-		data.put("version", 0);
+		data.put("version", index ? 1 : 0);
 		nioClient.send(Tuple.wrap(data), partitioner);
+		return Reply.success("Operation OK.");
+	}
+
+	@GetMapping("/index/create")
+	public Reply createIndex() {
+		indexedResourceService.createIndex();
+		return Reply.success("Operation OK.");
+	}
+
+	@GetMapping("/index/delete")
+	public Reply deleteIndex() {
+		indexedResourceService.deleteIndex();
 		return Reply.success("Operation OK.");
 	}
 

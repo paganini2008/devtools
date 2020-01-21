@@ -2,15 +2,15 @@ package com.github.paganini2008.springworld.cluster;
 
 /**
  * 
- * InstanceIdGenerator
+ * ClusterIdGenerator
  * 
  * @author Fred Feng
  * @created 2019-10
  * @revised 2019-10
  * @version 1.0
  */
-public interface InstanceIdGenerator {
+public interface ClusterIdGenerator {
 
-	String generateInstanceId();
+	String generateClusterId();
 
 }

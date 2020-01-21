@@ -2,7 +2,6 @@ package com.github.paganini2008.springworld.cluster;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationListener;
@@ -25,7 +24,10 @@ import lombok.extern.slf4j.Slf4j;
 public class ContextMasterBreakdownListener implements ApplicationListener<RedisKeyExpiredEvent>, ApplicationContextAware {
 
 	@Autowired
-	private InstanceId instanceId;
+	private ClusterId clusterId;
+
+	@Autowired
+	private ContextClusterConfigProperties configProperties;
 
 	@Autowired
 	private ContextClusterHeartbeatThread heartbeatThread;
@@ -35,30 +37,24 @@ public class ContextMasterBreakdownListener implements ApplicationListener<Redis
 
 	private ApplicationContext context;
 
-	@Value("${spring.application.name}")
-	private String applicationName;
-
-	@Value("${spring.application.cluster.namespace:application:cluster:}")
-	private String namespace;
-
 	@Override
 	public void onApplicationEvent(RedisKeyExpiredEvent event) {
 		final String expiredKey = new String(event.getSource());
-		final String heartbeatKey = namespace + applicationName;
+		final String heartbeatKey = configProperties.getApplicationClusterName();
 		if (heartbeatKey.equals(expiredKey)) {
-			log.info("The master of application '" + applicationName + "' is breakdown.");
+			log.info("The master of application '" + configProperties.getApplicationName() + "' is breakdown.");
 			final String key = heartbeatKey;
-			redisTemplate.opsForList().leftPush(key, instanceId.get());
-			if (instanceId.get().equals(redisTemplate.opsForList().index(key, -1))) {
-				instanceId.setMaster(true);
+			redisTemplate.opsForList().leftPush(key, clusterId.get());
+			if (clusterId.get().equals(redisTemplate.opsForList().index(key, -1))) {
+				clusterId.setMaster(true);
 				heartbeatThread.start();
 				context.publishEvent(new ContextMasterStandbyEvent(context));
 				log.info("Master of context cluster '{}' is you. You can also implement ApplicationListener to listen the event type {}",
-						applicationName, ContextMasterStandbyEvent.class.getName());
+						configProperties.getApplicationName(), ContextMasterStandbyEvent.class.getName());
 			} else {
 				context.publishEvent(new ContextSlaveStandbyEvent(context));
 				log.info("Slave of context cluster '{}' is you. You can also implement ApplicationListener to listen the event type {}",
-						applicationName, ContextSlaveStandbyEvent.class.getName());
+						configProperties.getApplicationName(), ContextSlaveStandbyEvent.class.getName());
 			}
 		}
 	}

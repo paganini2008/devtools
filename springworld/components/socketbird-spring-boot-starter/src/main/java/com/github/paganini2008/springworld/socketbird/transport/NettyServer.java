@@ -10,7 +10,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.net.NetUtils;
-import com.github.paganini2008.springworld.cluster.InstanceId;
+import com.github.paganini2008.springworld.cluster.ClusterId;
 import com.github.paganini2008.springworld.socketbird.Constants;
 import com.github.paganini2008.springworld.socketbird.Serializer;
 import com.github.paganini2008.springworld.socketbird.transport.NettyTransport.ByteToTupleDecorder;
@@ -60,7 +60,7 @@ public class NettyServer implements NioServer {
 	private String applicationName;
 
 	@Autowired
-	private InstanceId instanceId;
+	private ClusterId instanceId;
 
 	@Autowired
 	private StringRedisTemplate redisTemplate;

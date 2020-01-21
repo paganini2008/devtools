@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import com.github.paganini2008.springworld.cluster.InstanceId;
+import com.github.paganini2008.springworld.cluster.ClusterId;
 import com.github.paganini2008.springworld.socketbird.Tuple;
 
 /**
@@ -22,7 +22,7 @@ public class RedisBufferZone implements BufferZone {
 	private RedisTemplate<String, Object> template;
 
 	@Autowired
-	private InstanceId instanceId;
+	private ClusterId clusterId;
 
 	@Value("${spring.application.name}")
 	private String applicationName;
@@ -43,7 +43,7 @@ public class RedisBufferZone implements BufferZone {
 	}
 
 	String keyForName(String name) {
-		return name + ":" + applicationName + ":" + instanceId.get();
+		return name + ":" + applicationName + ":" + clusterId.get();
 	}
 
 }

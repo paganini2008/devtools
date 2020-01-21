@@ -3,10 +3,11 @@ package com.github.paganini2008.springworld.webcrawler.search;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.stereotype.Component;
 
 import com.github.paganini2008.devtools.jdbc.PageResponse;
-import com.github.paganini2008.springworld.webcrawler.dao.ResourceService;
+import com.github.paganini2008.springworld.webcrawler.jdbc.ResourceService;
 import com.github.paganini2008.springworld.webcrawler.utils.Resource;
 import com.github.paganini2008.springworld.webcrawler.utils.Source;
 import com.github.paganini2008.springworld.webcrawler.utils.SourceIndex;
@@ -32,6 +33,17 @@ public class IndexedResourceService {
 	@Autowired
 	private ResourceService resourceService;
 
+	@Autowired
+	private ElasticsearchTemplate elasticsearchTemplate;
+
+	public void createIndex() {
+		elasticsearchTemplate.createIndex("crawler_resources");
+	}
+
+	public void deleteIndex() {
+		elasticsearchTemplate.deleteIndex("ind_webcrawler_resource");
+	}
+
 	public void saveResource(IndexedResource indexedResource) {
 		indexedResourceRepository.save(indexedResource);
 	}
@@ -44,6 +56,19 @@ public class IndexedResourceService {
 		return indexedResourceRepository.count();
 	}
 
+	public void indexAll() {
+		int page = 1;
+		PageResponse<Source> pageResponse;
+		do {
+			pageResponse = resourceService.queryForSource(page, 10);
+			for (Source source : pageResponse.getContent()) {
+				indexAll(source.getId());
+			}
+			page++;
+		} while (pageResponse.hasNextPage());
+
+	}
+
 	public void indexAll(long id) {
 		Source source = resourceService.getSource(id);
 		int page = 1;
@@ -52,9 +77,9 @@ public class IndexedResourceService {
 			pageResponse = resourceService.queryForResource(source.getId(), page, 100);
 			for (Resource resource : pageResponse.getContent()) {
 				try {
-					indexEach(source, resource);
-					if (log.isTraceEnabled()) {
-						log.trace("Index resource: " + resource.toString());
+					index(source, resource);
+					if (log.isInfoEnabled()) {
+						log.info("Index resource: " + resource.toString());
 					}
 				} catch (RuntimeException e) {
 					log.error(e.getMessage(), e);
@@ -65,18 +90,21 @@ public class IndexedResourceService {
 
 		SourceIndex sourceIndex = resourceService.getSourceIndex(id);
 		resourceService.updateResourceVersion(source.getId(), sourceIndex.getVersion());
+		log.info("Create indexes on source: " + source.getName() + " ok. Current index size: " + indexCount());
 	}
 
-	private void indexEach(Source source, Resource resource) {
+	public void index(Source source, Resource resource) {
 		IndexedResource indexedResource = new IndexedResource();
 		Document document = Jsoup.parse(resource.getHtml());
-		indexedResource.setId(source.getId() + "-" + resource.getId());
+		indexedResource.setId(resource.getId());
 		indexedResource.setTitle(resource.getTitle());
 		indexedResource.setContent(document.body().text());
 		indexedResource.setOrder(document.body().select("a").size());
-		indexedResource.setUrl(resource.getUrl());
+		indexedResource.setPath(resource.getUrl());
 		indexedResource.setType(resource.getType());
-		indexedResource.setCreateDate(resource.getCreateDate());
+		indexedResource.setUrl(source.getUrl());
+		indexedResource.setSource(source.getName());
+		indexedResource.setCreateDate(resource.getCreateDate().getTime());
 		indexedResourceRepository.save(indexedResource);
 	}
 

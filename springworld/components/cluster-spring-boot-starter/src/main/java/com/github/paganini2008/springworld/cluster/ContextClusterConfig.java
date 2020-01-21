@@ -2,7 +2,6 @@ package com.github.paganini2008.springworld.cluster;
 
 import java.time.Duration;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -38,19 +37,21 @@ public class ContextClusterConfig {
 	private String password;
 	private int port;
 	private int dbIndex;
-
-	@Value("${spring.application.name}")
-	private String applicationName;
-
+	
 	@Bean
-	@ConditionalOnMissingBean(InstanceIdGenerator.class)
-	public InstanceIdGenerator instanceIdGenerator() {
-		return new DefaultInstanceIdGenerator();
+	public ContextClusterConfigProperties configProperties() {
+		return new ContextClusterConfigProperties();
 	}
 
 	@Bean
-	public InstanceId instanceId() {
-		return new InstanceId(instanceIdGenerator());
+	@ConditionalOnMissingBean(ClusterIdGenerator.class)
+	public ClusterIdGenerator clusterIdGenerator() {
+		return new DefaultClusterIdGenerator();
+	}
+
+	@Bean
+	public ClusterId clusterId() {
+		return new ClusterId();
 	}
 
 	@Bean

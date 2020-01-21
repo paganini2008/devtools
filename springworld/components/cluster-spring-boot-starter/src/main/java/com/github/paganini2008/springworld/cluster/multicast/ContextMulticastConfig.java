@@ -1,11 +1,13 @@
 package com.github.paganini2008.springworld.cluster.multicast;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
+import com.github.paganini2008.springworld.cluster.ContextClusterConfig;
 import com.github.paganini2008.springworld.redisplus.RedisMessageHandler;
 
 /**
@@ -19,6 +21,7 @@ import com.github.paganini2008.springworld.redisplus.RedisMessageHandler;
  */
 @Order(200)
 @Configuration
+@ConditionalOnBean(ContextClusterConfig.class)
 @ConditionalOnProperty(value = "spring.application.cluster.multicast.enabled", havingValue = "true")
 public class ContextMulticastConfig {
 
@@ -57,7 +60,7 @@ public class ContextMulticastConfig {
 	public ContextMulticastHeartbeatThread heartbeatThread() {
 		return new ContextMulticastHeartbeatThread();
 	}
-	
+
 	@Bean
 	public ContextMulticastEventListener multicastEventListener() {
 		return new ContextMulticastEventListener();

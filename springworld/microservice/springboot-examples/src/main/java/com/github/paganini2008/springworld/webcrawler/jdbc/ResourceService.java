@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.webcrawler.dao;
+package com.github.paganini2008.springworld.webcrawler.jdbc;
 
 import com.github.paganini2008.devtools.jdbc.PageResponse;
 import com.github.paganini2008.springworld.webcrawler.utils.PageBean;
@@ -16,6 +16,8 @@ import com.github.paganini2008.springworld.webcrawler.utils.SourceIndex;
  * @version 1.0
  */
 public interface ResourceService {
+	
+	PageResponse<Source> queryForSource( int page, int size);
 
 	PageBean<Source> pageForSource(int page, int size);
 
@@ -28,13 +30,15 @@ public interface ResourceService {
 	void deleteSource(long id);
 
 	Source getSource(long id);
-	
+
 	SourceIndex getSourceIndex(long id);
 
 	int saveResource(Resource resource);
 
+	Resource getResource(long id);
+
 	PageResponse<Resource> queryForResource(long id, int page, int size);
-	
+
 	int updateResourceVersion(long sourceId, int version);
 
 }

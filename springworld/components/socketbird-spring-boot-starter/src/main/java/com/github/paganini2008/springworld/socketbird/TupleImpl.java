@@ -28,6 +28,11 @@ public class TupleImpl extends HashMap<String, Object> implements Tuple {
 		super(kwargs);
 		setField("timestamp", System.currentTimeMillis());
 	}
+	
+	@Override
+	public boolean hasField(String fieldName) {
+		return containsKey(fieldName);
+	}
 
 	@Override
 	public void setField(String fieldName, Object value) {

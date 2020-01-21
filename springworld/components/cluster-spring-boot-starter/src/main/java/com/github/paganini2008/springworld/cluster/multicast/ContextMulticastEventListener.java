@@ -21,29 +21,29 @@ public class ContextMulticastEventListener {
 	static final String GLOBAL_TOPIC = "*";
 	private final Map<String, List<ContextMulticastEventHandler>> topicHandlers = new ConcurrentHashMap<String, List<ContextMulticastEventHandler>>();
 
-	public void fireOnJoin(final String instanceId) {
+	public void fireOnJoin(final String clusterId) {
 		List<ContextMulticastEventHandler> eventHandlers = topicHandlers.get(GLOBAL_TOPIC);
 		if (eventHandlers != null) {
 			eventHandlers.forEach(handler -> {
-				handler.onJoin(instanceId);
+				handler.onJoin(clusterId);
 			});
 		}
 	}
 
-	public void fireOnLeave(final String instanceId) {
+	public void fireOnLeave(final String clusterId) {
 		List<ContextMulticastEventHandler> eventHandlers = topicHandlers.get(GLOBAL_TOPIC);
 		if (eventHandlers != null) {
 			eventHandlers.forEach(handler -> {
-				handler.onLeave(instanceId);
+				handler.onLeave(clusterId);
 			});
 		}
 	}
 
-	public void fireOnMessage(final String instanceId, final String topic, final String message) {
+	public void fireOnMessage(final String clusterId, final String topic, final String message) {
 		List<ContextMulticastEventHandler> eventHandlers = topicHandlers.get(topic);
 		if (eventHandlers != null) {
 			eventHandlers.forEach(handler -> {
-				handler.onMessage(instanceId, message);
+				handler.onMessage(clusterId, message);
 			});
 		}
 	}

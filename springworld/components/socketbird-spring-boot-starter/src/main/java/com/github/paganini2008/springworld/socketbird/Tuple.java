@@ -13,6 +13,8 @@ import java.util.Map;
  * @version 1.0
  */
 public interface Tuple {
+	
+	boolean hasField(String fieldName);
 
 	void setField(String fieldName, Object value);
 

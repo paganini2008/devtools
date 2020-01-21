@@ -4,11 +4,11 @@ import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
-import com.github.paganini2008.springworld.cluster.InstanceId;
+import com.github.paganini2008.springworld.cluster.ClusterId;
+import com.github.paganini2008.springworld.cluster.ContextClusterConfigProperties;
 import com.github.paganini2008.springworld.redisplus.RedisMessageSender;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,17 +25,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ContextMulticastHeartbeatThread implements Executable {
 
-	@Value("${spring.application.name}")
-	private String applicationName;
+	static final int DEFAULT_LIFESPAN_TTL = 5;
 
-	@Value("${spring.application.cluster.namespace:application:cluster:}")
-	private String namespace;
+	@Autowired
+	private ContextClusterConfigProperties configProperties;
 
 	@Autowired
 	private RedisMessageSender redisMessageSender;
 
 	@Autowired
-	private InstanceId instanceId;
+	private ClusterId clusterId;
 
 	private Timer timer;
 
@@ -43,13 +42,13 @@ public class ContextMulticastHeartbeatThread implements Executable {
 
 	@Override
 	public boolean execute() {
-		redisMessageSender.sendEphemeralMessage(channel, instanceId.get(), 5, TimeUnit.SECONDS);
+		redisMessageSender.sendEphemeralMessage(channel, clusterId.get(), DEFAULT_LIFESPAN_TTL, TimeUnit.SECONDS);
 		return true;
 	}
 
 	public void start() {
-		this.channel = namespace + applicationName + ":multicast:" + instanceId.get();
-		redisMessageSender.sendEphemeralMessage(channel, instanceId.get(), 5, TimeUnit.SECONDS);
+		this.channel = configProperties.getApplicationClusterName() + ":" + clusterId.get();
+		redisMessageSender.sendEphemeralMessage(channel, clusterId.get(), DEFAULT_LIFESPAN_TTL, TimeUnit.SECONDS);
 		timer = ThreadUtils.scheduleWithFixedDelay(this, 3, 3, TimeUnit.SECONDS);
 		log.info("Start ContextMulticastHeartbeatTask ok.");
 	}

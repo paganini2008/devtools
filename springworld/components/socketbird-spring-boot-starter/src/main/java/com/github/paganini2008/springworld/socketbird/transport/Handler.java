@@ -14,10 +14,14 @@ import com.github.paganini2008.springworld.socketbird.Tuple;
 public interface Handler extends Comparable<Handler> {
 
 	void onData(Tuple tuple);
+	
+	default int order() {
+		return 0;
+	}
 
 	@Override
 	default int compareTo(Handler handler) {
-		return 0;
+		return order();
 	}
 
 }

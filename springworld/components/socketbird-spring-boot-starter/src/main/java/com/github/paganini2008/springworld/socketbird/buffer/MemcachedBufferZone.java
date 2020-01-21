@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.multithreads.AtomicPositiveInteger;
-import com.github.paganini2008.springworld.cluster.InstanceId;
+import com.github.paganini2008.springworld.cluster.ClusterId;
 import com.github.paganini2008.springworld.socketbird.Serializer;
 import com.github.paganini2008.springworld.socketbird.Tuple;
 
@@ -35,7 +35,7 @@ public class MemcachedBufferZone implements BufferZone {
 	private String address;
 
 	@Autowired
-	private InstanceId instanceId;
+	private ClusterId clusterId;
 
 	private final AtomicPositiveInteger setter = new AtomicPositiveInteger(0);
 	private final AtomicPositiveInteger getter = new AtomicPositiveInteger(0);
@@ -86,7 +86,7 @@ public class MemcachedBufferZone implements BufferZone {
 	}
 
 	String keyFor(String name) {
-		return name + "-" + instanceId.get();
+		return name + "-" + clusterId.get();
 	}
 
 }

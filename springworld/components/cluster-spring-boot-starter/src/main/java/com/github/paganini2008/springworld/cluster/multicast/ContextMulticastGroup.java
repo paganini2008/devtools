@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.StringUtils;
@@ -24,9 +23,6 @@ import com.github.paganini2008.springworld.redisplus.RedisMessageSender;
 public class ContextMulticastGroup {
 
 	private final List<String> channels = new CopyOnWriteArrayList<String>();
-
-	@Value("${spring.application.name}")
-	private String applicationName;
 
 	@Autowired
 	private RedisMessageSender messageSender;

@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ContextClusterController {
 
 	@Autowired
-	private InstanceId instanceId;
+	private ClusterId clusterId;
 
 	@Autowired
 	private Environment env;
@@ -31,8 +31,8 @@ public class ContextClusterController {
 	@GetMapping("/info")
 	public Map<String, Object> info() {
 		Map<String, Object> info = new HashMap<String, Object>();
-		info.put("instanceId", instanceId.get());
-		info.put("master", instanceId.isMaster());
+		info.put("clusterId", clusterId.get());
+		info.put("master", clusterId.isMaster());
 		info.put("port", env.getProperty("server.port"));
 		return info;
 	}

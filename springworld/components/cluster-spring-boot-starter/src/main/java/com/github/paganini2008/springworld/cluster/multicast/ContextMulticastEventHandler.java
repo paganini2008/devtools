@@ -11,13 +11,13 @@ package com.github.paganini2008.springworld.cluster.multicast;
  */
 public interface ContextMulticastEventHandler {
 
-	default void onJoin(String instanceId) {
+	default void onJoin(String clusterId) {
 	}
 
-	default void onLeave(String instanceId) {
+	default void onLeave(String clusterId) {
 	}
 
-	default void onMessage(String instanceId, String message) {
+	default void onMessage(String clusterId, String message) {
 	}
 
 	default String getTopic() {

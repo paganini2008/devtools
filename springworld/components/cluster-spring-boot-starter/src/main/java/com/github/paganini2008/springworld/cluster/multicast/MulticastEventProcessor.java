@@ -3,7 +3,7 @@ package com.github.paganini2008.springworld.cluster.multicast;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.paganini2008.devtools.StringUtils;
-import com.github.paganini2008.springworld.cluster.InstanceId;
+import com.github.paganini2008.springworld.cluster.ClusterId;
 import com.github.paganini2008.springworld.redisplus.RedisMessageHandler;
 
 /**
@@ -18,7 +18,7 @@ import com.github.paganini2008.springworld.redisplus.RedisMessageHandler;
 public class MulticastEventProcessor implements RedisMessageHandler {
 
 	@Autowired
-	private InstanceId instanceId;
+	private ClusterId clusterId;
 
 	@Autowired
 	private ContextMulticastEventListener multicastEventListener;
@@ -32,12 +32,12 @@ public class MulticastEventProcessor implements RedisMessageHandler {
 		String[] args = line.split("#", 2);
 		String topic = args[0];
 		String content = args[1];
-		multicastEventListener.fireOnMessage(instanceId.get(), topic, content);
+		multicastEventListener.fireOnMessage(clusterId.get(), topic, content);
 	}
 
 	@Override
 	public String getChannel() {
-		return instanceId.get();
+		return clusterId.get();
 	}
 
 }

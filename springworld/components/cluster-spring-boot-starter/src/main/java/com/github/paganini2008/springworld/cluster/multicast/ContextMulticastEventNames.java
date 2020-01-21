@@ -2,7 +2,7 @@ package com.github.paganini2008.springworld.cluster.multicast;
 
 /**
  * 
- * ContextClusterEvent
+ * ContextMulticastEventNames
  * 
  * @author Fred Feng
  * @created 2019-11

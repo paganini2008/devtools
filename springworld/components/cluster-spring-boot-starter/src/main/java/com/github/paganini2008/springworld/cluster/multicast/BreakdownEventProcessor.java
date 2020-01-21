@@ -1,8 +1,8 @@
 package com.github.paganini2008.springworld.cluster.multicast;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
+import com.github.paganini2008.springworld.cluster.ContextClusterConfigProperties;
 import com.github.paganini2008.springworld.redisplus.RedisMessageHandler;
 
 /**
@@ -22,22 +22,19 @@ public class BreakdownEventProcessor implements RedisMessageHandler {
 	@Autowired
 	private ContextMulticastEventListener multicastEventListener;
 
-	@Value("${spring.application.cluster.namespace:application:cluster:}")
-	private String namespace;
-
-	@Value("${spring.application.name}")
-	private String applicationName;
+	@Autowired
+	private ContextClusterConfigProperties configProperties;
 
 	@Override
 	public void onMessage(Object message) {
-		final String instanceId = (String) message;
-		multicastGroup.removeChannel(instanceId);
-		multicastEventListener.fireOnLeave(instanceId);
+		final String clusterId = (String) message;
+		multicastGroup.removeChannel(clusterId);
+		multicastEventListener.fireOnLeave(clusterId);
 	}
 
 	@Override
 	public String getChannel() {
-		return namespace + applicationName + ":multicast:*";
+		return configProperties.getApplicationClusterName() + ":*";
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.webcrawler.dao;
+package com.github.paganini2008.springworld.webcrawler.jdbc;
 
 import java.util.Map;
 

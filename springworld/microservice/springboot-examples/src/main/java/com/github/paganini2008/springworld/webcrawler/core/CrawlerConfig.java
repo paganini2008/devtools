@@ -10,10 +10,10 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
-import com.github.paganini2008.springworld.webcrawler.dao.JdbcResourceService;
-import com.github.paganini2008.springworld.webcrawler.dao.ResourceService;
+import com.github.paganini2008.springworld.webcrawler.jdbc.JdbcResourceService;
+import com.github.paganini2008.springworld.webcrawler.jdbc.ResourceService;
 import com.github.paganini2008.springworld.webcrawler.utils.RedisBloomFilter;
-import com.github.paganini2008.springworld.webcrawler.utils.RedisUUID;
+import com.github.paganini2008.springworld.webcrawler.utils.RedisIdentifier;
 
 /**
  * 
@@ -52,8 +52,8 @@ public class CrawlerConfig {
 	}
 
 	@Bean
-	public RedisUUID redisUuid(@Qualifier("bigint") RedisTemplate<String, Long> redisTemplate) {
-		return new RedisUUID("uuid:" + applicationName + ":timestamp", redisTemplate);
+	public RedisIdentifier redisIdentifier(@Qualifier("bigint") RedisTemplate<String, Long> redisTemplate) {
+		return new RedisIdentifier("serial:" + applicationName, redisTemplate);
 	}
 
 	@Bean
@@ -65,6 +65,17 @@ public class CrawlerConfig {
 	@Bean
 	public FinishCondition countLimited(ResourceCounter resourceCounter) {
 		return new CountLimitedCondition(resourceCounter);
+	}
+
+	@Bean
+	public CrawlerContextInitializer crawlerContextInitializer() {
+		return new CrawlerContextInitializer();
+	}
+	
+	@ConditionalOnMissingBean(PathAcceptor.class)
+	@Bean
+	public PathAcceptor pathAcceptor() {
+		return new DefaultPathAcceptor();
 	}
 
 }

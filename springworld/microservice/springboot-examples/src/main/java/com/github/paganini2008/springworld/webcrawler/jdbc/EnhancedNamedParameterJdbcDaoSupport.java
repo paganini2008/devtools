@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.webcrawler.dao;
+package com.github.paganini2008.springworld.webcrawler.jdbc;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcDaoSupport;
