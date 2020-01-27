@@ -15,7 +15,7 @@
 		<module>support</module>
     </modules>
     <packaging>pom</packaging>
-    <name>springcloud</name>
+    <name>springworld</name>
     <description>Some componens and examples based on springcloud framework </description>
 	
     <properties>

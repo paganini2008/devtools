@@ -3,6 +3,7 @@ package com.github.paganini2008.springworld.webcrawler.search;
 import static com.github.paganini2008.springworld.webcrawler.search.SearchResult.SEARCH_FIELD_CONTENT;
 import static com.github.paganini2008.springworld.webcrawler.search.SearchResult.SEARCH_FIELD_TITLE;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -14,6 +15,7 @@ import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 
+import com.github.paganini2008.devtools.beans.BeanUtils;
 import com.github.paganini2008.devtools.jdbc.ResultSetSlice;
 
 /**
@@ -49,14 +51,19 @@ public class ElasticsearchTemplateResultSlice implements ResultSetSlice<SearchRe
 				.should(QueryBuilders.matchQuery(SEARCH_FIELD_CONTENT, keyword));
 		NativeSearchQueryBuilder searchQueryBuilder = new NativeSearchQueryBuilder().withQuery(boolQueryBuilder)
 				.withHighlightFields(new HighlightBuilder.Field(SEARCH_FIELD_TITLE), new HighlightBuilder.Field(SEARCH_FIELD_CONTENT))
-				.withHighlightBuilder(
-						new HighlightBuilder().preTags("<font class=\"search-keyword\" color=\"#FF0000\">").postTags("</font>"));
+				.withHighlightBuilder(new HighlightBuilder().preTags("<font class=\"search-keyword\" color=\"#FF0000\">")
+						.postTags("</font>").fragmentSize(10).numOfFragments(3).noMatchSize(150));
 		if (maxResults > 0) {
 			searchQueryBuilder = searchQueryBuilder.withPageable(PageRequest.of(firstResult / maxResults, maxResults));
 		}
-		AggregatedPage<SearchResult> page = elasticsearchTemplate.queryForPage(searchQueryBuilder.build(), SearchResult.class,
+		AggregatedPage<IndexedResource> page = elasticsearchTemplate.queryForPage(searchQueryBuilder.build(), IndexedResource.class,
 				new HighlightResultMapper(elasticsearchTemplate.getElasticsearchConverter().getMappingContext()));
-		return page.getContent();
+		List<IndexedResource> content = page.getContent();
+		List<SearchResult> dataList = new ArrayList<SearchResult>();
+		for (IndexedResource resource : content) {
+			dataList.add(BeanUtils.copy(resource, SearchResult.class, null));
+		}
+		return dataList;
 	}
 
 }

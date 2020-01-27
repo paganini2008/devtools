@@ -13,7 +13,6 @@ import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.github.paganini2008.devtools.RandomUtils;
@@ -46,6 +45,8 @@ public class SeleniumPageSource implements PageSource {
 
 	public void configure() {
 		System.setProperty("webdriver.chrome.driver", webdriverExecutionPath);
+		System.setProperty("webdriver.chrome.args", "--disable-logging");
+		System.setProperty("webdriver.chrome.silentOutput", "true");
 
 		GenericObjectPoolConfig<WebDriver> poolConfig = new GenericObjectPoolConfig<WebDriver>();
 		poolConfig.setMinIdle(1);
@@ -90,23 +91,20 @@ public class SeleniumPageSource implements PageSource {
 		return "";
 	}
 
-	class WebDriverObjectFactory extends BasePooledObjectFactory<WebDriver> {
+	static class WebDriverObjectFactory extends BasePooledObjectFactory<WebDriver> {
 
 		WebDriverObjectFactory() {
 		}
 
 		public WebDriver create() throws Exception {
 			ChromeOptions options = new ChromeOptions();
-			DesiredCapabilities cap = DesiredCapabilities.chrome();
-			cap.setCapability(ChromeOptions.CAPABILITY, options);
-
 			options.addArguments("lang=zh_CN.UTF-8");
 			options.addArguments("user-agent=" + RandomUtils.randomChoice(userAgents));
 			options.addArguments("--test-type", "--ignore-certificate-errors", "--start-maximized", "no-default-browser-check");
-			options.addArguments("--headless", "--disable-gpu");
+			options.addArguments("--silent", "--headless", "--disable-gpu");
 			ChromeDriver driver = new ChromeDriver(options);
-			driver.setLogLevel(Level.OFF);
-			driver.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS).implicitlyWait(60, TimeUnit.SECONDS).setScriptTimeout(60,
+			driver.setLogLevel(Level.ALL);
+			driver.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS).setScriptTimeout(60, TimeUnit.SECONDS).implicitlyWait(5,
 					TimeUnit.SECONDS);
 			return driver;
 		}

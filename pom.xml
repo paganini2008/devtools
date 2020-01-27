@@ -8,6 +8,7 @@
     <modules>
 	    <module>base</module>
 		<module>springworld</module>
+		<module>other</module>
     </modules>
     <packaging>pom</packaging>
 

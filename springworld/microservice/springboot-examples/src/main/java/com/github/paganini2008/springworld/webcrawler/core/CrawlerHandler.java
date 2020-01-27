@@ -11,6 +11,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
@@ -57,6 +58,10 @@ public class CrawlerHandler implements Handler {
 
 	@Autowired
 	private Partitioner partitioner;
+	
+	@Qualifier("secondPartitioner")
+	@Autowired
+	private Partitioner secondPartitioner;
 
 	@Autowired
 	private PathAcceptor pathAcceptor;
@@ -336,7 +341,7 @@ public class CrawlerHandler implements Handler {
 		tuple.setField("action", "index");
 		tuple.setField("sourceId", sourceId);
 		tuple.setField("resourceId", resourceId);
-		nioClient.send(tuple, partitioner);
+		nioClient.send(tuple, secondPartitioner);
 	}
 
 	private void postHandle(long sourceId, long resourceId) {
@@ -344,7 +349,7 @@ public class CrawlerHandler implements Handler {
 		tuple.setField("action", "customize");
 		tuple.setField("sourceId", sourceId);
 		tuple.setField("resourceId", resourceId);
-		nioClient.send(tuple, partitioner);
+		nioClient.send(tuple, secondPartitioner);
 	}
 
 }

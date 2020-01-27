@@ -21,6 +21,8 @@ public class SearchResult implements Serializable {
 	private static final long serialVersionUID = 5993548637885933491L;
 	public static final String SEARCH_FIELD_TITLE = "title";
 	public static final String SEARCH_FIELD_CONTENT = "content";
+	public static final String SEARCH_FIELD_TYPE = "type";
+	public static final String SEARCH_FIELD_SOURCE = "source";
 
 	private Long id;
 	private String title;

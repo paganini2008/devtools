@@ -11,17 +11,8 @@ import com.github.paganini2008.springworld.socketbird.Tuple;
  * @revised 2019-10
  * @version 1.0
  */
-public interface Handler extends Comparable<Handler> {
+public interface Handler {
 
 	void onData(Tuple tuple);
-	
-	default int order() {
-		return 0;
-	}
-
-	@Override
-	default int compareTo(Handler handler) {
-		return order();
-	}
 
 }

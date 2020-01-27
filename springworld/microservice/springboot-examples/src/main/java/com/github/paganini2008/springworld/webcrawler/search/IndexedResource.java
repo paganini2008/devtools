@@ -23,31 +23,31 @@ import lombok.Setter;
 public class IndexedResource {
 
 	@Id
-	@Field(type = FieldType.Long, store = true, index = false)
+	@Field(type = FieldType.Long, store = true)
 	private Long id;
 
-	@Field(type = FieldType.Text, store = true, index = true, analyzer = "ik_smart", searchAnalyzer = "ik_smart")
+	@Field(type = FieldType.Text, store = true, analyzer = "ik_smart", searchAnalyzer = "ik_smart")
 	private String title;
 
-	@Field(type = FieldType.Text, store = true, index = true, analyzer = "ik_smart", searchAnalyzer = "ik_smart")
+	@Field(type = FieldType.Text, store = true, analyzer = "ik_smart", searchAnalyzer = "ik_smart")
 	private String content;
 
-	@Field(type = FieldType.Keyword, store = true, index = false)
+	@Field(type = FieldType.Keyword, store = true)
 	private String url;
 
-	@Field(type = FieldType.Keyword, store = true, index = false)
+	@Field(type = FieldType.Keyword, store = true)
 	private String path;
 
-	@Field(type = FieldType.Keyword, store = true, index = false)
+	@Field(type = FieldType.Keyword, store = true)
 	private String type;
 
-	@Field(type = FieldType.Keyword, store = true, index = false)
+	@Field(type = FieldType.Keyword, store = true)
 	private String source;
 
-	@Field(type = FieldType.Integer, store = true, index = false)
+	@Field(type = FieldType.Integer, store = true)
 	private Integer order;
 
-	@Field(type = FieldType.Long, store = true, index = false)
+	@Field(type = FieldType.Long, store = true)
 	private Long createDate;
 
 	public String toString() {

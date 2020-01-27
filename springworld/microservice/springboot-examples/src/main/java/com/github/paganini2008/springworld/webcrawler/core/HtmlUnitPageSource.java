@@ -52,7 +52,7 @@ public class HtmlUnitPageSource implements PageSource {
 		}
 	}
 
-	class WebClientObjectFactory extends BasePooledObjectFactory<WebClient> {
+	static class WebClientObjectFactory extends BasePooledObjectFactory<WebClient> {
 
 		WebClientObjectFactory() {
 		}

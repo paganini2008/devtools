@@ -12,6 +12,7 @@ import org.springframework.util.PathMatcher;
 
 import com.github.paganini2008.springworld.socketbird.utils.HashPartitioner;
 import com.github.paganini2008.springworld.socketbird.utils.Partitioner;
+import com.github.paganini2008.springworld.socketbird.utils.RoundRobinPartitioner;
 import com.github.paganini2008.springworld.webcrawler.jdbc.JdbcResourceService;
 import com.github.paganini2008.springworld.webcrawler.jdbc.ResourceService;
 import com.github.paganini2008.springworld.webcrawler.utils.RedisIdentifier;
@@ -32,8 +33,13 @@ public class CrawlerConfig {
 
 	@Primary
 	@Bean
-	public Partitioner hashPartitioner() {
+	public Partitioner partitioner() {
 		return new HashPartitioner("sourceId,refer,path,version".split(","));
+	}
+
+	@Bean("secondPartitioner")
+	public Partitioner secondPartitioner() {
+		return new RoundRobinPartitioner();
 	}
 
 	@Bean("crawlerPathMatcher")
@@ -66,7 +72,7 @@ public class CrawlerConfig {
 	@ConditionalOnMissingBean(FinishCondition.class)
 	@Bean
 	public FinishCondition countLimited(ResourceCounter resourceCounter) {
-		return new CountLimitedCondition(100000, resourceCounter);
+		return new CountLimitedCondition(resourceCounter);
 	}
 
 	@Bean

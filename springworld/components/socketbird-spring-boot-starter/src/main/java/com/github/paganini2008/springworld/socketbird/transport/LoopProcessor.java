@@ -1,7 +1,7 @@
 package com.github.paganini2008.springworld.socketbird.transport;
 
 import java.util.Queue;
-import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.github.paganini2008.devtools.multithreads.Executable;
+import com.github.paganini2008.devtools.multithreads.ThreadPool;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 import com.github.paganini2008.springworld.socketbird.Counter;
 import com.github.paganini2008.springworld.socketbird.Tuple;
@@ -34,10 +35,13 @@ public class LoopProcessor implements Runnable {
 	@Autowired
 	private Counter counter;
 
-	@Value("${socketbird.bufferzone.collectionName}")
-	private String collection;
+	@Autowired(required = false)
+	private ThreadPool threadPool;
 
-	private final Queue<Handler> handlers = new PriorityBlockingQueue<Handler>();
+	@Value("${socketbird.bufferzone.collectionName}")
+	private String collectionName;
+
+	private final Queue<Handler> handlers = new ConcurrentLinkedQueue<Handler>();
 	private final AtomicBoolean running = new AtomicBoolean(false);
 	private Thread runner;
 	private LoggingThread loggingThread = new LoggingThread();
@@ -85,7 +89,7 @@ public class LoopProcessor implements Runnable {
 			}
 			Tuple tuple = null;
 			try {
-				tuple = bufferZone.get(collection);
+				tuple = bufferZone.get(collectionName);
 			} catch (Exception e) {
 				if (log.isTraceEnabled()) {
 					log.trace(e.getMessage(), e);
@@ -94,7 +98,14 @@ public class LoopProcessor implements Runnable {
 			if (tuple != null) {
 				counter.incrementCount();
 				for (Handler handler : handlers) {
-					handler.onData(tuple);
+					Tuple copy = tuple.clone();
+					if (threadPool != null) {
+						threadPool.apply(() -> {
+							handler.onData(copy);
+						});
+					} else {
+						handler.onData(copy);
+					}
 				}
 			} else {
 				ThreadUtils.randomSleep(1000L);
@@ -114,7 +125,7 @@ public class LoopProcessor implements Runnable {
 			if (log.isTraceEnabled()) {
 				try {
 					log.trace("[Snapshot] count=" + counter.getLocal() + "/" + counter.get() + ", tps=" + counter.getLocalTps() + "/"
-							+ counter.getTps() + ", buffer=" + bufferZone.size(collection));
+							+ counter.getTps() + ", buffer=" + bufferZone.size(collectionName));
 				} catch (Exception ignored) {
 				}
 			}

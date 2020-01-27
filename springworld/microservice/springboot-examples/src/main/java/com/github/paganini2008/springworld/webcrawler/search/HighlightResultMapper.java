@@ -242,7 +242,10 @@ public class HighlightResultMapper extends AbstractResultMapper {
 				String fieldValue = highlightField.getFragments()[0].toString();
 				try {
 					Field field = ReflectionUtils.findField(source.getClass(), fieldName);
-					field.set(source, fieldValue);
+					if (field != null) {
+						field.setAccessible(true);
+						field.set(source, fieldValue);
+					}
 				} catch (Exception e) {
 					throw new ElasticsearchException("failed to access highlight field: " + fieldName, e);
 				}

@@ -27,6 +27,7 @@ public class Source implements Serializable {
 	private String type;
 	private String url;
 	private String pathPattern;
+	private String excludedPathPattern;
 	private Date createDate;
 
 }

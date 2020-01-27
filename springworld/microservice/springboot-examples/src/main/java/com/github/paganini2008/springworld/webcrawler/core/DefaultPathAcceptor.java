@@ -36,13 +36,27 @@ public class DefaultPathAcceptor implements PathAcceptor {
 	@Autowired
 	private ResourceService resourceService;
 
-	private final Map<Long, List<String>> pathPatternCache = new ConcurrentHashMap<Long, List<String>>();
+	private final Map<Long, List<String>> includedPathPatternCache = new ConcurrentHashMap<Long, List<String>>();
+	private final Map<Long, List<String>> excludedPathPatternCache = new ConcurrentHashMap<Long, List<String>>();
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean accept(String refer, String path, Tuple tuple) {
 		long sourceId = (Long) tuple.getField("sourceId");
-		List<String> pathPatterns = MapUtils.get(pathPatternCache, sourceId, () -> {
+		List<String> pathPatterns = MapUtils.get(excludedPathPatternCache, sourceId, () -> {
+			Source source = resourceService.getSource(sourceId);
+			if (StringUtils.isBlank(source.getExcludedPathPattern())) {
+				return Collections.EMPTY_LIST;
+			}
+			return Arrays.asList(source.getExcludedPathPattern().split(","));
+		});
+		for (String pathPattern : pathPatterns) {
+			if (pathMather.match(pathPattern, path)) {
+				return false;
+			}
+		}
+
+		pathPatterns = MapUtils.get(includedPathPatternCache, sourceId, () -> {
 			Source source = resourceService.getSource(sourceId);
 			if (StringUtils.isBlank(source.getPathPattern())) {
 				return Collections.EMPTY_LIST;

@@ -1,9 +1,15 @@
 package com.github.paganini2008.springworld.webcrawler.search;
 
+import static com.github.paganini2008.springworld.webcrawler.search.SearchResult.SEARCH_FIELD_SOURCE;
+import static com.github.paganini2008.springworld.webcrawler.search.SearchResult.SEARCH_FIELD_TYPE;
+
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.query.DeleteQuery;
 import org.springframework.stereotype.Component;
 
 import com.github.paganini2008.devtools.jdbc.PageRequest;
@@ -47,7 +53,12 @@ public class IndexedResourceService {
 	}
 
 	public void deleteBySourceId(long sourceId) {
-		// elasticsearchTemplate.delete(null, IndexedResource.class);
+		Source source = resourceService.getSource(sourceId);
+		BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery().should(QueryBuilders.termQuery(SEARCH_FIELD_TYPE, source.getType()))
+				.should(QueryBuilders.termQuery(SEARCH_FIELD_SOURCE, source.getName()));
+		DeleteQuery deleteQuery = new DeleteQuery();
+		deleteQuery.setQuery(boolQueryBuilder);
+		elasticsearchTemplate.delete(deleteQuery);
 	}
 
 	public void saveResource(IndexedResource indexedResource) {

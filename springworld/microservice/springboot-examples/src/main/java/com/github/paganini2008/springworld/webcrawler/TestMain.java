@@ -1,6 +1,8 @@
 package com.github.paganini2008.springworld.webcrawler;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.codec.cli.Digest;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -11,6 +13,8 @@ import com.github.paganini2008.devtools.CharsetUtils;
 import com.github.paganini2008.devtools.io.FileUtils;
 
 public class TestMain {
+	
+	private static final Logger logger = Logger.getLogger("abc");
 
 	public static boolean isChinese(char c) {
 		Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
@@ -64,8 +68,10 @@ public class TestMain {
 	public static void main(String[] args) throws IOException {
 		//String unicode = FileUtils.toString("d:/json.txt", CharsetUtils.UTF_8);
 		//System.out.println(decodeUnicode(unicode));
-		PathMatcher pathMatcher = new AntPathMatcher();
-		System.out.println(pathMatcher.match("http://*.haochi123.com/", "http://caipu.haochi123.com/"));
+		//PathMatcher pathMatcher = new AntPathMatcher();
+		//System.out.println(pathMatcher.match("https://www.meishij.net/list.php?*", "https://www.meishij.net/list.php?sortby=update&words=%E5%8D%97%E7%93%9C&lm=270&yl=241&yl=25063"));
+		System.out.println(logger.isLoggable(Level.OFF));
+		logger.info("123");
 	}
 
 }
