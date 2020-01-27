@@ -46,7 +46,7 @@ public class JdbcResourceService extends EnhancedNamedParameterJdbcDaoSupport im
 	private static final String SQL_SOURCE_SELECTION = "select * from crawler_source";
 	private static final String SQL_RESOURCE_INSERTION = "insert into crawler_resources (id,title,html,url,type,create_date,version,source_id) values (:id,:title,:html,:url,:type,:createDate,:version,:sourceId)";
 	private static final String SQL_RESOURCE_SELECTION = "select * from crawler_resources where source_id=:sourceId and version<(select version from crawler_source_index where source_id=:sourceId)";
-	private static final String SQL_RESOURCE_ONE_SELECTION = "select * from crawler_resources where id=:id";
+	private static final String SQL_RESOURCE_ONE_SELECTION = "select * from crawler_resources where id=:id limit 1";
 	private static final String SQL_RESOURCE_VERSION_UPDATE = "update crawler_resources set version=:version where source_id=:sourceId and version!=:version";
 
 	@Autowired

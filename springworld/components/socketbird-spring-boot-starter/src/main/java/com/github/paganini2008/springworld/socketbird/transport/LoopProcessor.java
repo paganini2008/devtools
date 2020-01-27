@@ -34,7 +34,7 @@ public class LoopProcessor implements Runnable {
 	@Autowired
 	private Counter counter;
 
-	@Value("${socketbird.store.collectionName}")
+	@Value("${socketbird.bufferzone.collectionName}")
 	private String collection;
 
 	private final Queue<Handler> handlers = new PriorityBlockingQueue<Handler>();

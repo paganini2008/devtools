@@ -70,18 +70,21 @@ public class SeleniumPageSource implements PageSource {
 		if (StringUtils.isBlank(url)) {
 			throw new IllegalArgumentException("Url must not be blank.");
 		}
-		WebDriver webDriver = objectPool.borrowObject();
+		WebDriver webDriver = null;
 		int retries = 0;
 		boolean failed = false;
 		do {
 			try {
+				webDriver = objectPool.borrowObject();
 				webDriver.get(url);
 				return function.apply(webDriver);
 			} catch (Exception e) {
 				failed = true;
 				log.error(e.getMessage(), e);
-			}finally {
-				objectPool.returnObject(webDriver);
+			} finally {
+				if (webDriver != null) {
+					objectPool.returnObject(webDriver);
+				}
 			}
 		} while (failed && retries++ < requestRetries);
 		return "";

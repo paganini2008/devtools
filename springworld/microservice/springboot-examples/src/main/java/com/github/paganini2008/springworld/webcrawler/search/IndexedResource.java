@@ -19,7 +19,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@Document(indexName = "crawler_resources_1", type = "docs", shards = 1, replicas = 0)
+@Document(indexName = "webcrawler_resources_0", type = "resource", shards = 3, replicas = 1)
 public class IndexedResource {
 
 	@Id
@@ -34,7 +34,7 @@ public class IndexedResource {
 
 	@Field(type = FieldType.Keyword, store = true, index = false)
 	private String url;
-	
+
 	@Field(type = FieldType.Keyword, store = true, index = false)
 	private String path;
 

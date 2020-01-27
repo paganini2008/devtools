@@ -11,8 +11,11 @@ import org.springframework.beans.factory.annotation.Value;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.CookieManager;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
+import com.gargoylesoftware.htmlunit.Page;
+import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.github.paganini2008.devtools.RandomUtils;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -56,16 +59,18 @@ public class HtmlUnitPageSource implements PageSource {
 
 		public WebClient create() throws Exception {
 			WebClient webClient = new WebClient(BrowserVersion.CHROME);
+			webClient.addRequestHeader("User-Agent", RandomUtils.randomChoice(userAgents));
 			webClient.getOptions().setThrowExceptionOnScriptError(false);
 			webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
 			webClient.getOptions().setActiveXNative(false);
 			webClient.getOptions().setCssEnabled(false);
 			webClient.getOptions().setJavaScriptEnabled(false);
 			webClient.getOptions().setRedirectEnabled(false);
+			webClient.getOptions().setDownloadImages(false);
 			webClient.getOptions().setUseInsecureSSL(true);
+			webClient.getOptions().setTimeout(60 * 1000);
 			webClient.setCookieManager(new CookieManager());
 			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-			webClient.getOptions().setTimeout(60 * 1000);
 			webClient.setJavaScriptTimeout(60 * 1000);
 			return webClient;
 		}
@@ -84,16 +89,27 @@ public class HtmlUnitPageSource implements PageSource {
 	public String getHtml(String url) throws Exception {
 		int retries = 0;
 		boolean failed = false;
-		WebClient webClient = objectPool.borrowObject();
+		WebClient webClient = null;
 		do {
 			try {
-				HtmlPage page = webClient.getPage(url);
-				return page.asXml();
+				webClient = objectPool.borrowObject();
+				Page page = webClient.getPage(url);
+				if (page.getWebResponse().getStatusCode() == 200) {
+					if (page instanceof HtmlPage) {
+						return ((HtmlPage) page).asXml();
+					} else if (page instanceof TextPage) {
+						return ((TextPage) page).getContent();
+					}
+				} else {
+					failed = true;
+				}
 			} catch (Exception e) {
 				failed = true;
 				log.error(e.getMessage(), e);
 			} finally {
-				objectPool.returnObject(webClient);
+				if (webClient != null) {
+					objectPool.returnObject(webClient);
+				}
 			}
 		} while (failed && retries++ < requestRetries);
 		return "";

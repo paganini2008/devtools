@@ -321,7 +321,7 @@ public class CrawlerHandler implements Handler {
 		String fullContent = sourceId + "$" + refer + "$" + href + "$" + version;
 		if (update || !bloomFilter.mightContain(fullContent)) {
 			Tuple tuple = Tuple.newTuple();
-			tuple.setField("action", "crawl");
+			tuple.setField("action", update ? "update" : "crawl");
 			tuple.setField("sourceId", sourceId);
 			tuple.setField("refer", refer);
 			tuple.setField("path", href);

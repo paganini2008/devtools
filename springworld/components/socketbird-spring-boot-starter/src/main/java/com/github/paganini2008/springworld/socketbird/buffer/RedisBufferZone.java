@@ -27,6 +27,9 @@ public class RedisBufferZone implements BufferZone {
 	@Value("${spring.application.name}")
 	private String applicationName;
 
+	@Value("${socketbird.bufferzone.single:true}")
+	private boolean singleBufferZone;
+
 	@Override
 	public void set(String name, Tuple tuple) {
 		template.opsForList().leftPush(keyForName(name), tuple);
@@ -43,7 +46,7 @@ public class RedisBufferZone implements BufferZone {
 	}
 
 	String keyForName(String name) {
-		return name + ":" + applicationName + ":" + clusterId.get();
+		return "bufferzone:" + name + ":" + applicationName + (singleBufferZone ? ":" + clusterId.get() : "");
 	}
 
 }

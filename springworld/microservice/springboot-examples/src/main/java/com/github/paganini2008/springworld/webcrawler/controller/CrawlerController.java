@@ -14,14 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 import com.github.paganini2008.springworld.socketbird.Tuple;
 import com.github.paganini2008.springworld.socketbird.transport.NioClient;
 import com.github.paganini2008.springworld.socketbird.utils.Partitioner;
 import com.github.paganini2008.springworld.webcrawler.core.PageSource;
 import com.github.paganini2008.springworld.webcrawler.core.ResourceCounter;
 import com.github.paganini2008.springworld.webcrawler.jdbc.ResourceService;
-import com.github.paganini2008.springworld.webcrawler.search.IndexedResourceService;
 import com.github.paganini2008.springworld.webcrawler.utils.PageBean;
 import com.github.paganini2008.springworld.webcrawler.utils.Reply;
 import com.github.paganini2008.springworld.webcrawler.utils.Source;
@@ -48,9 +46,6 @@ public class CrawlerController {
 
 	@Autowired
 	private ResourceService resourceService;
-
-	@Autowired
-	private IndexedResourceService indexedResourceService;
 
 	@Autowired
 	private ResourceCounter resourceCounter;
@@ -100,34 +95,25 @@ public class CrawlerController {
 		return Reply.success("Operation OK.");
 	}
 
+	@GetMapping("/source/{id}/update")
+	public Reply update(@PathVariable("id") Long id) {
+		Source source = resourceService.getSource(id);
+		resourceCounter.reset(source.getId());
+
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put("action", "update");
+		data.put("sourceId", source.getId());
+		data.put("refer", source.getUrl());
+		data.put("path", source.getUrl());
+		data.put("type", source.getType());
+		data.put("version", index ? 1 : 0);
+		nioClient.send(Tuple.wrap(data), partitioner);
+		return Reply.success("Operation OK.");
+	}
+
 	@GetMapping("/test/request")
 	public String testRequest(@RequestParam("url") String url) throws Exception {
 		return pageSource.getHtml(url);
-	}
-
-	@GetMapping("/index/create")
-	public Reply createIndex(@RequestParam("indexName") String indexName) {
-		indexedResourceService.createIndex(indexName);
-		return Reply.success("Operation OK.");
-	}
-
-	@GetMapping("/index/delete")
-	public Reply deleteIndex(@RequestParam("indexName") String indexName) {
-		indexedResourceService.deleteIndex(indexName);
-		return Reply.success("Operation OK.");
-	}
-
-	@GetMapping("/source/{id}/index")
-	public Reply indexSource(@PathVariable("id") Long id) {
-		ThreadUtils.runAsThread(() -> {
-			indexedResourceService.indexAll(id);
-		});
-		return Reply.success("Operation OK.");
-	}
-
-	@GetMapping("/source/index/count")
-	public Reply indexCount() {
-		return Reply.success("Operation OK.", indexedResourceService.indexCount());
 	}
 
 }

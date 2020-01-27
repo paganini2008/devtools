@@ -25,8 +25,8 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter{
 	@Autowired
 	private BufferZone store;
 
-	@Value("${socketbird.store.collectionName}")
-	private String collection;
+	@Value("${socketbird.bufferzone.collectionName}")
+	private String collectionName;
 	
 	@Autowired
 	private ChannelStateListener channelStateListener;
@@ -52,7 +52,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter{
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object data) throws Exception {
 		Tuple tuple = (Tuple) data;
-		store.set(collection, tuple);
+		store.set(collectionName, tuple);
 	}
 
 }

@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.stereotype.Component;
 
+import com.github.paganini2008.devtools.jdbc.PageRequest;
 import com.github.paganini2008.devtools.jdbc.PageResponse;
+import com.github.paganini2008.devtools.jdbc.ResultSetSlice;
 import com.github.paganini2008.springworld.webcrawler.jdbc.ResourceService;
 import com.github.paganini2008.springworld.webcrawler.utils.Resource;
 import com.github.paganini2008.springworld.webcrawler.utils.Source;
@@ -42,6 +44,10 @@ public class IndexedResourceService {
 
 	public void deleteIndex(String indexName) {
 		elasticsearchTemplate.deleteIndex(indexName);
+	}
+
+	public void deleteBySourceId(long sourceId) {
+		// elasticsearchTemplate.delete(null, IndexedResource.class);
 	}
 
 	public void saveResource(IndexedResource indexedResource) {
@@ -106,6 +112,14 @@ public class IndexedResourceService {
 		indexedResource.setSource(source.getName());
 		indexedResource.setCreateDate(resource.getCreateDate().getTime());
 		indexedResourceRepository.save(indexedResource);
+	}
+
+	public PageResponse<SearchResult> search(String keyword, int page, int size) {
+		return search(keyword).list(PageRequest.of(page, size));
+	}
+
+	public ResultSetSlice<SearchResult> search(String keyword) {
+		return new ElasticsearchTemplateResultSlice(keyword, elasticsearchTemplate);
 	}
 
 }

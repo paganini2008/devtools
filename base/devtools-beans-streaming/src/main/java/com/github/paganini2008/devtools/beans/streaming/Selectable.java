@@ -3,7 +3,6 @@ package com.github.paganini2008.devtools.beans.streaming;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import com.github.paganini2008.devtools.beans.BeanUtils;
 import com.github.paganini2008.devtools.jdbc.ResultSetSlice;
 
 /**
