@@ -1,10 +1,16 @@
-package com.github.paganini2008.springworld.logsink;
+package com.github.paganini2008.transport.netty;
 
-import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.github.paganini2008.devtools.SystemPropertyUtils;
-import com.github.paganini2008.springworld.socketbird.Tuple;
+import com.github.paganini2008.transport.KryoSerializer;
+import com.github.paganini2008.transport.LogSinkException;
+import com.github.paganini2008.transport.NioClient;
+import com.github.paganini2008.transport.Partitioner;
+import com.github.paganini2008.transport.Serializer;
+import com.github.paganini2008.transport.Tuple;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -21,16 +27,29 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.MessageToByteEncoder;
 
+/**
+ * 
+ * NettyClient
+ * 
+ * @author Fred Feng
+ * @created 2019-10
+ * @revised 2019-12
+ * @version 1.0
+ */
 public class NettyClient implements NioClient {
 
+	private final NettyChannelContext channelContext = new NettyChannelContext();
+	private final AtomicBoolean opened = new AtomicBoolean(false);
 	private EventLoopGroup workerGroup;
 	private Bootstrap bootstrap;
-	private Channel channel;
 	private Serializer serializer = new KryoSerializer();
 
-	public void connect(String host, int port) throws Exception {
+	public void setSerializer(Serializer serializer) {
+		this.serializer = serializer;
+	}
 
-		final int nThreads = SystemPropertyUtils.getInteger("socketbird.nioclient.threads", Runtime.getRuntime().availableProcessors() * 2);
+	public void open() {
+		final int nThreads = SystemPropertyUtils.getInteger("logsink.nioclient.threads", Runtime.getRuntime().availableProcessors() * 2);
 		workerGroup = new NioEventLoopGroup(nThreads);
 		bootstrap = new Bootstrap();
 		bootstrap.group(workerGroup).channel(NioSocketChannel.class).option(ChannelOption.SO_KEEPALIVE, true)
@@ -40,18 +59,66 @@ public class NettyClient implements NioClient {
 			public void initChannel(SocketChannel ch) throws Exception {
 				ChannelPipeline pipeline = ch.pipeline();
 				pipeline.addLast(new TupleToByteEncoder(serializer), new ByteToTupleDecorder(serializer));
+				pipeline.addLast("handler", channelContext);
 			}
 		});
-		channel = bootstrap.connect(new InetSocketAddress(host, port)).sync().channel();
+		opened.set(true);
+	}
+
+	public boolean isOpened() {
+		return opened.get();
+	}
+
+	public void connect(SocketAddress address) {
+		if (!isConnected(address)) {
+			try {
+				bootstrap.connect(address).sync();
+			} catch (InterruptedException e) {
+				throw new LogSinkException(e.getMessage(), e);
+			}
+		}
 	}
 
 	public void send(Tuple tuple) {
-		channel.writeAndFlush(tuple);
+		channelContext.getChannels().forEach(channel -> {
+			doSend(channel, tuple);
+		});
+	}
+
+	public void send(Tuple tuple, Partitioner partitioner) {
+		Channel channel = channelContext.selectChannel(tuple, partitioner);
+		if (channel != null) {
+			doSend(channel, tuple);
+		}
+	}
+
+	protected void doSend(Channel channel, Tuple tuple) {
+		try {
+			channel.writeAndFlush(tuple);
+		} catch (Exception e) {
+			throw new LogSinkException(e.getMessage(), e);
+		}
 	}
 
 	public void close() {
-		channel.close();
-		workerGroup.shutdownGracefully();
+		try {
+			channelContext.getChannels().forEach(channel -> {
+				channel.close();
+			});
+		} catch (Exception e) {
+			throw new LogSinkException(e.getMessage(), e);
+		}
+		try {
+			workerGroup.shutdownGracefully();
+		} catch (Exception e) {
+			throw new LogSinkException(e.getMessage(), e);
+		}
+		opened.set(false);
+	}
+
+	public boolean isConnected(SocketAddress address) {
+		Channel channel = channelContext.getChannel(address);
+		return channel != null && channel.isActive();
 	}
 
 	public static class TupleToByteEncoder extends MessageToByteEncoder<Tuple> {

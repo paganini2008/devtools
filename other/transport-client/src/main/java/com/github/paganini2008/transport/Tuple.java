@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.socketbird;
+package com.github.paganini2008.transport;
 
 import java.util.Map;
 

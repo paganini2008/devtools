@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.logsink;
+package com.github.paganini2008.transport;
 
 import java.util.HashMap;
 
@@ -9,8 +9,6 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.serializers.MapSerializer;
 import com.esotericsoftware.kryo.util.Pool;
-import com.github.paganini2008.springworld.socketbird.Tuple;
-import com.github.paganini2008.springworld.socketbird.TupleImpl;
 
 /**
  * 

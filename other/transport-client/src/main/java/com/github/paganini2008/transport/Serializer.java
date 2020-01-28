@@ -1,6 +1,4 @@
-package com.github.paganini2008.springworld.logsink;
-
-import com.github.paganini2008.springworld.socketbird.Tuple;
+package com.github.paganini2008.transport;
 
 /**
  * 
