@@ -9,10 +9,10 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>springboot-examples</artifactId>
+	<artifactId>webcrawler</artifactId>
 	<packaging>jar</packaging>
 
-	<name>springboot-examples</name>
+	<name>webcrawler</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>
