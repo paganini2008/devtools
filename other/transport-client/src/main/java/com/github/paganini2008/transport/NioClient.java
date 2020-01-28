@@ -13,12 +13,12 @@ import java.net.SocketAddress;
  */
 public interface NioClient extends LifeCycle {
 
-	void connect(SocketAddress address);
+	void connect(SocketAddress address, HandshakeCompletedListener completedListener);
 
 	boolean isConnected(SocketAddress address);
 
 	void setSerializer(Serializer serializer);
-	
+
 	void send(Tuple tuple);
 
 	void send(Tuple tuple, Partitioner partitioner);

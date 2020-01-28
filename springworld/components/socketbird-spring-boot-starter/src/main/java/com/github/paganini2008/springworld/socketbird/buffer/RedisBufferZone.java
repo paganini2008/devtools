@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import com.github.paganini2008.springworld.cluster.ClusterId;
-import com.github.paganini2008.springworld.socketbird.Tuple;
+import com.github.paganini2008.transport.Tuple;
 
 /**
  * 

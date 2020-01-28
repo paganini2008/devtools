@@ -21,30 +21,35 @@
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
 			<version>2.9.3</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-all</artifactId>
 			<version>4.1.36.Final</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>com.esotericsoftware</groupId>
 			<artifactId>kryo</artifactId>
 			<version>5.0.0-RC1</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
 			<version>1.2.3</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>1.2.3</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

@@ -19,15 +19,15 @@ import org.springframework.stereotype.Component;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.MapUtils;
-import com.github.paganini2008.springworld.socketbird.Tuple;
 import com.github.paganini2008.springworld.socketbird.transport.Handler;
-import com.github.paganini2008.springworld.socketbird.transport.NioClient;
-import com.github.paganini2008.springworld.socketbird.utils.Partitioner;
 import com.github.paganini2008.springworld.webcrawler.jdbc.ResourceService;
 import com.github.paganini2008.springworld.webcrawler.search.IndexedResourceService;
 import com.github.paganini2008.springworld.webcrawler.utils.RedisBloomFilter;
 import com.github.paganini2008.springworld.webcrawler.utils.Resource;
 import com.github.paganini2008.springworld.webcrawler.utils.Source;
+import com.github.paganini2008.transport.NioClient;
+import com.github.paganini2008.transport.Partitioner;
+import com.github.paganini2008.transport.Tuple;
 
 import lombok.extern.slf4j.Slf4j;
 

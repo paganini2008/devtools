@@ -10,12 +10,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
-import com.github.paganini2008.springworld.socketbird.utils.HashPartitioner;
-import com.github.paganini2008.springworld.socketbird.utils.Partitioner;
-import com.github.paganini2008.springworld.socketbird.utils.RoundRobinPartitioner;
 import com.github.paganini2008.springworld.webcrawler.jdbc.JdbcResourceService;
 import com.github.paganini2008.springworld.webcrawler.jdbc.ResourceService;
 import com.github.paganini2008.springworld.webcrawler.utils.RedisIdentifier;
+import com.github.paganini2008.transport.HashPartitioner;
+import com.github.paganini2008.transport.Partitioner;
+import com.github.paganini2008.transport.RoundRobinPartitioner;
 
 /**
  * 

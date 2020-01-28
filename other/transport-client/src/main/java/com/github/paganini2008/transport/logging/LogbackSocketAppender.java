@@ -87,7 +87,7 @@ public class LogbackSocketAppender extends UnsynchronizedAppenderBase<ILoggingEv
 		getAddresses().forEach(address -> {
 			String[] args = address.split(":", 2);
 			try {
-				nioClient.connect(new InetSocketAddress(args[0], Integer.parseInt(args[1])));
+				nioClient.connect(new InetSocketAddress(args[0], Integer.parseInt(args[1])), null);
 			} catch (Exception e) {
 				addError(e.getMessage(), e);
 			}

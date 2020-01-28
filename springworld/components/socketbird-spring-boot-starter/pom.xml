@@ -30,12 +30,12 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
@@ -70,6 +70,12 @@
 		<dependency>
 			<groupId>com.github.paganini2008.springworld</groupId>
 			<artifactId>cluster-spring-boot-starter</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.paganini2008</groupId>
+			<artifactId>transport-client</artifactId>
 			<version>1.0</version>
 		</dependency>
 

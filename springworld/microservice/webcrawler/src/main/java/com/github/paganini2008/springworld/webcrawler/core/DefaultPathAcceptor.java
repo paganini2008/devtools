@@ -14,9 +14,9 @@ import org.springframework.util.PathMatcher;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.MapUtils;
-import com.github.paganini2008.springworld.socketbird.Tuple;
 import com.github.paganini2008.springworld.webcrawler.jdbc.ResourceService;
 import com.github.paganini2008.springworld.webcrawler.utils.Source;
+import com.github.paganini2008.transport.Tuple;
 
 /**
  * 

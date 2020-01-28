@@ -12,8 +12,8 @@ import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.ThreadPool;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 import com.github.paganini2008.springworld.socketbird.Counter;
-import com.github.paganini2008.springworld.socketbird.Tuple;
 import com.github.paganini2008.springworld.socketbird.buffer.BufferZone;
+import com.github.paganini2008.transport.Tuple;
 
 import lombok.extern.slf4j.Slf4j;
 

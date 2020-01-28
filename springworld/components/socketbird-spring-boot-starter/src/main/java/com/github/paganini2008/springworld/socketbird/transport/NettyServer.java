@@ -12,9 +12,9 @@ import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.net.NetUtils;
 import com.github.paganini2008.springworld.cluster.ClusterId;
 import com.github.paganini2008.springworld.socketbird.Constants;
-import com.github.paganini2008.springworld.socketbird.Serializer;
-import com.github.paganini2008.springworld.socketbird.transport.NettyTransport.ByteToTupleDecorder;
-import com.github.paganini2008.springworld.socketbird.transport.NettyTransport.TupleToByteEncoder;
+import com.github.paganini2008.transport.Serializer;
+import com.github.paganini2008.transport.netty.NettyEncoderDecoders.ByteToTupleDecorder;
+import com.github.paganini2008.transport.netty.NettyEncoderDecoders.TupleToByteEncoder;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;

@@ -14,9 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.paganini2008.springworld.socketbird.Tuple;
-import com.github.paganini2008.springworld.socketbird.transport.NioClient;
-import com.github.paganini2008.springworld.socketbird.utils.Partitioner;
 import com.github.paganini2008.springworld.webcrawler.core.PageSource;
 import com.github.paganini2008.springworld.webcrawler.core.ResourceCounter;
 import com.github.paganini2008.springworld.webcrawler.jdbc.ResourceService;
@@ -24,6 +21,9 @@ import com.github.paganini2008.springworld.webcrawler.utils.PageBean;
 import com.github.paganini2008.springworld.webcrawler.utils.Reply;
 import com.github.paganini2008.springworld.webcrawler.utils.Source;
 import com.github.paganini2008.springworld.webcrawler.utils.SourceIndex;
+import com.github.paganini2008.transport.NioClient;
+import com.github.paganini2008.transport.Partitioner;
+import com.github.paganini2008.transport.Tuple;
 
 /**
  * 

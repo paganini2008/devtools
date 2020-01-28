@@ -9,7 +9,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 import com.github.paganini2008.springworld.cluster.multicast.ContextMulticastEventHandler;
-import com.github.paganini2008.springworld.socketbird.transport.NioClient;
+import com.github.paganini2008.transport.NioClient;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,7 +46,9 @@ public class AutoConnectionEventListener implements ContextMulticastEventHandler
 			String[] args = location.split(":", 2);
 			String hostName = args[0];
 			int port = Integer.parseInt(args[1]);
-			nioClient.connect(new InetSocketAddress(hostName, port));
+			nioClient.connect(new InetSocketAddress(hostName, port), address -> {
+				log.info("NioClient connect to: " + address);
+			});
 		}
 	}
 
@@ -54,7 +56,5 @@ public class AutoConnectionEventListener implements ContextMulticastEventHandler
 	public void onLeave(String instanceId) {
 		log.info("{} leave the spring application cluster {}", instanceId, applicationName);
 	}
-	
-	
 
 }

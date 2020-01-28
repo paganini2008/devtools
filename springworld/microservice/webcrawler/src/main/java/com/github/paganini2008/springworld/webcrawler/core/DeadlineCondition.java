@@ -4,7 +4,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
-import com.github.paganini2008.springworld.socketbird.Tuple;
+import com.github.paganini2008.transport.Tuple;
 
 /**
  * 

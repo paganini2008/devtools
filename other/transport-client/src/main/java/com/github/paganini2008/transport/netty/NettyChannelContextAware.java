@@ -23,19 +23,26 @@ public abstract class NettyChannelContextAware extends ChannelInboundHandlerAdap
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		addChannel(ctx.channel());
-		channelStateListener.onConnected(ctx.channel().remoteAddress());
+		if (channelStateListener != null) {
+			channelStateListener.onConnected(ctx.channel().remoteAddress());
+		}
+
 	}
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		removeChannel(ctx.channel().remoteAddress());
-		channelStateListener.onClosed(ctx.channel().remoteAddress());
+		if (channelStateListener != null) {
+			channelStateListener.onClosed(ctx.channel().remoteAddress());
+		}
 	}
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		removeChannel(ctx.channel().remoteAddress());
-		channelStateListener.onError(ctx.channel().remoteAddress(), cause);
+		if (channelStateListener != null) {
+			channelStateListener.onError(ctx.channel().remoteAddress(), cause);
+		}
 	}
 
 	@Override

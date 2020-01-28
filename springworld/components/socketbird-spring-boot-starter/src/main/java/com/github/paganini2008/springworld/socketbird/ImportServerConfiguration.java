@@ -1,5 +1,7 @@
 package com.github.paganini2008.springworld.socketbird;
 
+import java.net.SocketAddress;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -15,18 +17,19 @@ import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import com.github.paganini2008.springworld.cluster.multicast.ContextMulticastEventHandler;
 import com.github.paganini2008.springworld.socketbird.buffer.BufferZone;
 import com.github.paganini2008.springworld.socketbird.buffer.RedisBufferZone;
-import com.github.paganini2008.springworld.socketbird.transport.ChannelContext;
-import com.github.paganini2008.springworld.socketbird.transport.ChannelStateListener;
-import com.github.paganini2008.springworld.socketbird.transport.InternalNettyClient;
-import com.github.paganini2008.springworld.socketbird.transport.LoggingChannelStateListener;
 import com.github.paganini2008.springworld.socketbird.transport.LoopProcessor;
-import com.github.paganini2008.springworld.socketbird.transport.NettyClientHandler;
 import com.github.paganini2008.springworld.socketbird.transport.NettyServer;
 import com.github.paganini2008.springworld.socketbird.transport.NettyServerHandler;
-import com.github.paganini2008.springworld.socketbird.transport.NioClient;
 import com.github.paganini2008.springworld.socketbird.transport.NioServer;
-import com.github.paganini2008.springworld.socketbird.utils.Partitioner;
-import com.github.paganini2008.springworld.socketbird.utils.RoundRobinPartitioner;
+import com.github.paganini2008.transport.ChannelStateListener;
+import com.github.paganini2008.transport.KryoSerializer;
+import com.github.paganini2008.transport.NioClient;
+import com.github.paganini2008.transport.Partitioner;
+import com.github.paganini2008.transport.RoundRobinPartitioner;
+import com.github.paganini2008.transport.Serializer;
+import com.github.paganini2008.transport.netty.NettyClient;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
@@ -58,11 +61,6 @@ public class ImportServerConfiguration {
 		return new RedisBufferZone();
 	}
 
-	@Bean
-	public ChannelContext channelContext() {
-		return new ChannelContext();
-	}
-
 	@ConditionalOnMissingBean(Partitioner.class)
 	@Bean
 	public Partitioner partitioner() {
@@ -79,7 +77,7 @@ public class ImportServerConfiguration {
 	public ContextMulticastEventHandler autoConnectionEventListener() {
 		return new AutoConnectionEventListener();
 	}
-	
+
 	@Primary
 	@Bean
 	public ContextInitializer contextInitializer() {
@@ -112,23 +110,40 @@ public class ImportServerConfiguration {
 		return new Counter(redisAtomicLong);
 	}
 
+	@Slf4j
+	public static class LoggingChannelStateListener implements ChannelStateListener {
+
+		@Override
+		public void onConnected(SocketAddress address) {
+			log.trace(address + " is connected.");
+		}
+
+		@Override
+		public void onClosed(SocketAddress address) {
+			log.trace(address + " is disconnected.");
+		}
+
+		@Override
+		public void onError(SocketAddress address, Throwable cause) {
+			log.error(address + " is disconnected.", cause);
+		}
+
+	}
+
 	@Configuration
 	@ConditionalOnProperty(name = "socketbird.transport", havingValue = "netty", matchIfMissing = true)
 	public static class NettyTransportConfiguration {
 
 		@Bean(initMethod = "open", destroyMethod = "close")
-		public NioClient nioClient() {
-			return new InternalNettyClient();
+		public NioClient nioClient(Serializer serializer) {
+			NioClient nioClient = new NettyClient();
+			nioClient.setSerializer(serializer);
+			return nioClient;
 		}
 
 		@Bean(initMethod = "start", destroyMethod = "stop")
 		public NioServer nioServer() {
 			return new NettyServer();
-		}
-
-		@Bean
-		public NettyClientHandler clientHandler() {
-			return new NettyClientHandler();
 		}
 
 		@Bean

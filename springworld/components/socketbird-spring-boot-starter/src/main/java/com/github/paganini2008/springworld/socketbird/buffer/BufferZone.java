@@ -1,6 +1,6 @@
 package com.github.paganini2008.springworld.socketbird.buffer;
 
-import com.github.paganini2008.springworld.socketbird.Tuple;
+import com.github.paganini2008.transport.Tuple;
 
 /**
  * 
