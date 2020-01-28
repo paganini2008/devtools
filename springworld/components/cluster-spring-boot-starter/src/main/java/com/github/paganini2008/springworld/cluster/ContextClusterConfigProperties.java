@@ -17,12 +17,11 @@ import lombok.Setter;
 @Getter
 public class ContextClusterConfigProperties {
 
+	private static final String CLUSTER_NAMESPACE = "spring:application:cluster:";
+
 	@Value("${spring.application.name}")
 	private String applicationName;
-	
-	@Value("${spring.application.cluster.namespace:spring:application:cluster}")
-	private String namespace;
-	
+
 	@Setter
 	@Value("${spring.application.cluster.id:}")
 	private String id;
@@ -31,7 +30,7 @@ public class ContextClusterConfigProperties {
 	private int weight;
 
 	public String getApplicationClusterName() {
-		return namespace + ":" + applicationName;
+		return CLUSTER_NAMESPACE + applicationName;
 	}
 
 }

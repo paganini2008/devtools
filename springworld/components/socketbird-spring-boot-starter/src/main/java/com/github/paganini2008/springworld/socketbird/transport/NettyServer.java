@@ -40,7 +40,6 @@ import lombok.extern.slf4j.Slf4j;
 public class NettyServer implements NioServer {
 
 	private final AtomicBoolean started = new AtomicBoolean(false);
-
 	private EventLoopGroup bossGroup;
 	private EventLoopGroup workerGroup;
 
@@ -60,7 +59,7 @@ public class NettyServer implements NioServer {
 	private String applicationName;
 
 	@Autowired
-	private ClusterId instanceId;
+	private ClusterId clusterId;
 
 	@Autowired
 	private StringRedisTemplate redisTemplate;
@@ -91,7 +90,7 @@ public class NettyServer implements NioServer {
 			bootstrap.bind(socketAddress).sync();
 			String location = (StringUtils.isNotBlank(hostName) ? hostName : NetUtils.getLocalHost()) + ":" + port;
 			String key = String.format(Constants.APPLICATION_KEY, applicationName);
-			redisTemplate.opsForHash().put(key, instanceId.get(), location);
+			redisTemplate.opsForHash().put(key, clusterId.get(), location);
 			started.set(true);
 			log.info("NettyServer is started on: " + socketAddress);
 		} catch (InterruptedException e) {

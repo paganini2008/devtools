@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.github.paganini2008.devtools.SystemPropertyUtils;
 import com.github.paganini2008.transport.HandshakeCompletedListener;
 import com.github.paganini2008.transport.KryoSerializer;
-import com.github.paganini2008.transport.LogSinkException;
+import com.github.paganini2008.transport.TransportClientException;
 import com.github.paganini2008.transport.NioClient;
 import com.github.paganini2008.transport.Partitioner;
 import com.github.paganini2008.transport.Serializer;
@@ -80,7 +80,7 @@ public class NettyClient implements NioClient {
 					}
 				}).sync();
 			} catch (InterruptedException e) {
-				throw new LogSinkException(e.getMessage(), e);
+				throw new TransportClientException(e.getMessage(), e);
 			}
 		}
 	}
@@ -102,7 +102,7 @@ public class NettyClient implements NioClient {
 		try {
 			channel.writeAndFlush(tuple);
 		} catch (Exception e) {
-			throw new LogSinkException(e.getMessage(), e);
+			throw new TransportClientException(e.getMessage(), e);
 		}
 	}
 
@@ -112,12 +112,12 @@ public class NettyClient implements NioClient {
 				channel.close();
 			});
 		} catch (Exception e) {
-			throw new LogSinkException(e.getMessage(), e);
+			throw new TransportClientException(e.getMessage(), e);
 		}
 		try {
 			workerGroup.shutdownGracefully();
 		} catch (Exception e) {
-			throw new LogSinkException(e.getMessage(), e);
+			throw new TransportClientException(e.getMessage(), e);
 		}
 		opened.set(false);
 	}
