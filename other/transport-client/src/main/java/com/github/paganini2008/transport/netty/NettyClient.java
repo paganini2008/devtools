@@ -5,13 +5,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.github.paganini2008.devtools.SystemPropertyUtils;
 import com.github.paganini2008.transport.HandshakeCompletedListener;
-import com.github.paganini2008.transport.TransportClientException;
 import com.github.paganini2008.transport.NioClient;
 import com.github.paganini2008.transport.Partitioner;
+import com.github.paganini2008.transport.TransportClientException;
 import com.github.paganini2008.transport.Tuple;
-import com.github.paganini2008.transport.netty.NettyEncoderDecoders.ByteToTupleDecorder;
-import com.github.paganini2008.transport.netty.NettyEncoderDecoders.TupleToByteEncoder;
-import com.github.paganini2008.transport.serializer.KryoSerializer;
 import com.github.paganini2008.transport.serializer.Serializer;
 
 import io.netty.bootstrap.Bootstrap;
@@ -42,10 +39,10 @@ public class NettyClient implements NioClient {
 	private final AtomicBoolean opened = new AtomicBoolean(false);
 	private EventLoopGroup workerGroup;
 	private Bootstrap bootstrap;
-	private Serializer serializer = new KryoSerializer();
+	private NettySerializationCodecFactory codecFactory;
 
 	public void setSerializer(Serializer serializer) {
-		this.serializer = serializer;
+		this.codecFactory = new NettySerializationCodecFactory(serializer);
 	}
 
 	public void open() {
@@ -55,10 +52,13 @@ public class NettyClient implements NioClient {
 		bootstrap.group(workerGroup).channel(NioSocketChannel.class).option(ChannelOption.SO_KEEPALIVE, true)
 				.option(ChannelOption.TCP_NODELAY, true).option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 60000)
 				.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT).option(ChannelOption.SO_SNDBUF, 1024 * 1024);
+		if (codecFactory == null) {
+			codecFactory = new NettySerializationCodecFactory();
+		}
 		bootstrap.handler(new ChannelInitializer<SocketChannel>() {
 			public void initChannel(SocketChannel ch) throws Exception {
 				ChannelPipeline pipeline = ch.pipeline();
-				pipeline.addLast(new TupleToByteEncoder(serializer), new ByteToTupleDecorder(serializer));
+				pipeline.addLast(codecFactory.getEncoder(), codecFactory.getDecoder());
 				pipeline.addLast("handler", channelContext);
 			}
 		});

@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.socketbird.transport;
+package com.github.paganini2008.springworld.socketbird;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.ThreadPool;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
-import com.github.paganini2008.springworld.socketbird.Counter;
 import com.github.paganini2008.springworld.socketbird.buffer.BufferZone;
 import com.github.paganini2008.transport.Tuple;
 

@@ -61,6 +61,9 @@ public class Log4j2TransportClientAppender extends AbstractAppender {
 		@PluginAttribute(value = "password", defaultString = "")
 		private String password;
 
+		@PluginAttribute(value = "startupDelay", defaultInt = 0)
+		private int startupDelay;
+
 		@PluginAttribute("clusterName")
 		private String clusterName;
 
@@ -82,6 +85,7 @@ public class Log4j2TransportClientAppender extends AbstractAppender {
 			transportClient.redisPort = redisPort;
 			transportClient.password = password;
 			transportClient.clusterName = clusterName;
+			transportClient.startupDelay = startupDelay;
 			transportClient.partitioner = BeanUtils.instantiate(partitionerClassName);
 			if (transportClient.partitioner instanceof HashPartitioner && StringUtils.isNotBlank(groupingFieldName)) {
 				((HashPartitioner) transportClient.partitioner).addFieldNames(groupingFieldName.split(","));
@@ -106,8 +110,16 @@ public class Log4j2TransportClientAppender extends AbstractAppender {
 			return clusterName;
 		}
 
+		public int getStartupDelay() {
+			return startupDelay;
+		}
+
 		public String getPartitionerClassName() {
 			return partitionerClassName;
+		}
+
+		public String getGroupingFieldName() {
+			return groupingFieldName;
 		}
 
 		public B setRedisHost(final String host) {
@@ -132,6 +144,16 @@ public class Log4j2TransportClientAppender extends AbstractAppender {
 
 		public B setPartitionerClassName(String partitionerClassName) {
 			this.partitionerClassName = partitionerClassName;
+			return asBuilder();
+		}
+
+		public B setStartupDelay(int startupDelay) {
+			this.startupDelay = startupDelay;
+			return asBuilder();
+		}
+
+		public B setGroupingFieldName(String groupingFieldName) {
+			this.groupingFieldName = groupingFieldName;
 			return asBuilder();
 		}
 
@@ -167,6 +189,10 @@ public class Log4j2TransportClientAppender extends AbstractAppender {
 
 	@Override
 	public void append(LogEvent eventObject) {
+		if (!transportClient.ready()) {
+			return;
+		}
+
 		Tuple tuple = Tuple.newTuple();
 		tuple.setField("loggerName", eventObject.getLoggerName());
 		tuple.setField("message", eventObject.getMessage());
@@ -193,12 +219,22 @@ public class Log4j2TransportClientAppender extends AbstractAppender {
 		int redisPort;
 		String password;
 		String clusterName;
+		int startupDelay;
 		Partitioner partitioner;
 		NioClient nioClient;
 		JedisPool jedisPool;
 
 		public void configure() {
+			if (startupDelay > 0) {
+				ThreadUtils.schedule(() -> {
+					doStart();
+				}, startupDelay, TimeUnit.SECONDS);
+			} else {
+				doStart();
+			}
+		}
 
+		private void doStart() {
 			nioClient = new NettyClient();
 			nioClient.open();
 
@@ -209,6 +245,10 @@ public class Log4j2TransportClientAppender extends AbstractAppender {
 				doConnect();
 				return nioClient.isOpened();
 			}, 1, TimeUnit.MINUTES);
+		}
+
+		public boolean ready() {
+			return nioClient != null && nioClient.isOpened();
 		}
 
 		public void send(Tuple data) {

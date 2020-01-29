@@ -45,6 +45,7 @@ public class Log4jTransportClientAppender extends AppenderSkeleton {
 	private int redisPort = 6379;
 	private String password = "";
 	private String clusterName;
+	private int startupDelay = 0;
 	private Partitioner partitioner = new RoundRobinPartitioner();
 	private JedisPool jedisPool;
 
@@ -58,6 +59,10 @@ public class Log4jTransportClientAppender extends AppenderSkeleton {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public void setStartupDelay(int startupDelay) {
+		this.startupDelay = startupDelay;
 	}
 
 	public void setPartitionerClassName(String partitionerClassName) {
@@ -90,6 +95,16 @@ public class Log4jTransportClientAppender extends AppenderSkeleton {
 
 	@Override
 	public void activateOptions() {
+		if (startupDelay > 0) {
+			ThreadUtils.schedule(() -> {
+				doStart();
+			}, startupDelay, TimeUnit.SECONDS);
+		} else {
+			doStart();
+		}
+	}
+
+	private void doStart() {
 		nioClient = new NettyClient();
 		nioClient.open();
 
@@ -109,6 +124,10 @@ public class Log4jTransportClientAppender extends AppenderSkeleton {
 
 	@Override
 	protected void append(LoggingEvent eventObject) {
+		if (nioClient == null || !nioClient.isOpened()) {
+			return;
+		}
+
 		Tuple tuple = Tuple.newTuple();
 		tuple.setField("loggerName", eventObject.getLoggerName());
 		tuple.setField("message", eventObject.getRenderedMessage());

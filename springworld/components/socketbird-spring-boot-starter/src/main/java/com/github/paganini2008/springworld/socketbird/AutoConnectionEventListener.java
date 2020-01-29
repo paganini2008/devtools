@@ -35,13 +35,14 @@ public class AutoConnectionEventListener implements ContextMulticastEventHandler
 	private String applicationName;
 
 	@Override
-	public void onJoin(String instanceId) {
-		log.info("{} join the spring application cluster: {}", instanceId, applicationName);
+	public void onJoin(String clusterId) {
+		log.info("{} join the spring application cluster: {}", clusterId, applicationName);
 		final String key = String.format(Constants.APPLICATION_KEY, applicationName);
-		while (!redisTemplate.opsForHash().hasKey(key, instanceId)) {
+		while (!redisTemplate.opsForHash().hasKey(key, clusterId)) {
 			ThreadUtils.sleep(1000L);
+			log.info("Waiting for connection... ");
 		}
-		String location = (String) redisTemplate.opsForHash().get(key, instanceId);
+		String location = (String) redisTemplate.opsForHash().get(key, clusterId);
 		if (StringUtils.isNotBlank(location)) {
 			String[] args = location.split(":", 2);
 			String hostName = args[0];
@@ -53,8 +54,8 @@ public class AutoConnectionEventListener implements ContextMulticastEventHandler
 	}
 
 	@Override
-	public void onLeave(String instanceId) {
-		log.info("{} leave the spring application cluster {}", instanceId, applicationName);
+	public void onLeave(String clusterId) {
+		log.info("{} leave the spring application cluster {}", clusterId, applicationName);
 	}
 
 }

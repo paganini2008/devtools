@@ -12,20 +12,20 @@ import io.netty.handler.codec.MessageToByteEncoder;
 
 /**
  * 
- * NettyEncoderDecoders
+ * NettySerializationEncoderDecoders
  * 
  * @author Fred Feng
  * @created 2019-10
  * @revised 2019-12
  * @version 1.0
  */
-public abstract class NettyEncoderDecoders {
+public abstract class NettySerializationEncoderDecoders {
 
-	public static class TupleToByteEncoder extends MessageToByteEncoder<Tuple> {
+	public static class NettySerializationEncoder extends MessageToByteEncoder<Tuple> {
 
 		private final Serializer serializer;
 
-		public TupleToByteEncoder(Serializer serializer) {
+		public NettySerializationEncoder(Serializer serializer) {
 			this.serializer = serializer;
 		}
 
@@ -38,11 +38,11 @@ public abstract class NettyEncoderDecoders {
 
 	}
 
-	public static class ByteToTupleDecorder extends ByteToMessageDecoder {
+	public static class NettySerializationDecorder extends ByteToMessageDecoder {
 
 		private final Serializer serializer;
 
-		public ByteToTupleDecorder(Serializer serializer) {
+		public NettySerializationDecorder(Serializer serializer) {
 			this.serializer = serializer;
 		}
 

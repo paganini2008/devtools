@@ -17,7 +17,6 @@ import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import com.github.paganini2008.springworld.cluster.multicast.ContextMulticastEventHandler;
 import com.github.paganini2008.springworld.socketbird.buffer.BufferZone;
 import com.github.paganini2008.springworld.socketbird.buffer.RedisBufferZone;
-import com.github.paganini2008.springworld.socketbird.transport.LoopProcessor;
 import com.github.paganini2008.springworld.socketbird.transport.NettyServer;
 import com.github.paganini2008.springworld.socketbird.transport.NettyServerHandler;
 import com.github.paganini2008.springworld.socketbird.transport.NioServer;
@@ -26,6 +25,7 @@ import com.github.paganini2008.transport.NioClient;
 import com.github.paganini2008.transport.Partitioner;
 import com.github.paganini2008.transport.RoundRobinPartitioner;
 import com.github.paganini2008.transport.netty.NettyClient;
+import com.github.paganini2008.transport.netty.NettySerializationCodecFactory;
 import com.github.paganini2008.transport.serializer.KryoSerializer;
 import com.github.paganini2008.transport.serializer.Serializer;
 
@@ -136,7 +136,7 @@ public class ImportServerConfiguration {
 
 		@Bean(initMethod = "open", destroyMethod = "close")
 		public NioClient nioClient(Serializer serializer) {
-			NioClient nioClient = new NettyClient();
+			NettyClient nioClient = new NettyClient();
 			nioClient.setSerializer(serializer);
 			return nioClient;
 		}
@@ -144,6 +144,11 @@ public class ImportServerConfiguration {
 		@Bean(initMethod = "start", destroyMethod = "stop")
 		public NioServer nioServer() {
 			return new NettyServer();
+		}
+
+		@Bean
+		public NettySerializationCodecFactory codecFactory(Serializer serializer) {
+			return new NettySerializationCodecFactory(serializer);
 		}
 
 		@Bean

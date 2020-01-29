@@ -12,9 +12,7 @@ import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.net.NetUtils;
 import com.github.paganini2008.springworld.cluster.ClusterId;
 import com.github.paganini2008.springworld.socketbird.Constants;
-import com.github.paganini2008.transport.netty.NettyEncoderDecoders.ByteToTupleDecorder;
-import com.github.paganini2008.transport.netty.NettyEncoderDecoders.TupleToByteEncoder;
-import com.github.paganini2008.transport.serializer.Serializer;
+import com.github.paganini2008.transport.netty.NettySerializationCodecFactory;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -47,7 +45,7 @@ public class NettyServer implements NioServer {
 	private NettyServerHandler serverHandler;
 
 	@Autowired
-	private Serializer serializer;
+	private NettySerializationCodecFactory codecFactory;
 
 	@Value("${socketbird.nioserver.threads:-1}")
 	private int threadCount;
@@ -79,7 +77,7 @@ public class NettyServer implements NioServer {
 		bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
 			public void initChannel(SocketChannel ch) throws Exception {
 				ChannelPipeline pipeline = ch.pipeline();
-				pipeline.addLast(new TupleToByteEncoder(serializer), new ByteToTupleDecorder(serializer));
+				pipeline.addLast(codecFactory.getEncoder(), codecFactory.getDecoder());
 				pipeline.addLast(serverHandler);
 			}
 		});
