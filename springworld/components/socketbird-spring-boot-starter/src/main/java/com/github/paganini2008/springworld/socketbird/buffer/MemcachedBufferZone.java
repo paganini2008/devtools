@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.multithreads.AtomicPositiveInteger;
 import com.github.paganini2008.springworld.cluster.ClusterId;
-import com.github.paganini2008.transport.Serializer;
 import com.github.paganini2008.transport.Tuple;
+import com.github.paganini2008.transport.serializer.Serializer;
 
 import lombok.extern.slf4j.Slf4j;
 import net.rubyeye.xmemcached.MemcachedClient;

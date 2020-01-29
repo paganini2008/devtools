@@ -2,8 +2,8 @@ package com.github.paganini2008.transport.netty;
 
 import java.util.List;
 
-import com.github.paganini2008.transport.Serializer;
 import com.github.paganini2008.transport.Tuple;
+import com.github.paganini2008.transport.serializer.Serializer;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

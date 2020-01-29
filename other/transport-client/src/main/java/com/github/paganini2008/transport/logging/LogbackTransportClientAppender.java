@@ -1,4 +1,4 @@
-package com.github.paganini2008.transport.logback;
+package com.github.paganini2008.transport.logging;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.github.paganini2008.devtools.StringUtils;
+import com.github.paganini2008.devtools.beans.BeanUtils;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
+import com.github.paganini2008.transport.HashPartitioner;
 import com.github.paganini2008.transport.NioClient;
 import com.github.paganini2008.transport.Partitioner;
 import com.github.paganini2008.transport.RoundRobinPartitioner;
@@ -24,40 +26,48 @@ import redis.clients.jedis.JedisPoolConfig;
 
 /**
  * 
- * ApplicationClusterTransportAppender
+ * LogbackTransportClientAppender
  * 
  * @author Fred Feng
  * @created 2019-10
  * @revised 2019-12
  * @version 1.0
  */
-public class ApplicationClusterTransportAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
+public class LogbackTransportClientAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
 	private static final String CLUSTER_NAMESPACE = "spring:application:cluster:";
-	private final static String APPLICATION_KEY_PREFIX = "socketbird:application:";
+	private static final String APPLICATION_KEY_PREFIX = "socketbird:application:";
 
 	private NioClient nioClient;
-	private String host = "localhost";
-	private int port = 6379;
+	private String redisHost = "localhost";
+	private int redisPort = 6379;
 	private String password = "";
 	private String clusterName;
 	private Partitioner partitioner = new RoundRobinPartitioner();
 	private JedisPool jedisPool;
 
-	public void setHost(String host) {
-		this.host = host;
+	public void setRedisHost(String redisHost) {
+		this.redisHost = redisHost;
 	}
 
-	public void setPort(int port) {
-		this.port = port;
+	public void setRedisPort(int redisPort) {
+		this.redisPort = redisPort;
 	}
 
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
-	public void setPartitioner(Partitioner partitioner) {
-		this.partitioner = partitioner;
+	public void setPartitionerClassName(String partitionerClassName) {
+		if (StringUtils.isNotBlank(partitionerClassName)) {
+			this.partitioner = BeanUtils.instantiate(partitionerClassName);
+		}
+	}
+
+	public void setGroupingFieldName(String groupingFieldName) {
+		if (partitioner instanceof HashPartitioner && StringUtils.isNotBlank(groupingFieldName)) {
+			((HashPartitioner) partitioner).addFieldNames(groupingFieldName.trim().split(","));
+		}
 	}
 
 	public void setClusterName(String clusterName) {
@@ -67,9 +77,11 @@ public class ApplicationClusterTransportAppender extends UnsynchronizedAppenderB
 	@Override
 	protected void append(ILoggingEvent eventObject) {
 		Tuple tuple = Tuple.newTuple();
+		tuple.setField("loggerName", eventObject.getLoggerName());
 		tuple.setField("message", eventObject.getFormattedMessage());
 		tuple.setField("level", eventObject.getLevel().levelStr);
-		tuple.setField("cause", ThrowableProxyUtil.asString(eventObject.getThrowableProxy()));
+		tuple.setField("error", ThrowableProxyUtil.asString(eventObject.getThrowableProxy()));
+		tuple.setField("mdc", eventObject.getMDCPropertyMap());
 		tuple.setField("timestamp", eventObject.getTimeStamp());
 		nioClient.send(tuple, partitioner);
 	}
@@ -147,7 +159,7 @@ public class ApplicationClusterTransportAppender extends UnsynchronizedAppenderB
 		jedisPoolConfig.setMaxTotal(10);
 		jedisPoolConfig.setMaxWaitMillis(-1);
 		jedisPoolConfig.setTestWhileIdle(true);
-		return new JedisPool(jedisPoolConfig, host, port, 60 * 1000, password, 0);
+		return new JedisPool(jedisPoolConfig, redisHost, redisPort, 60 * 1000, password, 0);
 	}
 
 }

@@ -1,4 +1,6 @@
-package com.github.paganini2008.transport;
+package com.github.paganini2008.transport.serializer;
+
+import com.github.paganini2008.transport.Tuple;
 
 /**
  * 

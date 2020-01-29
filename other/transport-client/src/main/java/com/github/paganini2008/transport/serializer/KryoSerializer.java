@@ -1,4 +1,4 @@
-package com.github.paganini2008.transport;
+package com.github.paganini2008.transport.serializer;
 
 import java.util.HashMap;
 
@@ -9,6 +9,8 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.serializers.MapSerializer;
 import com.esotericsoftware.kryo.util.Pool;
+import com.github.paganini2008.transport.Tuple;
+import com.github.paganini2008.transport.TupleImpl;
 
 /**
  * 

@@ -2,6 +2,8 @@ package com.github.paganini2008.transport;
 
 import java.net.SocketAddress;
 
+import com.github.paganini2008.transport.serializer.Serializer;
+
 /**
  * 
  * NioClient

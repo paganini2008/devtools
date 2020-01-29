@@ -5,14 +5,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.github.paganini2008.devtools.SystemPropertyUtils;
 import com.github.paganini2008.transport.HandshakeCompletedListener;
-import com.github.paganini2008.transport.KryoSerializer;
 import com.github.paganini2008.transport.TransportClientException;
 import com.github.paganini2008.transport.NioClient;
 import com.github.paganini2008.transport.Partitioner;
-import com.github.paganini2008.transport.Serializer;
 import com.github.paganini2008.transport.Tuple;
 import com.github.paganini2008.transport.netty.NettyEncoderDecoders.ByteToTupleDecorder;
 import com.github.paganini2008.transport.netty.NettyEncoderDecoders.TupleToByteEncoder;
+import com.github.paganini2008.transport.serializer.KryoSerializer;
+import com.github.paganini2008.transport.serializer.Serializer;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;

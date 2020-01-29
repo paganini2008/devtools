@@ -22,12 +22,12 @@ import com.github.paganini2008.springworld.socketbird.transport.NettyServer;
 import com.github.paganini2008.springworld.socketbird.transport.NettyServerHandler;
 import com.github.paganini2008.springworld.socketbird.transport.NioServer;
 import com.github.paganini2008.transport.ChannelStateListener;
-import com.github.paganini2008.transport.KryoSerializer;
 import com.github.paganini2008.transport.NioClient;
 import com.github.paganini2008.transport.Partitioner;
 import com.github.paganini2008.transport.RoundRobinPartitioner;
-import com.github.paganini2008.transport.Serializer;
 import com.github.paganini2008.transport.netty.NettyClient;
+import com.github.paganini2008.transport.serializer.KryoSerializer;
+import com.github.paganini2008.transport.serializer.Serializer;
 
 import lombok.extern.slf4j.Slf4j;
 
