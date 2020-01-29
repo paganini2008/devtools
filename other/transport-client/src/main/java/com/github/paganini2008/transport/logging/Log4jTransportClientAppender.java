@@ -156,10 +156,9 @@ public class Log4jTransportClientAppender extends AppenderSkeleton {
 		return addresses;
 	}
 
-	protected JedisPool getPool() {
+	private JedisPool getPool() {
 		JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-		jedisPoolConfig.setMinIdle(1);
-		jedisPoolConfig.setMaxIdle(5);
+		jedisPoolConfig.setMaxIdle(1);
 		jedisPoolConfig.setMaxTotal(10);
 		jedisPoolConfig.setMaxWaitMillis(-1);
 		jedisPoolConfig.setTestWhileIdle(true);

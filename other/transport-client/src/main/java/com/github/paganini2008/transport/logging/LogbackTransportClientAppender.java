@@ -82,6 +82,7 @@ public class LogbackTransportClientAppender extends UnsynchronizedAppenderBase<I
 		tuple.setField("level", eventObject.getLevel().levelStr);
 		tuple.setField("error", ThrowableProxyUtil.asString(eventObject.getThrowableProxy()));
 		tuple.setField("mdc", eventObject.getMDCPropertyMap());
+		tuple.setField("marker", eventObject.getMarker().getName());
 		tuple.setField("timestamp", eventObject.getTimeStamp());
 		nioClient.send(tuple, partitioner);
 	}
@@ -152,10 +153,9 @@ public class LogbackTransportClientAppender extends UnsynchronizedAppenderBase<I
 		return addresses;
 	}
 
-	protected JedisPool getPool() {
+	private JedisPool getPool() {
 		JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-		jedisPoolConfig.setMinIdle(1);
-		jedisPoolConfig.setMaxIdle(5);
+		jedisPoolConfig.setMaxIdle(1);
 		jedisPoolConfig.setMaxTotal(10);
 		jedisPoolConfig.setMaxWaitMillis(-1);
 		jedisPoolConfig.setTestWhileIdle(true);
