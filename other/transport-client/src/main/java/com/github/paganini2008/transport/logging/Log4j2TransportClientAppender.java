@@ -22,6 +22,7 @@ import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.beans.BeanUtils;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
+import com.github.paganini2008.transport.HashPartitioner;
 import com.github.paganini2008.transport.NioClient;
 import com.github.paganini2008.transport.Partitioner;
 import com.github.paganini2008.transport.TransportClientException;
@@ -66,6 +67,9 @@ public class Log4j2TransportClientAppender extends AbstractAppender {
 		@PluginAttribute(value = "partitionerClassName", defaultString = "com.github.paganini2008.transport.RoundRobinPartitioner")
 		private String partitionerClassName;
 
+		@PluginAttribute("groupingFieldName")
+		private String groupingFieldName;
+
 		@Override
 		public Log4j2TransportClientAppender build() {
 			final Layout<? extends Serializable> layout = getLayout();
@@ -79,6 +83,9 @@ public class Log4j2TransportClientAppender extends AbstractAppender {
 			transportClient.password = password;
 			transportClient.clusterName = clusterName;
 			transportClient.partitioner = BeanUtils.instantiate(partitionerClassName);
+			if (transportClient.partitioner instanceof HashPartitioner && StringUtils.isNotBlank(groupingFieldName)) {
+				((HashPartitioner) transportClient.partitioner).addFieldNames(groupingFieldName.split(","));
+			}
 			return new Log4j2TransportClientAppender(getName(), getFilter(), layout, isIgnoreExceptions(), getPropertyArray(),
 					transportClient);
 		}
