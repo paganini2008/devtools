@@ -50,7 +50,7 @@ public class TestController {
 	@GetMapping("/test/socket")
 	public Map<String, Object> testSocket(@RequestParam("q") String content) {
 		Map<String, Object> result = new HashMap<String, Object>();
-		nioClient.send(Tuple.createBy(content), partitioner);
+		nioClient.send(Tuple.by(content), partitioner);
 		result.put("success", true);
 		return result;
 	}

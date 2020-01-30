@@ -33,8 +33,8 @@ public class MessageController {
 	private Partitioner partitioner;
 
 	@GetMapping("/send")
-	public Map<String, Object> send(@RequestParam("q") String content) {
-		Tuple data = Tuple.createBy(content);
+	public Map<String, Object> sendMsg(@RequestParam("q") String content) {
+		Tuple data = Tuple.by(content);
 		nioClient.send(data, partitioner);
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("q", content);

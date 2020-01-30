@@ -31,7 +31,7 @@ public interface Tuple extends Cloneable {
 		return new TupleImpl();
 	}
 
-	public static Tuple createBy(String content) {
+	public static Tuple by(String content) {
 		Tuple tuple = new TupleImpl();
 		tuple.setField("content", content);
 		return tuple;

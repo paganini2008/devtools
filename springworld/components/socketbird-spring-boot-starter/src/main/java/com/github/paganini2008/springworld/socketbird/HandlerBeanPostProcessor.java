@@ -34,8 +34,8 @@ public class HandlerBeanPostProcessor implements BeanPostProcessor, ApplicationL
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		LoopProcessor loopProcessor = event.getApplicationContext().getBean(LoopProcessor.class);
-		loopProcessor.startDaemon();
 		handlerObservable.notifyObservers(loopProcessor);
+		loopProcessor.startDaemon();
 	}
 
 }

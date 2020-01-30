@@ -17,6 +17,8 @@ import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import com.github.paganini2008.springworld.cluster.multicast.ContextMulticastEventHandler;
 import com.github.paganini2008.springworld.socketbird.buffer.BufferZone;
 import com.github.paganini2008.springworld.socketbird.buffer.RedisBufferZone;
+import com.github.paganini2008.springworld.socketbird.transport.MinaServer;
+import com.github.paganini2008.springworld.socketbird.transport.MinaServerHandler;
 import com.github.paganini2008.springworld.socketbird.transport.NettyServer;
 import com.github.paganini2008.springworld.socketbird.transport.NettyServerHandler;
 import com.github.paganini2008.springworld.socketbird.transport.NioServer;
@@ -24,6 +26,8 @@ import com.github.paganini2008.transport.ChannelStateListener;
 import com.github.paganini2008.transport.NioClient;
 import com.github.paganini2008.transport.Partitioner;
 import com.github.paganini2008.transport.RoundRobinPartitioner;
+import com.github.paganini2008.transport.mina.MinaClient;
+import com.github.paganini2008.transport.mina.MinaSerializationCodecFactory;
 import com.github.paganini2008.transport.netty.NettyClient;
 import com.github.paganini2008.transport.netty.NettySerializationCodecFactory;
 import com.github.paganini2008.transport.serializer.KryoSerializer;
@@ -131,7 +135,7 @@ public class ImportServerConfiguration {
 	}
 
 	@Configuration
-	@ConditionalOnProperty(name = "socketbird.transport", havingValue = "netty", matchIfMissing = true)
+	@ConditionalOnProperty(name = "socketbird.transport.nioserver", havingValue = "netty", matchIfMissing = true)
 	public static class NettyTransportConfiguration {
 
 		@Bean(initMethod = "open", destroyMethod = "close")
@@ -154,6 +158,33 @@ public class ImportServerConfiguration {
 		@Bean
 		public NettyServerHandler serverHandler() {
 			return new NettyServerHandler();
+		}
+	}
+
+	@Configuration
+	@ConditionalOnProperty(name = "socketbird.transport.nioserver", havingValue = "mina")
+	public static class MinaTransportConfiguration {
+
+		@Bean(initMethod = "open", destroyMethod = "close")
+		public NioClient nioClient(Serializer serializer) {
+			MinaClient nioClient = new MinaClient();
+			nioClient.setSerializer(serializer);
+			return nioClient;
+		}
+
+		@Bean(initMethod = "start", destroyMethod = "stop")
+		public NioServer nioServer() {
+			return new MinaServer();
+		}
+
+		@Bean
+		public MinaSerializationCodecFactory codecFactory(Serializer serializer) {
+			return new MinaSerializationCodecFactory(serializer);
+		}
+
+		@Bean
+		public MinaServerHandler serverHandler() {
+			return new MinaServerHandler();
 		}
 	}
 

@@ -52,8 +52,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object data) throws Exception {
-		Tuple tuple = (Tuple) data;
-		store.set(collectionName, tuple);
+		store.set(collectionName, (Tuple) data);
 	}
 
 }

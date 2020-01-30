@@ -1,5 +1,9 @@
 package com.github.paganini2008.springworld.socketbird.transport;
 
+import static com.github.paganini2008.springworld.socketbird.Constants.APPLICATION_KEY;
+import static com.github.paganini2008.springworld.socketbird.Constants.PORT_RANGE_END;
+import static com.github.paganini2008.springworld.socketbird.Constants.PORT_RANGE_START;
+
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -11,7 +15,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.net.NetUtils;
 import com.github.paganini2008.springworld.cluster.ClusterId;
-import com.github.paganini2008.springworld.socketbird.Constants;
 import com.github.paganini2008.transport.netty.NettySerializationCodecFactory;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -47,10 +50,10 @@ public class NettyServer implements NioServer {
 	@Autowired
 	private NettySerializationCodecFactory codecFactory;
 
-	@Value("${socketbird.nioserver.threads:-1}")
+	@Value("${socketbird.transport.nioserver.threads:-1}")
 	private int threadCount;
 
-	@Value("${socketbird.nioserver.hostName:}")
+	@Value("${socketbird.transport.nioserver.hostName:}")
 	private String hostName;
 
 	@Value("${spring.application.name}")
@@ -63,7 +66,7 @@ public class NettyServer implements NioServer {
 	private StringRedisTemplate redisTemplate;
 
 	public int start() {
-		if (started.get()) {
+		if (isStarted()) {
 			throw new IllegalStateException("NettyServer has been started.");
 		}
 		int nThreads = threadCount > 0 ? threadCount : Runtime.getRuntime().availableProcessors() * 2;
@@ -81,13 +84,13 @@ public class NettyServer implements NioServer {
 				pipeline.addLast(serverHandler);
 			}
 		});
-		int port = NetUtils.getRandomPort(50000, 60000);
+		int port = NetUtils.getRandomPort(PORT_RANGE_START, PORT_RANGE_END);
 		try {
 			SocketAddress socketAddress = StringUtils.isNotBlank(hostName) ? new InetSocketAddress(hostName, port)
 					: new InetSocketAddress(port);
 			bootstrap.bind(socketAddress).sync();
 			String location = (StringUtils.isNotBlank(hostName) ? hostName : NetUtils.getLocalHost()) + ":" + port;
-			String key = String.format(Constants.APPLICATION_KEY, applicationName);
+			String key = String.format(APPLICATION_KEY, applicationName);
 			redisTemplate.opsForHash().put(key, clusterId.get(), location);
 			started.set(true);
 			log.info("NettyServer is started on: " + socketAddress);
@@ -98,6 +101,9 @@ public class NettyServer implements NioServer {
 	}
 
 	public void stop() {
+		if (!isStarted()) {
+			return;
+		}
 		try {
 			if (workerGroup != null) {
 				workerGroup.shutdownGracefully();
@@ -106,7 +112,7 @@ public class NettyServer implements NioServer {
 				bossGroup.shutdownGracefully();
 			}
 			started.set(false);
-			log.info("NettyServer stop successfully.");
+			log.info("NettyServer is stoped successfully.");
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}

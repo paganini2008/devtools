@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Import;
  * @revised 2019-12
  * @version 1.0
  */
-@Import({ ImportServerConfiguration.class})
+@Import({ ImportServerConfiguration.class, MessageController.class })
 @Configuration
 public class ImportConfiguration {
 

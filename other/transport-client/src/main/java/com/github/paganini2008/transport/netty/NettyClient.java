@@ -70,19 +70,21 @@ public class NettyClient implements NioClient {
 	}
 
 	public void connect(final SocketAddress address, final HandshakeCompletedListener completedListener) {
-		if (!isConnected(address)) {
-			try {
-				bootstrap.connect(address).addListener(new GenericFutureListener<ChannelFuture>() {
-					public void operationComplete(ChannelFuture future) throws Exception {
-						if (completedListener != null) {
-							completedListener.operationComplete(address);
-						}
-					}
-				}).sync();
-			} catch (InterruptedException e) {
-				throw new TransportClientException(e.getMessage(), e);
-			}
+		if (isConnected(address)) {
+			return;
 		}
+		try {
+			bootstrap.connect(address).addListener(new GenericFutureListener<ChannelFuture>() {
+				public void operationComplete(ChannelFuture future) throws Exception {
+					if (completedListener != null) {
+						completedListener.operationComplete(address);
+					}
+				}
+			}).sync();
+		} catch (InterruptedException e) {
+			throw new TransportClientException(e.getMessage(), e);
+		}
+
 	}
 
 	public void send(Tuple tuple) {
