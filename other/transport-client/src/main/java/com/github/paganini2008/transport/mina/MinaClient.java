@@ -3,7 +3,6 @@ package com.github.paganini2008.transport.mina;
 import java.net.SocketAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.mina.core.buffer.CachedBufferAllocator;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.buffer.SimpleBufferAllocator;
 import org.apache.mina.core.future.IoFuture;

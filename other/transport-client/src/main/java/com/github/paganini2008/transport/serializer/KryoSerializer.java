@@ -48,7 +48,7 @@ public class KryoSerializer implements Serializer {
 
 		outputPool = new Pool<Output>(true, false, outputSize) {
 			protected Output create() {
-				return new Output(8 * 1024, -1);
+				return new Output(1024 * 1024, -1);
 			}
 		};
 
