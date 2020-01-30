@@ -3,8 +3,8 @@ package com.github.paganini2008.transport.mina;
 import java.net.SocketAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.mina.core.buffer.CachedBufferAllocator;
 import org.apache.mina.core.buffer.IoBuffer;
-import org.apache.mina.core.buffer.SimpleBufferAllocator;
 import org.apache.mina.core.future.IoFuture;
 import org.apache.mina.core.future.IoFutureListener;
 import org.apache.mina.core.session.IoSession;
@@ -33,7 +33,7 @@ public class MinaClient implements NioClient {
 
 	static {
 		IoBuffer.setUseDirectBuffer(SystemPropertyUtils.getBoolean("transport.nioclient.mina.useDirectBuffer", false));
-		IoBuffer.setAllocator(new SimpleBufferAllocator());
+		IoBuffer.setAllocator(new CachedBufferAllocator());
 	}
 
 	private final MinaChannelContext channelContext = new MinaChannelContext();
