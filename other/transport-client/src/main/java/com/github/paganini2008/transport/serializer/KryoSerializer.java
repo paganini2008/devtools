@@ -28,7 +28,7 @@ public class KryoSerializer implements Serializer {
 	private final Pool<Input> inputPool;
 
 	public KryoSerializer() {
-		this(Runtime.getRuntime().availableProcessors() * 2, 32, 32);
+		this(Runtime.getRuntime().availableProcessors() * 2, 64, 64);
 	}
 
 	public KryoSerializer(int poolSize, int outputSize, int inputSize) {

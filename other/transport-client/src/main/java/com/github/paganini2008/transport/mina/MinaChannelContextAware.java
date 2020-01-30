@@ -37,7 +37,8 @@ public abstract class MinaChannelContextAware extends IoHandlerAdapter implement
 
 	@Override
 	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
-		removeChannel(session.getRemoteAddress());
+		cause.printStackTrace();
+		session.closeNow();
 		if (channelStateListener != null) {
 			channelStateListener.onError(session.getRemoteAddress(), cause);
 		}

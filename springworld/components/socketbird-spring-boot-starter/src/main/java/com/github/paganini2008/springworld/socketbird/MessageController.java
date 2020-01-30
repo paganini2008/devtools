@@ -2,6 +2,8 @@ package com.github.paganini2008.springworld.socketbird;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +40,21 @@ public class MessageController {
 		nioClient.send(data, partitioner);
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("q", content);
+		result.put("success", true);
+		return result;
+	}
+
+	@GetMapping("/test")
+	public Map<String, Object> test() {
+		StringBuilder str = new StringBuilder();
+		int n = ThreadLocalRandom.current().nextInt(1, 20);
+		for (int i = 0; i < n; i++) {
+			str.append(UUID.randomUUID().toString());
+		}
+		Tuple data = Tuple.by(str.toString());
+		nioClient.send(data, partitioner);
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("q", str.length());
 		result.put("success", true);
 		return result;
 	}

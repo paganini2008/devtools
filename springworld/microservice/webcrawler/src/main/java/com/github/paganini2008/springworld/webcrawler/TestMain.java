@@ -72,6 +72,7 @@ public class TestMain {
 		//System.out.println(pathMatcher.match("https://www.meishij.net/list.php?*", "https://www.meishij.net/list.php?sortby=update&words=%E5%8D%97%E7%93%9C&lm=270&yl=241&yl=25063"));
 		System.out.println(logger.isLoggable(Level.OFF));
 		logger.info("123");
+		System.out.println(1 << 23);
 	}
 
 }

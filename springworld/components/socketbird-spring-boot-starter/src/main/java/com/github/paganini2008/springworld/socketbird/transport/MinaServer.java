@@ -10,6 +10,8 @@ import java.net.SocketAddress;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.mina.core.buffer.IoBuffer;
+import org.apache.mina.core.buffer.SimpleBufferAllocator;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.executor.ExecutorFilter;
 import org.apache.mina.transport.socket.SocketSessionConfig;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.github.paganini2008.devtools.StringUtils;
+import com.github.paganini2008.devtools.SystemPropertyUtils;
 import com.github.paganini2008.devtools.net.NetUtils;
 import com.github.paganini2008.springworld.cluster.ClusterId;
 import com.github.paganini2008.transport.mina.MinaSerializationCodecFactory;
@@ -28,14 +31,19 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * 
  * MinaServer
- * 
+ *
  * @author Fred Feng
  * @created 2019-10
- * @revised 2019-12
+ * @revised 2020-01
  * @version 1.0
  */
 @Slf4j
 public class MinaServer implements NioServer {
+
+	static {
+		IoBuffer.setUseDirectBuffer(SystemPropertyUtils.getBoolean("transport.nioclient.mina.useDirectBuffer", false));
+		IoBuffer.setAllocator(new SimpleBufferAllocator());
+	}
 
 	private final AtomicBoolean started = new AtomicBoolean(false);
 	private NioSocketAcceptor ioAcceptor;
