@@ -28,7 +28,7 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 public class EventBus<E extends Event<T>, T> implements EventPubSub<E, T> {
 
 	public EventBus(int nThreads, boolean multicast) {
-		this(ThreadUtils.newCommonPool(nThreads), multicast);
+		this(ThreadUtils.commonPool(nThreads), multicast);
 	}
 
 	public EventBus(ThreadPool threadPool, boolean multicast) {

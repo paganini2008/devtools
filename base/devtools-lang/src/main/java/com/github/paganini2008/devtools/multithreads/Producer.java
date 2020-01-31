@@ -117,7 +117,7 @@ public final class Producer<X, R> {
 
 	public static <X, R> long executeBatch(Iterator<X> batch, int nThreads, Consumer<X, R> consumer) {
 		long start = System.currentTimeMillis();
-		Producer<X, R> producer = new Producer<X, R>(ThreadUtils.newCommonPool(nThreads), consumer);
+		Producer<X, R> producer = new Producer<X, R>(ThreadUtils.commonPool(nThreads), consumer);
 		while (batch.hasNext()) {
 			producer.produce(batch.next());
 		}

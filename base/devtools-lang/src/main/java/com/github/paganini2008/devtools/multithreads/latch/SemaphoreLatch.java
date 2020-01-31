@@ -81,7 +81,7 @@ public class SemaphoreLatch implements Latch {
 
 	public static void main(String[] args) throws IOException {
 		SemaphoreLatch latch = new SemaphoreLatch();
-		ThreadPool threads = ThreadUtils.newCommonPool(10);
+		ThreadPool threads = ThreadUtils.commonPool(10);
 		final AtomicInteger score = new AtomicInteger();
 		for (int i : Sequence.forEach(0, 100)) {
 			threads.execute(() -> {

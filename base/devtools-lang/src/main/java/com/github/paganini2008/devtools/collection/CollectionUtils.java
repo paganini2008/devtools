@@ -123,7 +123,7 @@ public class CollectionUtils {
 		}
 		return null;
 	}
-	
+
 	public static <T> T get(Enumeration<T> en, int index) {
 		return get(en, index, null);
 	}
@@ -265,11 +265,7 @@ public class CollectionUtils {
 
 	public static <T> Iterable<T> forEach(final Iterator<T> delegate) {
 		Assert.isNull(delegate, "Null iterator.");
-		return new Iterable<T>() {
-			public Iterator<T> iterator() {
-				return delegate;
-			}
-		};
+		return () -> delegate;
 	}
 
 	public static <T> List<T> toList(Iterator<T> delegate) {

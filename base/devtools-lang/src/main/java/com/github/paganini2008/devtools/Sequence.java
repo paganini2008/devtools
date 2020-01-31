@@ -17,6 +17,10 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public abstract class Sequence {
 
+	public static Iterable<Integer> forEach(int to) {
+		return forEach(0, to);
+	}
+
 	public static Iterable<Integer> forEach(int from, int to) {
 		return forEach(from, to, 1);
 	}
@@ -27,6 +31,10 @@ public abstract class Sequence {
 				return new IntegerSequence(from, to, interval);
 			}
 		};
+	}
+
+	public static List<Integer> range(int to) {
+		return range(0, to);
 	}
 
 	public static List<Integer> range(int from, int to) {
@@ -41,6 +49,10 @@ public abstract class Sequence {
 		return range;
 	}
 
+	public static Iterable<Long> forEach(long to) {
+		return forEach(0, to);
+	}
+
 	public static Iterable<Long> forEach(long from, long to) {
 		return forEach(from, to, 1);
 	}
@@ -51,6 +63,10 @@ public abstract class Sequence {
 				return new LongSequence(from, to, interval);
 			}
 		};
+	}
+
+	public static List<Long> range(long to) {
+		return range(0, to);
 	}
 
 	public static List<Long> range(long from, long to) {
@@ -108,5 +124,5 @@ public abstract class Sequence {
 		}
 
 	}
-	
+
 }

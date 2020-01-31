@@ -11,11 +11,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.github.paganini2008.devtools.Observable;
 import com.github.paganini2008.devtools.Observer;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.Tuple;
+import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 
 /**
  * DBUtils
@@ -155,6 +157,16 @@ public abstract class DBUtils {
 		}
 	}
 
+	/**
+	 * 
+	 * PreparedStatementCallback
+	 *
+	 * @author Fred Feng
+	 * @created 2012-12
+	 * @revised 2019-08
+	 * @version 1.0
+	 */
+	@FunctionalInterface
 	public static interface PreparedStatementCallback {
 
 		void setParameters(PreparedStatement ps) throws SQLException;
@@ -237,10 +249,19 @@ public abstract class DBUtils {
 		return first != null && !first.isEmpty() ? first.valueArray()[0] : null;
 	}
 
+	public static Iterator<Tuple> executeQuery(ConnectionFactory connectionFactory, String sql, Object[] args) throws SQLException {
+		return executeQuery(connectionFactory.getConnection(), sql, args);
+	}
+
 	public static Iterator<Tuple> executeQuery(Connection connection, String sql, Object[] args) throws SQLException {
 		return executeQuery(connection, sql, ps -> {
 			setParameters(ps, args);
 		});
+	}
+
+	public static Iterator<Tuple> executeQuery(ConnectionFactory connectionFactory, String sql, PreparedStatementCallback callback)
+			throws SQLException {
+		return executeQuery(connectionFactory.getConnection(), sql, callback);
 	}
 
 	public static Iterator<Tuple> executeQuery(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
@@ -314,6 +335,52 @@ public abstract class DBUtils {
 				throw new UnsupportedOperationException();
 			}
 		};
+	}
+
+	public static void scan(ConnectionFactory connectionFactory, String sql, PreparedStatementCallback callback, Consumer<Tuple> consumer)
+			throws SQLException {
+		scan(connectionFactory.getConnection(), sql, callback, consumer);
+	}
+
+	public static void scan(ConnectionFactory connectionFactory, String sql, Object[] args, PreparedStatementCallback callback,
+			Consumer<Tuple> consumer) throws SQLException {
+		scan(connectionFactory.getConnection(), sql, args, consumer);
+	}
+
+	public static void scan(Connection connection, String sql, Object[] args, Consumer<Tuple> consumer) throws SQLException {
+		scan(connection, sql, ps -> {
+			setParameters(ps, args);
+		}, consumer);
+	}
+
+	public static void scan(Connection connection, String sql, PreparedStatementCallback callback, Consumer<Tuple> consumer)
+			throws SQLException {
+		final int nThreads = Runtime.getRuntime().availableProcessors() * 2;
+		Iterator<Tuple> iterator = executeQuery(connection, sql, callback);
+		ThreadUtils.loop(nThreads, () -> iterator, consumer);
+	}
+
+	public static void scrollingScan(ConnectionFactory connectionFactory, String sql, PreparedStatementCallback callback, int pageSize,
+			Consumer<List<Tuple>> consumer) throws SQLException {
+		scrollingScan(connectionFactory.getConnection(), sql, callback, pageSize, consumer);
+	}
+
+	public static void scrollingScan(Connection connection, String sql, PreparedStatementCallback callback, int pageSize,
+			Consumer<List<Tuple>> consumer) throws SQLException {
+		SqlQuery<Tuple> sqlQuery = sqlQuery(connection, sql, callback);
+		for (PageResponse<Tuple> pageResponse : sqlQuery.forEach(1, pageSize)) {
+			consumer.accept(pageResponse.getContent());
+		}
+	}
+
+	public static SqlQuery<Tuple> sqlQuery(Connection connection, String sql, Object[] args) {
+		return sqlQuery(connection, sql, ps -> {
+			setParameters(ps, args);
+		});
+	}
+
+	public static SqlQuery<Tuple> sqlQuery(Connection connection, String sql, PreparedStatementCallback callback) {
+		return new SqlQueryImpl(connection, sql, callback);
 	}
 
 	public static void setParameters(PreparedStatement ps, Object[] args) throws SQLException {

@@ -8,22 +8,29 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
 
 /**
  * 
- * JdbcQuery
+ * SqlQuery
  *
  * @author Fred Feng
  * @revised 2019-07
  * @created 2019-07
  */
-public interface JdbcQuery<T> extends ResultSetSlice<T> {
+public interface SqlQuery<T> extends ResultSetSlice<T> {
 
 	default List<T> list(int maxResults, int firstResult) {
 		List<T> list = new ArrayList<T>();
-		for (T tuple : CollectionUtils.forEach(iterator(maxResults, firstResult))) {
+		Iterator<T> iterator = iterator(maxResults, firstResult);
+		for (T tuple : CollectionUtils.forEach(iterator)) {
 			list.add(tuple);
 		}
 		return list;
 	}
 
 	Iterator<T> iterator(int maxResults, int firstResult);
+
+	String getSql();
+
+	default Iterable<PageResponse<T>> forEach(int page, int size) {
+		return list(PageRequest.of(page, size));
+	}
 
 }

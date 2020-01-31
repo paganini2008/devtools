@@ -310,12 +310,26 @@ public abstract class ThreadUtils {
 
 	}
 
-	public static <T> void benchmark(int nThreads, int concurrents, int loops, Consumer<Integer> consumer) {
-		benchmark(nThreads, concurrents, Sequence.forEach(0, loops), consumer);
+	public static <T> void loop(int nThreads, int loops, Consumer<Integer> consumer) {
+		loop(nThreads, Sequence.forEach(loops), consumer);
 	}
 
-	public static <T> void benchmark(int nThreads, int concurrents, Iterable<T> iterable, Consumer<T> consumer) {
-		final ThreadPool threadPool = ThreadPoolBuilder.common(nThreads).setConcurrents(concurrents).build();
+	public static <T> void loop(int nThreads, Iterable<T> iterable, Consumer<T> consumer) {
+		final ThreadPool threadPool = ThreadPoolBuilder.common(nThreads).build();
+		for (final T t : iterable) {
+			threadPool.apply(() -> {
+				consumer.accept(t);
+			});
+		}
+		threadPool.shutdown();
+	}
+
+	public static <T> void benchmark(int nThreads, int maxPermits, int loops, Consumer<Integer> consumer) {
+		benchmark(nThreads, maxPermits, Sequence.forEach(loops), consumer);
+	}
+
+	public static <T> void benchmark(int nThreads, int maxPermits, Iterable<T> iterable, Consumer<T> consumer) {
+		final ThreadPool threadPool = ThreadPoolBuilder.common(nThreads).setMaxPermits(maxPermits).build();
 		List<Thread> runners = new ArrayList<Thread>();
 		for (int i = 0; i < nThreads; i++) {
 			runners.add(runAsThread(() -> {
@@ -335,15 +349,15 @@ public abstract class ThreadUtils {
 		threadPool.shutdown();
 	}
 
-	public static ThreadPool newCommonPool() {
-		return newCommonPool(Runtime.getRuntime().availableProcessors() * 2);
+	public static ThreadPool commonPool() {
+		return commonPool(Runtime.getRuntime().availableProcessors() * 2);
 	}
 
-	public static ThreadPool newCommonPool(int maxPoolSize) {
-		return newCommonPool(maxPoolSize, -1L, Integer.MAX_VALUE);
+	public static ThreadPool commonPool(int maxPoolSize) {
+		return commonPool(maxPoolSize, -1L, Integer.MAX_VALUE);
 	}
 
-	public static ThreadPool newCommonPool(int maxPoolSize, long timeout, int queueSize) {
+	public static ThreadPool commonPool(int maxPoolSize, long timeout, int queueSize) {
 		return ThreadPoolBuilder.common(maxPoolSize).setTimeout(timeout).setQueueSize(queueSize).build();
 	}
 

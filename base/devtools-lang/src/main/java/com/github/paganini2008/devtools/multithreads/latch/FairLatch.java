@@ -126,7 +126,7 @@ public class FairLatch implements Latch {
 
 	public static void main(String[] args) throws IOException {
 		FairLatch latch = new FairLatch();
-		ThreadPool threads = ThreadUtils.newCommonPool(10);
+		ThreadPool threads = ThreadUtils.commonPool(10);
 		final AtomicInteger score = new AtomicInteger();
 		for (int i : Sequence.forEach(0, 1000)) {
 			if (latch.acquire(1, TimeUnit.SECONDS)) {

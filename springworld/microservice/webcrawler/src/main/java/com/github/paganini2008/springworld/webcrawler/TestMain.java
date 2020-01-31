@@ -84,7 +84,7 @@ public class TestMain {
 		// System.out.println(counter.getAndDecrement());
 		// }
 		AtomicInteger integer = new AtomicInteger();
-		ThreadUtils.benchmark(100, 5, 100000, i -> {
+		ThreadUtils.loop(100, 100000, i -> {
 			System.out.println(Thread.currentThread().getName() + ": " + UUID.randomUUID().toString());
 			integer.incrementAndGet();
 		});

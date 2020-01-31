@@ -39,8 +39,8 @@ public class ThreadPoolBuilder {
 		return this;
 	}
 
-	public ThreadPoolBuilder setConcurrents(int concurrents) {
-		return setLatch(concurrents > 0 ? new CounterLatch(concurrents) : CounterLatch.newUnlimitedLatch());
+	public ThreadPoolBuilder setMaxPermits(int maxPermits) {
+		return setLatch(maxPermits > 0 ? new CounterLatch(maxPermits) : CounterLatch.newUnlimitedLatch());
 	}
 
 	public int getQueueSize() {
