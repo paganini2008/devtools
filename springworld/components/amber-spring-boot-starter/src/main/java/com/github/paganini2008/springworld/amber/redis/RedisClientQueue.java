@@ -3,7 +3,7 @@ package com.github.paganini2008.springworld.amber.redis;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.github.paganini2008.devtools.multithreads.AtomicPositiveInteger;
+import com.github.paganini2008.devtools.multithreads.AtomicUnsignedInteger;
 
 /**
  * 
@@ -14,7 +14,7 @@ import com.github.paganini2008.devtools.multithreads.AtomicPositiveInteger;
  */
 public class RedisClientQueue {
 
-	private final AtomicPositiveInteger counter = new AtomicPositiveInteger();
+	private final AtomicUnsignedInteger counter = new AtomicUnsignedInteger();
 	private final List<String> clientIds = new CopyOnWriteArrayList<String>();
 
 	public RedisClientQueue() {

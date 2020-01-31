@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
-import com.github.paganini2008.devtools.multithreads.AtomicPositiveInteger;
+import com.github.paganini2008.devtools.multithreads.AtomicUnsignedInteger;
 import com.github.paganini2008.springworld.cluster.ClusterId;
 import com.github.paganini2008.transport.Tuple;
 import com.github.paganini2008.transport.serializer.Serializer;
@@ -37,8 +37,8 @@ public class MemcachedBufferZone implements BufferZone {
 	@Autowired
 	private ClusterId clusterId;
 
-	private final AtomicPositiveInteger setter = new AtomicPositiveInteger(0);
-	private final AtomicPositiveInteger getter = new AtomicPositiveInteger(0);
+	private final AtomicUnsignedInteger setter = new AtomicUnsignedInteger(0);
+	private final AtomicUnsignedInteger getter = new AtomicUnsignedInteger(0);
 
 	private MemcachedClient client;
 

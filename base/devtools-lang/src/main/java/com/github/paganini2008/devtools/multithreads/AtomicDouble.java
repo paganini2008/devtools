@@ -7,31 +7,30 @@ import static java.lang.Double.longBitsToDouble;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 
 /**
- * AtomicPositiveDouble
+ * AtomicDouble
  * 
  * @author Fred Feng
  * @created 2014-03
  * @version 1.0
  */
-public class AtomicPositiveDouble extends Number {
+public class AtomicDouble extends Number {
 
 	private static final long serialVersionUID = -5035478790557265664L;
-	private static final AtomicLongFieldUpdater<AtomicPositiveDouble> updater = AtomicLongFieldUpdater
-			.newUpdater(AtomicPositiveDouble.class, "value");
+	private static final AtomicLongFieldUpdater<AtomicDouble> updater = AtomicLongFieldUpdater.newUpdater(AtomicDouble.class, "value");
 
 	private volatile long value;
 	private final long maxValue;
 	private final double initialValue;
 
-	public AtomicPositiveDouble() {
+	public AtomicDouble() {
 		this(0);
 	}
 
-	public AtomicPositiveDouble(double initialValue) {
+	public AtomicDouble(double initialValue) {
 		this(initialValue, Long.MAX_VALUE);
 	}
 
-	public AtomicPositiveDouble(double initialValue, long maxValue) {
+	public AtomicDouble(double initialValue, long maxValue) {
 		value = doubleToRawLongBits(initialValue);
 		this.initialValue = initialValue;
 		this.maxValue = maxValue;
@@ -97,8 +96,8 @@ public class AtomicPositiveDouble extends Number {
 	}
 
 	public boolean equals(Object other) {
-		if (other instanceof AtomicPositiveLong) {
-			AtomicPositiveLong integer = (AtomicPositiveLong) other;
+		if (other instanceof AtomicUnsignedLong) {
+			AtomicUnsignedLong integer = (AtomicUnsignedLong) other;
 			return integer.get() == get();
 		}
 		return false;

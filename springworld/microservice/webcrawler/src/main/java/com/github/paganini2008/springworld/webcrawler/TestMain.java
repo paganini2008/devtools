@@ -4,13 +4,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.codec.cli.Digest;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.util.PathMatcher;
-
-import com.github.paganini2008.devtools.CharsetUtils;
-import com.github.paganini2008.devtools.io.FileUtils;
+import com.github.paganini2008.devtools.multithreads.AtomicUnsignedInteger;
 
 public class TestMain {
 	
@@ -72,7 +66,18 @@ public class TestMain {
 		//System.out.println(pathMatcher.match("https://www.meishij.net/list.php?*", "https://www.meishij.net/list.php?sortby=update&words=%E5%8D%97%E7%93%9C&lm=270&yl=241&yl=25063"));
 		System.out.println(logger.isLoggable(Level.OFF));
 		logger.info("123");
-		System.out.println(1 << 23);
+//		for(int i=0;i<10;i++) {
+//			System.out.println(5 << i);
+//		}
+		
+//		int a = Integer.MAX_VALUE+10;
+//		System.out.println(a);
+		
+//		AtomicUnsignedInteger counter = new AtomicUnsignedInteger();
+//		for(int i=0;i<100;i++) {
+//			System.out.println(counter.getAndDecrement());
+//		}
+		System.out.println(-1& 0xffffffff);
 	}
 
 }

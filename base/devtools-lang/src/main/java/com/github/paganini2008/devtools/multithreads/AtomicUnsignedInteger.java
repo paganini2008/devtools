@@ -3,13 +3,14 @@ package com.github.paganini2008.devtools.multithreads;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * AtomicPositiveInteger
+ * AtomicUnsignedInteger
  * 
  * @author Fred Feng
  * @created 2014-03
+ * @revised 2020-01
  * @version 1.0
  */
-public class AtomicPositiveInteger extends Number {
+public class AtomicUnsignedInteger extends Number {
 
 	private static final long serialVersionUID = 6144822865358352926L;
 
@@ -18,15 +19,21 @@ public class AtomicPositiveInteger extends Number {
 	private final int initialValue;
 	private final int maxValue;
 
-	public AtomicPositiveInteger() {
+	public AtomicUnsignedInteger() {
 		this(0);
 	}
 
-	public AtomicPositiveInteger(int initialValue) {
+	public AtomicUnsignedInteger(int initialValue) {
 		this(initialValue, Integer.MAX_VALUE);
 	}
 
-	public AtomicPositiveInteger(int initialValue, int maxValue) {
+	public AtomicUnsignedInteger(int initialValue, int maxValue) {
+		if (initialValue < 0) {
+			throw new IllegalArgumentException("Initial value must >= 0.");
+		}
+		if (initialValue >= maxValue) {
+			throw new IllegalArgumentException("Maximum value must > initial value.");
+		}
 		i = new AtomicInteger(initialValue);
 		this.initialValue = initialValue;
 		this.maxValue = maxValue;
@@ -160,8 +167,8 @@ public class AtomicPositiveInteger extends Number {
 	}
 
 	public boolean equals(Object other) {
-		if (other instanceof AtomicPositiveInteger) {
-			AtomicPositiveInteger integer = (AtomicPositiveInteger) other;
+		if (other instanceof AtomicUnsignedInteger) {
+			AtomicUnsignedInteger integer = (AtomicUnsignedInteger) other;
 			return integer.get() == get();
 		}
 		return false;

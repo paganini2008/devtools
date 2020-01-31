@@ -76,7 +76,7 @@ public class ThreadFactoryBuilder {
 		final ThreadFactory threadFactory = backingThreadFactory != null ? backingThreadFactory : new DefaultThreadFactory();
 		return new ThreadFactory() {
 
-			final AtomicPositiveInteger count = nameFormat != null ? new AtomicPositiveInteger() : null;
+			final AtomicUnsignedInteger count = nameFormat != null ? new AtomicUnsignedInteger() : null;
 
 			public Thread newThread(Runnable r) {
 				Thread thread = threadFactory.newThread(r);

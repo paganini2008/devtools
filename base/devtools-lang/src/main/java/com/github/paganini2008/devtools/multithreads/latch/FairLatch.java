@@ -8,7 +8,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.github.paganini2008.devtools.Sequence;
-import com.github.paganini2008.devtools.multithreads.AtomicPositiveLong;
+import com.github.paganini2008.devtools.multithreads.AtomicUnsignedLong;
 import com.github.paganini2008.devtools.multithreads.ThreadPool;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 
@@ -22,15 +22,15 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
  */
 public class FairLatch implements Latch {
 
-	private final ThreadLocal<AtomicPositiveLong> threadLocal = new ThreadLocal<AtomicPositiveLong>() {
+	private final ThreadLocal<AtomicUnsignedLong> threadLocal = new ThreadLocal<AtomicUnsignedLong>() {
 
-		protected AtomicPositiveLong initialValue() {
-			return new AtomicPositiveLong(0);
+		protected AtomicUnsignedLong initialValue() {
+			return new AtomicUnsignedLong(0);
 		}
 
 	};
 
-	private final AtomicPositiveLong sequence = new AtomicPositiveLong(0);
+	private final AtomicUnsignedLong sequence = new AtomicUnsignedLong(0);
 	private final AtomicInteger counter = new AtomicInteger(0);
 	private final Lock lock = new ReentrantLock();
 	private final Condition condition = lock.newCondition();
@@ -45,7 +45,7 @@ public class FairLatch implements Latch {
 	}
 
 	public boolean acquire() {
-		AtomicPositiveLong serial = threadLocal.get();
+		AtomicUnsignedLong serial = threadLocal.get();
 		final long ticket = serial.getAndIncrement();
 		while (true) {
 			lock.lock();
@@ -71,7 +71,7 @@ public class FairLatch implements Latch {
 		final long begin = System.nanoTime();
 		long elapsed;
 		long nanosTimeout = TimeUnit.NANOSECONDS.convert(timeout, timeUnit);
-		AtomicPositiveLong serial = threadLocal.get();
+		AtomicUnsignedLong serial = threadLocal.get();
 		final long ticket = serial.getAndIncrement();
 		while (true) {
 			lock.lock();
@@ -100,7 +100,7 @@ public class FairLatch implements Latch {
 	}
 
 	public boolean tryAcquire() {
-		AtomicPositiveLong serial = threadLocal.get();
+		AtomicUnsignedLong serial = threadLocal.get();
 		long ticket = serial.getAndIncrement();
 		return ticket == sequence.get();
 	}

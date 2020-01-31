@@ -3,13 +3,14 @@ package com.github.paganini2008.devtools.multithreads;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * AtomicPositiveLong
+ * AtomicUnsignedLong
  * 
  * @author Fred Feng
  * @created 2014-03
+ * @revised 2020-01
  * @version 1.0
  */
-public class AtomicPositiveLong extends Number {
+public class AtomicUnsignedLong extends Number {
 
 	private static final long serialVersionUID = -2149027152615605579L;
 
@@ -18,21 +19,27 @@ public class AtomicPositiveLong extends Number {
 	private final long maxValue;
 	private final long initialValue;
 
-	public AtomicPositiveLong() {
+	public AtomicUnsignedLong() {
 		this(0);
 	}
 
-	public AtomicPositiveLong(long initialValue) {
+	public AtomicUnsignedLong(long initialValue) {
 		this(initialValue, Long.MAX_VALUE);
 	}
 
-	public AtomicPositiveLong(long initialValue, long maxValue) {
+	public AtomicUnsignedLong(long initialValue, long maxValue) {
+		if (initialValue < 0) {
+			throw new IllegalArgumentException("Initial value must >= 0.");
+		}
+		if (initialValue >= maxValue) {
+			throw new IllegalArgumentException("Maximum value must > initial value.");
+		}
 		l = new AtomicLong(initialValue);
 		this.initialValue = initialValue;
 		this.maxValue = maxValue;
 	}
 
-	public final long getAndIncrement() {
+	public long getAndIncrement() {
 		while (true) {
 			long current = l.get();
 			long next = (current >= maxValue ? initialValue : current + 1);
@@ -42,7 +49,7 @@ public class AtomicPositiveLong extends Number {
 		}
 	}
 
-	public final long getAndDecrement() {
+	public long getAndDecrement() {
 		while (true) {
 			long current = l.get();
 			long next = (current <= initialValue ? maxValue : current - 1);
@@ -52,7 +59,7 @@ public class AtomicPositiveLong extends Number {
 		}
 	}
 
-	public final long incrementAndGet() {
+	public long incrementAndGet() {
 		while (true) {
 			long current = l.get();
 			long next = (current >= maxValue ? initialValue : current + 1);
@@ -62,7 +69,7 @@ public class AtomicPositiveLong extends Number {
 		}
 	}
 
-	public final long decrementAndGet() {
+	public long decrementAndGet() {
 		while (true) {
 			long current = l.get();
 			long next = (current <= initialValue ? maxValue : current - 1);
@@ -72,11 +79,11 @@ public class AtomicPositiveLong extends Number {
 		}
 	}
 
-	public final long get() {
+	public long get() {
 		return l.get();
 	}
 
-	public final void set(long newValue) {
+	public void set(long newValue) {
 		if (newValue >= initialValue && newValue <= maxValue) {
 			l.set(newValue);
 		} else {
@@ -84,14 +91,14 @@ public class AtomicPositiveLong extends Number {
 		}
 	}
 
-	public final long getAndSet(long newValue) {
+	public long getAndSet(long newValue) {
 		if (newValue >= initialValue && newValue <= maxValue) {
 			return l.getAndSet(newValue);
 		}
 		throw new IllegalArgumentException("New value must >= " + initialValue + " and <= " + maxValue + ".");
 	}
 
-	public final long getAndAdd(long delta) {
+	public long getAndAdd(long delta) {
 		while (true) {
 			long current = l.get();
 			long next = (current >= maxValue - delta ? initialValue : current + delta);
@@ -101,7 +108,7 @@ public class AtomicPositiveLong extends Number {
 		}
 	}
 
-	public final long addAndGet(long delta) {
+	public long addAndGet(long delta) {
 		while (true) {
 			long current = l.get();
 			long next = (current >= maxValue - delta ? initialValue : current + delta);
@@ -111,14 +118,14 @@ public class AtomicPositiveLong extends Number {
 		}
 	}
 
-	public final boolean compareAndSet(long expect, long update) {
+	public boolean compareAndSet(long expect, long update) {
 		if (update >= initialValue && update <= maxValue) {
 			return l.compareAndSet(expect, update);
 		}
 		throw new IllegalArgumentException("New value must >= " + initialValue + " and <= " + maxValue + ".");
 	}
 
-	public final boolean weakCompareAndSet(long expect, long update) {
+	public boolean weakCompareAndSet(long expect, long update) {
 		if (update >= initialValue && update <= maxValue) {
 			return l.weakCompareAndSet(expect, update);
 		}
@@ -160,8 +167,8 @@ public class AtomicPositiveLong extends Number {
 	}
 
 	public boolean equals(Object other) {
-		if (other instanceof AtomicPositiveLong) {
-			AtomicPositiveLong integer = (AtomicPositiveLong) other;
+		if (other instanceof AtomicUnsignedLong) {
+			AtomicUnsignedLong integer = (AtomicUnsignedLong) other;
 			return integer.get() == get();
 		}
 		return false;

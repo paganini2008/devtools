@@ -3,7 +3,7 @@ package com.github.paganini2008.springworld.cluster.multicast;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import com.github.paganini2008.devtools.multithreads.AtomicPositiveInteger;
+import com.github.paganini2008.devtools.multithreads.AtomicUnsignedInteger;
 
 /**
  * 
@@ -18,7 +18,7 @@ public abstract class LoadBalanceSelector {
 
 	public static class RoundrobinLoadBalance implements LoadBalance {
 
-		private final AtomicPositiveInteger counter = new AtomicPositiveInteger();
+		private final AtomicUnsignedInteger counter = new AtomicUnsignedInteger();
 
 		public String select(Object message, List<String> channels) {
 			return channels.get(counter.getAndIncrement() % channels.size());
