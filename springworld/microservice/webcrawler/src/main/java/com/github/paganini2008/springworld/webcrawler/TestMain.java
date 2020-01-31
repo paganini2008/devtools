@@ -1,13 +1,18 @@
 package com.github.paganini2008.springworld.webcrawler;
 
 import java.io.IOException;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.github.paganini2008.devtools.date.DateUtils;
+import com.github.paganini2008.devtools.multithreads.AtomicDouble;
 import com.github.paganini2008.devtools.multithreads.AtomicUnsignedInteger;
+import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 
 public class TestMain {
-	
+
 	private static final Logger logger = Logger.getLogger("abc");
 
 	public static boolean isChinese(char c) {
@@ -60,24 +65,30 @@ public class TestMain {
 	}
 
 	public static void main(String[] args) throws IOException {
-		//String unicode = FileUtils.toString("d:/json.txt", CharsetUtils.UTF_8);
-		//System.out.println(decodeUnicode(unicode));
-		//PathMatcher pathMatcher = new AntPathMatcher();
-		//System.out.println(pathMatcher.match("https://www.meishij.net/list.php?*", "https://www.meishij.net/list.php?sortby=update&words=%E5%8D%97%E7%93%9C&lm=270&yl=241&yl=25063"));
+		// String unicode = FileUtils.toString("d:/json.txt", CharsetUtils.UTF_8);
+		// System.out.println(decodeUnicode(unicode));
+		// PathMatcher pathMatcher = new AntPathMatcher();
+		// System.out.println(pathMatcher.match("https://www.meishij.net/list.php?*",
+		// "https://www.meishij.net/list.php?sortby=update&words=%E5%8D%97%E7%93%9C&lm=270&yl=241&yl=25063"));
 		System.out.println(logger.isLoggable(Level.OFF));
 		logger.info("123");
-//		for(int i=0;i<10;i++) {
-//			System.out.println(5 << i);
-//		}
-		
-//		int a = Integer.MAX_VALUE+10;
-//		System.out.println(a);
-		
-//		AtomicUnsignedInteger counter = new AtomicUnsignedInteger();
-//		for(int i=0;i<100;i++) {
-//			System.out.println(counter.getAndDecrement());
-//		}
-		System.out.println(-1& 0xffffffff);
+		// for(int i=0;i<10;i++) {
+		// System.out.println(5 << i);
+		// }
+
+		// int a = Integer.MAX_VALUE+10;
+		// System.out.println(a);
+
+		// AtomicUnsignedInteger counter = new AtomicUnsignedInteger();
+		// for(int i=0;i<100;i++) {
+		// System.out.println(counter.getAndDecrement());
+		// }
+		AtomicInteger integer = new AtomicInteger();
+		ThreadUtils.benchmark(100, 5, 100000, i -> {
+			System.out.println(Thread.currentThread().getName() + ": " + UUID.randomUUID().toString());
+			integer.incrementAndGet();
+		});
+		System.out.println(integer);
 	}
 
 }

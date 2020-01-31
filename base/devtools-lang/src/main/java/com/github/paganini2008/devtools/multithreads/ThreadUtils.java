@@ -2,6 +2,7 @@ package com.github.paganini2008.devtools.multithreads;
 
 import static com.github.paganini2008.devtools.date.DateUtils.convertToMillis;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -9,9 +10,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import com.github.paganini2008.devtools.RandomUtils;
+import com.github.paganini2008.devtools.Sequence;
 
 /**
  * 
@@ -305,6 +308,31 @@ public abstract class ThreadUtils {
 			return new SerialExecutable(executables);
 		}
 
+	}
+
+	public static <T> void benchmark(int nThreads, int concurrents, int loops, Consumer<Integer> consumer) {
+		benchmark(nThreads, concurrents, Sequence.forEach(0, loops), consumer);
+	}
+
+	public static <T> void benchmark(int nThreads, int concurrents, Iterable<T> iterable, Consumer<T> consumer) {
+		final ThreadPool threadPool = ThreadPoolBuilder.common(nThreads).setConcurrents(concurrents).build();
+		List<Thread> runners = new ArrayList<Thread>();
+		for (int i = 0; i < nThreads; i++) {
+			runners.add(runAsThread(() -> {
+				for (final T t : iterable) {
+					threadPool.apply(() -> {
+						consumer.accept(t);
+					});
+				}
+			}));
+		}
+		for (Thread thread : runners) {
+			try {
+				thread.join();
+			} catch (InterruptedException ignored) {
+			}
+		}
+		threadPool.shutdown();
 	}
 
 	public static ThreadPool newCommonPool() {

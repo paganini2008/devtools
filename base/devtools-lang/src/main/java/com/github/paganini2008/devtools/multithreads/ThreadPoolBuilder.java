@@ -39,6 +39,10 @@ public class ThreadPoolBuilder {
 		return this;
 	}
 
+	public ThreadPoolBuilder setConcurrents(int concurrents) {
+		return setLatch(concurrents > 0 ? new CounterLatch(concurrents) : CounterLatch.newUnlimitedLatch());
+	}
+
 	public int getQueueSize() {
 		return queueSize;
 	}
@@ -75,7 +79,7 @@ public class ThreadPoolBuilder {
 
 	public static ThreadPoolBuilder common(int maxPoolSize) {
 		ThreadPoolBuilder builder = new ThreadPoolBuilder();
-		return builder.setMaxPoolSize(maxPoolSize).setLatch(new CounterLatch(Integer.MAX_VALUE)).setQueueSize(Integer.MAX_VALUE)
+		return builder.setMaxPoolSize(maxPoolSize).setLatch(CounterLatch.newUnlimitedLatch()).setQueueSize(Integer.MAX_VALUE)
 				.setTimeout(-1L).setThreadFactory(new PooledThreadFactory());
 	}
 

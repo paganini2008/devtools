@@ -352,7 +352,7 @@ public class DateUtils {
 	public static String formatDuration(long ms, DurationType type, String pattern) {
 		long[] args = type.toArray(ms);
 		Long[] array = Longs.toWrappers(args);
-		return StringUtils.parseText(pattern, "#", array);
+		return StringUtils.format(pattern, "#", array);
 	}
 
 	public static Date valueOf(int year, int month, int date) {

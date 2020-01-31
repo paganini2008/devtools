@@ -15,7 +15,7 @@ import com.github.paganini2008.transport.Tuple;
  */
 public class FstSerializer implements Serializer {
 
-	private FSTConfiguration configuration = FSTConfiguration.createStructConfiguration();
+	private final FSTConfiguration configuration = FSTConfiguration.createStructConfiguration();
 
 	public byte[] serialize(Tuple tuple) {
 		return configuration.asByteArray(tuple);

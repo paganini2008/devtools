@@ -31,7 +31,7 @@ import com.github.paganini2008.devtools.multithreads.latch.Latch;
 public class GenericThreadPool extends ThreadPoolExecutor implements ThreadPool {
 
 	public GenericThreadPool(int maxPoolSize, long timeout, int queueSize, ThreadFactory threadFactory) {
-		this(maxPoolSize, new CounterLatch(maxPoolSize * 2), timeout, queueSize, threadFactory);
+		this(maxPoolSize, new CounterLatch(maxPoolSize), timeout, queueSize, threadFactory);
 	}
 
 	public GenericThreadPool(int maxPoolSize, Latch latch, long timeout, int queueSize, ThreadFactory threadFactory) {

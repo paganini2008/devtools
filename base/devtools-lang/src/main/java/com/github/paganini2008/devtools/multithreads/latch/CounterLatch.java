@@ -25,10 +25,6 @@ public class CounterLatch implements Latch {
 	private final Condition condition;
 	private final long startTime;
 
-	public CounterLatch() {
-		this(1);
-	}
-
 	public CounterLatch(int maxPermits) {
 		this(maxPermits, new ReentrantLock());
 	}
@@ -122,6 +118,14 @@ public class CounterLatch implements Latch {
 
 	public boolean isLocked() {
 		return counter.get() > 0;
+	}
+
+	public static Latch newSingleLatch() {
+		return new CounterLatch(1);
+	}
+
+	public static Latch newUnlimitedLatch() {
+		return new CounterLatch(Integer.MAX_VALUE);
 	}
 
 }
