@@ -3,7 +3,6 @@ package com.github.paganini2008.devtools.collection;
 import java.util.Map;
 
 import com.github.paganini2008.devtools.CaseFormat;
-import com.github.paganini2008.devtools.beans.TupleImpl;
 
 /**
  * 

@@ -1,4 +1,4 @@
-package com.github.paganini2008.devtools.beans;
+package com.github.paganini2008.devtools.collection;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -8,9 +8,7 @@ import com.github.paganini2008.devtools.CaseFormat;
 import com.github.paganini2008.devtools.CaseFormats;
 import com.github.paganini2008.devtools.MissingKeyException;
 import com.github.paganini2008.devtools.StringUtils;
-import com.github.paganini2008.devtools.collection.KeyConversionMap;
-import com.github.paganini2008.devtools.collection.MapUtils;
-import com.github.paganini2008.devtools.collection.Tuple;
+import com.github.paganini2008.devtools.beans.BeanUtils;
 
 /**
  * 
@@ -102,12 +100,12 @@ public class TupleImpl extends KeyConversionMap<String, String, Object> implemen
 	}
 
 	public static void main(String[] args) {
-		Tuple tuple = Tuple.newTuple(new CaseFormats.LowerCamelCase(c->{
-			return c == '_';
-		}));
+		System.out.println(CaseFormats.LOWER_CAMEL.toCase("last_modified"));
+		System.out.println(CaseFormats.UPPER_CAMEL.toCase("last_modified"));
+		Tuple tuple = Tuple.newTuple(CaseFormats.LOWER_CAMEL);
 		tuple.set("last_modified", new Date());
 		System.out.println(tuple);
-		System.out.println(tuple.getProperty("lastModified"));
+		System.out.println(tuple.getProperty("LastModified"));
 	}
 
 }

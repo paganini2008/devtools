@@ -8,13 +8,13 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
 
 /**
  * 
- * SqlQuery
+ * PagingQuery
  *
  * @author Fred Feng
  * @revised 2019-07
  * @created 2019-07
  */
-public interface SqlQuery<T> extends ResultSetSlice<T> {
+public interface PagingQuery<T> extends ResultSetSlice<T> {
 
 	default List<T> list(int maxResults, int firstResult) {
 		List<T> list = new ArrayList<T>();
@@ -27,9 +27,7 @@ public interface SqlQuery<T> extends ResultSetSlice<T> {
 
 	Iterator<T> iterator(int maxResults, int firstResult);
 
-	String getSql();
-
-	default Iterable<PageResponse<T>> forEach(int page, int size) {
+	default Iterable<PageResponse<T>> forEachPage(int page, int size) {
 		return list(PageRequest.of(page, size));
 	}
 

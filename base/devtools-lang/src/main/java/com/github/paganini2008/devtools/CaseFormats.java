@@ -11,6 +11,30 @@ import java.util.function.Function;
  * @created 2018-03
  */
 public abstract class CaseFormats {
+	
+	public static final CaseFormat LOWER_HYPHEN = new CaseFormats.LowerHyphenCase(ch -> {
+		return Character.isUpperCase(ch);
+	}, '-');
+
+	public static final CaseFormat UPPER_HYPHEN = new CaseFormats.UpperHyphenCase(ch -> {
+		return Character.isUpperCase(ch);
+	}, '-');
+
+	public static final CaseFormat LOWER_UNDERSCORE = new CaseFormats.LowerHyphenCase(ch -> {
+		return Character.isUpperCase(ch);
+	}, '_');
+
+	public static final CaseFormat UPPER_UNDERSCORE = new CaseFormats.UpperHyphenCase(ch -> {
+		return Character.isUpperCase(ch);
+	}, '_');
+
+	public static final CaseFormat LOWER_CAMEL = new CaseFormats.LowerCamelCase(ch -> {
+		return ch == '-' || ch == '_';
+	});
+
+	public static final CaseFormat UPPER_CAMEL = new CaseFormats.UpperCamelCase(ch -> {
+		return ch == '-' || ch == '_';
+	});
 
 	public static class UpperHyphenCase implements CaseFormat {
 

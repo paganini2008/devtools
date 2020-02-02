@@ -49,16 +49,28 @@ public class SimplePageResponse<T> implements PageResponse<T>, Serializable {
 	}
 
 	public Iterator<PageResponse<T>> iterator() {
+		return new PageIterator();
+	}
 
-		return new Iterator<PageResponse<T>>() {
-			public boolean hasNext() {
-				return hasNextPage();
-			}
+	class PageIterator implements Iterator<PageResponse<T>> {
 
-			public PageResponse<T> next() {
-				return new SimplePageResponse<T>(pageRequest.next(), resultSlice);
+		private PageResponse<T> current;
+
+		PageIterator() {
+		}
+
+		public boolean hasNext() {
+			return current == null || current.hasNextPage();
+		}
+
+		public PageResponse<T> next() {
+			if (current == null) {
+				current = SimplePageResponse.this;
+			} else {
+				current = current.nextPage();
 			}
-		};
+			return current;
+		}
 	}
 
 	public int getTotalPages() {

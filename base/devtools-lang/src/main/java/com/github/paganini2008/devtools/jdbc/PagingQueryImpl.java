@@ -15,20 +15,20 @@ import com.github.paganini2008.devtools.jdbc.DBUtils.PreparedStatementCallback;
  * @revised 2019-07
  * @created 2019-07
  */
-public class SqlQueryImpl implements SqlQuery<Tuple> {
+public class PagingQueryImpl implements PagingQuery<Tuple> {
 
 	private final Connection connection;
-	private final String sql;
+	private final PageableSql pageableSql;
 	private final PreparedStatementCallback callback;
 
-	public SqlQueryImpl(Connection connection, String sql, PreparedStatementCallback callback) {
+	public PagingQueryImpl(Connection connection, PageableSql pageableSql, PreparedStatementCallback callback) {
 		this.connection = connection;
-		this.sql = sql;
+		this.pageableSql = pageableSql;
 		this.callback = callback;
 	}
 
 	public int totalCount() {
-		final String sql = "select count(1) from (" + this.sql + ")";
+		final String sql = pageableSql.countableSql();
 		try {
 			Object result = DBUtils.executeOneResultQuery(connection, sql);
 			return result instanceof Number ? ((Number) result).intValue() : 0;
@@ -38,20 +38,12 @@ public class SqlQueryImpl implements SqlQuery<Tuple> {
 	}
 
 	public Iterator<Tuple> iterator(int maxResults, int firstResult) {
-		final String pageableSql = getPageableSql(sql, maxResults, firstResult);
+		final String execution = pageableSql.pageableSql(maxResults, firstResult);
 		try {
-			return DBUtils.executeQuery(connection, pageableSql, callback);
+			return DBUtils.executeQuery(connection, execution, callback);
 		} catch (SQLException e) {
 			throw new JdbcException(e.getMessage(), e);
 		}
-	}
-
-	public String getSql() {
-		return sql;
-	}
-
-	protected String getPageableSql(String sql, int maxResults, int firstResult) {
-		return sql + " limit " + maxResults + "," + firstResult;
 	}
 
 }

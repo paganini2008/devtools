@@ -18,9 +18,11 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import com.github.paganini2008.devtools.ArrayUtils;
+import com.github.paganini2008.devtools.NotImplementedException;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.beans.PropertyUtils;
 import com.github.paganini2008.devtools.collection.MapUtils;
+import com.github.paganini2008.devtools.jdbc.PageableSql;
 import com.github.paganini2008.devtools.jdbc.ResultSetSlice;
 import com.github.paganini2008.springworld.jdbc.annotations.Arg;
 import com.github.paganini2008.springworld.jdbc.annotations.Example;
@@ -69,7 +71,7 @@ public class DaoProxyBean<T> implements InvocationHandler {
 		} else if (method.isAnnotationPresent(Slice.class)) {
 			return doSlice(method, args);
 		}
-		throw new UnsupportedOperationException("Unkown operation in interface: " + interfaceClass.getName());
+		throw new NotImplementedException("Unkown operation in interface: " + interfaceClass.getName());
 	}
 
 	private Object doSelect(Method method, Object[] args) {

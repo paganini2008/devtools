@@ -11,13 +11,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
+import com.github.paganini2008.devtools.CaseFormats;
 import com.github.paganini2008.devtools.Observable;
 import com.github.paganini2008.devtools.Observer;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.Tuple;
-import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 
 /**
  * DBUtils
@@ -187,13 +188,8 @@ public abstract class DBUtils {
 		}
 	}
 
-	public static int[] executeBatch(Connection connection, String sql, List<Object[]> argList) throws SQLException {
-		return executeBatch(connection, sql, ps -> {
-			for (Object[] args : argList) {
-				setParameters(ps, args);
-				ps.addBatch();
-			}
-		});
+	public static int[] executeBatch(Connection connection, String sql, List<Object[]> argsList) throws SQLException {
+		return executeBatch(connection, sql, setParameters(argsList));
 	}
 
 	public static int[] executeBatch(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
@@ -208,9 +204,7 @@ public abstract class DBUtils {
 	}
 
 	public static int executeUpdate(Connection connection, String sql, Object[] args) throws SQLException {
-		return executeUpdate(connection, sql, ps -> {
-			setParameters(ps, args);
-		});
+		return executeUpdate(connection, sql, setParameters(args));
 	}
 
 	public static int executeUpdate(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
@@ -254,9 +248,7 @@ public abstract class DBUtils {
 	}
 
 	public static Iterator<Tuple> executeQuery(Connection connection, String sql, Object[] args) throws SQLException {
-		return executeQuery(connection, sql, ps -> {
-			setParameters(ps, args);
-		});
+		return executeQuery(connection, sql, setParameters(args));
 	}
 
 	public static Iterator<Tuple> executeQuery(ConnectionFactory connectionFactory, String sql, PreparedStatementCallback callback)
@@ -290,7 +282,7 @@ public abstract class DBUtils {
 	private static Tuple toTuple(ResultSet rs) throws SQLException {
 		ResultSetMetaData rsmd = rs.getMetaData();
 		int columnCount = rsmd.getColumnCount();
-		Tuple tuple = Tuple.newTuple();
+		Tuple tuple = Tuple.newTuple(CaseFormats.LOWER_CAMEL);
 		for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
 			String columnName = rsmd.getColumnLabel(columnIndex);
 			Object value = rs.getObject(columnIndex);
@@ -348,46 +340,78 @@ public abstract class DBUtils {
 	}
 
 	public static void scan(Connection connection, String sql, Object[] args, Consumer<Tuple> consumer) throws SQLException {
-		scan(connection, sql, ps -> {
-			setParameters(ps, args);
-		}, consumer);
+		scan(connection, sql, setParameters(args), consumer);
 	}
 
 	public static void scan(Connection connection, String sql, PreparedStatementCallback callback, Consumer<Tuple> consumer)
 			throws SQLException {
-		final int nThreads = Runtime.getRuntime().availableProcessors() * 2;
 		Iterator<Tuple> iterator = executeQuery(connection, sql, callback);
-		ThreadUtils.loop(nThreads, () -> iterator, consumer);
+		CollectionUtils.forEach(iterator).forEach(consumer);
+	}
+
+	public static void scrollingScan(ConnectionFactory connectionFactory, String sql, Object[] args, int pageSize,
+			Consumer<List<Tuple>> consumer) throws SQLException {
+		scrollingScan(connectionFactory, sql, setParameters(args), pageSize, consumer);
 	}
 
 	public static void scrollingScan(ConnectionFactory connectionFactory, String sql, PreparedStatementCallback callback, int pageSize,
 			Consumer<List<Tuple>> consumer) throws SQLException {
-		scrollingScan(connectionFactory.getConnection(), sql, callback, pageSize, consumer);
+		scrollingScan(connectionFactory.getConnection(), new DefaultPageableSql(sql), callback, pageSize, consumer);
 	}
 
-	public static void scrollingScan(Connection connection, String sql, PreparedStatementCallback callback, int pageSize,
+	public static void scrollingScan(Connection connection, PageableSql pageableSql, Object[] args, int pageSize,
 			Consumer<List<Tuple>> consumer) throws SQLException {
-		SqlQuery<Tuple> sqlQuery = sqlQuery(connection, sql, callback);
-		for (PageResponse<Tuple> pageResponse : sqlQuery.forEach(1, pageSize)) {
+		scrollingScan(connection, pageableSql, setParameters(args), pageSize, consumer);
+	}
+
+	public static void scrollingScan(Connection connection, PageableSql pageableSql, PreparedStatementCallback callback, int pageSize,
+			Consumer<List<Tuple>> consumer) throws SQLException {
+		PagingQuery<Tuple> query = pagingQuery(connection, pageableSql, callback);
+		for (PageResponse<Tuple> pageResponse : query.forEachPage(1, pageSize)) {
 			consumer.accept(pageResponse.getContent());
 		}
 	}
 
-	public static SqlQuery<Tuple> sqlQuery(Connection connection, String sql, Object[] args) {
-		return sqlQuery(connection, sql, ps -> {
-			setParameters(ps, args);
-		});
+	public static PagingQuery<Tuple> pagingQuery(Connection connection, String sql, Object[] args) {
+		return pagingQuery(connection, sql, setParameters(args));
 	}
 
-	public static SqlQuery<Tuple> sqlQuery(Connection connection, String sql, PreparedStatementCallback callback) {
-		return new SqlQueryImpl(connection, sql, callback);
+	public static PagingQuery<Tuple> pagingQuery(Connection connection, String sql, PreparedStatementCallback callback) {
+		return pagingQuery(connection, new DefaultPageableSql(sql), callback);
+	}
+
+	public static PagingQuery<Tuple> pagingQuery(Connection connection, PageableSql pageableSql, Object[] args) {
+		return pagingQuery(connection, pageableSql, setParameters(args));
+	}
+
+	public static PagingQuery<Tuple> pagingQuery(Connection connection, PageableSql pageableSql, PreparedStatementCallback callback) {
+		return new PagingQueryImpl(connection, pageableSql, callback);
 	}
 
 	public static void setParameters(PreparedStatement ps, Object[] args) throws SQLException {
-		int parameterIndex = 1;
-		for (Object arg : args) {
-			ps.setObject(parameterIndex++, arg);
+		if (args != null && args.length > 0) {
+			int parameterIndex = 1;
+			for (Object arg : args) {
+				ps.setObject(parameterIndex++, arg);
+			}
 		}
+	}
+
+	private static PreparedStatementCallback setParameters(List<Object[]> argsList) {
+		return ps -> {
+			for (Object[] args : argsList) {
+				if (args != null && args.length > 0) {
+					setParameters(ps, args);
+					ps.addBatch();
+				}
+			}
+		};
+	}
+
+	private static PreparedStatementCallback setParameters(Object[] args) {
+		return ps -> {
+			setParameters(ps, args);
+		};
 	}
 
 	public static boolean tableExists(DatabaseMetaData dbmd, String schema, String tableName) throws SQLException {
@@ -530,6 +554,23 @@ public abstract class DBUtils {
 				}
 			}
 		}
+	}
+
+	public static void main(String[] args) throws SQLException {
+		UnpooledConnectionFactory connectionFactory = new UnpooledConnectionFactory();
+		connectionFactory.setDriverClassName("com.mysql.cj.jdbc.Driver");
+		connectionFactory.setUser("fengy");
+		connectionFactory.setPassword("123456");
+		connectionFactory.setUrl(
+				"jdbc:mysql://localhost:3306/db_mec_hlsh_v2?userUnicode=true&serverTimezone=GMT&characterEncoding=UTF8&useSSL=false&autoReconnect=true&zeroDateTimeBehavior=convertToNull");
+		final AtomicInteger count = new AtomicInteger();
+		DBUtils.scrollingScan(connectionFactory, "select * from mec_area", (Object[]) null, 100, list -> {
+			for (Tuple tuple : list) {
+				System.out.println(tuple);
+				count.incrementAndGet();
+			}
+		});
+		System.out.println("Rows: " + count);
 	}
 
 }
