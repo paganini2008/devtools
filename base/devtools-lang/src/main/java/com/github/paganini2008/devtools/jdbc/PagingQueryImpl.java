@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.Iterator;
 
 import com.github.paganini2008.devtools.collection.Tuple;
-import com.github.paganini2008.devtools.jdbc.DBUtils.PreparedStatementCallback;
 
 /**
  * 

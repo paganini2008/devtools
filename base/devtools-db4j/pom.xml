@@ -9,13 +9,17 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>devtools-lang</artifactId>
+	<artifactId>devtools-db4j</artifactId>
 	<packaging>jar</packaging>
 
-	<name>devtools-lang</name>
+	<name>devtools-db4j</name>
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.github.paganini2008</groupId>
+			<artifactId>devtools-lang</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
-
 </project>

@@ -158,22 +158,6 @@ public abstract class DBUtils {
 		}
 	}
 
-	/**
-	 * 
-	 * PreparedStatementCallback
-	 *
-	 * @author Fred Feng
-	 * @created 2012-12
-	 * @revised 2019-08
-	 * @version 1.0
-	 */
-	@FunctionalInterface
-	public static interface PreparedStatementCallback {
-
-		void setParameters(PreparedStatement ps) throws SQLException;
-
-	}
-
 	public static Connection getConnection(String url, String user, String password) throws SQLException {
 		return DriverManager.getConnection(url, user, password);
 	}
@@ -196,7 +180,7 @@ public abstract class DBUtils {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement(sql);
-			callback.setParameters(ps);
+			callback.setValues(ps);
 			return ps.executeBatch();
 		} finally {
 			closeQuietly(ps);
@@ -211,7 +195,7 @@ public abstract class DBUtils {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement(sql);
-			callback.setParameters(ps);
+			callback.setValues(ps);
 			return ps.executeUpdate();
 		} finally {
 			closeQuietly(ps);
@@ -262,7 +246,7 @@ public abstract class DBUtils {
 		Observable observable = Observable.unrepeatable();
 		try {
 			ps = connection.prepareStatement(sql);
-			callback.setParameters(ps);
+			callback.setValues(ps);
 			rs = ps.executeQuery();
 			return toIterator(rs, observable);
 		} finally {
@@ -315,16 +299,12 @@ public abstract class DBUtils {
 					return toTuple(rs);
 				} catch (SQLException e) {
 					state = false;
-					throw new IllegalStateException(e);
+					throw new IllegalStateException(e.getMessage(), e);
 				} finally {
 					if (!state) {
 						observable.notifyObservers();
 					}
 				}
-			}
-
-			public void remove() {
-				throw new UnsupportedOperationException();
 			}
 		};
 	}
@@ -424,136 +404,6 @@ public abstract class DBUtils {
 
 	public static boolean tableExists(Connection conn, String schema, String tableName) throws SQLException {
 		return tableExists(conn.getMetaData(), schema, tableName);
-	}
-
-	public static PreparedStatementSetter newBatchArgumentTypePrepareStatementSetter(List<Object[]> parameterList, int[] jdbcTypes) {
-		return new BatchArgumentTypePrepareStatementSetter(parameterList, jdbcTypes);
-	}
-
-	public static PreparedStatementSetter newBatchArgumentTypePrepareStatementSetter(List<Object[]> parameterList, JdbcType[] jdbcTypes) {
-		return new BatchArgumentTypePrepareStatementSetter(parameterList, jdbcTypes);
-	}
-
-	public static PreparedStatementSetter newBatchArgumentPrepareStatementSetter(List<Object[]> parameterList) {
-		return new BatchArgumentPrepareStatementSetter(parameterList);
-	}
-
-	public static PreparedStatementSetter newArgumentPrepareStatementSetter(Object[] parameters) {
-		return new ArgumentPrepareStatementSetter(parameters);
-	}
-
-	public static PreparedStatementSetter newArgumentTypePrepareStatementSetter(Object[] parameters, int[] jdbcTypes) {
-		return new ArgumentTypePrepareStatementSetter(parameters, jdbcTypes);
-	}
-
-	public static PreparedStatementSetter newArgumentTypePrepareStatementSetter(Object[] parameters, JdbcType[] jdbcTypes) {
-		return new ArgumentTypePrepareStatementSetter(parameters, jdbcTypes);
-	}
-
-	private static int[] getSqlTypes(JdbcType[] jdbcTypes) {
-		int[] sqlTypes = new int[jdbcTypes.length];
-		for (int i = 0; i < sqlTypes.length; i++) {
-			sqlTypes[i] = jdbcTypes[i].getTypeCode();
-		}
-		return sqlTypes;
-	}
-
-	private static class BatchArgumentTypePrepareStatementSetter implements PreparedStatementSetter {
-		BatchArgumentTypePrepareStatementSetter(List<Object[]> parameterList, int[] sqlTypes) {
-			this.parameterList = parameterList;
-			this.sqlTypes = sqlTypes;
-		}
-
-		BatchArgumentTypePrepareStatementSetter(List<Object[]> parameterList, JdbcType[] jdbcTypes) {
-			this(parameterList, getSqlTypes(jdbcTypes));
-		}
-
-		private final List<Object[]> parameterList;
-		private final int[] sqlTypes;
-
-		public void setValues(PreparedStatement ps) throws SQLException {
-			if (parameterList != null && parameterList.size() > 0) {
-				for (Object[] parameters : parameterList) {
-					int leftLength = parameters != null ? parameters.length : 0;
-					int rightLength = sqlTypes != null ? sqlTypes.length : 0;
-					if (leftLength != rightLength) {
-						throw new IllegalArgumentException("JdbcTypes'length doesn't matches parameters'length length.");
-					}
-					if (parameters != null && parameters.length > 0) {
-						for (int i = 0; i < parameters.length; i++) {
-							ps.setObject(i + 1, parameters[i]);
-						}
-						ps.addBatch();
-					}
-				}
-			}
-		}
-	}
-
-	private static class BatchArgumentPrepareStatementSetter implements PreparedStatementSetter {
-		BatchArgumentPrepareStatementSetter(List<Object[]> parameterList) {
-			this.parameterList = parameterList;
-		}
-
-		private final List<Object[]> parameterList;
-
-		public void setValues(PreparedStatement ps) throws SQLException {
-			if (parameterList != null && parameterList.size() > 0) {
-				for (Object[] parameters : parameterList) {
-					if (parameters != null && parameters.length > 0) {
-						for (int i = 0; i < parameters.length; i++) {
-							ps.setObject(i + 1, parameters[i]);
-						}
-						ps.addBatch();
-					}
-				}
-			}
-		}
-	}
-
-	private static class ArgumentPrepareStatementSetter implements PreparedStatementSetter {
-
-		ArgumentPrepareStatementSetter(Object[] parameters) {
-			this.parameters = parameters;
-		}
-
-		private final Object[] parameters;
-
-		public void setValues(PreparedStatement ps) throws SQLException {
-			if (parameters != null && parameters.length > 0) {
-				for (int i = 0; i < parameters.length; i++) {
-					ps.setObject(i + 1, parameters[i]);
-				}
-			}
-		}
-	}
-
-	private static class ArgumentTypePrepareStatementSetter implements PreparedStatementSetter {
-
-		ArgumentTypePrepareStatementSetter(Object[] parameters, int[] sqlTypes) {
-			this.parameters = parameters;
-			this.sqlTypes = sqlTypes;
-		}
-
-		ArgumentTypePrepareStatementSetter(Object[] parameters, JdbcType[] jdbcTypes) {
-			this(parameters, getSqlTypes(jdbcTypes));
-		}
-
-		private final Object[] parameters;
-		private final int[] sqlTypes;
-
-		public void setValues(PreparedStatement ps) throws SQLException {
-			int leftLength = parameters != null ? parameters.length : 0;
-			int rightLength = sqlTypes != null ? sqlTypes.length : 0;
-			if (leftLength != rightLength) {
-				throw new IllegalArgumentException("JdbcTypes'length doesn't matches parameters'length length.");
-			}
-			if (parameters != null && parameters.length > 0) {
-				for (int i = 0; i < parameters.length; i++) {
-					ps.setObject(i + 1, parameters[i]);
-				}
-			}
-		}
 	}
 
 	public static void main(String[] args) throws SQLException {

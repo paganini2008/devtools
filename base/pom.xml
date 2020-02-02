@@ -13,6 +13,7 @@
 		<module>devtools-objectpool</module>
 		<module>devtools-scheduler</module>
 		<module>devtools-beans-streaming</module>
+		<module>devtools-db4j</module>
     </modules>
     <packaging>pom</packaging>
     <name>base</name>
