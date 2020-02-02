@@ -56,7 +56,7 @@ public class DaoProxyBean<T> implements InvocationHandler {
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		if (!acceptedMethod(method)) {
-			throw new IllegalStateException("All calling is only based in Dao operations.");
+			throw new IllegalArgumentException("All calling is only based in Dao operations.");
 		}
 		if (method.isAnnotationPresent(Insert.class)) {
 			return doInsert(method, args);
