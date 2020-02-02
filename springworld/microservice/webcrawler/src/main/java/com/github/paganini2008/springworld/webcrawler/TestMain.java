@@ -1,15 +1,10 @@
 package com.github.paganini2008.springworld.webcrawler;
 
 import java.io.IOException;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.github.paganini2008.devtools.date.DateUtils;
-import com.github.paganini2008.devtools.multithreads.AtomicDouble;
-import com.github.paganini2008.devtools.multithreads.AtomicUnsignedInteger;
-import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 
 public class TestMain {
 
@@ -83,12 +78,14 @@ public class TestMain {
 		// for(int i=0;i<100;i++) {
 		// System.out.println(counter.getAndDecrement());
 		// }
-		AtomicInteger integer = new AtomicInteger();
-		ThreadUtils.loop(100, 100000, i -> {
-			System.out.println(Thread.currentThread().getName() + ": " + UUID.randomUUID().toString());
-			integer.incrementAndGet();
-		});
-		System.out.println(integer);
+//		AtomicInteger integer = new AtomicInteger();
+//		ThreadUtils.loop(100, 100000, i -> {
+//			System.out.println(Thread.currentThread().getName() + ": " + UUID.randomUUID().toString());
+//			integer.incrementAndGet();
+//		});
+//		System.out.println(integer);
+		
+		System.out.println(Map.class.isAssignableFrom(HashMap.class));
 	}
 
 }

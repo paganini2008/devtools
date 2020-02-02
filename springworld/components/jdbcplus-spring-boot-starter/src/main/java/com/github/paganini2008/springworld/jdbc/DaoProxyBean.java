@@ -80,7 +80,7 @@ public class DaoProxyBean<T> implements InvocationHandler {
 		}
 
 		Class<?> resultClass = method.getReturnType();
-		if (!resultClass.isAssignableFrom(List.class)) {
+		if (!List.class.isAssignableFrom(resultClass)) {
 			throw new UnsupportedOperationException("Only for List Type");
 		}
 		SqlParameterSource sqlParameterSource = getSqlParameterSource(method, args);
@@ -88,7 +88,7 @@ public class DaoProxyBean<T> implements InvocationHandler {
 		if (select.javaType()) {
 			return jdbcTemplate.queryForList(sql, sqlParameterSource, elementType);
 		} else {
-			if (elementType.isAssignableFrom(Map.class)) {
+			if (Map.class.isAssignableFrom(elementType)) {
 				return jdbcTemplate.queryForList(sql, sqlParameterSource);
 			} else {
 				return jdbcTemplate.query(sql, sqlParameterSource, new BeanPropertyRowMapper<>(elementType));
@@ -122,7 +122,7 @@ public class DaoProxyBean<T> implements InvocationHandler {
 		}
 
 		Class<?> resultClass = method.getReturnType();
-		if (!resultClass.isAssignableFrom(ResultSetSlice.class)) {
+		if (!ResultSetSlice.class.isAssignableFrom(resultClass)) {
 			throw new UnsupportedOperationException("Only for ResultSetSlice Type");
 		}
 		SqlParameterSource sqlParameterSource = getSqlParameterSource(method, args);
@@ -130,7 +130,7 @@ public class DaoProxyBean<T> implements InvocationHandler {
 		if (slice.javaType()) {
 			return jdbcTemplate.slice(pageableSql, sqlParameterSource, elementType);
 		} else {
-			if (elementType.isAssignableFrom(Map.class)) {
+			if (Map.class.isAssignableFrom(elementType)) {
 				return jdbcTemplate.slice(pageableSql, sqlParameterSource);
 			} else {
 				return jdbcTemplate.slice(pageableSql, sqlParameterSource, new BeanPropertyRowMapper<>(elementType));
@@ -150,7 +150,7 @@ public class DaoProxyBean<T> implements InvocationHandler {
 		if (getter.javaType()) {
 			return jdbcTemplate.queryForObject(sql, sqlParameterSource, resultClass);
 		} else {
-			if (resultClass.isAssignableFrom(Map.class)) {
+			if (Map.class.isAssignableFrom(resultClass)) {
 				return jdbcTemplate.queryForObject(sql, sqlParameterSource, new ColumnMapRowMapper());
 			} else {
 				return jdbcTemplate.queryForObject(sql, sqlParameterSource, new BeanPropertyRowMapper<>(resultClass));
