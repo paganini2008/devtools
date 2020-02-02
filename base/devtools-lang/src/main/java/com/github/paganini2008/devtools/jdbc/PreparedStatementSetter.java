@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 /**
  * 
- * PreparedStatementCallback
+ * PreparedStatementSetter
  *
  * @author Fred Feng
  * @created 2016-02
@@ -13,7 +13,7 @@ import java.sql.SQLException;
  * @version 1.0
  */
 @FunctionalInterface
-public interface PreparedStatementCallback {
+public interface PreparedStatementSetter {
 
 	void setValues(PreparedStatement ps) throws SQLException;
 

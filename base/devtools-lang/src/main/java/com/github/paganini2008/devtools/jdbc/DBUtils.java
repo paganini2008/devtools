@@ -176,7 +176,7 @@ public abstract class DBUtils {
 		return executeBatch(connection, sql, setParameters(argsList));
 	}
 
-	public static int[] executeBatch(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
+	public static int[] executeBatch(Connection connection, String sql, PreparedStatementSetter callback) throws SQLException {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement(sql);
@@ -191,7 +191,7 @@ public abstract class DBUtils {
 		return executeUpdate(connection, sql, setParameters(args));
 	}
 
-	public static int executeUpdate(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
+	public static int executeUpdate(Connection connection, String sql, PreparedStatementSetter callback) throws SQLException {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement(sql);
@@ -235,12 +235,12 @@ public abstract class DBUtils {
 		return executeQuery(connection, sql, setParameters(args));
 	}
 
-	public static Iterator<Tuple> executeQuery(ConnectionFactory connectionFactory, String sql, PreparedStatementCallback callback)
+	public static Iterator<Tuple> executeQuery(ConnectionFactory connectionFactory, String sql, PreparedStatementSetter callback)
 			throws SQLException {
 		return executeQuery(connectionFactory.getConnection(), sql, callback);
 	}
 
-	public static Iterator<Tuple> executeQuery(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
+	public static Iterator<Tuple> executeQuery(Connection connection, String sql, PreparedStatementSetter callback) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		Observable observable = Observable.unrepeatable();
@@ -309,12 +309,12 @@ public abstract class DBUtils {
 		};
 	}
 
-	public static void scan(ConnectionFactory connectionFactory, String sql, PreparedStatementCallback callback, Consumer<Tuple> consumer)
+	public static void scan(ConnectionFactory connectionFactory, String sql, PreparedStatementSetter callback, Consumer<Tuple> consumer)
 			throws SQLException {
 		scan(connectionFactory.getConnection(), sql, callback, consumer);
 	}
 
-	public static void scan(ConnectionFactory connectionFactory, String sql, Object[] args, PreparedStatementCallback callback,
+	public static void scan(ConnectionFactory connectionFactory, String sql, Object[] args, PreparedStatementSetter callback,
 			Consumer<Tuple> consumer) throws SQLException {
 		scan(connectionFactory.getConnection(), sql, args, consumer);
 	}
@@ -323,7 +323,7 @@ public abstract class DBUtils {
 		scan(connection, sql, setParameters(args), consumer);
 	}
 
-	public static void scan(Connection connection, String sql, PreparedStatementCallback callback, Consumer<Tuple> consumer)
+	public static void scan(Connection connection, String sql, PreparedStatementSetter callback, Consumer<Tuple> consumer)
 			throws SQLException {
 		Iterator<Tuple> iterator = executeQuery(connection, sql, callback);
 		CollectionUtils.forEach(iterator).forEach(consumer);
@@ -334,7 +334,7 @@ public abstract class DBUtils {
 		scrollingScan(connectionFactory, sql, setParameters(args), pageSize, consumer);
 	}
 
-	public static void scrollingScan(ConnectionFactory connectionFactory, String sql, PreparedStatementCallback callback, int pageSize,
+	public static void scrollingScan(ConnectionFactory connectionFactory, String sql, PreparedStatementSetter callback, int pageSize,
 			Consumer<List<Tuple>> consumer) throws SQLException {
 		scrollingScan(connectionFactory.getConnection(), new DefaultPageableSql(sql), callback, pageSize, consumer);
 	}
@@ -344,7 +344,7 @@ public abstract class DBUtils {
 		scrollingScan(connection, pageableSql, setParameters(args), pageSize, consumer);
 	}
 
-	public static void scrollingScan(Connection connection, PageableSql pageableSql, PreparedStatementCallback callback, int pageSize,
+	public static void scrollingScan(Connection connection, PageableSql pageableSql, PreparedStatementSetter callback, int pageSize,
 			Consumer<List<Tuple>> consumer) throws SQLException {
 		PagingQuery<Tuple> query = pagingQuery(connection, pageableSql, callback);
 		for (PageResponse<Tuple> pageResponse : query.forEachPage(1, pageSize)) {
@@ -356,7 +356,7 @@ public abstract class DBUtils {
 		return pagingQuery(connection, sql, setParameters(args));
 	}
 
-	public static PagingQuery<Tuple> pagingQuery(Connection connection, String sql, PreparedStatementCallback callback) {
+	public static PagingQuery<Tuple> pagingQuery(Connection connection, String sql, PreparedStatementSetter callback) {
 		return pagingQuery(connection, new DefaultPageableSql(sql), callback);
 	}
 
@@ -364,7 +364,7 @@ public abstract class DBUtils {
 		return pagingQuery(connection, pageableSql, setParameters(args));
 	}
 
-	public static PagingQuery<Tuple> pagingQuery(Connection connection, PageableSql pageableSql, PreparedStatementCallback callback) {
+	public static PagingQuery<Tuple> pagingQuery(Connection connection, PageableSql pageableSql, PreparedStatementSetter callback) {
 		return new PagingQueryImpl(connection, pageableSql, callback);
 	}
 
@@ -377,7 +377,7 @@ public abstract class DBUtils {
 		}
 	}
 
-	private static PreparedStatementCallback setParameters(List<Object[]> argsList) {
+	private static PreparedStatementSetter setParameters(List<Object[]> argsList) {
 		return ps -> {
 			for (Object[] args : argsList) {
 				if (args != null && args.length > 0) {
@@ -388,7 +388,7 @@ public abstract class DBUtils {
 		};
 	}
 
-	private static PreparedStatementCallback setParameters(Object[] args) {
+	private static PreparedStatementSetter setParameters(Object[] args) {
 		return ps -> {
 			setParameters(ps, args);
 		};

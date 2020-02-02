@@ -16,7 +16,7 @@ import com.github.paganini2008.devtools.db4j.mapper.ColumnIndexRowMapper;
 import com.github.paganini2008.devtools.db4j.mapper.RowMapper;
 import com.github.paganini2008.devtools.db4j.mapper.TupleRowMapper;
 import com.github.paganini2008.devtools.jdbc.DBUtils;
-import com.github.paganini2008.devtools.jdbc.PreparedStatementCallback;
+import com.github.paganini2008.devtools.jdbc.PreparedStatementSetter;
 
 /**
  * 
@@ -49,13 +49,13 @@ public class JdbcOperations {
 		return query(connection, sql, PreparedStatementSetterUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry), extractor);
 	}
 
-	public <T> T query(Connection connection, String sql, PreparedStatementCallback statementSetter, ResultSetExtractor<T> extractor)
+	public <T> T query(Connection connection, String sql, PreparedStatementSetter statementSetter, ResultSetExtractor<T> extractor)
 			throws SQLException {
 		return query(connection, PreparedStatementCreatorUtils.create(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY),
 				statementSetter, extractor);
 	}
 
-	public <T> T query(Connection connection, PreparedStatementCreator statementCreator, final PreparedStatementCallback statementSetter,
+	public <T> T query(Connection connection, PreparedStatementCreator statementCreator, final PreparedStatementSetter statementSetter,
 			final ResultSetExtractor<T> extractor) throws SQLException {
 		return execute(connection, statementCreator, new PreparedStatementAction<T>() {
 			public T execute(PreparedStatement ps) throws SQLException {
@@ -87,12 +87,12 @@ public class JdbcOperations {
 				requiredType);
 	}
 
-	public <T> T queryForObject(Connection connection, String sql, PreparedStatementCallback statementSetter, Class<T> requiredType)
+	public <T> T queryForObject(Connection connection, String sql, PreparedStatementSetter statementSetter, Class<T> requiredType)
 			throws SQLException {
 		return queryForObject(connection, PreparedStatementCreatorUtils.create(sql), statementSetter, requiredType);
 	}
 
-	public <T> T queryForObject(Connection connection, PreparedStatementCreator statementCreator, PreparedStatementCallback statementSetter,
+	public <T> T queryForObject(Connection connection, PreparedStatementCreator statementCreator, PreparedStatementSetter statementSetter,
 			Class<T> requiredType) throws SQLException {
 		return queryForObject(connection, statementCreator, statementSetter,
 				new ColumnIndexRowMapper<T>(typeHandlerRegistry, requiredType));
@@ -107,12 +107,12 @@ public class JdbcOperations {
 		return queryForObject(connection, sql, PreparedStatementSetterUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry), rowMapper);
 	}
 
-	public <T> T queryForObject(Connection connection, String sql, PreparedStatementCallback statementSetter, RowMapper<T> rowMapper)
+	public <T> T queryForObject(Connection connection, String sql, PreparedStatementSetter statementSetter, RowMapper<T> rowMapper)
 			throws SQLException {
 		return queryForObject(connection, PreparedStatementCreatorUtils.create(sql), statementSetter, rowMapper);
 	}
 
-	public <T> T queryForObject(Connection connection, PreparedStatementCreator statementCreator, PreparedStatementCallback statementSetter,
+	public <T> T queryForObject(Connection connection, PreparedStatementCreator statementCreator, PreparedStatementSetter statementSetter,
 			RowMapper<T> rowMapper) throws SQLException {
 		return query(connection, statementCreator, statementSetter, new FirstRowResultSetExtractor<T>(rowMapper));
 	}
@@ -125,11 +125,11 @@ public class JdbcOperations {
 		return queryForTuple(connection, sql, PreparedStatementSetterUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry));
 	}
 
-	public Tuple queryForTuple(Connection connection, String sql, PreparedStatementCallback statementSetter) throws SQLException {
+	public Tuple queryForTuple(Connection connection, String sql, PreparedStatementSetter statementSetter) throws SQLException {
 		return queryForTuple(connection, PreparedStatementCreatorUtils.create(sql), statementSetter);
 	}
 
-	public Tuple queryForTuple(Connection connection, PreparedStatementCreator statementCreator, PreparedStatementCallback statementSetter)
+	public Tuple queryForTuple(Connection connection, PreparedStatementCreator statementCreator, PreparedStatementSetter statementSetter)
 			throws SQLException {
 		return queryForObject(connection, statementCreator, statementSetter, new TupleRowMapper(typeHandlerRegistry));
 	}
@@ -143,14 +143,14 @@ public class JdbcOperations {
 		return queryForList(connection, sql, PreparedStatementSetterUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry), rowMapper);
 	}
 
-	public <T> List<T> queryForList(Connection connection, String sql, PreparedStatementCallback statementSetter, RowMapper<T> rowMapper)
+	public <T> List<T> queryForList(Connection connection, String sql, PreparedStatementSetter statementSetter, RowMapper<T> rowMapper)
 			throws SQLException {
 		return queryForList(connection, PreparedStatementCreatorUtils.create(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY),
 				statementSetter, rowMapper);
 	}
 
 	public <T> List<T> queryForList(Connection connection, PreparedStatementCreator statementCreator,
-			PreparedStatementCallback statementSetter, RowMapper<T> rowMapper) throws SQLException {
+			PreparedStatementSetter statementSetter, RowMapper<T> rowMapper) throws SQLException {
 		return query(connection, statementCreator, statementSetter, new RowMapperResultSetExtractor<T>(rowMapper));
 	}
 
@@ -164,13 +164,13 @@ public class JdbcOperations {
 				new TupleRowMapper(typeHandlerRegistry));
 	}
 
-	public List<Tuple> queryForList(Connection connection, String sql, PreparedStatementCallback statementSetter) throws SQLException {
+	public List<Tuple> queryForList(Connection connection, String sql, PreparedStatementSetter statementSetter) throws SQLException {
 		return queryForList(connection, PreparedStatementCreatorUtils.create(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY),
 				statementSetter, new TupleRowMapper(typeHandlerRegistry));
 	}
 
 	public List<Tuple> queryForList(Connection connection, PreparedStatementCreator statementCreator,
-			PreparedStatementCallback statementSetter) throws SQLException {
+			PreparedStatementSetter statementSetter) throws SQLException {
 		return queryForList(connection, statementCreator, statementSetter, new TupleRowMapper(typeHandlerRegistry));
 	}
 
@@ -183,14 +183,14 @@ public class JdbcOperations {
 		return queryForList(connection, sql, PreparedStatementSetterUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry), objectClass);
 	}
 
-	public <T> List<T> queryForList(Connection connection, String sql, PreparedStatementCallback statementSetter, Class<T> objectClass)
+	public <T> List<T> queryForList(Connection connection, String sql, PreparedStatementSetter statementSetter, Class<T> objectClass)
 			throws SQLException {
 		return queryForList(connection, PreparedStatementCreatorUtils.create(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY),
 				statementSetter, objectClass);
 	}
 
 	public <T> List<T> queryForList(Connection connection, PreparedStatementCreator statementCreator,
-			PreparedStatementCallback statementSetter, Class<T> objectClass) throws SQLException {
+			PreparedStatementSetter statementSetter, Class<T> objectClass) throws SQLException {
 		return queryForList(connection, statementCreator, statementSetter, new BeanPropertyRowMapper<T>(typeHandlerRegistry, objectClass));
 	}
 
@@ -205,7 +205,7 @@ public class JdbcOperations {
 		return iterator(connection, sql, PreparedStatementSetterUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry));
 	}
 
-	public Iterator<Tuple> iterator(Connection connection, String sql, PreparedStatementCallback statementSetter) throws SQLException {
+	public Iterator<Tuple> iterator(Connection connection, String sql, PreparedStatementSetter statementSetter) throws SQLException {
 		return iterator(connection, PreparedStatementCreatorUtils.create(sql), statementSetter, new TupleRowMapper(typeHandlerRegistry));
 	}
 
@@ -220,7 +220,7 @@ public class JdbcOperations {
 				new BeanPropertyRowMapper<T>(typeHandlerRegistry, objectClass));
 	}
 
-	public <T> Iterator<T> iterator(Connection connection, String sql, PreparedStatementCallback statementSetter, Class<T> objectClass)
+	public <T> Iterator<T> iterator(Connection connection, String sql, PreparedStatementSetter statementSetter, Class<T> objectClass)
 			throws SQLException {
 		return iterator(connection, sql, statementSetter, new BeanPropertyRowMapper<T>(typeHandlerRegistry, objectClass));
 	}
@@ -234,13 +234,13 @@ public class JdbcOperations {
 		return iterator(connection, sql, PreparedStatementSetterUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry), rowMapper);
 	}
 
-	public <T> Iterator<T> iterator(Connection connection, String sql, PreparedStatementCallback statementSetter, RowMapper<T> rowMapper)
+	public <T> Iterator<T> iterator(Connection connection, String sql, PreparedStatementSetter statementSetter, RowMapper<T> rowMapper)
 			throws SQLException {
 		return iterator(connection, PreparedStatementCreatorUtils.create(sql), statementSetter, rowMapper);
 	}
 
 	public <T> Iterator<T> iterator(Connection connection, PreparedStatementCreator statementCreator,
-			final PreparedStatementCallback statementSetter, final RowMapper<T> rowMapper) throws SQLException {
+			final PreparedStatementSetter statementSetter, final RowMapper<T> rowMapper) throws SQLException {
 		final Observable closeable = Observable.unrepeatable();
 		return execute(connection, statementCreator, new PreparedStatementAction<Iterator<T>>() {
 
@@ -288,7 +288,7 @@ public class JdbcOperations {
 		return detachedIterator(connection, sql, PreparedStatementSetterUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry));
 	}
 
-	public Iterator<Tuple> detachedIterator(Connection connection, String sql, PreparedStatementCallback statementSetter)
+	public Iterator<Tuple> detachedIterator(Connection connection, String sql, PreparedStatementSetter statementSetter)
 			throws SQLException {
 		return detachedIterator(connection, PreparedStatementCreatorUtils.create(sql), statementSetter,
 				new TupleRowMapper(typeHandlerRegistry));
@@ -307,7 +307,7 @@ public class JdbcOperations {
 	}
 
 	public <T> Iterator<T> detachedIterator(Connection connection, PreparedStatementCreator statementCreator,
-			final PreparedStatementCallback statementSetter, final RowMapper<T> rowMapper) throws SQLException {
+			final PreparedStatementSetter statementSetter, final RowMapper<T> rowMapper) throws SQLException {
 		return execute(connection, statementCreator, new PreparedStatementAction<Iterator<T>>() {
 
 			public Iterator<T> execute(PreparedStatement ps) throws SQLException {
@@ -342,11 +342,11 @@ public class JdbcOperations {
 		return update(connection, sql, PreparedStatementSetterUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry), keyHolder);
 	}
 
-	public int update(Connection connection, String sql, PreparedStatementCallback statementSetter, KeyHolder keyHolder) throws SQLException {
+	public int update(Connection connection, String sql, PreparedStatementSetter statementSetter, KeyHolder keyHolder) throws SQLException {
 		return update(connection, PreparedStatementCreatorUtils.create(sql, keyHolder.getKeyNames()), statementSetter, keyHolder);
 	}
 
-	public int update(Connection connection, PreparedStatementCreator statementCreator, final PreparedStatementCallback statementSetter,
+	public int update(Connection connection, PreparedStatementCreator statementCreator, final PreparedStatementSetter statementSetter,
 			final KeyHolder keyHolder) throws SQLException {
 		return execute(connection, statementCreator, new PreparedStatementAction<Integer>() {
 			@SuppressWarnings("unchecked")
@@ -387,11 +387,11 @@ public class JdbcOperations {
 		return update(connection, sql, PreparedStatementSetterUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry));
 	}
 
-	public int update(Connection connection, String sql, PreparedStatementCallback statementSetter) throws SQLException {
+	public int update(Connection connection, String sql, PreparedStatementSetter statementSetter) throws SQLException {
 		return update(connection, PreparedStatementCreatorUtils.create(sql), statementSetter);
 	}
 
-	public int update(Connection connection, PreparedStatementCreator statementCreator, final PreparedStatementCallback statementSetter)
+	public int update(Connection connection, PreparedStatementCreator statementCreator, final PreparedStatementSetter statementSetter)
 			throws SQLException {
 		return execute(connection, statementCreator, new PreparedStatementAction<Integer>() {
 			public Integer execute(PreparedStatement ps) throws SQLException {
@@ -417,11 +417,11 @@ public class JdbcOperations {
 		return batch(connection, sql, PreparedStatementSetterUtils.batchPrepare(parameters, typeHandlerRegistry));
 	}
 
-	public int[] batch(Connection connection, String sql, PreparedStatementCallback statementSetter) throws SQLException {
+	public int[] batch(Connection connection, String sql, PreparedStatementSetter statementSetter) throws SQLException {
 		return batch(connection, PreparedStatementCreatorUtils.create(sql), statementSetter);
 	}
 
-	public int[] batch(Connection connection, PreparedStatementCreator statementCreator, final PreparedStatementCallback statementSetter)
+	public int[] batch(Connection connection, PreparedStatementCreator statementCreator, final PreparedStatementSetter statementSetter)
 			throws SQLException {
 		return execute(connection, statementCreator, new PreparedStatementAction<int[]>() {
 			public int[] execute(PreparedStatement ps) throws SQLException {

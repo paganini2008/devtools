@@ -18,9 +18,9 @@ public class PagingQueryImpl implements PagingQuery<Tuple> {
 
 	private final Connection connection;
 	private final PageableSql pageableSql;
-	private final PreparedStatementCallback callback;
+	private final PreparedStatementSetter callback;
 
-	public PagingQueryImpl(Connection connection, PageableSql pageableSql, PreparedStatementCallback callback) {
+	public PagingQueryImpl(Connection connection, PageableSql pageableSql, PreparedStatementSetter callback) {
 		this.connection = connection;
 		this.pageableSql = pageableSql;
 		this.callback = callback;
