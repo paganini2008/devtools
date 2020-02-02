@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.github.paganini2008.devtools.CaseFormat;
+import com.github.paganini2008.devtools.CaseFormats;
 import com.github.paganini2008.devtools.MissingKeyException;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.KeyConversionMap;
@@ -101,7 +102,9 @@ public class TupleImpl extends KeyConversionMap<String, String, Object> implemen
 	}
 
 	public static void main(String[] args) {
-		Tuple tuple = Tuple.newTuple();
+		Tuple tuple = Tuple.newTuple(new CaseFormats.LowerCamelCase(c->{
+			return c == '_';
+		}));
 		tuple.set("last_modified", new Date());
 		System.out.println(tuple);
 		System.out.println(tuple.getProperty("lastModified"));

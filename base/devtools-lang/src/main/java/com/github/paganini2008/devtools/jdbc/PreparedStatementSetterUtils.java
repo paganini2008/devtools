@@ -7,7 +7,16 @@ import java.util.List;
 import com.github.paganini2008.devtools.converter.TypeConverter;
 import com.github.paganini2008.devtools.jdbc.type.TypeHandler;
 
-public class PreparedStatementSetterUtils {
+/**
+ * 
+ * PreparedStatementSetterUtils
+ *
+ * @author Fred Feng
+ * @created 2016-02
+ * @revised 2020-01
+ * @version 1.0
+ */
+public abstract class PreparedStatementSetterUtils {
 
 	public static PreparedStatementSetter batchPrepare(List<Object[]> parametersList, JdbcType[] jdbcTypes,
 			TypeHandlerRegistry typeHandlerRegistry, TypeConverter typeConverter) {
@@ -19,8 +28,8 @@ public class PreparedStatementSetterUtils {
 		return new BatchArgumentPrepareStatementSetter(parametersList, typeHandlerRegistry, typeConverter);
 	}
 
-	public static PreparedStatementSetter prepare(Object[] parameters, JdbcType[] jdbcTypes,
-			TypeHandlerRegistry typeHandlerRegistry, TypeConverter typeConverter) {
+	public static PreparedStatementSetter prepare(Object[] parameters, JdbcType[] jdbcTypes, TypeHandlerRegistry typeHandlerRegistry,
+			TypeConverter typeConverter) {
 		return new ArgumentJdbcTypePrepareStatementSetter(parameters, jdbcTypes, typeHandlerRegistry, typeConverter);
 	}
 
@@ -61,8 +70,8 @@ public class PreparedStatementSetterUtils {
 					}
 					TypeHandler typeHandler;
 					for (int j = 0; j < right; j++) {
-						typeHandler = typeHandlerRegistry != null ? typeHandlerRegistry
-								.getTypeHandler(parameters[j] != null ? parameters[j].getClass() : null, jdbcTypes[j])
+						typeHandler = typeHandlerRegistry != null
+								? typeHandlerRegistry.getTypeHandler(parameters[j] != null ? parameters[j].getClass() : null, jdbcTypes[j])
 								: TypeHandlerRegistryImpl.getDefault();
 						typeHandler.setValue(ps, j + 1, parameters[j], jdbcTypes[j], typeConverter);
 					}
@@ -99,8 +108,9 @@ public class PreparedStatementSetterUtils {
 					if (parameters != null && parameters.length > 0) {
 						TypeHandler typeHandler;
 						for (int j = 0; j < parameters.length; j++) {
-							typeHandler = typeHandlerRegistry != null ? typeHandlerRegistry
-									.getTypeHandler(parameters[j] != null ? parameters[j].getClass() : null, JdbcType.OTHER)
+							typeHandler = typeHandlerRegistry != null
+									? typeHandlerRegistry.getTypeHandler(parameters[j] != null ? parameters[j].getClass() : null,
+											JdbcType.OTHER)
 									: TypeHandlerRegistryImpl.getDefault();
 							typeHandler.setValue(ps, j + 1, parameters[j], JdbcType.OTHER, typeConverter);
 						}
@@ -119,8 +129,8 @@ public class PreparedStatementSetterUtils {
 	 */
 	private static class ArgumentJdbcTypePrepareStatementSetter implements PreparedStatementSetter {
 
-		private ArgumentJdbcTypePrepareStatementSetter(Object[] parameters, JdbcType[] jdbcTypes,
-				TypeHandlerRegistry typeHandlerRegistry, TypeConverter typeConverter) {
+		private ArgumentJdbcTypePrepareStatementSetter(Object[] parameters, JdbcType[] jdbcTypes, TypeHandlerRegistry typeHandlerRegistry,
+				TypeConverter typeConverter) {
 			this.parameters = parameters;
 			this.jdbcTypes = jdbcTypes;
 			this.typeHandlerRegistry = typeHandlerRegistry;
@@ -140,8 +150,8 @@ public class PreparedStatementSetterUtils {
 			}
 			TypeHandler typeHandler;
 			for (int i = 0; i < right; i++) {
-				typeHandler = typeHandlerRegistry != null ? typeHandlerRegistry
-						.getTypeHandler(parameters[i] != null ? parameters[i].getClass() : null, jdbcTypes[i])
+				typeHandler = typeHandlerRegistry != null
+						? typeHandlerRegistry.getTypeHandler(parameters[i] != null ? parameters[i].getClass() : null, jdbcTypes[i])
 						: TypeHandlerRegistryImpl.getDefault();
 				typeHandler.setValue(ps, i + 1, parameters[i], jdbcTypes[i], typeConverter);
 			}
@@ -157,8 +167,7 @@ public class PreparedStatementSetterUtils {
 	 */
 	private static class ArgumentPrepareStatementSetter implements PreparedStatementSetter {
 
-		private ArgumentPrepareStatementSetter(Object[] parameters, TypeHandlerRegistry typeHandlerRegistry,
-				TypeConverter typeConverter) {
+		private ArgumentPrepareStatementSetter(Object[] parameters, TypeHandlerRegistry typeHandlerRegistry, TypeConverter typeConverter) {
 			this.parameters = parameters;
 			this.typeHandlerRegistry = typeHandlerRegistry;
 			this.typeConverter = typeConverter;
@@ -172,15 +181,12 @@ public class PreparedStatementSetterUtils {
 			if (parameters != null && parameters.length > 0) {
 				TypeHandler typeHandler;
 				for (int i = 0; i < parameters.length; i++) {
-					typeHandler = typeHandlerRegistry != null ? typeHandlerRegistry
-							.getTypeHandler(parameters[i] != null ? parameters[i].getClass() : null, JdbcType.OTHER)
+					typeHandler = typeHandlerRegistry != null
+							? typeHandlerRegistry.getTypeHandler(parameters[i] != null ? parameters[i].getClass() : null, JdbcType.OTHER)
 							: TypeHandlerRegistryImpl.getDefault();
 					typeHandler.setValue(ps, i + 1, parameters[i], JdbcType.OTHER, typeConverter);
 				}
 			}
 		}
-	}
-
-	private PreparedStatementSetterUtils() {
 	}
 }

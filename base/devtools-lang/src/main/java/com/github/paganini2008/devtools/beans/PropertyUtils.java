@@ -60,7 +60,7 @@ public abstract class PropertyUtils {
 		Map<String, PropertyDescriptor> destination = new LinkedHashMap<String, PropertyDescriptor>();
 		if (original != null) {
 			for (Map.Entry<String, PropertyDescriptor> e : original.entrySet()) {
-				if (filter == null || filter.accept(e.getKey(), e.getValue())) {
+				if (filter == null || filter.accept(beanClass, e.getKey(), e.getValue())) {
 					destination.put(e.getKey(), e.getValue());
 				}
 			}

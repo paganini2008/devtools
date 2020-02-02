@@ -23,7 +23,7 @@ public abstract class Transformers {
 	}
 
 	public static <E> Transformer<E, Map<String, Object>> asMap(String[] propertyNames) {
-		return asMap(PropertyFilters.include(propertyNames));
+		return asMap(PropertyFilters.includedProperties(propertyNames));
 	}
 
 	public static <E> Transformer<E, Map<String, Object>> asMap(PropertyFilter propertyFilter) {
@@ -33,7 +33,7 @@ public abstract class Transformers {
 	}
 
 	public static <E, T> Transformer<E, T> asBean(Class<T> requiredType, String[] propertyNames) {
-		return asBean(requiredType, PropertyFilters.include(propertyNames));
+		return asBean(requiredType, PropertyFilters.includedProperties(propertyNames));
 	}
 
 	public static <E, T> Transformer<E, T> asBean(Class<T> requiredType) {

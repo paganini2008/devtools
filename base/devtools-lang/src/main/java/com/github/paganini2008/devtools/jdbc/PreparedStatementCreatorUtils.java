@@ -10,10 +10,7 @@ import java.sql.SQLException;
  * @author Fred Feng
  * @version 1.0
  */
-public class PreparedStatementCreatorUtils {
-
-	private PreparedStatementCreatorUtils() {
-	}
+public abstract class PreparedStatementCreatorUtils {
 
 	public static PreparedStatementCreator create(String sql) {
 		return new DefaultPreparedStatementCreator(sql);

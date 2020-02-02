@@ -64,7 +64,7 @@ public abstract class ToStringBuilder {
 	}
 
 	public static String reflectionToString(Object target, String[] excludedProperties) {
-		return reflectionToString(target, PropertyFilters.exclude(excludedProperties));
+		return reflectionToString(target, PropertyFilters.excludedProperties(excludedProperties));
 	}
 
 	public static String reflectionToString(Object target, PropertyFilter filter) {
@@ -108,7 +108,7 @@ public abstract class ToStringBuilder {
 	 */
 	private static class PublicPropertyFilter implements PropertyFilter {
 
-		public boolean accept(String name, PropertyDescriptor descriptor) {
+		public boolean accept(Class<?> type, String name, PropertyDescriptor descriptor) {
 			Method getter = descriptor.getReadMethod();
 			if (getter != null) {
 				return getter.getModifiers() == Modifier.PUBLIC || getter.getModifiers() == Modifier.PROTECTED

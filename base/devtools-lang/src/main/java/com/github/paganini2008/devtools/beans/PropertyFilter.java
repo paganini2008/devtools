@@ -13,35 +13,35 @@ import java.beans.PropertyDescriptor;
  */
 public interface PropertyFilter {
 
-	boolean accept(String name, PropertyDescriptor descriptor);
+	boolean accept(Class<?> type, String name, PropertyDescriptor descriptor);
 
 	static PropertyFilter disjunction() {
-		return (name, descriptor) -> {
+		return (type, name, descriptor) -> {
 			return false;
 		};
 	}
 
 	static PropertyFilter conjunction() {
-		return (name, descriptor) -> {
+		return (type, name, descriptor) -> {
 			return true;
 		};
 	}
 
 	default PropertyFilter and(PropertyFilter filter) {
-		return (name, descriptor) -> {
-			return accept(name, descriptor) && filter.accept(name, descriptor);
+		return (type, name, descriptor) -> {
+			return accept(type, name, descriptor) && filter.accept(type, name, descriptor);
 		};
 	}
 
 	default PropertyFilter or(PropertyFilter filter) {
-		return (name, descriptor) -> {
-			return accept(name, descriptor) || filter.accept(name, descriptor);
+		return (type, name, descriptor) -> {
+			return accept(type, name, descriptor) || filter.accept(type, name, descriptor);
 		};
 	}
 
 	default PropertyFilter not(PropertyFilter filter) {
-		return (name, descriptor) -> {
-			return !filter.accept(name, descriptor);
+		return (type, name, descriptor) -> {
+			return !filter.accept(type, name, descriptor);
 		};
 	}
 
