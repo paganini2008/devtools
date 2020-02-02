@@ -12,15 +12,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import com.github.paganini2008.devtools.ArrayUtils;
 import com.github.paganini2008.devtools.StringUtils;
-import com.github.paganini2008.devtools.beans.PropertyFilters;
 import com.github.paganini2008.devtools.beans.PropertyUtils;
+import com.github.paganini2008.devtools.collection.MapUtils;
 import com.github.paganini2008.devtools.jdbc.ResultSetSlice;
 import com.github.paganini2008.springworld.jdbc.annotations.Arg;
 import com.github.paganini2008.springworld.jdbc.annotations.Example;
@@ -210,32 +210,42 @@ public class DaoProxyBean<T> implements InvocationHandler {
 			requiredAnnotations[i++] = annotation[0];
 		}
 		int length = requiredAnnotations.length;
+		Map<String, Object> parameters = new HashMap<String, Object>();
 		if (length > 1) {
-			Map<String, Object> parameters = new HashMap<String, Object>();
 			Annotation annotation;
 			for (i = 0; i < length; i++) {
 				annotation = requiredAnnotations[i];
 				if (annotation instanceof Arg) {
 					parameters.put(((Arg) annotation).value(), args[i]);
 				} else if (annotation instanceof Example) {
+					if (args[i] instanceof Map) {
+						parameters.putAll((Map<String, Object>) args[i]);
+					} else {
+						parameters.putAll(PropertyUtils.convertToMap(args[i]));
+					}
 					String[] excludedProperties = ((Example) annotation).excludedProperties();
-					parameters.putAll(PropertyUtils.convertToMap(args[i], null, PropertyFilters.excludedProperties(excludedProperties)));
+					if (ArrayUtils.isNotEmpty(excludedProperties)) {
+						MapUtils.removeKeys(parameters, excludedProperties);
+					}
 				}
 			}
-			return new MapSqlParameterSource(parameters);
 		} else if (length == 1) {
-			Annotation annotation = requiredAnnotations[0];
+			final Annotation annotation = requiredAnnotations[0];
 			if (annotation instanceof Arg) {
-				return new MapSqlParameterSource(((Arg) annotation).value(), args[0]);
+				parameters.put(((Arg) annotation).value(), args[0]);
 			} else if (annotation instanceof Example) {
-				if (args[0] instanceof Map) {
-					return new MapSqlParameterSource((Map<String, Object>) args[0]);
+				if (args[i] instanceof Map) {
+					parameters.putAll((Map<String, Object>) args[i]);
 				} else {
-					return new BeanPropertySqlParameterSource(args[0]);
+					parameters.putAll(PropertyUtils.convertToMap(args[i]));
+				}
+				String[] excludedProperties = ((Example) annotation).excludedProperties();
+				if (ArrayUtils.isNotEmpty(excludedProperties)) {
+					MapUtils.removeKeys(parameters, excludedProperties);
 				}
 			}
 		}
-		return new MapSqlParameterSource();
+		return new MapSqlParameterSource(parameters);
 	}
 
 	public Class<T> getInterfaceClass() {
