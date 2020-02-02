@@ -8,6 +8,7 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
 
+import com.github.paganini2008.springworld.jdbc.ApplicationContextUtils;
 import com.github.paganini2008.springworld.jdbc.DaoScannerRegistrar;
 import com.github.paganini2008.springworld.jdbc.EnhancedJdbcTemplate;
 
@@ -23,7 +24,7 @@ import com.github.paganini2008.springworld.jdbc.EnhancedJdbcTemplate;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-@Import({ EnhancedJdbcTemplate.class, DaoScannerRegistrar.class })
+@Import({ EnhancedJdbcTemplate.class, DaoScannerRegistrar.class, ApplicationContextUtils.class })
 public @interface DaoScan {
 
 	String[] basePackages();

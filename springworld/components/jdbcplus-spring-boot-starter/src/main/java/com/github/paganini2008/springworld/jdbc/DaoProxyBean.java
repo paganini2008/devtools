@@ -18,6 +18,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.beans.PropertyFilters;
 import com.github.paganini2008.devtools.beans.PropertyUtils;
 import com.github.paganini2008.devtools.jdbc.ResultSetSlice;
@@ -26,6 +27,7 @@ import com.github.paganini2008.springworld.jdbc.annotations.Example;
 import com.github.paganini2008.springworld.jdbc.annotations.Get;
 import com.github.paganini2008.springworld.jdbc.annotations.Insert;
 import com.github.paganini2008.springworld.jdbc.annotations.Select;
+import com.github.paganini2008.springworld.jdbc.annotations.Slice;
 import com.github.paganini2008.springworld.jdbc.annotations.Update;
 
 /**
@@ -64,6 +66,8 @@ public class DaoProxyBean<T> implements InvocationHandler {
 			return doGet(method, args);
 		} else if (method.isAnnotationPresent(Select.class)) {
 			return doSelect(method, args);
+		} else if (method.isAnnotationPresent(Slice.class)) {
+			return doSlice(method, args);
 		}
 		throw new UnsupportedOperationException("Unkown operation in interface: " + interfaceClass.getName());
 	}
@@ -76,30 +80,60 @@ public class DaoProxyBean<T> implements InvocationHandler {
 		}
 
 		Class<?> resultClass = method.getReturnType();
-		if (!resultClass.isAssignableFrom(List.class) || !resultClass.isAssignableFrom(ResultSetSlice.class)) {
-			throw new UnsupportedOperationException("Only for List or ResultSetSlice");
+		if (!resultClass.isAssignableFrom(List.class)) {
+			throw new UnsupportedOperationException("Only for List Type");
 		}
 		SqlParameterSource sqlParameterSource = getSqlParameterSource(method, args);
 		Class<?> elementType = select.elementType();
-		if (resultClass.isAssignableFrom(ResultSetSlice.class)) {
-			if (select.javaType()) {
-				return jdbcTemplate.slice(sql, sqlParameterSource, elementType);
-			} else {
-				if (elementType.isAssignableFrom(Map.class)) {
-					return jdbcTemplate.slice(sql, sqlParameterSource);
-				} else {
-					return jdbcTemplate.slice(sql, sqlParameterSource, new BeanPropertyRowMapper<>(elementType));
-				}
-			}
+		if (select.javaType()) {
+			return jdbcTemplate.queryForList(sql, sqlParameterSource, elementType);
 		} else {
-			if (select.javaType()) {
-				return jdbcTemplate.queryForList(sql, sqlParameterSource, elementType);
+			if (elementType.isAssignableFrom(Map.class)) {
+				return jdbcTemplate.queryForList(sql, sqlParameterSource);
 			} else {
-				if (elementType.isAssignableFrom(Map.class)) {
-					return jdbcTemplate.queryForList(sql, sqlParameterSource);
-				} else {
-					return jdbcTemplate.query(sql, sqlParameterSource, new BeanPropertyRowMapper<>(elementType));
+				return jdbcTemplate.query(sql, sqlParameterSource, new BeanPropertyRowMapper<>(elementType));
+			}
+		}
+	}
+
+	private Object doSlice(Method method, Object[] args) {
+		final Slice slice = method.getAnnotation(Slice.class);
+		PageableSql pageableSql;
+		if (StringUtils.isNotBlank(slice.name())) {
+			pageableSql = ApplicationContextUtils.getBean(slice.name(), PageableSql.class);
+		} else {
+			pageableSql = new PageableSql() {
+
+				public String countableSql() {
+					if (log.isTraceEnabled()) {
+						log.trace("Execute sql: " + slice.countableSql());
+					}
+					return slice.countableSql();
 				}
+
+				public String pageableSql(int maxResults, int firstResult) {
+					if (log.isTraceEnabled()) {
+						log.trace("Execute sql: " + slice.pageableSql());
+					}
+					return slice.pageableSql();
+				}
+
+			};
+		}
+
+		Class<?> resultClass = method.getReturnType();
+		if (!resultClass.isAssignableFrom(ResultSetSlice.class)) {
+			throw new UnsupportedOperationException("Only for ResultSetSlice Type");
+		}
+		SqlParameterSource sqlParameterSource = getSqlParameterSource(method, args);
+		Class<?> elementType = slice.elementType();
+		if (slice.javaType()) {
+			return jdbcTemplate.slice(pageableSql, sqlParameterSource, elementType);
+		} else {
+			if (elementType.isAssignableFrom(Map.class)) {
+				return jdbcTemplate.slice(pageableSql, sqlParameterSource);
+			} else {
+				return jdbcTemplate.slice(pageableSql, sqlParameterSource, new BeanPropertyRowMapper<>(elementType));
 			}
 		}
 	}
@@ -163,9 +197,9 @@ public class DaoProxyBean<T> implements InvocationHandler {
 	}
 
 	protected boolean acceptedAnnotation(Annotation annotation) {
-		Class<?> annotationClass = annotation.getClass();
+		Class<?> annotationClass = annotation.annotationType();
 		return annotationClass == Insert.class || annotationClass == Update.class || annotationClass == Get.class
-				|| annotationClass == Select.class;
+				|| annotationClass == Select.class || annotationClass == Slice.class;
 	}
 
 	private SqlParameterSource getSqlParameterSource(Method method, Object[] args) {

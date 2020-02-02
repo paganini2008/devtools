@@ -32,12 +32,20 @@ public class EnhancedJdbcTemplate extends NamedParameterJdbcTemplate {
 		return slice(sql, sqlParameterSource, new ColumnMapRowMapper());
 	}
 
-	public <T> ResultSetSlice<T> slice(String sql, SqlParameterSource sqlParameterSource, Class<T> resultClass) {
-		return slice(sql, sqlParameterSource, new SingleColumnRowMapper<T>(resultClass));
+	public <T> ResultSetSlice<T> slice(String sql, SqlParameterSource sqlParameterSource, Class<T> elementClass) {
+		return slice(sql, sqlParameterSource, new SingleColumnRowMapper<T>(elementClass));
 	}
 
 	public <T> ResultSetSlice<T> slice(String sql, SqlParameterSource sqlParameterSource, RowMapper<T> rowMapper) {
 		return slice(new DefaultPageableSql(sql), sqlParameterSource, rowMapper);
+	}
+
+	public <T> ResultSetSlice<Map<String, Object>> slice(PageableSql pageableSql, SqlParameterSource sqlParameterSource) {
+		return new EnhancedJdbcTemplateResultSetSlice<Map<String, Object>>(this, pageableSql, sqlParameterSource, new ColumnMapRowMapper());
+	}
+
+	public <T> ResultSetSlice<T> slice(PageableSql pageableSql, SqlParameterSource sqlParameterSource, Class<T> elementClass) {
+		return new EnhancedJdbcTemplateResultSetSlice<T>(this, pageableSql, sqlParameterSource, new SingleColumnRowMapper<T>(elementClass));
 	}
 
 	public <T> ResultSetSlice<T> slice(PageableSql pageableSql, SqlParameterSource sqlParameterSource, RowMapper<T> rowMapper) {
