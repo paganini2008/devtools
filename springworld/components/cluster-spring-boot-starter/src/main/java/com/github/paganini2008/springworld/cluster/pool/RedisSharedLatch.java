@@ -12,6 +12,8 @@ import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 import com.github.paganini2008.springworld.cluster.ContextMasterStandbyEvent;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 
  * RedisSharedLatch
@@ -21,6 +23,7 @@ import com.github.paganini2008.springworld.cluster.ContextMasterStandbyEvent;
  * @revised 2020-02
  * @version 1.0
  */
+@Slf4j
 public class RedisSharedLatch implements ClusterLatch {
 
 	public static final String LATCH_KEY_PREFIX = "latch:";
@@ -155,6 +158,7 @@ public class RedisSharedLatch implements ClusterLatch {
 	@Override
 	public void onApplicationEvent(ContextMasterStandbyEvent event) {
 		lifespan.start();
+		log.info("RedisSharedLatch works.");
 	}
 
 }

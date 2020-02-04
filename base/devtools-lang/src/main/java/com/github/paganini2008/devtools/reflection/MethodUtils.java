@@ -22,10 +22,7 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * @created 2012-01
  * @version 1.0
  */
-public class MethodUtils {
-
-	private MethodUtils() {
-	}
+public abstract class MethodUtils {
 
 	public static Object invokeMethod(Object object, String methodName, Object... arguments) {
 		if (arguments == null) {

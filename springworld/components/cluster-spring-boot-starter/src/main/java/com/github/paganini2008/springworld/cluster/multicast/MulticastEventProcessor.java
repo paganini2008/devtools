@@ -27,13 +27,12 @@ public class MulticastEventProcessor implements RedisMessageHandler {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onMessage(Object received) {
-		if (!(received instanceof Map)) {
-			return;
+		if (received instanceof Map) {
+			Map<String, Object> data = (Map<String, Object>) received;
+			String topic = (String) data.get("topic");
+			Object message = data.get("message");
+			multicastEventListener.fireOnMessage(clusterId.get(), topic, message);
 		}
-		Map<String, Object> data = (Map<String, Object>) received;
-		String topic = (String) data.get("topic");
-		Object message = data.get("message");
-		multicastEventListener.fireOnMessage(clusterId.get(), topic, message);
 	}
 
 	@Override

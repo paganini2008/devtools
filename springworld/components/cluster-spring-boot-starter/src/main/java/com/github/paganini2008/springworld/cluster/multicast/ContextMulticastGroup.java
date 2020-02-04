@@ -1,8 +1,8 @@
 package com.github.paganini2008.springworld.cluster.multicast;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -75,7 +75,7 @@ public class ContextMulticastGroup {
 	}
 
 	private static Map<String, Object> createMessage(String topic, Object message) {
-		Map<String, Object> data = new LinkedHashMap<String, Object>();
+		Map<String, Object> data = new HashMap<String, Object>();
 		data.put("topic", topic);
 		data.put("message", message);
 		return data;
