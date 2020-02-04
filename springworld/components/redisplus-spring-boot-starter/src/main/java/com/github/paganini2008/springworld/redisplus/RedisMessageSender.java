@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.RedisTemplate;
 
 /**
  * 
@@ -27,7 +27,7 @@ public class RedisMessageSender {
 	private String namespace;
 
 	@Autowired
-	private StringRedisTemplate redisTemplate;
+	private RedisTemplate<String, Object> redisTemplate;
 
 	@Autowired
 	@Qualifier("redis-message-listener")
@@ -38,21 +38,26 @@ public class RedisMessageSender {
 	private RedisEphemeralMessageListener redisEphemeralMessageListener;
 
 	public void sendMessage(String channel, Object message) {
-		String json = JacksonUtils.toJsonString(RedisMessageEntity.of(channel, message));
-		redisTemplate.convertAndSend(this.channel, json);
+		redisTemplate.convertAndSend(this.channel, RedisMessageEntity.of(channel, message));
+	}
+	
+	public void sendEphemeralMessage(String channel, Object message, long delay, TimeUnit timeUnit) {
+		sendEphemeralMessage(channel, message, delay, timeUnit, false);
 	}
 
-	public void sendEphemeralMessage(String channel, Object message, long delay, TimeUnit timeUnit) {
+	public void sendEphemeralMessage(String channel, Object message, long delay, TimeUnit timeUnit, boolean idempotent) {
 		String expiredKey = namespace + channel;
-		String json = JacksonUtils.toJsonString(RedisMessageEntity.of(channel, message));
-		redisTemplate.opsForValue().set(expiredKey, json, delay, timeUnit);
-		setExpiredValue(expiredKey);
+		if (idempotent && redisTemplate.hasKey(expiredKey)) {
+			RedisMessageEntity entity = RedisMessageEntity.of(channel, message);
+			redisTemplate.opsForValue().set(expiredKey, entity, delay, timeUnit);
+			setExpiredValue(expiredKey);
+		}
 	}
 
 	private void setExpiredValue(String expiredKey) {
 		final String key = EXPIRED_KEY_PREFIX + expiredKey;
-		String jsonResult = redisTemplate.opsForValue().get(expiredKey);
-		redisTemplate.opsForValue().set(key, jsonResult);
+		Object value = redisTemplate.opsForValue().get(expiredKey);
+		redisTemplate.opsForValue().set(key, value);
 	}
 
 	public void subscribeChannel(String name, RedisMessageHandler messageHandler) {

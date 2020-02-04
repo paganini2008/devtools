@@ -17,7 +17,7 @@ public interface ContextMulticastEventHandler {
 	default void onLeave(String clusterId) {
 	}
 
-	default void onMessage(String clusterId, String message) {
+	default void onMessage(String clusterId, Object message) {
 	}
 
 	default String getTopic() {

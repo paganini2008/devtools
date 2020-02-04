@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisPassword;
@@ -27,7 +28,7 @@ import redis.clients.jedis.JedisPoolConfig;
  * @version 1.0
  */
 @Setter
-@Order(100)
+@Order(Ordered.LOWEST_PRECEDENCE - 100)
 @Configuration
 @ConditionalOnProperty(value = "spring.application.cluster.enabled", havingValue = "true", matchIfMissing = true)
 @ConfigurationProperties(prefix = "spring.redis")
@@ -37,7 +38,7 @@ public class ContextClusterConfig {
 	private String password;
 	private int port;
 	private int dbIndex;
-	
+
 	@Bean
 	public ContextClusterConfigProperties configProperties() {
 		return new ContextClusterConfigProperties();

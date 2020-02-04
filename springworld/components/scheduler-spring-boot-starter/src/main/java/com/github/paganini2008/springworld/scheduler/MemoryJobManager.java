@@ -10,7 +10,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 
 import com.github.paganini2008.devtools.Observable;
-import com.github.paganini2008.springworld.cluster.ApplicationContextUtils;
+import com.github.paganini2008.springworld.cluster.utils.ApplicationContextUtils;
 
 import lombok.extern.slf4j.Slf4j;
 

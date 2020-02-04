@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
 import com.github.paganini2008.springworld.cluster.ContextClusterConfig;
@@ -19,7 +20,7 @@ import com.github.paganini2008.springworld.redisplus.RedisMessageHandler;
  * @revised 2019-08
  * @version 1.0
  */
-@Order(200)
+@Order(Ordered.LOWEST_PRECEDENCE - 200)
 @Configuration
 @ConditionalOnBean(ContextClusterConfig.class)
 @ConditionalOnProperty(value = "spring.application.cluster.multicast.enabled", havingValue = "true")

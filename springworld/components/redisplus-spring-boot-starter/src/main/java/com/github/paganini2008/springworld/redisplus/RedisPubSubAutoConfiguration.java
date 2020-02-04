@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Import;
 
 /**
  * 
- * RedisMessageAutoConfiguration
+ * RedisPubSubAutoConfiguration
  * 
  * @author Fred Feng
  * @created 2019-08
@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Import;
  * @version 1.0
  */
 @Configuration
-@Import({ RedisMessageConfig.class, RedisMessageListenerBeanProcessor.class })
-public class RedisMessageAutoConfiguration {
+@Import({ RedisPubSubConfig.class, RedisMessageHandlerBeanProcessor.class })
+public class RedisPubSubAutoConfiguration {
 
 }

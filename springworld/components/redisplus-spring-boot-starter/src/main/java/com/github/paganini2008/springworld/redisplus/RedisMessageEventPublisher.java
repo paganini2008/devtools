@@ -22,9 +22,8 @@ public class RedisMessageEventPublisher implements ApplicationContextAware {
 		this.springContext = springContext;
 	}
 
-	public void publish(final String jsonResult) {
-		RedisMessageEntity messageEntity = JacksonUtils.parseJson(jsonResult, RedisMessageEntity.class);
-		RedisMessageEvent event = new RedisMessageEvent(messageEntity.getChannel(), messageEntity.getMessage());
+	public void publish(final RedisMessageEntity entity) {
+		RedisMessageEvent event = new RedisMessageEvent(entity.getChannel(), entity.getMessage());
 		springContext.publishEvent(event);
 	}
 

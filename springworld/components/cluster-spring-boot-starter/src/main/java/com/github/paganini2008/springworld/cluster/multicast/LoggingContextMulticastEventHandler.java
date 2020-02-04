@@ -29,7 +29,7 @@ public class LoggingContextMulticastEventHandler implements ContextMulticastEven
 	}
 
 	@Override
-	public void onMessage(String clusterId, String message) {
+	public void onMessage(String clusterId, Object message) {
 		if (log.isTraceEnabled()) {
 			log.trace("Application '{}' send: {}", clusterId, message);
 		}

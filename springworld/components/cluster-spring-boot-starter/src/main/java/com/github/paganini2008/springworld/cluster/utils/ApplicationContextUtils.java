@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.cluster;
+package com.github.paganini2008.springworld.cluster.utils;
 
 import java.util.HashMap;
 import java.util.Map;

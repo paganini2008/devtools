@@ -372,6 +372,14 @@ public abstract class ClassUtils {
 		return false;
 	}
 
+	public static Class<?> forName(String className) {
+		try {
+			return Class.forName(className);
+		} catch (ClassNotFoundException e) {
+			throw new IllegalArgumentException(e.getMessage(), e);
+		}
+	}
+
 	public static void main(String[] args) {
 		System.out.println(getAllSuperClassesAndInterfaces(ThreadPoolExecutor.class));
 	}

@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.data.redis.core.RedisKeyExpiredEvent;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import com.github.paganini2008.devtools.collection.MapUtils;
 
@@ -32,7 +32,7 @@ public class RedisEphemeralMessageListener implements ApplicationListener<RedisK
 	private final ConcurrentMap<String, Map<String, RedisMessageHandler>> channelPatternHandlers = new ConcurrentHashMap<String, Map<String, RedisMessageHandler>>();
 
 	@Autowired
-	private StringRedisTemplate redisTemplate;
+	private RedisTemplate<String, Object> redisTemplate;
 
 	@Value("${spring.redis.ephemeral-key.namespace:ephemeral:}")
 	private String namespace;
@@ -118,9 +118,8 @@ public class RedisEphemeralMessageListener implements ApplicationListener<RedisK
 	private Object getExpiredValue(String expiredKey) {
 		final String key = RedisMessageSender.EXPIRED_KEY_PREFIX + expiredKey;
 		if (redisTemplate.hasKey(key)) {
-			String jsonResult = redisTemplate.opsForValue().get(key);
+			RedisMessageEntity entity = (RedisMessageEntity) redisTemplate.opsForValue().get(key);
 			redisTemplate.expire(key, 3, TimeUnit.SECONDS);
-			RedisMessageEntity entity = JacksonUtils.parseJson(jsonResult, RedisMessageEntity.class);
 			return entity.getMessage();
 		}
 		return null;

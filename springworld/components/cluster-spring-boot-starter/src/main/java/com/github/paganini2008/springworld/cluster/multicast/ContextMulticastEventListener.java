@@ -39,7 +39,7 @@ public class ContextMulticastEventListener {
 		}
 	}
 
-	public void fireOnMessage(final String clusterId, final String topic, final String message) {
+	public void fireOnMessage(final String clusterId, final String topic, final Object message) {
 		List<ContextMulticastEventHandler> eventHandlers = topicHandlers.get(topic);
 		if (eventHandlers != null) {
 			eventHandlers.forEach(handler -> {

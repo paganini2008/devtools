@@ -1,8 +1,9 @@
 package com.github.paganini2008.springworld.cluster.multicast;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.springworld.cluster.ClusterId;
 import com.github.paganini2008.springworld.redisplus.RedisMessageHandler;
 
@@ -23,16 +24,16 @@ public class MulticastEventProcessor implements RedisMessageHandler {
 	@Autowired
 	private ContextMulticastEventListener multicastEventListener;
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void onMessage(Object message) {
-		String line = (String) message;
-		if (StringUtils.isBlank(line)) {
+	public void onMessage(Object received) {
+		if (!(received instanceof Map)) {
 			return;
 		}
-		String[] args = line.split("#", 2);
-		String topic = args[0];
-		String content = args[1];
-		multicastEventListener.fireOnMessage(clusterId.get(), topic, content);
+		Map<String, Object> data = (Map<String, Object>) received;
+		String topic = (String) data.get("topic");
+		Object message = data.get("message");
+		multicastEventListener.fireOnMessage(clusterId.get(), topic, message);
 	}
 
 	@Override

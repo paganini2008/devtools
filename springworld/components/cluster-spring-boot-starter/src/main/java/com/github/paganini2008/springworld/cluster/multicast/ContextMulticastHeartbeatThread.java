@@ -4,6 +4,7 @@ import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
@@ -25,7 +26,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ContextMulticastHeartbeatThread implements Executable {
 
-	static final int DEFAULT_LIFESPAN_TTL = 5;
+	@Value("${spring.application.cluster.member.lifespanTtl:5}")
+	private int lifespanTtl;
 
 	@Autowired
 	private ContextClusterConfigProperties configProperties;
@@ -42,13 +44,13 @@ public class ContextMulticastHeartbeatThread implements Executable {
 
 	@Override
 	public boolean execute() {
-		redisMessageSender.sendEphemeralMessage(channel, clusterId.get(), DEFAULT_LIFESPAN_TTL, TimeUnit.SECONDS);
+		redisMessageSender.sendEphemeralMessage(channel, clusterId.get(), lifespanTtl, TimeUnit.SECONDS);
 		return true;
 	}
 
 	public void start() {
 		this.channel = configProperties.getApplicationClusterName() + ":" + clusterId.get();
-		redisMessageSender.sendEphemeralMessage(channel, clusterId.get(), DEFAULT_LIFESPAN_TTL, TimeUnit.SECONDS);
+		redisMessageSender.sendEphemeralMessage(channel, clusterId.get(), lifespanTtl, TimeUnit.SECONDS);
 		timer = ThreadUtils.scheduleWithFixedDelay(this, 3, 3, TimeUnit.SECONDS);
 		log.info("Start ContextMulticastHeartbeatThread ok.");
 	}

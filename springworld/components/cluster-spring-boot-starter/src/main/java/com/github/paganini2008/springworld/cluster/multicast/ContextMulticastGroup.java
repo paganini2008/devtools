@@ -2,7 +2,9 @@ package com.github.paganini2008.springworld.cluster.multicast;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,27 +51,34 @@ public class ContextMulticastGroup {
 		}
 	}
 
-	public void unicast(String message) {
+	public void unicast(Object message) {
 		unicast(ContextMulticastEventListener.GLOBAL_TOPIC, message);
 	}
 
-	public void unicast(String topic, String message) {
+	public void unicast(String topic, Object message) {
 		Assert.hasNoText("Topic is required");
 		String channel = loadBalance.select(message, channels);
 		if (StringUtils.isNotBlank(channel)) {
-			messageSender.sendMessage(channel, topic + "#" + message);
+			messageSender.sendMessage(channel, createMessage(topic, message));
 		}
 	}
 
-	public void multicast(String message) {
+	public void multicast(Object message) {
 		multicast(ContextMulticastEventListener.GLOBAL_TOPIC, message);
 	}
 
-	public void multicast(String topic, String message) {
+	public void multicast(String topic, Object message) {
 		Assert.hasNoText("Topic is required");
 		for (String channel : new HashSet<String>(channels)) {
-			messageSender.sendMessage(channel, topic + "#" + message);
+			messageSender.sendMessage(channel, createMessage(topic, message));
 		}
+	}
+
+	private static Map<String, Object> createMessage(String topic, Object message) {
+		Map<String, Object> data = new LinkedHashMap<String, Object>();
+		data.put("topic", topic);
+		data.put("message", message);
+		return data;
 	}
 
 }

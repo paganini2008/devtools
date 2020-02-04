@@ -1,9 +1,6 @@
 package com.github.paganini2008.springworld.redisplus;
 
 import java.io.Serializable;
-import java.util.Map;
-
-import com.github.paganini2008.devtools.collection.Tuple;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -38,14 +35,6 @@ public class RedisMessageEntity implements Serializable {
 
 	public static RedisMessageEntity of(String channel, Object message) {
 		return new RedisMessageEntity(channel, message);
-	}
-
-	@SuppressWarnings("unchecked")
-	public Object getMessage() {
-		if (message instanceof Map) {
-			return Tuple.wrap((Map<String, Object>) message);
-		}
-		return message;
 	}
 
 }

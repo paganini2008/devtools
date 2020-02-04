@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.reflection.MethodUtils;
-import com.github.paganini2008.springworld.cluster.ApplicationContextUtils;
+import com.github.paganini2008.springworld.cluster.utils.ApplicationContextUtils;
 import com.github.paganini2008.springworld.scheduler.CancellationException;
 import com.github.paganini2008.springworld.scheduler.JobAnnotations.Executable;
 import com.github.paganini2008.springworld.scheduler.JobAnnotations.OnEnd;
