@@ -51,7 +51,7 @@ public class ContextMulticastHeartbeatThread implements Executable {
 	public void start() {
 		this.channel = configProperties.getApplicationClusterName() + ":" + clusterId.get();
 		redisMessageSender.sendEphemeralMessage(channel, clusterId.get(), lifespanTtl, TimeUnit.SECONDS);
-		timer = ThreadUtils.scheduleWithFixedDelay(this, 3, 3, TimeUnit.SECONDS);
+		timer = ThreadUtils.scheduleAtFixedRate(this, 3, 3, TimeUnit.SECONDS);
 		log.info("Start ContextMulticastHeartbeatThread ok.");
 	}
 

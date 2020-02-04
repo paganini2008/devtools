@@ -40,14 +40,14 @@ public class RedisMessageSender {
 	public void sendMessage(String channel, Object message) {
 		redisTemplate.convertAndSend(this.channel, RedisMessageEntity.of(channel, message));
 	}
-	
+
 	public void sendEphemeralMessage(String channel, Object message, long delay, TimeUnit timeUnit) {
 		sendEphemeralMessage(channel, message, delay, timeUnit, false);
 	}
 
 	public void sendEphemeralMessage(String channel, Object message, long delay, TimeUnit timeUnit, boolean idempotent) {
 		String expiredKey = namespace + channel;
-		if (idempotent && redisTemplate.hasKey(expiredKey)) {
+		if (!idempotent || redisTemplate.hasKey(expiredKey)) {
 			RedisMessageEntity entity = RedisMessageEntity.of(channel, message);
 			redisTemplate.opsForValue().set(expiredKey, entity, delay, timeUnit);
 			setExpiredValue(expiredKey);
