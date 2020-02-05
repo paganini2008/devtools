@@ -33,35 +33,23 @@ public class ProcessPoolBackgroundProcessor {
 
 	@Around("signature() && @annotation(com.github.paganini2008.springworld.cluster.pool.BackgroundProcessing)")
 	public Object arround(ProceedingJoinPoint pjp) throws Throwable {
-		long startTime = System.currentTimeMillis();
 		Class<?> beanClass = pjp.getSignature().getDeclaringType();
-		String beanClassName = pjp.getSignature().getDeclaringTypeName();
 		Component component = beanClass.getAnnotation(Component.class);
-
 		String beanName = component.value();
-		if (StringUtils.isBlank(beanName)) {
-			beanName = StringUtils.firstCharToLowerCase(beanClassName);
-		}
 		String methodName = pjp.getSignature().getName();
+		methodName = generateTargetMethodName(methodName);
 		Object[] arguments = pjp.getArgs();
-		Throwable throwing = null;
 		try {
 			processPool.submit(beanName, beanClass, methodName, arguments);
 			return null;
 		} catch (Throwable e) {
 			log.error(e.getMessage(), e);
-			throwing = e;
 			throw e;
-		} finally {
-			StringBuilder str = new StringBuilder();
-			long elapsed = System.currentTimeMillis() - startTime;
-			str.append("Consuming: " + elapsed);
-
-			if (log.isTraceEnabled()) {
-				log.trace(str.toString());
-			}
 		}
+	}
 
+	protected String generateTargetMethodName(String originalMethodName) {
+		return "do" + StringUtils.capitalize(originalMethodName);
 	}
 
 }

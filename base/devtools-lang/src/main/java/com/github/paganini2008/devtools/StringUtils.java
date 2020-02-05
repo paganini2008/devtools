@@ -186,12 +186,12 @@ public class StringUtils {
 		return result.toString();
 	}
 
-	public static String firstCharToLowerCase(String s) {
-		return toLowerCase(s, 0);
+	public static String uncapitalize(String str) {
+		return toLowerCase(str, 0);
 	}
 
-	public static String firstCharToUpperCase(String s) {
-		return toUpperCase(s, 0);
+	public static String capitalize(String str) {
+		return toUpperCase(str, 0);
 	}
 
 	public static String insert(String str, String substr, int index) {
@@ -431,7 +431,7 @@ public class StringUtils {
 	}
 
 	public static void main(String[] args) throws Exception {
-		System.out.println(format("\\/{}???\\~^{},{}{}{}{}?000000000000000?", "{}", new Object[] { 1, false, "abc" }));
+		System.out.println(capitalize("lastModfied"));
 	}
 
 	public static String parseText(String text, String prefix, String suffix, Object... args) {

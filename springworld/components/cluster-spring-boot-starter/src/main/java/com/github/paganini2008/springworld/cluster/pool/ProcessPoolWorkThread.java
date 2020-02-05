@@ -27,19 +27,39 @@ public class ProcessPoolWorkThread implements ContextMulticastEventHandler {
 	@Autowired
 	private ProcessPool processPool;
 
+	@Autowired
+	private ClusterLatch clusterLatch;
+
 	@Override
 	public void onMessage(String clusterId, Object message) {
-		Signature signature;
+		Object bean = null;
+		Object result = null;
+		Signature signature = null;
 		try {
 			signature = (Signature) message;
-			Object bean = ApplicationContextUtils.getBean(signature.getBeanName(), ClassUtils.forName(signature.getBeanClassName()));
-			if (bean == null) {
+			bean = ApplicationContextUtils.getBean(signature.getBeanName(), ClassUtils.forName(signature.getBeanClassName()));
+			if (bean != null) {
+				result = MethodUtils.invokeMethod(bean, signature.getMethodName(), signature.getArguments());
+				if (bean instanceof FutureCallback) {
+					((FutureCallback) bean).onSuccess(result);
+				}
+			} else {
 				log.warn("No bean registered in spring context to call the signature: " + signature);
-				return;
 			}
-			Object result = MethodUtils.invokeMethod(bean, signature.getMethodName(), signature.getArguments());
-			log.info("result: " + result);
+		} catch (Exception e) {
+			if (bean instanceof FutureCallback) {
+				((FutureCallback) bean).onFailure(e);
+			} else {
+				if (e instanceof NoSuchMethodException) {
+					log.warn("No method for name " + signature.getMethodName()
+							+ ", please add a new method, which from the original method and start with 'do' to invoke. ");
+				} else {
+					log.error(e.getMessage(), e);
+				}
+			}
 		} finally {
+			clusterLatch.release();
+
 			signature = workQueue.pop();
 			if (signature != null) {
 				processPool.submit(signature.getBeanName(), ClassUtils.forName(signature.getBeanClassName()), signature.getMethodName(),
