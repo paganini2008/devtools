@@ -7,8 +7,6 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.github.paganini2008.devtools.StringUtils;
-
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -27,29 +25,31 @@ public class ProcessPoolBackgroundProcessor {
 	@Autowired
 	private ProcessPool processPool;
 
+	@Autowired
+	private InvocationResult invocationResult;
+
 	@Pointcut("execution(public * *(..))")
 	public void signature() {
 	}
 
 	@Around("signature() && @annotation(com.github.paganini2008.springworld.cluster.pool.BackgroundProcessing)")
 	public Object arround(ProceedingJoinPoint pjp) throws Throwable {
-		Class<?> beanClass = pjp.getSignature().getDeclaringType();
-		Component component = beanClass.getAnnotation(Component.class);
-		String beanName = component.value();
-		String methodName = pjp.getSignature().getName();
-		methodName = generateTargetMethodName(methodName);
-		Object[] arguments = pjp.getArgs();
-		try {
-			processPool.submit(beanName, beanClass, methodName, arguments);
-			return null;
-		} catch (Throwable e) {
-			log.error(e.getMessage(), e);
-			throw e;
+		if (invocationResult.isCompleted()) {
+			return pjp.proceed();
+		} else {
+			Class<?> beanClass = pjp.getSignature().getDeclaringType();
+			Component component = beanClass.getAnnotation(Component.class);
+			String beanName = component.value();
+			String methodName = pjp.getSignature().getName();
+			Object[] arguments = pjp.getArgs();
+			try {
+				processPool.submit(beanName, beanClass, methodName, arguments);
+				return null;
+			} catch (Throwable e) {
+				log.error(e.getMessage(), e);
+				throw e;
+			}
 		}
-	}
-
-	protected String generateTargetMethodName(String originalMethodName) {
-		return "do" + StringUtils.capitalize(originalMethodName);
 	}
 
 }

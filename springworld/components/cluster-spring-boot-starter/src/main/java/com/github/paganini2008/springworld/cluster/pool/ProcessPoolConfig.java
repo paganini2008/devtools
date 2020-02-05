@@ -61,4 +61,9 @@ public class ProcessPoolConfig {
 		return new ProcessPoolBackgroundProcessor();
 	}
 
+	@Bean
+	public InvocationResult invocationResult() {
+		return new InvocationResult();
+	}
+
 }

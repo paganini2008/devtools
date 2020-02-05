@@ -29,6 +29,9 @@ public class ProcessPoolWorkThread implements ContextMulticastEventHandler {
 
 	@Autowired
 	private ClusterLatch clusterLatch;
+	
+	@Autowired
+	private InvocationResult invocationResult;
 
 	@Override
 	public void onMessage(String clusterId, Object message) {
@@ -39,6 +42,7 @@ public class ProcessPoolWorkThread implements ContextMulticastEventHandler {
 			signature = (Signature) message;
 			bean = ApplicationContextUtils.getBean(signature.getBeanName(), ClassUtils.forName(signature.getBeanClassName()));
 			if (bean != null) {
+				invocationResult.setCompleted();
 				result = MethodUtils.invokeMethod(bean, signature.getMethodName(), signature.getArguments());
 				if (bean instanceof FutureCallback) {
 					((FutureCallback) bean).onSuccess(result);
