@@ -1,15 +1,5 @@
 package com.github.paganini2008.springworld.cluster.pool;
 
-import static com.github.paganini2008.springworld.cluster.pool.ProcessPool.TOPIC_IDENTITY;
-
-import java.util.concurrent.RejectedExecutionException;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
-
-import com.github.paganini2008.devtools.multithreads.ThreadUtils;
-
 /**
  * 
  * WorkQueue
@@ -19,37 +9,14 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
  * @revised 2020-02
  * @version 1.0
  */
-public class WorkQueue {
+public interface WorkQueue {
 
-	@Autowired
-	private RedisTemplate<String, Object> redisTemplate;
+	void push(Signature signature);
 
-	@Autowired
-	private ProcessPoolProperties poolConfig;
+	Signature pop();
 
-	@Value("${spring.application.name}")
-	private String applicationName;
+	void waitForTermination();
 
-	public void push(Signature signature) {
-		String key = TOPIC_IDENTITY + ":" + applicationName;
-		long queueSize = redisTemplate.opsForList().size(key);
-		if (queueSize > poolConfig.getQueueSize()) {
-			throw new RejectedExecutionException("Pool queue has been full. Size: " + queueSize);
-		} else {
-			redisTemplate.opsForList().leftPush(key, signature);
-		}
-	}
-
-	public Signature pop() {
-		String key = TOPIC_IDENTITY + ":" + applicationName;
-		return (Signature) redisTemplate.opsForList().leftPop(key);
-	}
-
-	public void cleaningForTermination() {
-		String key = TOPIC_IDENTITY + ":" + applicationName;
-		while (redisTemplate.opsForList().size(key) != 0) {
-			ThreadUtils.randomSleep(1000L);
-		}
-	}
+	int size();
 
 }

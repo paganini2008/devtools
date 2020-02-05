@@ -57,7 +57,7 @@ public class ProcessPoolExecutor implements ProcessPool {
 			return;
 		}
 		running.set(false);
-		workQueue.cleaningForTermination();
+		workQueue.waitForTermination();
 		clusterLatch.join();
 		
 	}

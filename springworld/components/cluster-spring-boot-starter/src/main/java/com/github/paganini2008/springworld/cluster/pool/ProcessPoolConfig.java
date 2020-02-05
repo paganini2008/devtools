@@ -38,9 +38,10 @@ public class ProcessPoolConfig {
 		return new RedisSharedLatch(applicationName, poolConfig.getPoolSize(), 60, redisConnectionFactory);
 	}
 
+	@ConditionalOnMissingBean(WorkQueue.class)
 	@Bean
 	public WorkQueue workQueue() {
-		return new WorkQueue();
+		return new RedisWorkQueue();
 	}
 
 	@Bean

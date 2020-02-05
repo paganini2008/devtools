@@ -76,7 +76,6 @@ public class RedisPubSubConfig {
 	}
 
 	@Bean
-	@ConditionalOnMissingBean(KeyExpirationEventMessageListener.class)
 	public KeyExpirationEventMessageListener keyExpirationEventMessageListener(
 			RedisMessageListenerContainer redisMessageListenerContainer) {
 		KeyExpirationEventMessageListener listener = new KeyExpirationEventMessageListener(redisMessageListenerContainer);
