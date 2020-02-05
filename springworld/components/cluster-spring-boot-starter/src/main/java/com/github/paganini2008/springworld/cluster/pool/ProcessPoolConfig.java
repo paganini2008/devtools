@@ -24,6 +24,8 @@ import com.github.paganini2008.springworld.cluster.multicast.ContextMulticastCon
 @ConditionalOnProperty(value = "spring.application.cluster.pool.enabled", havingValue = "true")
 public class ProcessPoolConfig {
 
+	private static final int DEFAULT_LATCH_LIFESPAN = 60;
+
 	@Value("${spring.application.name}")
 	private String applicationName;
 
@@ -35,7 +37,7 @@ public class ProcessPoolConfig {
 	@ConditionalOnMissingBean(ClusterLatch.class)
 	@Bean
 	public ClusterLatch clusterLatch(ProcessPoolProperties poolConfig, RedisConnectionFactory redisConnectionFactory) {
-		return new RedisSharedLatch(applicationName, poolConfig.getPoolSize(), 60, redisConnectionFactory);
+		return new RedisSharedLatch(applicationName, poolConfig.getPoolSize(), DEFAULT_LATCH_LIFESPAN, redisConnectionFactory);
 	}
 
 	@ConditionalOnMissingBean(WorkQueue.class)
@@ -53,7 +55,7 @@ public class ProcessPoolConfig {
 	public ProcessPoolWorkThread processPoolWorkThread() {
 		return new ProcessPoolWorkThread();
 	}
-	
+
 	@Bean
 	public ProcessPoolBackgroundProcessor processPoolBackgroundProcessor() {
 		return new ProcessPoolBackgroundProcessor();

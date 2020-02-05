@@ -24,6 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ContextClusterHeartbeatThread implements Executable {
 
+	private static final int MIN_LIFESPAN_TTL = 5;
+	private static final int MAX_LIFESPAN_TTL = 15;
+
 	@Value("${spring.application.cluster.lifespanTtl:5}")
 	private int lifespanTtl;
 
@@ -43,6 +46,10 @@ public class ContextClusterHeartbeatThread implements Executable {
 	private Timer timer;
 
 	public void start() {
+		if (lifespanTtl < MIN_LIFESPAN_TTL || lifespanTtl > MAX_LIFESPAN_TTL) {
+			throw new IllegalArgumentException("The value range of parameter 'spring.application.cluster.lifespanTtl' is between "
+					+ MIN_LIFESPAN_TTL + " and " + MAX_LIFESPAN_TTL);
+		}
 		String key = configProperties.getApplicationClusterName();
 		redisTemplate.expire(key, lifespanTtl, TimeUnit.SECONDS);
 		timer = ThreadUtils.scheduleAtFixedRate(this, 3, 3, TimeUnit.SECONDS);
