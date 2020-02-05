@@ -11,4 +11,10 @@ package com.github.paganini2008.springworld.cluster.pool;
  */
 public interface ProcessPool {
 
+	static final String TOPIC_IDENTITY = "process-pool";
+
+	void execute(String beanName, Class<?> beanClass, String methodName, Object... arguments);
+	
+	void shutdown();
+
 }

@@ -18,7 +18,7 @@ import com.github.paganini2008.devtools.collection.MapUtils;
  */
 public class ContextMulticastEventListener {
 
-	static final String GLOBAL_TOPIC = "*";
+	public static final String GLOBAL_TOPIC = "*";
 	private final Map<String, List<ContextMulticastEventHandler>> topicHandlers = new ConcurrentHashMap<String, List<ContextMulticastEventHandler>>();
 
 	public void fireOnJoin(final String clusterId) {
@@ -40,11 +40,20 @@ public class ContextMulticastEventListener {
 	}
 
 	public void fireOnMessage(final String clusterId, final String topic, final Object message) {
-		List<ContextMulticastEventHandler> eventHandlers = topicHandlers.get(topic);
-		if (eventHandlers != null) {
-			eventHandlers.forEach(handler -> {
-				handler.onMessage(clusterId, message);
-			});
+		if (GLOBAL_TOPIC.equals(topic)) {
+			List<ContextMulticastEventHandler> eventHandlers = topicHandlers.get(topic);
+			if (eventHandlers != null) {
+				eventHandlers.forEach(handler -> {
+					handler.onGlobalMessage(clusterId, message);
+				});
+			}
+		} else {
+			List<ContextMulticastEventHandler> eventHandlers = topicHandlers.get(topic);
+			if (eventHandlers != null) {
+				eventHandlers.forEach(handler -> {
+					handler.onMessage(clusterId, message);
+				});
+			}
 		}
 	}
 

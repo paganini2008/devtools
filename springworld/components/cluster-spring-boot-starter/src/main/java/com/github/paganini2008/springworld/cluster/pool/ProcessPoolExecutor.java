@@ -1,17 +1,11 @@
 package com.github.paganini2008.springworld.cluster.pool;
 
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
 
-import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.springworld.cluster.multicast.ContextMulticastGroup;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
@@ -22,62 +16,48 @@ import lombok.extern.slf4j.Slf4j;
  * @revised 2020-02
  * @version 1.0
  */
-@Slf4j
-@Aspect
-@Component
 public class ProcessPoolExecutor implements ProcessPool {
-
-	public static final String TOPIC_IDENTITY = "PROCESS_POOL";
 
 	@Autowired
 	private ClusterLatch clusterLatch;
 
 	@Autowired
-	private RedisTemplate<String, Object> redisTemplate;
-
-	@Autowired
 	private ContextMulticastGroup contextMulticastGroup;
 
-	@Pointcut("@annotation(com.github.paganini2008.springworld.cluster.pool.BackgroundProcessing)")
-	public void signature(BackgroundProcessing backgroundProcessing) {
+	@Autowired
+	private ProcessPoolProperties poolConfig;
+
+	@Autowired
+	private WorkQueue workQueue;
+
+	private final AtomicBoolean running = new AtomicBoolean(true);
+
+	@Override
+	public void execute(String beanName, Class<?> beanClass, String methodName, Object... arguments) {
+		if (!running.get()) {
+			throw new IllegalStateException("ProcessPool is shutdown now.");
+		}
+		SignatureInfo signature = new SignatureInfo(beanName, beanClass.getName(), methodName);
+		if (arguments != null) {
+			signature.setArguments(arguments);
+		}
+		boolean acquired = poolConfig.getTimeout() > 0 ? clusterLatch.acquire(poolConfig.getTimeout(), TimeUnit.SECONDS)
+				: clusterLatch.acquire();
+		if (acquired) {
+			contextMulticastGroup.unicast(TOPIC_IDENTITY, signature);
+		} else {
+			workQueue.push(signature);
+		}
+
 	}
 
-	@Around("com.github.paganini2008.springworld.cluster.pool.ProcessPoolExecutor.signature(backgroundProcessing)")
-	public Object arround(ProceedingJoinPoint pjp, BackgroundProcessing backgroundProcessing) throws Throwable {
-		long startTime = System.currentTimeMillis();
-		Class<?> beanClass = pjp.getSignature().getDeclaringType();
-		String beanClassName = pjp.getSignature().getDeclaringTypeName();
-		Component component = beanClass.getAnnotation(Component.class);
+	@Override
+	public void shutdown() {
 
-		String beanName = component.value();
-		if (StringUtils.isBlank(beanName)) {
-			beanName = StringUtils.firstCharToLowerCase(beanClassName);
-		}
-		String methodName = pjp.getSignature().getName();
-		Object[] arguments = pjp.getArgs();
-		if (arguments == null) {
-			arguments = new Object[0];
-		}
-		SignatureInfo signatureInfo = new SignatureInfo(beanName, beanClassName, methodName);
-		signatureInfo.setArguments(arguments);
-		Throwable throwing = null;
-		try {
-			contextMulticastGroup.unicast(TOPIC_IDENTITY, signatureInfo);
-			return null;
-		} catch (Throwable e) {
-			log.error(e.getMessage(), e);
-			throwing = e;
-			throw e;
-		} finally {
-			StringBuilder str = new StringBuilder();
-			long elapsed = System.currentTimeMillis() - startTime;
-			str.append("Signature: " + signatureInfo + ", Consuming: " + elapsed);
-
-			if (log.isTraceEnabled()) {
-				log.trace(str.toString());
-			}
-		}
-
+		running.set(false);
+		workQueue.cleaningForTermination();
+		clusterLatch.join();
+		
 	}
 
 }

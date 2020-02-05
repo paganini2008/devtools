@@ -1,5 +1,7 @@
 package com.github.paganini2008.springworld.cluster.pool;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.github.paganini2008.devtools.ClassUtils;
 import com.github.paganini2008.devtools.reflection.MethodUtils;
 import com.github.paganini2008.springworld.cluster.multicast.ContextMulticastEventHandler;
@@ -19,21 +21,34 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ProcessPoolWorkThread implements ContextMulticastEventHandler {
 
+	@Autowired
+	private WorkQueue workQueue;
+
+	@Autowired
+	private ProcessPool processPool;
+
 	@Override
 	public void onMessage(String clusterId, Object message) {
-		SignatureInfo signatureInfo = (SignatureInfo) message;
-		Object bean = ApplicationContextUtils.getBean(signatureInfo.getBeanName(), ClassUtils.forName(signatureInfo.getBeanClassName()));
-		if (bean == null) {
-			log.warn("No bean registered in spring context to call the signature: " + signatureInfo);
-			return;
+		Signature signature;
+		try {
+			signature = (Signature) message;
+			Object bean = ApplicationContextUtils.getBean(signature.getBeanName(), ClassUtils.forName(signature.getBeanClassName()));
+			if (bean == null) {
+				log.warn("No bean registered in spring context to call the signature: " + signature);
+				return;
+			}
+			Object result = MethodUtils.invokeMethod(bean, signature.getMethodName(), signature.getArguments());
+			log.info("result: " + result);
+		} finally {
+			signature = workQueue.pop();
+			processPool.execute(signature.getBeanName(), ClassUtils.forName(signature.getBeanClassName()), signature.getMethodName(),
+					signature.getArguments());
 		}
-		Object result = MethodUtils.invokeMethod(bean, signatureInfo.getMethodName(), signatureInfo.getArguments());
-		log.info("result: " + result);
 	}
 
 	@Override
 	public String getTopic() {
-		return ProcessPoolExecutor.TOPIC_IDENTITY;
+		return ProcessPool.TOPIC_IDENTITY;
 	}
 
 }

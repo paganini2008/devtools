@@ -30,17 +30,27 @@ public class ProcessPoolConfig {
 	@Value("${spring.application.cluster.pool.maxPermits:8}")
 	private int maxPermits;
 
+	@Bean
+	public ProcessPoolProperties poolConfig() {
+		return new ProcessPoolProperties();
+	}
+
 	@ConditionalOnMissingBean(ClusterLatch.class)
 	@Bean
-	public ClusterLatch clusterLatch(RedisConnectionFactory redisConnectionFactory) {
-		return new RedisSharedLatch(applicationName, maxPermits, 60, redisConnectionFactory);
+	public ClusterLatch clusterLatch(ProcessPoolProperties poolConfig, RedisConnectionFactory redisConnectionFactory) {
+		return new RedisSharedLatch(applicationName, poolConfig.getMaxPoolSize(), 60, redisConnectionFactory);
+	}
+
+	@Bean
+	public WorkQueue workQueue() {
+		return new WorkQueue();
 	}
 
 	@Bean
 	public ProcessPool processPool() {
 		return new ProcessPoolExecutor();
 	}
-	
+
 	@Bean
 	public ProcessPoolWorkThread processPoolWorkThread() {
 		return new ProcessPoolWorkThread();

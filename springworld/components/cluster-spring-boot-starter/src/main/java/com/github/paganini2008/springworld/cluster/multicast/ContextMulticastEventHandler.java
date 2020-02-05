@@ -20,6 +20,9 @@ public interface ContextMulticastEventHandler {
 	default void onMessage(String clusterId, Object message) {
 	}
 
+	default void onGlobalMessage(String clusterId, Object message) {
+	}
+
 	default String getTopic() {
 		return ContextMulticastEventListener.GLOBAL_TOPIC;
 	}

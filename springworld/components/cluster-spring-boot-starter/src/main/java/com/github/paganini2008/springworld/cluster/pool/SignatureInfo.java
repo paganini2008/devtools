@@ -17,14 +17,14 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class SignatureInfo implements Serializable {
+public class SignatureInfo implements Signature, Serializable {
 
 	private static final long serialVersionUID = -5401293046063974728L;
 
 	private String beanName;
 	private String beanClassName;
 	private String methodName;
-	private Object[] arguments;
+	private Object[] arguments = new Object[0];
 
 	public SignatureInfo(String beanName, String beanClassName, String methodName) {
 		this.beanName = beanName;
