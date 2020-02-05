@@ -25,19 +25,22 @@ public class SignatureInfo implements Signature, Serializable {
 	private String beanClassName;
 	private String methodName;
 	private Object[] arguments = new Object[0];
+	private final long timestamp;
 
 	public SignatureInfo(String beanName, String beanClassName, String methodName) {
 		this.beanName = beanName;
 		this.beanClassName = beanClassName;
 		this.methodName = methodName;
+		this.timestamp = System.currentTimeMillis();
 	}
 
 	public SignatureInfo() {
+		this.timestamp = System.currentTimeMillis();
 	}
 
 	public String toString() {
 		StringBuilder str = new StringBuilder();
-		str.append("[").append(beanName).append("] ");
+		str.append("[beanName: ").append(beanName).append("] ");
 		str.append(beanClassName).append(".").append(methodName).append("(").append(Arrays.toString(arguments)).append(")");
 		return str.toString();
 	}

@@ -19,4 +19,6 @@ public interface Signature {
 	
 	Object[] getArguments();
 	
+	long getTimestamp();
+	
 }
