@@ -14,11 +14,14 @@ import lombok.Data;
  * @version 1.0
  */
 @Data
-@ConfigurationProperties(prefix = "spring.application.cluster.pool")
+@ConfigurationProperties(prefix = "spring.application.cluster.pool", ignoreUnknownFields = true)
 public class ProcessPoolProperties {
 
-	private int maxPoolSize;
-	private int timeout;
-	private int queueSize;
-	
+	public static final int DEFUALT_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 2;
+	public static final int DEFAULT_QUEUE_SIZE = Integer.MAX_VALUE;
+
+	private int poolSize = DEFUALT_POOL_SIZE;
+	private int timeout = -1;
+	private int queueSize = DEFAULT_QUEUE_SIZE;
+
 }
