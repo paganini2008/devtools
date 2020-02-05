@@ -11,6 +11,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import com.github.paganini2008.devtools.Assert;
+import com.github.paganini2008.devtools.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -87,16 +88,19 @@ public class ApplicationContextUtils implements ApplicationContextAware {
 		try {
 			return getApplicationContext().getBean(requiredType);
 		} catch (RuntimeException e) {
-			log.warn("Unable to get bean because " + e.getMessage());
+			log.warn("Can't to get the bean for reason: " + e.getMessage());
 			return null;
 		}
 	}
 
 	public static <T> T getBean(String name, Class<T> requiredType) {
+		if (StringUtils.isBlank(name)) {
+			return getBean(requiredType);
+		}
 		try {
 			return getApplicationContext().getBean(name, requiredType);
 		} catch (RuntimeException e) {
-			log.warn("Unable to get bean because " + e.getMessage());
+			log.warn("Can't to get the bean for reason: " + e.getMessage());
 			return null;
 		}
 	}

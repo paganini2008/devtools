@@ -23,16 +23,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Aspect
 public class ProcessPoolBackgroundProcessor {
-	
+
 	@Autowired
 	private ProcessPool processPool;
 
-	@Pointcut("@annotation(com.github.paganini2008.springworld.cluster.pool.BackgroundProcessing)")
-	public void signature(BackgroundProcessing backgroundProcessing) {
+	@Pointcut("execution(public * *(..))")
+	public void signature() {
 	}
 
-	@Around("com.github.paganini2008.springworld.cluster.pool.ProcessPoolExecutor.signature(backgroundProcessing)")
-	public Object arround(ProceedingJoinPoint pjp, BackgroundProcessing backgroundProcessing) throws Throwable {
+	@Around("signature() && @annotation(com.github.paganini2008.springworld.cluster.pool.BackgroundProcessing)")
+	public Object arround(ProceedingJoinPoint pjp) throws Throwable {
 		long startTime = System.currentTimeMillis();
 		Class<?> beanClass = pjp.getSignature().getDeclaringType();
 		String beanClassName = pjp.getSignature().getDeclaringTypeName();

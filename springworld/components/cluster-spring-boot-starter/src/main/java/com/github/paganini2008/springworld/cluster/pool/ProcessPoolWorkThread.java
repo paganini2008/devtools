@@ -41,8 +41,10 @@ public class ProcessPoolWorkThread implements ContextMulticastEventHandler {
 			log.info("result: " + result);
 		} finally {
 			signature = workQueue.pop();
-			processPool.submit(signature.getBeanName(), ClassUtils.forName(signature.getBeanClassName()), signature.getMethodName(),
-					signature.getArguments());
+			if (signature != null) {
+				processPool.submit(signature.getBeanName(), ClassUtils.forName(signature.getBeanClassName()), signature.getMethodName(),
+						signature.getArguments());
+			}
 		}
 	}
 
