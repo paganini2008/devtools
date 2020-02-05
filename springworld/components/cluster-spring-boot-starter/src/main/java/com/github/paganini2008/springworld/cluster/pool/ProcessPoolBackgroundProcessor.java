@@ -46,7 +46,7 @@ public class ProcessPoolBackgroundProcessor {
 		Object[] arguments = pjp.getArgs();
 		Throwable throwing = null;
 		try {
-			processPool.execute(beanName, beanClass, methodName, arguments);
+			processPool.submit(beanName, beanClass, methodName, arguments);
 			return null;
 		} catch (Throwable e) {
 			log.error(e.getMessage(), e);

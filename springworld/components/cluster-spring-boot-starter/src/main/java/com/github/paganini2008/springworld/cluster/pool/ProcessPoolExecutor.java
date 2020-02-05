@@ -33,7 +33,7 @@ public class ProcessPoolExecutor implements ProcessPool {
 	private final AtomicBoolean running = new AtomicBoolean(true);
 
 	@Override
-	public void execute(String beanName, Class<?> beanClass, String methodName, Object... arguments) {
+	public void submit(String beanName, Class<?> beanClass, String methodName, Object... arguments) {
 		if (!running.get()) {
 			throw new IllegalStateException("ProcessPool is shutdown now.");
 		}
@@ -53,7 +53,9 @@ public class ProcessPoolExecutor implements ProcessPool {
 
 	@Override
 	public void shutdown() {
-
+		if (!running.get()) {
+			return;
+		}
 		running.set(false);
 		workQueue.cleaningForTermination();
 		clusterLatch.join();
