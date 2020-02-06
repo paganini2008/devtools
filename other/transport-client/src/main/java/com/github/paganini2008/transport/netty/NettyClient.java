@@ -1,6 +1,7 @@
 package com.github.paganini2008.transport.netty;
 
 import java.net.SocketAddress;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.github.paganini2008.devtools.SystemPropertyUtils;
@@ -22,6 +23,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.GenericFutureListener;
 
 /**
@@ -41,6 +43,12 @@ public class NettyClient implements NioClient {
 	private Bootstrap bootstrap;
 	private NettySerializationCodecFactory codecFactory;
 
+	private int idleTime = 60;
+
+	public void setIdleTime(int idleTime) {
+		this.idleTime = idleTime;
+	}
+
 	public void setSerializer(Serializer serializer) {
 		this.codecFactory = new NettySerializationCodecFactory(serializer);
 	}
@@ -58,8 +66,10 @@ public class NettyClient implements NioClient {
 		bootstrap.handler(new ChannelInitializer<SocketChannel>() {
 			public void initChannel(SocketChannel ch) throws Exception {
 				ChannelPipeline pipeline = ch.pipeline();
+				pipeline.addLast(new IdleStateHandler(0, idleTime, 0, TimeUnit.SECONDS));
+				pipeline.addLast(idleTime > 0 ? IdlePolicy.PING : IdlePolicy.NOOP);
 				pipeline.addLast(codecFactory.getEncoder(), codecFactory.getDecoder());
-				pipeline.addLast("handler", channelContext);
+				pipeline.addLast(channelContext);
 			}
 		});
 		opened.set(true);

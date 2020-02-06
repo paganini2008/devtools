@@ -6,6 +6,7 @@ import static com.github.paganini2008.springworld.socketbird.Constants.PORT_RANG
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.net.NetUtils;
 import com.github.paganini2008.springworld.cluster.ClusterId;
+import com.github.paganini2008.transport.netty.IdlePolicy;
 import com.github.paganini2008.transport.netty.NettySerializationCodecFactory;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -26,6 +28,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -56,6 +59,9 @@ public class NettyServer implements NioServer {
 	@Value("${socketbird.transport.nioserver.hostName:}")
 	private String hostName;
 
+	@Value("${socketbird.transport.nioserver.readerIdleTime:300}")
+	private int readerIdleTime;
+
 	@Value("${spring.application.name}")
 	private String applicationName;
 
@@ -80,7 +86,9 @@ public class NettyServer implements NioServer {
 		bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
 			public void initChannel(SocketChannel ch) throws Exception {
 				ChannelPipeline pipeline = ch.pipeline();
+				pipeline.addLast(new IdleStateHandler(readerIdleTime, 0, 0, TimeUnit.SECONDS));
 				pipeline.addLast(codecFactory.getEncoder(), codecFactory.getDecoder());
+				pipeline.addLast(readerIdleTime > 0 ? IdlePolicy.CLOSE_BY_SERVER : IdlePolicy.NOOP);
 				pipeline.addLast(serverHandler);
 			}
 		});

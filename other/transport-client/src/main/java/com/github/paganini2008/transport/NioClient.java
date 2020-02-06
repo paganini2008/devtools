@@ -14,6 +14,8 @@ import com.github.paganini2008.transport.serializer.Serializer;
  * @version 1.0
  */
 public interface NioClient extends LifeCycle {
+	
+	void setIdleTime(int idleTime);
 
 	void connect(SocketAddress address, HandshakeCompletedListener completedListener);
 

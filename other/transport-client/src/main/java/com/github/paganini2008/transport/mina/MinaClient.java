@@ -40,6 +40,12 @@ public class MinaClient implements NioClient {
 	private final AtomicBoolean opened = new AtomicBoolean(false);
 	private MinaSerializationCodecFactory codecFactory;
 	private NioSocketConnector connector;
+	private int idleTime = 60;
+
+	@Override
+	public void setIdleTime(int idleTime) {
+		this.idleTime = idleTime;
+	}
 
 	@Override
 	public void open() {
