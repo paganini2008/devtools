@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.cluster.pool;
+package com.github.paganini2008.springworld.cluster.utils;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -11,6 +11,7 @@ import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 import com.github.paganini2008.springworld.cluster.ContextMasterStandbyEvent;
+import com.github.paganini2008.springworld.cluster.pool.ClusterLatch;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,17 +27,19 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RedisSharedLatch implements ClusterLatch {
 
-	public static final String LATCH_KEY_PREFIX = "latch:";
-	private final int maxPermits;
-	private final long startTime;
+	private static final String LATCH_KEY_PREFIX = "latch:";
 
 	public RedisSharedLatch(String name, int maxPermits, int lifespanInSeconds, RedisConnectionFactory redisConnectionFactory) {
 		this.counter = new RedisAtomicLong(LATCH_KEY_PREFIX + name, redisConnectionFactory);
+		this.redisConnectionFactory = redisConnectionFactory;
 		this.maxPermits = maxPermits;
 		this.startTime = System.currentTimeMillis();
 		this.lifespan = new Lifespan(lifespanInSeconds);
 	}
 
+	private final RedisConnectionFactory redisConnectionFactory;
+	private final int maxPermits;
+	private final long startTime;
 	private final Lifespan lifespan;
 	private final Lock lock = new ReentrantLock();
 	private final Condition condition = lock.newCondition();
@@ -144,6 +147,12 @@ public class RedisSharedLatch implements ClusterLatch {
 		}
 
 		void start() {
+			try {
+				counter.get();
+			} catch (Exception e) {
+				log.warn(e.getMessage(), e);
+				counter = new RedisAtomicLong(counter.getKey(), redisConnectionFactory);
+			}
 			counter.expire(timeout, TimeUnit.SECONDS);
 			ThreadUtils.scheduleAtFixedRate(this, 3, TimeUnit.SECONDS);
 		}
@@ -158,7 +167,7 @@ public class RedisSharedLatch implements ClusterLatch {
 	@Override
 	public void onApplicationEvent(ContextMasterStandbyEvent event) {
 		lifespan.start();
-		log.info("RedisSharedLatch works.");
+		log.info("RedisSharedLatch start to work.");
 	}
 
 }

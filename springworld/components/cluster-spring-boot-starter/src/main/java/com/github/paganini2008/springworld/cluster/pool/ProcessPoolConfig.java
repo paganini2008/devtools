@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 
 import com.github.paganini2008.springworld.cluster.multicast.ContextMulticastConfig;
+import com.github.paganini2008.springworld.cluster.utils.RedisSharedLatch;
 
 /**
  * 

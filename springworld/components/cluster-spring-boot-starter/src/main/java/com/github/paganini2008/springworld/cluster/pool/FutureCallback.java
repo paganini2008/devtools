@@ -11,9 +11,9 @@ package com.github.paganini2008.springworld.cluster.pool;
  */
 public interface FutureCallback {
 
-	void onSuccess(Object result);
+	void onSuccess(Signature signature, Object result);
 
-	default void onFailure(Exception e) {
+	default void onFailure(Signature signature, Exception e) {
 	}
 
 }

@@ -45,14 +45,14 @@ public class ProcessPoolWorkThread implements ContextMulticastEventHandler {
 				invocationResult.setCompleted();
 				result = MethodUtils.invokeMethod(bean, signature.getMethodName(), signature.getArguments());
 				if (bean instanceof FutureCallback) {
-					((FutureCallback) bean).onSuccess(result);
+					((FutureCallback) bean).onSuccess(signature,result);
 				}
 			} else {
 				log.warn("No bean registered in spring context to call the signature: " + signature);
 			}
 		} catch (Exception e) {
 			if (bean instanceof FutureCallback) {
-				((FutureCallback) bean).onFailure(e);
+				((FutureCallback) bean).onFailure(signature,e);
 			} else {
 				if (e instanceof NoSuchMethodException) {
 					log.warn("No method for name " + signature.getMethodName()
