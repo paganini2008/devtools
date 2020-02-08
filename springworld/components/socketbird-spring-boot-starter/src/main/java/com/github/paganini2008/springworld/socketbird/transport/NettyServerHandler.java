@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import com.github.paganini2008.springworld.socketbird.buffer.BufferZone;
 import com.github.paganini2008.transport.ChannelEvent;
 import com.github.paganini2008.transport.ChannelEvent.EventType;
+import com.github.paganini2008.transport.ChannelEventListener;
 import com.github.paganini2008.transport.Tuple;
 
 import io.netty.channel.Channel;
@@ -32,7 +33,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 	private String collectionName;
 
 	@Autowired(required = false)
-	private NettyChannelEventListener channelEventListener;
+	private ChannelEventListener<Channel> channelEventListener;
 
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {

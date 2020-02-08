@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import com.github.paganini2008.transport.ChannelEvent;
 import com.github.paganini2008.transport.ChannelEvent.EventType;
+import com.github.paganini2008.transport.ChannelEventListener;
 import com.github.paganini2008.transport.Tuple;
 import com.github.paganini2008.transport.netty.KeepAlivePolicy;
 
@@ -34,7 +35,7 @@ public class NettyServerKeepAlivePolicy extends KeepAlivePolicy {
 	private int idleTimeout;
 
 	@Autowired(required = false)
-	private NettyChannelEventListener channelEventListener;
+	private ChannelEventListener<Channel> channelEventListener;
 
 	@Override
 	protected void whenReaderIdle(ChannelHandlerContext ctx) {

@@ -9,8 +9,8 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.mina.core.buffer.CachedBufferAllocator;
 import org.apache.mina.core.buffer.IoBuffer;
+import org.apache.mina.core.buffer.SimpleBufferAllocator;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
@@ -30,6 +30,7 @@ import com.github.paganini2008.devtools.net.NetUtils;
 import com.github.paganini2008.springworld.cluster.ClusterId;
 import com.github.paganini2008.transport.ChannelEvent;
 import com.github.paganini2008.transport.ChannelEvent.EventType;
+import com.github.paganini2008.transport.ChannelEventListener;
 import com.github.paganini2008.transport.Tuple;
 import com.github.paganini2008.transport.mina.MinaSerializationCodecFactory;
 
@@ -52,7 +53,7 @@ public class MinaServer implements NioServer {
 
 	static {
 		IoBuffer.setUseDirectBuffer(SystemPropertyUtils.getBoolean("transport.nioclient.mina.useDirectBuffer", false));
-		IoBuffer.setAllocator(new CachedBufferAllocator());
+		IoBuffer.setAllocator(new SimpleBufferAllocator());
 	}
 
 	private final AtomicBoolean started = new AtomicBoolean(false);
@@ -66,7 +67,7 @@ public class MinaServer implements NioServer {
 	private MinaSerializationCodecFactory codecFactory;
 
 	@Autowired(required = false)
-	private MinaChannelEventListener channelEventListener;
+	private ChannelEventListener<IoSession> channelEventListener;
 
 	@Value("${socketbird.transport.nioserver.threads:-1}")
 	private int threadCount;
@@ -106,12 +107,12 @@ public class MinaServer implements NioServer {
 		ioAcceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(codecFactory));
 
 		KeepAliveFilter heartBeat = new KeepAliveFilter(new ServerKeepAliveMessageFactory(), IdleStatus.READER_IDLE);
-		heartBeat.setForwardEvent(true);
+		heartBeat.setForwardEvent(false);
 		heartBeat.setRequestTimeout(idleTimeout);
 		heartBeat.setRequestTimeoutHandler(KeepAliveRequestTimeoutHandler.LOG);
 		ioAcceptor.getFilterChain().addLast("heartbeat", heartBeat);
 
-		ioAcceptor.getFilterChain().addLast("threadPool", new ExecutorFilter(Executors.newFixedThreadPool(nThreads)));
+		ioAcceptor.getFilterChain().addLast("threadPool", new ExecutorFilter(Executors.newCachedThreadPool()));
 		ioAcceptor.setHandler(serverHandler);
 		int port = NetUtils.getRandomPort(PORT_RANGE_START, PORT_RANGE_END);
 		try {

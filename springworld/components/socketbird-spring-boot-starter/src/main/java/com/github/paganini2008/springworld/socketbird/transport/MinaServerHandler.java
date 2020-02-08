@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import com.github.paganini2008.springworld.socketbird.buffer.BufferZone;
 import com.github.paganini2008.transport.ChannelEvent;
 import com.github.paganini2008.transport.ChannelEvent.EventType;
+import com.github.paganini2008.transport.ChannelEventListener;
 import com.github.paganini2008.transport.Tuple;
 
 /**
@@ -28,7 +29,7 @@ public class MinaServerHandler extends IoHandlerAdapter {
 	private String collectionName;
 
 	@Autowired(required = false)
-	private MinaChannelEventListener channelEventListener;
+	private ChannelEventListener<IoSession> channelEventListener;
 
 	@Override
 	public void sessionOpened(IoSession session) throws Exception {

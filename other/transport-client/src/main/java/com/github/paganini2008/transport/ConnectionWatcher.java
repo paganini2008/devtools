@@ -21,10 +21,6 @@ public final class ConnectionWatcher {
 	private final TimeUnit timeUnit;
 	private final NioConnection connection;
 
-	public ConnectionWatcher(NioConnection connection) {
-		this(5, TimeUnit.SECONDS, connection);
-	}
-
 	public ConnectionWatcher(int interval, TimeUnit timeUnit, NioConnection connection) {
 		this.interval = interval;
 		this.timeUnit = timeUnit;
