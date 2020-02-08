@@ -34,6 +34,12 @@ public class MemcachedBufferZone implements BufferZone {
 	@Value("${socketbird.memcached.address:localhost:11211}")
 	private String address;
 
+	@Value("${spring.application.name}")
+	private String applicationName;
+
+	@Value("${socketbird.bufferzone.reused:true}")
+	private boolean reused;
+
 	@Autowired
 	private ClusterId clusterId;
 
@@ -61,7 +67,7 @@ public class MemcachedBufferZone implements BufferZone {
 
 	@Override
 	public void set(String name, Tuple tuple) throws Exception {
-		String key = keyFor(name) + "-" + setter.getAndIncrement();
+		String key = getKey(name) + "-" + setter.getAndIncrement();
 		byte[] data = serializer.serialize(tuple);
 		client.set(key, DEFAULT_STORE_EXPIRATION, data);
 	}
@@ -69,7 +75,7 @@ public class MemcachedBufferZone implements BufferZone {
 	@Override
 	public Tuple get(String name) throws Exception {
 		if (setter.get() > getter.get()) {
-			String key = keyFor(name) + "-" + getter.getAndIncrement();
+			String key = getKey(name) + "-" + getter.getAndIncrement();
 			byte[] data;
 			if ((data = (byte[]) client.getAndTouch(key, 3)) != null) {
 				return serializer.deserialize(data);
@@ -85,8 +91,8 @@ public class MemcachedBufferZone implements BufferZone {
 		return 0;
 	}
 
-	String keyFor(String name) {
-		return name + "-" + clusterId.get();
+	protected String getKey(String name) {
+		return "bufferzone-" + name + "-" + applicationName + (reused ? "-" + clusterId.get() : "");
 	}
 
 }

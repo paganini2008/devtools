@@ -40,7 +40,7 @@ import io.netty.channel.Channel;
 
 /**
  * 
- * ImportServerConfiguration
+ * TransportServerConfiguration
  * 
  * @author Fred Feng
  * @created 2019-10
@@ -49,7 +49,7 @@ import io.netty.channel.Channel;
  */
 @ConditionalOnProperty(prefix = "socketbird", name = "mode", havingValue = "server", matchIfMissing = true)
 @Configuration
-public class ImportServerConfiguration {
+public class TransportServerConfiguration {
 
 	@ConditionalOnMissingBean(Serializer.class)
 	@Bean

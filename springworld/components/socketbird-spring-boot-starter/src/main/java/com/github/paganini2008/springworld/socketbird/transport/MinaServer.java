@@ -6,7 +6,6 @@ import static com.github.paganini2008.springworld.socketbird.Constants.PORT_RANG
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.mina.core.buffer.IoBuffer;
@@ -112,7 +111,7 @@ public class MinaServer implements NioServer {
 		heartBeat.setRequestTimeoutHandler(KeepAliveRequestTimeoutHandler.LOG);
 		ioAcceptor.getFilterChain().addLast("heartbeat", heartBeat);
 
-		ioAcceptor.getFilterChain().addLast("threadPool", new ExecutorFilter(Executors.newCachedThreadPool()));
+		ioAcceptor.getFilterChain().addLast("threadPool", new ExecutorFilter(nThreads));
 		ioAcceptor.setHandler(serverHandler);
 		int port = NetUtils.getRandomPort(PORT_RANGE_START, PORT_RANGE_END);
 		try {

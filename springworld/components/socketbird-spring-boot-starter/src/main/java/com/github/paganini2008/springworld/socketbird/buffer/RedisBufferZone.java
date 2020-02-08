@@ -27,26 +27,26 @@ public class RedisBufferZone implements BufferZone {
 	@Value("${spring.application.name}")
 	private String applicationName;
 
-	@Value("${socketbird.bufferzone.single:true}")
-	private boolean singleBufferZone;
+	@Value("${socketbird.bufferzone.reused:true}")
+	private boolean reused;
 
 	@Override
 	public void set(String name, Tuple tuple) {
-		template.opsForList().leftPush(keyForName(name), tuple);
+		template.opsForList().leftPush(getKey(name), tuple);
 	}
 
 	@Override
 	public Tuple get(String name) {
-		return (Tuple) template.opsForList().leftPop(keyForName(name));
+		return (Tuple) template.opsForList().leftPop(getKey(name));
 	}
 
 	@Override
 	public int size(String name) {
-		return template.opsForList().size(keyForName(name)).intValue();
+		return template.opsForList().size(getKey(name)).intValue();
 	}
 
-	String keyForName(String name) {
-		return "bufferzone:" + name + ":" + applicationName + (singleBufferZone ? ":" + clusterId.get() : "");
+	protected String getKey(String name) {
+		return "bufferzone:" + name + ":" + applicationName + (reused ? ":" + clusterId.get() : "");
 	}
 
 }

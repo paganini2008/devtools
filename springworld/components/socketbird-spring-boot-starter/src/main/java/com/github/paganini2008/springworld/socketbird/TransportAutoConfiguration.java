@@ -5,15 +5,14 @@ import org.springframework.context.annotation.Import;
 
 /**
  * 
- * ImportConfiguration
+ * TransportAutoConfiguration
  * 
  * @author Fred Feng
  * @created 2019-10
  * @revised 2019-12
  * @version 1.0
  */
-@Import({ ImportServerConfiguration.class, MessageController.class })
+@Import({ TransportServerConfiguration.class, MessageController.class })
 @Configuration
-public class ImportConfiguration {
-
+public class TransportAutoConfiguration {
 }
