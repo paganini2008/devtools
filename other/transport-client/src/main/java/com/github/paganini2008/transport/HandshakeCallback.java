@@ -4,7 +4,7 @@ import java.net.SocketAddress;
 
 /**
  * 
- * HandshakeCompletedListener
+ * HandshakeCallback
  * 
  * @author Fred Feng
  * @created 2019-10
@@ -12,7 +12,7 @@ import java.net.SocketAddress;
  * @version 1.0
  */
 @FunctionalInterface
-public interface HandshakeCompletedListener {
+public interface HandshakeCallback {
 
 	void operationComplete(SocketAddress address);
 

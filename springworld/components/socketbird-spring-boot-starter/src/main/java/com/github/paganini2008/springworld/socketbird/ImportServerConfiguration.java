@@ -1,7 +1,6 @@
 package com.github.paganini2008.springworld.socketbird;
 
-import java.net.SocketAddress;
-
+import org.apache.mina.core.session.IoSession;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -17,23 +16,27 @@ import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import com.github.paganini2008.springworld.cluster.multicast.ContextMulticastEventHandler;
 import com.github.paganini2008.springworld.socketbird.buffer.BufferZone;
 import com.github.paganini2008.springworld.socketbird.buffer.RedisBufferZone;
+import com.github.paganini2008.springworld.socketbird.transport.MinaChannelEventListener;
 import com.github.paganini2008.springworld.socketbird.transport.MinaServer;
 import com.github.paganini2008.springworld.socketbird.transport.MinaServerHandler;
+import com.github.paganini2008.springworld.socketbird.transport.NettyChannelEventListener;
+import com.github.paganini2008.springworld.socketbird.transport.NettyServerKeepAlivePolicy;
 import com.github.paganini2008.springworld.socketbird.transport.NettyServer;
 import com.github.paganini2008.springworld.socketbird.transport.NettyServerHandler;
 import com.github.paganini2008.springworld.socketbird.transport.NioServer;
-import com.github.paganini2008.transport.ChannelStateListener;
+import com.github.paganini2008.transport.ChannelEventListener;
 import com.github.paganini2008.transport.NioClient;
 import com.github.paganini2008.transport.Partitioner;
 import com.github.paganini2008.transport.RoundRobinPartitioner;
 import com.github.paganini2008.transport.mina.MinaClient;
 import com.github.paganini2008.transport.mina.MinaSerializationCodecFactory;
+import com.github.paganini2008.transport.netty.KeepAlivePolicy;
 import com.github.paganini2008.transport.netty.NettyClient;
 import com.github.paganini2008.transport.netty.NettySerializationCodecFactory;
 import com.github.paganini2008.transport.serializer.KryoSerializer;
 import com.github.paganini2008.transport.serializer.Serializer;
 
-import lombok.extern.slf4j.Slf4j;
+import io.netty.channel.Channel;
 
 /**
  * 
@@ -69,12 +72,6 @@ public class ImportServerConfiguration {
 	@Bean
 	public Partitioner partitioner() {
 		return new RoundRobinPartitioner();
-	}
-
-	@ConditionalOnMissingBean(ChannelStateListener.class)
-	@Bean
-	public ChannelStateListener channelStateListener() {
-		return new LoggingChannelStateListener();
 	}
 
 	@Bean
@@ -114,26 +111,6 @@ public class ImportServerConfiguration {
 		return new Counter(redisAtomicLong);
 	}
 
-	@Slf4j
-	public static class LoggingChannelStateListener implements ChannelStateListener {
-
-		@Override
-		public void onConnected(SocketAddress address) {
-			log.trace(address + " is connected.");
-		}
-
-		@Override
-		public void onClosed(SocketAddress address) {
-			log.trace(address + " is disconnected.");
-		}
-
-		@Override
-		public void onError(SocketAddress address, Throwable cause) {
-			log.error(address + " is disconnected.", cause);
-		}
-
-	}
-
 	@Configuration
 	@ConditionalOnProperty(name = "socketbird.transport.nioserver", havingValue = "netty", matchIfMissing = true)
 	public static class NettyTransportConfiguration {
@@ -150,6 +127,12 @@ public class ImportServerConfiguration {
 			return new NettyServer();
 		}
 
+		@ConditionalOnMissingBean(KeepAlivePolicy.class)
+		@Bean
+		public KeepAlivePolicy idlePolicy() {
+			return new NettyServerKeepAlivePolicy();
+		}
+
 		@Bean
 		public NettySerializationCodecFactory codecFactory(Serializer serializer) {
 			return new NettySerializationCodecFactory(serializer);
@@ -158,6 +141,12 @@ public class ImportServerConfiguration {
 		@Bean
 		public NettyServerHandler serverHandler() {
 			return new NettyServerHandler();
+		}
+
+		@ConditionalOnMissingBean(ChannelEventListener.class)
+		@Bean
+		public ChannelEventListener<Channel> channelEventListener() {
+			return new NettyChannelEventListener();
 		}
 	}
 
@@ -185,6 +174,12 @@ public class ImportServerConfiguration {
 		@Bean
 		public MinaServerHandler serverHandler() {
 			return new MinaServerHandler();
+		}
+
+		@ConditionalOnMissingBean(ChannelEventListener.class)
+		@Bean
+		public ChannelEventListener<IoSession> channelEventListener() {
+			return new MinaChannelEventListener();
 		}
 	}
 

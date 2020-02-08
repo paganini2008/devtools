@@ -29,7 +29,7 @@ public class ProcessPoolWorkThread implements ContextMulticastEventHandler {
 
 	@Autowired
 	private ClusterLatch clusterLatch;
-	
+
 	@Autowired
 	private InvocationResult invocationResult;
 
@@ -44,23 +44,13 @@ public class ProcessPoolWorkThread implements ContextMulticastEventHandler {
 			if (bean != null) {
 				invocationResult.setCompleted();
 				result = MethodUtils.invokeMethod(bean, signature.getMethodName(), signature.getArguments());
-				if (bean instanceof FutureCallback) {
-					((FutureCallback) bean).onSuccess(signature,result);
-				}
+				MethodUtils.invokeMethodWithAnnotation(bean, OnSuccess.class, signature, result);
 			} else {
 				log.warn("No bean registered in spring context to call the signature: " + signature);
 			}
 		} catch (Exception e) {
-			if (bean instanceof FutureCallback) {
-				((FutureCallback) bean).onFailure(signature,e);
-			} else {
-				if (e instanceof NoSuchMethodException) {
-					log.warn("No method for name " + signature.getMethodName()
-							+ ", please add a new method, which from the original method and start with 'do' to invoke. ");
-				} else {
-					log.error(e.getMessage(), e);
-				}
-			}
+			log.error(e.getMessage(), e);
+			MethodUtils.invokeMethodWithAnnotation(bean, OnFailure.class, signature, e);
 		} finally {
 			clusterLatch.release();
 

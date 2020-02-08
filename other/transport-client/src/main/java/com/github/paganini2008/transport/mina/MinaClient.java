@@ -1,19 +1,28 @@
 package com.github.paganini2008.transport.mina;
 
 import java.net.SocketAddress;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.mina.core.buffer.CachedBufferAllocator;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.future.IoFuture;
 import org.apache.mina.core.future.IoFutureListener;
+import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
+import org.apache.mina.filter.keepalive.KeepAliveFilter;
+import org.apache.mina.filter.keepalive.KeepAliveMessageFactory;
+import org.apache.mina.filter.keepalive.KeepAliveRequestTimeoutHandler;
 import org.apache.mina.transport.socket.SocketSessionConfig;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
 import com.github.paganini2008.devtools.SystemPropertyUtils;
-import com.github.paganini2008.transport.HandshakeCompletedListener;
+import com.github.paganini2008.transport.ChannelEvent;
+import com.github.paganini2008.transport.ChannelEvent.EventType;
+import com.github.paganini2008.transport.ChannelEventListener;
+import com.github.paganini2008.transport.ConnectionWatcher;
+import com.github.paganini2008.transport.HandshakeCallback;
 import com.github.paganini2008.transport.NioClient;
 import com.github.paganini2008.transport.Partitioner;
 import com.github.paganini2008.transport.TransportClientException;
@@ -35,22 +44,34 @@ public class MinaClient implements NioClient {
 		IoBuffer.setUseDirectBuffer(SystemPropertyUtils.getBoolean("transport.nioclient.mina.useDirectBuffer", false));
 		IoBuffer.setAllocator(new CachedBufferAllocator());
 	}
+	private static final String PING = "PING";
+	private static final String PONG = "PONG";
 
 	private final MinaChannelContext channelContext = new MinaChannelContext();
 	private final AtomicBoolean opened = new AtomicBoolean(false);
 	private MinaSerializationCodecFactory codecFactory;
 	private NioSocketConnector connector;
-	private int idleTime = 60;
+	private int idleTimeout = 30;
+	private int threadCount = Runtime.getRuntime().availableProcessors() * 2;
 
 	@Override
-	public void setIdleTime(int idleTime) {
-		this.idleTime = idleTime;
+	public void setIdleTimeout(int idleTimeout) {
+		this.idleTimeout = idleTimeout;
+	}
+
+	@Override
+	public void watchConnection(int interval, TimeUnit timeUnit) {
+		this.channelContext.setConnectionWatcher(new ConnectionWatcher(interval, timeUnit, this));
+	}
+
+	@Override
+	public void setThreadCount(int nThreads) {
+		this.threadCount = nThreads;
 	}
 
 	@Override
 	public void open() {
-		final int nThreads = SystemPropertyUtils.getInteger("transport.nioclient.threads", Runtime.getRuntime().availableProcessors() * 2);
-		connector = new NioSocketConnector(nThreads);
+		connector = new NioSocketConnector(threadCount);
 		connector.setConnectTimeoutMillis(60000);
 		SocketSessionConfig sessionConfig = connector.getSessionConfig();
 		sessionConfig.setKeepAlive(true);
@@ -59,6 +80,13 @@ public class MinaClient implements NioClient {
 		if (codecFactory == null) {
 			codecFactory = new MinaSerializationCodecFactory();
 		}
+
+		KeepAliveFilter heartBeat = new KeepAliveFilter(new ClientKeepAliveMessageFactory(), IdleStatus.WRITER_IDLE);
+		heartBeat.setForwardEvent(true);
+		heartBeat.setRequestTimeout(idleTimeout);
+		heartBeat.setRequestTimeoutHandler(KeepAliveRequestTimeoutHandler.LOG);
+		connector.getFilterChain().addLast("heartbeat", heartBeat);
+
 		connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(codecFactory));
 		connector.setHandler(channelContext);
 
@@ -93,14 +121,19 @@ public class MinaClient implements NioClient {
 	}
 
 	@Override
-	public void connect(final SocketAddress address, final HandshakeCompletedListener completedListener) {
-		if (isConnected(address)) {
+	public void connect(final SocketAddress remoteAddress, final HandshakeCallback handshakeCallback) {
+		if (isConnected(remoteAddress)) {
 			return;
 		}
 		try {
-			connector.connect(address).addListener(new IoFutureListener<IoFuture>() {
+			connector.connect(remoteAddress).addListener(new IoFutureListener<IoFuture>() {
 				public void operationComplete(IoFuture future) {
-					completedListener.operationComplete(address);
+					ConnectionWatcher connectionWatcher = channelContext.getConnectionWatcher();
+					if (connectionWatcher != null) {
+						connectionWatcher.watch(remoteAddress, handshakeCallback);
+					}
+
+					handshakeCallback.operationComplete(remoteAddress);
 				}
 			}).awaitUninterruptibly();
 		} catch (Exception e) {
@@ -109,8 +142,8 @@ public class MinaClient implements NioClient {
 	}
 
 	@Override
-	public boolean isConnected(SocketAddress address) {
-		IoSession ioSession = channelContext.getChannel(address);
+	public boolean isConnected(SocketAddress remoteAddress) {
+		IoSession ioSession = channelContext.getChannel(remoteAddress);
 		return ioSession != null && ioSession.isActive();
 	}
 
@@ -139,6 +172,29 @@ public class MinaClient implements NioClient {
 			ioSession.write(tuple);
 		} catch (Exception e) {
 			throw new TransportClientException(e.getMessage(), e);
+		}
+	}
+
+	class ClientKeepAliveMessageFactory implements KeepAliveMessageFactory {
+
+		public boolean isRequest(IoSession session, Object message) {
+			return false;
+		}
+
+		public boolean isResponse(IoSession session, Object message) {
+			return (message instanceof Tuple) && PONG.equals(((Tuple) message).getField("content"));
+		}
+
+		public Object getRequest(IoSession session) {
+			return Tuple.by(PING);
+		}
+
+		public Object getResponse(IoSession session, Object request) {
+			ChannelEventListener<IoSession> channelEventListener = channelContext.getChannelEventListener();
+			if (channelEventListener != null) {
+				channelEventListener.fireChannelEvent(new ChannelEvent<IoSession>(session, EventType.PONG, null));
+			}
+			return null;
 		}
 	}
 

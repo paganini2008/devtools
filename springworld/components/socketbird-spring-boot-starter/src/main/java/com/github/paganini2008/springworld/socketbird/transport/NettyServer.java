@@ -5,7 +5,6 @@ import static com.github.paganini2008.springworld.socketbird.Constants.PORT_RANG
 import static com.github.paganini2008.springworld.socketbird.Constants.PORT_RANGE_START;
 
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -16,7 +15,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.net.NetUtils;
 import com.github.paganini2008.springworld.cluster.ClusterId;
-import com.github.paganini2008.transport.netty.IdlePolicy;
+import com.github.paganini2008.transport.netty.KeepAlivePolicy;
 import com.github.paganini2008.transport.netty.NettySerializationCodecFactory;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -59,11 +58,14 @@ public class NettyServer implements NioServer {
 	@Value("${socketbird.transport.nioserver.hostName:}")
 	private String hostName;
 
-	@Value("${socketbird.transport.nioserver.readerIdleTime:300}")
-	private int readerIdleTime;
+	@Value("${socketbird.transport.nioserver.idleTimeout:60}")
+	private int idleTimeout;
 
 	@Value("${spring.application.name}")
 	private String applicationName;
+	
+	@Autowired
+	private KeepAlivePolicy keepAlivePolicy;
 
 	@Autowired
 	private ClusterId clusterId;
@@ -86,18 +88,18 @@ public class NettyServer implements NioServer {
 		bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
 			public void initChannel(SocketChannel ch) throws Exception {
 				ChannelPipeline pipeline = ch.pipeline();
-				pipeline.addLast(new IdleStateHandler(readerIdleTime, 0, 0, TimeUnit.SECONDS));
+				pipeline.addLast(new IdleStateHandler(idleTimeout, 0, 0, TimeUnit.SECONDS));
 				pipeline.addLast(codecFactory.getEncoder(), codecFactory.getDecoder());
-				pipeline.addLast(readerIdleTime > 0 ? IdlePolicy.CLOSE_BY_SERVER : IdlePolicy.NOOP);
+				pipeline.addLast(keepAlivePolicy);
 				pipeline.addLast(serverHandler);
 			}
 		});
 		int port = NetUtils.getRandomPort(PORT_RANGE_START, PORT_RANGE_END);
 		try {
-			SocketAddress socketAddress = StringUtils.isNotBlank(hostName) ? new InetSocketAddress(hostName, port)
+			InetSocketAddress socketAddress = StringUtils.isNotBlank(hostName) ? new InetSocketAddress(hostName, port)
 					: new InetSocketAddress(port);
 			bootstrap.bind(socketAddress).sync();
-			String location = (StringUtils.isNotBlank(hostName) ? hostName : NetUtils.getLocalHost()) + ":" + port;
+			String location = socketAddress.getHostName() + ":" + socketAddress.getPort();
 			String key = String.format(APPLICATION_KEY, applicationName);
 			redisTemplate.opsForHash().put(key, clusterId.get(), location);
 			started.set(true);

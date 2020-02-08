@@ -1,6 +1,6 @@
 package com.github.paganini2008.transport;
 
-import java.net.SocketAddress;
+import java.util.concurrent.TimeUnit;
 
 import com.github.paganini2008.transport.serializer.Serializer;
 
@@ -13,13 +13,13 @@ import com.github.paganini2008.transport.serializer.Serializer;
  * @revised 2019-12
  * @version 1.0
  */
-public interface NioClient extends LifeCycle {
-	
-	void setIdleTime(int idleTime);
+public interface NioClient extends LifeCycle, NioConnection {
 
-	void connect(SocketAddress address, HandshakeCompletedListener completedListener);
+	void setThreadCount(int nThreads);
 
-	boolean isConnected(SocketAddress address);
+	void watchConnection(int interval, TimeUnit timeUnit);
+
+	void setIdleTimeout(int idleTime);
 
 	void setSerializer(Serializer serializer);
 

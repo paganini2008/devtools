@@ -186,12 +186,35 @@ public abstract class MethodUtils {
 		});
 	}
 
+	public static Object invokeMethodWithAnnotation(Object object, Class<? extends Annotation> annotationClass, Object... arguments) {
+		List<Method> methods = getMethodsWithAnnotation(object.getClass(), annotationClass);
+		Method matched = CollectionUtils.getFirst(methods);
+		if (matched != null) {
+			return invokeMethod(object, matched, arguments);
+		}
+		return null;
+	}
+
+	public static Object[] invokeMethodsWithAnnotation(Object object, Class<? extends Annotation> annotationClass, Object... arguments) {
+		List<Method> methods = getMethodsWithAnnotation(object.getClass(), annotationClass);
+		if (CollectionUtils.isNotEmpty(methods)) {
+			Object[] results = new Object[methods.size()];
+			int i = 0;
+			for (Method method : methods) {
+				results[i++] = invokeMethod(object, method, arguments);
+			}
+			return results;
+		}
+		return null;
+	}
+
 	/**
 	 * 
 	 * DeclaredMethodIterator
 	 * 
 	 * @author Fred Feng
-	 * @revised 2019-07
+	 * @created 2012-05
+	 * @revised 2019-05
 	 * @version 1.0
 	 */
 	public static class DeclaredMethodIterator implements Iterator<Method> {
@@ -227,6 +250,7 @@ public abstract class MethodUtils {
 	 * MethodIterator
 	 * 
 	 * @author Fred Feng
+	 * @created 2012-05
 	 * @revised 2019-05
 	 * @version 1.0
 	 */

@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.github.paganini2008.springworld.socketbird.buffer.BufferZone;
-import com.github.paganini2008.transport.ChannelStateListener;
+import com.github.paganini2008.transport.ChannelEvent;
+import com.github.paganini2008.transport.ChannelEvent.EventType;
 import com.github.paganini2008.transport.Tuple;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -29,30 +31,36 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 	@Value("${socketbird.bufferzone.collectionName}")
 	private String collectionName;
 
-	@Autowired
-	private ChannelStateListener channelStateListener;
+	@Autowired(required = false)
+	private NettyChannelEventListener channelEventListener;
 
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		super.channelActive(ctx);
-		channelStateListener.onConnected(ctx.channel().remoteAddress());
+		fireChannelEvent(ctx.channel(), EventType.CONNECTED, null); 
 	}
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		super.channelInactive(ctx);
-		channelStateListener.onClosed(ctx.channel().remoteAddress());
+		fireChannelEvent(ctx.channel(), EventType.CLOSED, null); 
 	}
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		super.exceptionCaught(ctx, cause);
-		channelStateListener.onError(ctx.channel().remoteAddress(), cause);
+		fireChannelEvent(ctx.channel(), EventType.FAULTY, cause); 
 	}
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object data) throws Exception {
 		store.set(collectionName, (Tuple) data);
+	}
+
+	private void fireChannelEvent(Channel channel, EventType eventType, Throwable cause) {
+		if (channelEventListener != null) {
+			channelEventListener.fireChannelEvent(new ChannelEvent<Channel>(channel, eventType, cause));
+		}
 	}
 
 }

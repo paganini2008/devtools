@@ -4,8 +4,8 @@ import java.net.SocketAddress;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.github.paganini2008.devtools.SystemPropertyUtils;
-import com.github.paganini2008.transport.HandshakeCompletedListener;
+import com.github.paganini2008.transport.ConnectionWatcher;
+import com.github.paganini2008.transport.HandshakeCallback;
 import com.github.paganini2008.transport.NioClient;
 import com.github.paganini2008.transport.Partitioner;
 import com.github.paganini2008.transport.TransportClientException;
@@ -42,20 +42,27 @@ public class NettyClient implements NioClient {
 	private EventLoopGroup workerGroup;
 	private Bootstrap bootstrap;
 	private NettySerializationCodecFactory codecFactory;
+	private int threadCount = Runtime.getRuntime().availableProcessors() * 2;
+	private int idleTimeout = 30;
 
-	private int idleTime = 60;
+	public void setThreadCount(int nThreads) {
+		this.threadCount = nThreads;
+	}
 
-	public void setIdleTime(int idleTime) {
-		this.idleTime = idleTime;
+	public void setIdleTimeout(int idleTimeout) {
+		this.idleTimeout = idleTimeout;
 	}
 
 	public void setSerializer(Serializer serializer) {
 		this.codecFactory = new NettySerializationCodecFactory(serializer);
 	}
 
+	public void watchConnection(int interval, TimeUnit timeUnit) {
+		this.channelContext.setConnectionWatcher(new ConnectionWatcher(interval, timeUnit, this));
+	}
+
 	public void open() {
-		final int nThreads = SystemPropertyUtils.getInteger("transport.nioclient.threads", Runtime.getRuntime().availableProcessors() * 2);
-		workerGroup = new NioEventLoopGroup(nThreads);
+		workerGroup = new NioEventLoopGroup(threadCount);
 		bootstrap = new Bootstrap();
 		bootstrap.group(workerGroup).channel(NioSocketChannel.class).option(ChannelOption.SO_KEEPALIVE, true)
 				.option(ChannelOption.TCP_NODELAY, true).option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 60000)
@@ -66,8 +73,8 @@ public class NettyClient implements NioClient {
 		bootstrap.handler(new ChannelInitializer<SocketChannel>() {
 			public void initChannel(SocketChannel ch) throws Exception {
 				ChannelPipeline pipeline = ch.pipeline();
-				pipeline.addLast(new IdleStateHandler(0, idleTime, 0, TimeUnit.SECONDS));
-				pipeline.addLast(idleTime > 0 ? IdlePolicy.PING : IdlePolicy.NOOP);
+				pipeline.addLast(new IdleStateHandler(0, idleTimeout, 0, TimeUnit.SECONDS));
+				pipeline.addLast(new NettyClientKeepAlivePolicy());
 				pipeline.addLast(codecFactory.getEncoder(), codecFactory.getDecoder());
 				pipeline.addLast(channelContext);
 			}
@@ -79,15 +86,19 @@ public class NettyClient implements NioClient {
 		return opened.get();
 	}
 
-	public void connect(final SocketAddress address, final HandshakeCompletedListener completedListener) {
-		if (isConnected(address)) {
+	public void connect(final SocketAddress remoteAddress, final HandshakeCallback handshakeCallback) {
+		if (isConnected(remoteAddress)) {
 			return;
 		}
 		try {
-			bootstrap.connect(address).addListener(new GenericFutureListener<ChannelFuture>() {
+			bootstrap.connect(remoteAddress).addListener(new GenericFutureListener<ChannelFuture>() {
 				public void operationComplete(ChannelFuture future) throws Exception {
-					if (completedListener != null) {
-						completedListener.operationComplete(address);
+					ConnectionWatcher connectionWatcher = channelContext.getConnectionWatcher();
+					if (connectionWatcher != null) {
+						connectionWatcher.watch(remoteAddress, handshakeCallback);
+					}
+					if (handshakeCallback != null) {
+						handshakeCallback.operationComplete(remoteAddress);
 					}
 				}
 			}).sync();
@@ -134,8 +145,8 @@ public class NettyClient implements NioClient {
 		opened.set(false);
 	}
 
-	public boolean isConnected(SocketAddress address) {
-		Channel channel = channelContext.getChannel(address);
+	public boolean isConnected(SocketAddress remoteAddress) {
+		Channel channel = channelContext.getChannel(remoteAddress);
 		return channel != null && channel.isActive();
 	}
 

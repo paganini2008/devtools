@@ -31,7 +31,7 @@ public class RedisWorkQueue implements WorkQueue {
 	private String applicationName;
 
 	public void push(Signature signature) {
-		String key = key();
+		String key = getKey();
 		long queueSize = redisTemplate.opsForList().size(key);
 		if (queueSize > poolConfig.getQueueSize()) {
 			throw new RejectedExecutionException("Pool queue has been full. Size: " + queueSize);
@@ -41,20 +41,20 @@ public class RedisWorkQueue implements WorkQueue {
 	}
 
 	public Signature pop() {
-		return (Signature) redisTemplate.opsForList().leftPop(key());
+		return (Signature) redisTemplate.opsForList().leftPop(getKey());
 	}
 
 	public void waitForTermination() {
-		while (redisTemplate.opsForList().size(key()) != 0) {
+		while (redisTemplate.opsForList().size(getKey()) != 0) {
 			ThreadUtils.randomSleep(1000L);
 		}
 	}
 	
 	public int size() {
-		return redisTemplate.opsForList().size(key()).intValue();
+		return redisTemplate.opsForList().size(getKey()).intValue();
 	}
 
-	private String key() {
+	protected String getKey() {
 		return TOPIC_IDENTITY + ":" + applicationName;
 	}
 

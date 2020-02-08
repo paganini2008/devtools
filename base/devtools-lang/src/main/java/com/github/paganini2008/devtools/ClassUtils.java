@@ -373,6 +373,7 @@ public abstract class ClassUtils {
 	}
 
 	public static Class<?> forName(String className) {
+		Assert.hasNoText(className);
 		try {
 			return Class.forName(className);
 		} catch (ClassNotFoundException e) {

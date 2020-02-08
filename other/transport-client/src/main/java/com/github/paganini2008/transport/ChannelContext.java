@@ -30,6 +30,6 @@ public interface ChannelContext<T> {
 
 	Collection<T> getChannels();
 
-	void setChannelStateListener(ChannelStateListener channelStateListener);
+	void setChannelEventListener(ChannelEventListener<T> channelEventListener);
 
 }

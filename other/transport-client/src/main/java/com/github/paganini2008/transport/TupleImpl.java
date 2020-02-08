@@ -26,6 +26,7 @@ public class TupleImpl extends HashMap<String, Object> implements Tuple {
 
 	TupleImpl(Map<String, ?> kwargs) {
 		super(kwargs);
+		setField("timestamp", System.currentTimeMillis());
 	}
 
 	@Override

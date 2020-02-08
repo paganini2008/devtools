@@ -6,7 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.github.paganini2008.springworld.socketbird.buffer.BufferZone;
-import com.github.paganini2008.transport.ChannelStateListener;
+import com.github.paganini2008.transport.ChannelEvent;
+import com.github.paganini2008.transport.ChannelEvent.EventType;
 import com.github.paganini2008.transport.Tuple;
 
 /**
@@ -26,30 +27,36 @@ public class MinaServerHandler extends IoHandlerAdapter {
 	@Value("${socketbird.bufferzone.collectionName}")
 	private String collectionName;
 
-	@Autowired
-	private ChannelStateListener channelStateListener;
+	@Autowired(required = false)
+	private MinaChannelEventListener channelEventListener;
 
 	@Override
 	public void sessionOpened(IoSession session) throws Exception {
 		super.sessionOpened(session);
-		channelStateListener.onConnected(session.getRemoteAddress());
+		fireChannelEvent(session, EventType.CONNECTED, null);
 	}
 
 	@Override
 	public void sessionClosed(IoSession session) throws Exception {
 		super.sessionClosed(session);
-		channelStateListener.onClosed(session.getRemoteAddress());
+		fireChannelEvent(session, EventType.CLOSED, null);
 	}
 
 	@Override
 	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
 		super.exceptionCaught(session, cause);
-		channelStateListener.onError(session.getRemoteAddress(), cause);
+		fireChannelEvent(session, EventType.FAULTY, cause);
 	}
 
 	@Override
 	public void messageReceived(IoSession session, Object message) throws Exception {
 		store.set(collectionName, (Tuple) message);
+	}
+
+	private void fireChannelEvent(IoSession channel, EventType eventType, Throwable cause) {
+		if (channelEventListener != null) {
+			channelEventListener.fireChannelEvent(new ChannelEvent<IoSession>(channel, eventType, cause));
+		}
 	}
 
 }
