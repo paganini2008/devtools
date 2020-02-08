@@ -143,7 +143,7 @@ public class MinaClient implements NioClient {
 	@Override
 	public boolean isConnected(SocketAddress remoteAddress) {
 		IoSession ioSession = channelContext.getChannel(remoteAddress);
-		return ioSession != null && ioSession.isActive();
+		return ioSession != null && ioSession.isConnected();
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package com.github.paganini2008.springworld.webcrawler;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -86,6 +87,7 @@ public class TestMain {
 //		System.out.println(integer);
 		
 		System.out.println(Map.class.isAssignableFrom(HashMap.class));
+		System.out.println(Arrays.toString("fengyan".getBytes()));
 	}
 
 }

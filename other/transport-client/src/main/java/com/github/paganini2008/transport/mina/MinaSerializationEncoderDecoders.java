@@ -42,10 +42,8 @@ public abstract class MinaSerializationEncoderDecoders {
 
 		@Override
 		public void encode(IoSession session, Object message, ProtocolEncoderOutput out) throws Exception {
-			IoBuffer buf = IoBuffer.allocate(64);
-			buf.setAutoExpand(true);
-
 			byte[] data = serializer.serialize((Tuple) message);
+			IoBuffer buf = IoBuffer.allocate(data.length + 4);
 			buf.putInt(data.length);
 			buf.put(data);
 			int objectSize = buf.position() - 4;

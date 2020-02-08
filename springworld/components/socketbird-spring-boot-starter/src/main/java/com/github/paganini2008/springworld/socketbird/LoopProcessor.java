@@ -106,6 +106,7 @@ public class LoopProcessor implements Runnable {
 						handler.onData(copy);
 					}
 				}
+				tuple = null;
 			} else {
 				ThreadUtils.randomSleep(1000L);
 			}
