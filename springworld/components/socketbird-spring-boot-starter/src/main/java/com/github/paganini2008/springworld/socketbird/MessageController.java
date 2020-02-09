@@ -14,6 +14,8 @@ import com.github.paganini2008.transport.NioClient;
 import com.github.paganini2008.transport.Partitioner;
 import com.github.paganini2008.transport.Tuple;
 
+import io.netty.util.internal.ThreadLocalRandom;
+
 /**
  * 
  * MessageController
@@ -48,7 +50,11 @@ public class MessageController {
 		int N = 10000;
 
 		for (int i = 0; i < N; i++) {
-			Tuple data = Tuple.by("Hello world!");
+			StringBuilder str = new StringBuilder();
+			for (int j = 0, l = ThreadLocalRandom.current().nextInt(100, 1000); j < l; j++) {
+				str.append(UUID.randomUUID().toString());
+			}
+			Tuple data = Tuple.by(str.toString());
 			nioClient.send(data, partitioner);
 		}
 
