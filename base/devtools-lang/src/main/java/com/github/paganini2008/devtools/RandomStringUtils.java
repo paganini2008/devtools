@@ -96,7 +96,7 @@ public class RandomStringUtils {
 		char[] buffer = new char[count];
 		for (int i = 0; i < count; i++) {
 			buffer[i] = chars[RandomUtils.randomInt(from, to)];
-		}
+		} 
 		return new String(buffer);
 	}
 

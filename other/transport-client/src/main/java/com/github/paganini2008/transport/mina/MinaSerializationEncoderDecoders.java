@@ -43,9 +43,11 @@ public abstract class MinaSerializationEncoderDecoders {
 		@Override
 		public void encode(IoSession session, Object message, ProtocolEncoderOutput out) throws Exception {
 			byte[] data = serializer.serialize((Tuple) message);
-			IoBuffer buf = IoBuffer.allocate(data.length + 4);
+			IoBuffer buf = IoBuffer.allocate(64);
+			buf.setAutoExpand(true);
 			buf.putInt(data.length);
 			buf.put(data);
+
 			int objectSize = buf.position() - 4;
 			if (objectSize > maxObjectSize) {
 				throw new IllegalArgumentException("The encoded object is too big: " + objectSize + " (> " + maxObjectSize + ')');
