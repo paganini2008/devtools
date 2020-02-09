@@ -1,5 +1,6 @@
 package com.github.paganini2008.transport.mina;
 
+import org.apache.mina.core.buffer.BufferDataException;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.CumulativeProtocolDecoder;
@@ -43,8 +44,7 @@ public abstract class MinaSerializationEncoderDecoders {
 		@Override
 		public void encode(IoSession session, Object message, ProtocolEncoderOutput out) throws Exception {
 			byte[] data = serializer.serialize((Tuple) message);
-			IoBuffer buf = IoBuffer.allocate(64);
-			buf.setAutoExpand(true);
+			IoBuffer buf = IoBuffer.allocate(data.length + 4);
 			buf.putInt(data.length);
 			buf.put(data);
 
@@ -83,10 +83,13 @@ public abstract class MinaSerializationEncoderDecoders {
 				return false;
 			}
 			int length = in.getInt();
-			byte[] bytes = new byte[length];
-			in.get(bytes);
-			Tuple data = serializer.deserialize(bytes);
-			out.write(data);
+			if (length <= 4) {
+				throw new BufferDataException("Object length should be greater than 4: " + length);
+			}
+			byte[] data = new byte[length];
+			in.get(data);
+			Tuple tuple = serializer.deserialize(data);
+			out.write(tuple);
 			return true;
 		}
 

@@ -3,7 +3,6 @@ package com.github.paganini2008.springworld.socketbird;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 import com.github.paganini2008.transport.NioClient;
 import com.github.paganini2008.transport.Partitioner;
 import com.github.paganini2008.transport.Tuple;
@@ -37,7 +35,7 @@ public class MessageController {
 
 	@GetMapping("/send")
 	public Map<String, Object> sendMsg(@RequestParam("q") String content) {
-		Tuple data = Tuple.by(content);
+		Tuple data = Tuple.by(UUID.randomUUID().toString());
 		nioClient.send(data, partitioner);
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("q", content);
@@ -49,21 +47,10 @@ public class MessageController {
 	public Map<String, Object> test() {
 		int N = 10000;
 
-		ThreadUtils.runAsThread(() -> {
-			StringBuilder str = new StringBuilder();
-			for (int i = 0; i < N; i++) {
-
-				int n = ThreadLocalRandom.current().nextInt(1, 20);
-
-				for (int j = 0; j < n; j++) {
-					str.append(UUID.randomUUID().toString());
-				}
-				Tuple data = Tuple.by(str.toString());
-				nioClient.send(data, partitioner);
-				str.delete(0, str.length() - 1);
-
-			}
-		});
+		for (int i = 0; i < N; i++) {
+			Tuple data = Tuple.by("Hello world!");
+			nioClient.send(data, partitioner);
+		}
 
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("success", true);

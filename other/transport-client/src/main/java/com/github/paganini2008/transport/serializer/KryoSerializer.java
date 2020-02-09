@@ -1,5 +1,6 @@
 package com.github.paganini2008.transport.serializer;
 
+import java.io.InputStream;
 import java.util.HashMap;
 
 import org.objenesis.strategy.StdInstantiatorStrategy;
@@ -78,6 +79,18 @@ public class KryoSerializer implements Serializer {
 		Input input = inputPool.obtain();
 		try {
 			input.setBuffer(bytes);
+			return kryo.readObject(input, TupleImpl.class);
+		} finally {
+			inputPool.free(input);
+			pool.free(kryo);
+		}
+	}
+	
+	public Tuple deserialize(InputStream in) {
+		Kryo kryo = pool.obtain();
+		Input input = inputPool.obtain();
+		try {
+			input.setInputStream(in);
 			return kryo.readObject(input, TupleImpl.class);
 		} finally {
 			inputPool.free(input);

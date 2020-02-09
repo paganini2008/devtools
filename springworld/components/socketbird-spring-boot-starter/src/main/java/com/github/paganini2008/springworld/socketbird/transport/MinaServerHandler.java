@@ -33,19 +33,17 @@ public class MinaServerHandler extends IoHandlerAdapter {
 
 	@Override
 	public void sessionOpened(IoSession session) throws Exception {
-		super.sessionOpened(session);
 		fireChannelEvent(session, EventType.CONNECTED, null);
 	}
 
 	@Override
 	public void sessionClosed(IoSession session) throws Exception {
-		super.sessionClosed(session);
 		fireChannelEvent(session, EventType.CLOSED, null);
 	}
 
 	@Override
 	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
-		super.exceptionCaught(session, cause);
+		cause.printStackTrace();
 		fireChannelEvent(session, EventType.FAULTY, cause);
 	}
 
