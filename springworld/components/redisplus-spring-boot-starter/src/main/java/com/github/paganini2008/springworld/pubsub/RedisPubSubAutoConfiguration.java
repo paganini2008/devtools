@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.redisplus;
+package com.github.paganini2008.springworld.pubsub;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;

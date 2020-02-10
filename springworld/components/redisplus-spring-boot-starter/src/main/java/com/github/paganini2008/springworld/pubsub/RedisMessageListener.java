@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.redisplus;
+package com.github.paganini2008.springworld.pubsub;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

@@ -5,9 +5,9 @@ import static com.github.paganini2008.springworld.cluster.multicast.ContextMulti
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.paganini2008.springworld.cluster.ContextClusterConfigProperties;
+import com.github.paganini2008.springworld.pubsub.RedisMessageHandler;
+import com.github.paganini2008.springworld.pubsub.RedisMessageSender;
 import com.github.paganini2008.springworld.cluster.ClusterId;
-import com.github.paganini2008.springworld.redisplus.RedisMessageHandler;
-import com.github.paganini2008.springworld.redisplus.RedisMessageSender;
 
 /**
  * 

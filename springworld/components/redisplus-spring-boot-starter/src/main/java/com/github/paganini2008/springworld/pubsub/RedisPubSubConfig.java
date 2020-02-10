@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.redisplus;
+package com.github.paganini2008.springworld.pubsub;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

@@ -5,8 +5,8 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 import com.github.paganini2008.springworld.cluster.ContextClusterConfigProperties;
+import com.github.paganini2008.springworld.pubsub.RedisMessageSender;
 import com.github.paganini2008.springworld.cluster.ClusterId;
-import com.github.paganini2008.springworld.redisplus.RedisMessageSender;
 
 /**
  * 

@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.StringUtils;
-import com.github.paganini2008.springworld.redisplus.RedisMessageSender;
+import com.github.paganini2008.springworld.pubsub.RedisMessageSender;
 
 /**
  * 

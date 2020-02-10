@@ -10,7 +10,7 @@ import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 import com.github.paganini2008.springworld.cluster.ClusterId;
 import com.github.paganini2008.springworld.cluster.ContextClusterConfigProperties;
-import com.github.paganini2008.springworld.redisplus.RedisMessageSender;
+import com.github.paganini2008.springworld.pubsub.RedisMessageSender;
 
 import lombok.extern.slf4j.Slf4j;
 
