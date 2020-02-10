@@ -1,7 +1,5 @@
 package com.github.paganini2008.transport.serializer;
 
-import java.io.InputStream;
-
 import com.github.paganini2008.transport.Tuple;
 
 /**
@@ -17,6 +15,5 @@ public interface Serializer {
 	byte[] serialize(Tuple tuple);
 
 	Tuple deserialize(byte[] bytes);
-	
-	Tuple deserialize(InputStream in);
+
 }

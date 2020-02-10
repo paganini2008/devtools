@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.socketbird;
+package com.github.paganini2008.springworld.transport;
 
 import java.net.InetSocketAddress;
 
@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
- * AutoConnectionEventListener
+ * ConnectionSensitiveMulticastEventHandler
  * 
  * @author Fred Feng
  * @created 2019-10
@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
  * @version 1.0
  */
 @Slf4j
-public class AutoConnectionEventListener implements ContextMulticastEventHandler {
+public class ConnectionSensitiveMulticastEventHandler implements ContextMulticastEventHandler {
 
 	@Autowired
 	private NioClient nioClient;

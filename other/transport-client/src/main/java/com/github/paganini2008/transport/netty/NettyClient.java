@@ -4,6 +4,7 @@ import java.net.SocketAddress;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.github.paganini2008.transport.ChannelEventListener;
 import com.github.paganini2008.transport.ConnectionWatcher;
 import com.github.paganini2008.transport.HandshakeCallback;
 import com.github.paganini2008.transport.NioClient;
@@ -59,6 +60,10 @@ public class NettyClient implements NioClient {
 
 	public void watchConnection(int interval, TimeUnit timeUnit) {
 		this.channelContext.setConnectionWatcher(new ConnectionWatcher(interval, timeUnit, this));
+	}
+	
+	public void setChannelEventListener(ChannelEventListener<Channel> channelEventListener) {
+		this.channelContext.setChannelEventListener(channelEventListener);
 	}
 
 	public void open() {

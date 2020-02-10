@@ -1,8 +1,8 @@
-package com.github.paganini2008.springworld.socketbird.transport;
+package com.github.paganini2008.springworld.transport.transport;
 
-import static com.github.paganini2008.springworld.socketbird.Constants.APPLICATION_KEY;
-import static com.github.paganini2008.springworld.socketbird.Constants.PORT_RANGE_END;
-import static com.github.paganini2008.springworld.socketbird.Constants.PORT_RANGE_START;
+import static com.github.paganini2008.springworld.transport.Constants.APPLICATION_KEY;
+import static com.github.paganini2008.springworld.transport.Constants.PORT_RANGE_END;
+import static com.github.paganini2008.springworld.transport.Constants.PORT_RANGE_START;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
@@ -52,13 +52,13 @@ public class NettyServer implements NioServer {
 	@Autowired
 	private NettySerializationCodecFactory codecFactory;
 
-	@Value("${socketbird.transport.nioserver.threads:-1}")
+	@Value("${spring.transport.nioserver.threads:-1}")
 	private int threadCount;
 
-	@Value("${socketbird.transport.nioserver.hostName:}")
+	@Value("${spring.transport.nioserver.hostName:}")
 	private String hostName;
 
-	@Value("${socketbird.transport.nioserver.idleTimeout:60}")
+	@Value("${spring.transport.nioserver.idleTimeout:60}")
 	private int idleTimeout;
 
 	@Value("${spring.application.name}")

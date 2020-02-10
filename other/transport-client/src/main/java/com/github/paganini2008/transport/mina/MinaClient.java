@@ -39,12 +39,13 @@ import com.github.paganini2008.transport.serializer.Serializer;
  */
 public class MinaClient implements NioClient {
 
+	private static final String PING = "PING";
+	private static final String PONG = "PONG";
+
 	static {
 		IoBuffer.setUseDirectBuffer(false);
 		IoBuffer.setAllocator(new SimpleBufferAllocator());
 	}
-	private static final String PING = "PING";
-	private static final String PONG = "PONG";
 
 	private final MinaChannelContext channelContext = new MinaChannelContext();
 	private final AtomicBoolean opened = new AtomicBoolean(false);
@@ -66,6 +67,10 @@ public class MinaClient implements NioClient {
 	@Override
 	public void setThreadCount(int nThreads) {
 		this.threadCount = nThreads;
+	}
+
+	public void setChannelEventListener(ChannelEventListener<IoSession> channelEventListener) {
+		this.channelContext.setChannelEventListener(channelEventListener);
 	}
 
 	@Override
@@ -130,8 +135,9 @@ public class MinaClient implements NioClient {
 					if (connectionWatcher != null) {
 						connectionWatcher.watch(remoteAddress, handshakeCallback);
 					}
-
-					handshakeCallback.operationComplete(remoteAddress);
+					if (handshakeCallback != null) {
+						handshakeCallback.operationComplete(remoteAddress);
+					}
 				}
 			}).awaitUninterruptibly();
 		} catch (Exception e) {

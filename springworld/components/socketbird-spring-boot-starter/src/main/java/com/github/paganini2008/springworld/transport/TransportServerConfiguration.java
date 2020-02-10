@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.socketbird;
+package com.github.paganini2008.springworld.transport;
 
 import org.apache.mina.core.session.IoSession;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,16 +14,16 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 
 import com.github.paganini2008.springworld.cluster.multicast.ContextMulticastEventHandler;
-import com.github.paganini2008.springworld.socketbird.buffer.BufferZone;
-import com.github.paganini2008.springworld.socketbird.buffer.RedisBufferZone;
-import com.github.paganini2008.springworld.socketbird.transport.MinaChannelEventListener;
-import com.github.paganini2008.springworld.socketbird.transport.MinaServer;
-import com.github.paganini2008.springworld.socketbird.transport.MinaServerHandler;
-import com.github.paganini2008.springworld.socketbird.transport.NettyChannelEventListener;
-import com.github.paganini2008.springworld.socketbird.transport.NettyServerKeepAlivePolicy;
-import com.github.paganini2008.springworld.socketbird.transport.NettyServer;
-import com.github.paganini2008.springworld.socketbird.transport.NettyServerHandler;
-import com.github.paganini2008.springworld.socketbird.transport.NioServer;
+import com.github.paganini2008.springworld.transport.buffer.BufferZone;
+import com.github.paganini2008.springworld.transport.buffer.RedisBufferZone;
+import com.github.paganini2008.springworld.transport.transport.MinaChannelEventListener;
+import com.github.paganini2008.springworld.transport.transport.MinaServer;
+import com.github.paganini2008.springworld.transport.transport.MinaServerHandler;
+import com.github.paganini2008.springworld.transport.transport.NettyChannelEventListener;
+import com.github.paganini2008.springworld.transport.transport.NettyServer;
+import com.github.paganini2008.springworld.transport.transport.NettyServerHandler;
+import com.github.paganini2008.springworld.transport.transport.NettyServerKeepAlivePolicy;
+import com.github.paganini2008.springworld.transport.transport.NioServer;
 import com.github.paganini2008.transport.ChannelEventListener;
 import com.github.paganini2008.transport.NioClient;
 import com.github.paganini2008.transport.Partitioner;
@@ -47,7 +47,7 @@ import io.netty.channel.Channel;
  * @revised 2019-10
  * @version 1.0
  */
-@ConditionalOnProperty(prefix = "socketbird", name = "mode", havingValue = "server", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "spring.transport", name = "mode", havingValue = "server", matchIfMissing = true)
 @Configuration
 public class TransportServerConfiguration {
 
@@ -75,8 +75,8 @@ public class TransportServerConfiguration {
 	}
 
 	@Bean
-	public ContextMulticastEventHandler autoConnectionEventListener() {
-		return new AutoConnectionEventListener();
+	public ContextMulticastEventHandler connectionSensitiveMulticastEventHandler() {
+		return new ConnectionSensitiveMulticastEventHandler();
 	}
 
 	@Primary
@@ -103,7 +103,7 @@ public class TransportServerConfiguration {
 
 	@Bean("counter-bigint")
 	public RedisAtomicLong redisAtomicLong(@Qualifier("redistemplate-bigint") RedisTemplate<String, Long> redisTemplate) {
-		return new RedisAtomicLong("socketbird:counter", redisTemplate);
+		return new RedisAtomicLong("transport:counter", redisTemplate);
 	}
 
 	@Bean(initMethod = "start", destroyMethod = "stop")
@@ -112,7 +112,7 @@ public class TransportServerConfiguration {
 	}
 
 	@Configuration
-	@ConditionalOnProperty(name = "socketbird.transport.nioserver", havingValue = "netty", matchIfMissing = true)
+	@ConditionalOnProperty(name = "spring.transport.nioserver", havingValue = "netty", matchIfMissing = true)
 	public static class NettyTransportConfiguration {
 
 		@Bean(initMethod = "open", destroyMethod = "close")
@@ -151,7 +151,7 @@ public class TransportServerConfiguration {
 	}
 
 	@Configuration
-	@ConditionalOnProperty(name = "socketbird.transport.nioserver", havingValue = "mina")
+	@ConditionalOnProperty(name = "spring.transport.nioserver", havingValue = "mina")
 	public static class MinaTransportConfiguration {
 
 		@Bean(initMethod = "open", destroyMethod = "close")

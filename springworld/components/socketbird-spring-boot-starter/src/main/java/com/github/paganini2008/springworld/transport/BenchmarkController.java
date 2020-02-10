@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.socketbird;
+package com.github.paganini2008.springworld.transport;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,16 +18,16 @@ import io.netty.util.internal.ThreadLocalRandom;
 
 /**
  * 
- * MessageController
+ * BenchmarkController
  * 
  * @author Fred Feng
  * @created 2019-10
  * @revised 2019-10
  * @version 1.0
  */
-@RequestMapping("/socketbird")
+@RequestMapping("/transport")
 @RestController
-public class MessageController {
+public class BenchmarkController {
 
 	@Autowired
 	private NioClient nioClient;
@@ -35,9 +35,9 @@ public class MessageController {
 	@Autowired
 	private Partitioner partitioner;
 
-	@GetMapping("/send")
-	public Map<String, Object> sendMsg(@RequestParam("q") String content) {
-		Tuple data = Tuple.by(UUID.randomUUID().toString());
+	@GetMapping("/echo")
+	public Map<String, Object> echo(@RequestParam("q") String content) {
+		Tuple data = Tuple.by(content);
 		nioClient.send(data, partitioner);
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("q", content);
@@ -46,8 +46,7 @@ public class MessageController {
 	}
 
 	@GetMapping("/test")
-	public Map<String, Object> test() {
-		int N = 10000;
+	public Map<String, Object> test(@RequestParam(name = "n", defaultValue = "10000", required = false) int N) {
 
 		for (int i = 0; i < N; i++) {
 			StringBuilder str = new StringBuilder();

@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.socketbird.buffer;
+package com.github.paganini2008.springworld.transport.buffer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +27,7 @@ public class RedisBufferZone implements BufferZone {
 	@Value("${spring.application.name}")
 	private String applicationName;
 
-	@Value("${socketbird.bufferzone.reused:true}")
+	@Value("${spring.transport.bufferzone.reused:true}")
 	private boolean reused;
 
 	@Override
@@ -46,7 +46,7 @@ public class RedisBufferZone implements BufferZone {
 	}
 
 	protected String getKey(String name) {
-		return "bufferzone:" + name + ":" + applicationName + (reused ? ":" + clusterId.get() : "");
+		return "transport:bufferzone:" + name + ":" + applicationName + (reused ? ":" + clusterId.get() : "");
 	}
 
 }

@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.socketbird.buffer;
+package com.github.paganini2008.springworld.transport.buffer;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;

@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.socketbird;
+package com.github.paganini2008.springworld.transport;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;

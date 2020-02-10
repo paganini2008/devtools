@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.socketbird;
+package com.github.paganini2008.springworld.transport;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Import;
  * @revised 2019-12
  * @version 1.0
  */
-@Import({ TransportServerConfiguration.class, MessageController.class })
+@Import({ TransportServerConfiguration.class, BenchmarkController.class })
 @Configuration
 public class TransportAutoConfiguration {
 }

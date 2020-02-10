@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.MapUtils;
-import com.github.paganini2008.springworld.socketbird.Handler;
+import com.github.paganini2008.springworld.transport.Handler;
 import com.github.paganini2008.springworld.webcrawler.jdbc.ResourceService;
 import com.github.paganini2008.springworld.webcrawler.search.IndexedResourceService;
 import com.github.paganini2008.springworld.webcrawler.utils.RedisBloomFilter;

@@ -1,7 +1,5 @@
 package com.github.paganini2008.transport.serializer;
 
-import java.io.InputStream;
-
 import com.github.paganini2008.devtools.io.SerializationUtils;
 import com.github.paganini2008.transport.Tuple;
 
@@ -22,10 +20,6 @@ public class JdkSerializer implements Serializer {
 
 	public Tuple deserialize(byte[] bytes) {
 		return SerializationUtils.readObject(bytes);
-	}
-	
-	public Tuple deserialize(InputStream in) {
-		return null;
 	}
 
 }

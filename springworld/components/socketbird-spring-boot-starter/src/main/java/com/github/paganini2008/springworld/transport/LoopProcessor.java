@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.socketbird;
+package com.github.paganini2008.springworld.transport;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.ThreadPool;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
-import com.github.paganini2008.springworld.socketbird.buffer.BufferZone;
+import com.github.paganini2008.springworld.transport.buffer.BufferZone;
 import com.github.paganini2008.transport.Tuple;
 
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ public class LoopProcessor implements Runnable {
 	@Autowired(required = false)
 	private ThreadPool threadPool;
 
-	@Value("${socketbird.bufferzone.collectionName}")
+	@Value("${spring.transport.bufferzone.collectionName:default}")
 	private String collectionName;
 
 	private final Queue<Handler> handlers = new ConcurrentLinkedQueue<Handler>();
@@ -95,7 +95,6 @@ public class LoopProcessor implements Runnable {
 				}
 			}
 			if (tuple != null) {
-				counter.incrementCount();
 				for (Handler handler : handlers) {
 					Tuple copy = tuple.clone();
 					if (threadPool != null) {
@@ -106,7 +105,9 @@ public class LoopProcessor implements Runnable {
 						handler.onData(copy);
 					}
 				}
+
 				tuple = null;
+				counter.incrementCount();
 			} else {
 				ThreadUtils.randomSleep(1000L);
 			}

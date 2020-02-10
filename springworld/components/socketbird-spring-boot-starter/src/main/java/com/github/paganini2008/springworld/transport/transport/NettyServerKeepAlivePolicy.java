@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.socketbird.transport;
+package com.github.paganini2008.springworld.transport.transport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,10 +28,10 @@ public class NettyServerKeepAlivePolicy extends KeepAlivePolicy {
 	private static final String PING = "PING";
 	private static final String PONG = "PONG";
 
-	@Value("${socketbird.transport.nioserver.keepalive.response:true}")
+	@Value("${spring.transport.nioserver.keepalive.response:true}")
 	private boolean keepaliveResposne;
 
-	@Value("${socketbird.transport.nioserver.idleTimeout:60}")
+	@Value("${spring.transport.nioserver.idleTimeout:60}")
 	private int idleTimeout;
 
 	@Autowired(required = false)

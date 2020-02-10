@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.socketbird.buffer;
+package com.github.paganini2008.springworld.transport.buffer;
 
 import java.io.IOException;
 import java.util.Map;
@@ -31,13 +31,13 @@ public class MemcachedBufferZone implements BufferZone {
 
 	private static final int DEFAULT_STORE_EXPIRATION = 60;
 
-	@Value("${socketbird.memcached.address:localhost:11211}")
+	@Value("${spring.transport.memcached.address:localhost:11211}")
 	private String address;
 
 	@Value("${spring.application.name}")
 	private String applicationName;
 
-	@Value("${socketbird.bufferzone.reused:true}")
+	@Value("${spring.transport.bufferzone.reused:true}")
 	private boolean reused;
 
 	@Autowired
@@ -92,7 +92,7 @@ public class MemcachedBufferZone implements BufferZone {
 	}
 
 	protected String getKey(String name) {
-		return "bufferzone-" + name + "-" + applicationName + (reused ? "-" + clusterId.get() : "");
+		return "transport:bufferzone:" + name + ":" + applicationName + (reused ? ":" + clusterId.get() : "");
 	}
 
 }

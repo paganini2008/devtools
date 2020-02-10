@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.socketbird.buffer;
+package com.github.paganini2008.springworld.transport.buffer;
 
 import com.github.paganini2008.transport.Tuple;
 

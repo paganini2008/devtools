@@ -1,11 +1,11 @@
-package com.github.paganini2008.springworld.socketbird.transport;
+package com.github.paganini2008.springworld.transport.transport;
 
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import com.github.paganini2008.springworld.socketbird.buffer.BufferZone;
+import com.github.paganini2008.springworld.transport.buffer.BufferZone;
 import com.github.paganini2008.transport.ChannelEvent;
 import com.github.paganini2008.transport.ChannelEvent.EventType;
 import com.github.paganini2008.transport.ChannelEventListener;
@@ -25,7 +25,7 @@ public class MinaServerHandler extends IoHandlerAdapter {
 	@Autowired
 	private BufferZone store;
 
-	@Value("${socketbird.bufferzone.collectionName}")
+	@Value("${spring.transport.bufferzone.collectionName:default}")
 	private String collectionName;
 
 	@Autowired(required = false)

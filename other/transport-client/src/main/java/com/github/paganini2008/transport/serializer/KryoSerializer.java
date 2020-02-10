@@ -24,12 +24,14 @@ import com.github.paganini2008.transport.TupleImpl;
  */
 public class KryoSerializer implements Serializer {
 
+	private static final int DEFAULT_POOL_SIZE = 128;
+
 	private final Pool<Kryo> pool;
 	private final Pool<Output> outputPool;
 	private final Pool<Input> inputPool;
 
 	public KryoSerializer() {
-		this(Runtime.getRuntime().availableProcessors() * 2, 64, 64);
+		this(16, DEFAULT_POOL_SIZE, DEFAULT_POOL_SIZE);
 	}
 
 	public KryoSerializer(int poolSize, int outputSize, int inputSize) {

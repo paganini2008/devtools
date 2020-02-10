@@ -1,7 +1,5 @@
 package com.github.paganini2008.transport.serializer;
 
-import java.io.InputStream;
-
 import org.nustaq.serialization.FSTConfiguration;
 
 import com.github.paganini2008.transport.Tuple;
@@ -26,11 +24,5 @@ public class FstSerializer implements Serializer {
 	public Tuple deserialize(byte[] bytes) {
 		return (Tuple) configuration.asObject(bytes);
 	}
-
-	public Tuple deserialize(InputStream in) {
-		return null;
-	}
-	
-	
 
 }
