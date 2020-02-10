@@ -11,10 +11,8 @@ import com.github.paganini2008.devtools.multithreads.latch.Latch;
  * @revised 2020-02
  * @version 1.0
  */
-public interface SharedLatch extends Latch {
+public interface SharedLatch extends Latch, KeepAliveHandler {
 
 	String getKey();
-
-	void keepAlive(Lifespan lifespan, int checkInterval);
 
 }
