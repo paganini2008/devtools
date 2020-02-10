@@ -6,6 +6,7 @@ import com.github.paganini2008.devtools.ClassUtils;
 import com.github.paganini2008.devtools.reflection.MethodUtils;
 import com.github.paganini2008.springworld.cluster.multicast.ContextMulticastEventHandler;
 import com.github.paganini2008.springworld.cluster.utils.ApplicationContextUtils;
+import com.github.paganini2008.springworld.redis.concurrents.SharedLatch;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,7 +29,7 @@ public class ProcessPoolWorkThread implements ContextMulticastEventHandler {
 	private ProcessPool processPool;
 
 	@Autowired
-	private ClusterLatch clusterLatch;
+	private SharedLatch sharedLatch;
 
 	@Autowired
 	private InvocationResult invocationResult;
@@ -52,7 +53,7 @@ public class ProcessPoolWorkThread implements ContextMulticastEventHandler {
 			log.error(e.getMessage(), e);
 			MethodUtils.invokeMethodWithAnnotation(bean, OnFailure.class, signature, e);
 		} finally {
-			clusterLatch.release();
+			sharedLatch.release();
 
 			signature = workQueue.pop();
 			if (signature != null) {

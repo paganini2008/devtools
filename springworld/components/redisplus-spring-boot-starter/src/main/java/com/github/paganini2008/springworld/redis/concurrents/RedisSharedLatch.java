@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.cluster.utils;
+package com.github.paganini2008.springworld.redis.concurrents;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -8,12 +8,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 
-import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
-import com.github.paganini2008.springworld.cluster.ContextMasterStandbyEvent;
-import com.github.paganini2008.springworld.cluster.pool.ClusterLatch;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
@@ -24,26 +19,24 @@ import lombok.extern.slf4j.Slf4j;
  * @revised 2020-02
  * @version 1.0
  */
-@Slf4j
-public class RedisSharedLatch implements ClusterLatch {
+public class RedisSharedLatch implements SharedLatch {
 
 	private static final String LATCH_KEY_PREFIX = "latch:";
 
-	public RedisSharedLatch(String name, int maxPermits, int lifespanInSeconds, RedisConnectionFactory redisConnectionFactory) {
+	public RedisSharedLatch(String name, int maxPermits, RedisConnectionFactory redisConnectionFactory, int expiration) {
 		this.counter = new RedisAtomicLong(LATCH_KEY_PREFIX + name, redisConnectionFactory);
-		this.redisConnectionFactory = redisConnectionFactory;
+		this.counter.expire(expiration, TimeUnit.SECONDS);
+		this.expiration = expiration;
 		this.maxPermits = maxPermits;
 		this.startTime = System.currentTimeMillis();
-		this.lifespan = new Lifespan(lifespanInSeconds);
 	}
 
-	private final RedisConnectionFactory redisConnectionFactory;
 	private final int maxPermits;
+	private final int expiration;
 	private final long startTime;
-	private final Lifespan lifespan;
 	private final Lock lock = new ReentrantLock();
 	private final Condition condition = lock.newCondition();
-	private RedisAtomicLong counter;
+	protected RedisAtomicLong counter;
 
 	public boolean acquire() {
 		while (true) {
@@ -129,45 +122,14 @@ public class RedisSharedLatch implements ClusterLatch {
 		return System.currentTimeMillis() - startTime;
 	}
 
-	/**
-	 * 
-	 * Lifespan
-	 *
-	 * @author Fred Feng
-	 * @created 2020-01
-	 * @revised 2020-02
-	 * @version 1.0
-	 */
-	class Lifespan implements Executable {
-
-		private final int timeout;
-
-		Lifespan(int timeout) {
-			this.timeout = timeout;
-		}
-
-		void start() {
-			try {
-				counter.get();
-			} catch (Exception e) {
-				log.warn(e.getMessage(), e);
-				counter = new RedisAtomicLong(counter.getKey(), redisConnectionFactory);
-			}
-			counter.expire(timeout, TimeUnit.SECONDS);
-			ThreadUtils.scheduleAtFixedRate(this, 3, TimeUnit.SECONDS);
-		}
-
-		@Override
-		public boolean execute() {
-			return counter.expire(timeout, TimeUnit.SECONDS);
-		}
-
+	public String getKey() {
+		return counter.getKey();
 	}
 
-	@Override
-	public void onApplicationEvent(ContextMasterStandbyEvent event) {
-		lifespan.start();
-		log.info("RedisSharedLatch start to work.");
+	public void keepAlive(Lifespan lifespan, int checkInterval) {
+		if (lifespan != null) {
+			lifespan.watch(counter.getKey(), expiration, checkInterval, TimeUnit.SECONDS);
+		}
 	}
 
 }

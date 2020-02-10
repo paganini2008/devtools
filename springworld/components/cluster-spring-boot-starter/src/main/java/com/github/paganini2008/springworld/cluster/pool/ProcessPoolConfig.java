@@ -7,9 +7,14 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import com.github.paganini2008.springworld.cluster.multicast.ContextMulticastConfig;
-import com.github.paganini2008.springworld.cluster.utils.RedisSharedLatch;
+import com.github.paganini2008.springworld.redis.concurrents.Lifespan;
+import com.github.paganini2008.springworld.redis.concurrents.RedisKeyLifespan;
+import com.github.paganini2008.springworld.redis.concurrents.SharedLatch;
 
 /**
  * 
@@ -25,8 +30,6 @@ import com.github.paganini2008.springworld.cluster.utils.RedisSharedLatch;
 @ConditionalOnProperty(value = "spring.application.cluster.pool.enabled", havingValue = "true")
 public class ProcessPoolConfig {
 
-	private static final int DEFAULT_LATCH_LIFESPAN = 60;
-
 	@Value("${spring.application.name}")
 	private String applicationName;
 
@@ -35,10 +38,26 @@ public class ProcessPoolConfig {
 		return new ProcessPoolProperties();
 	}
 
-	@ConditionalOnMissingBean(ClusterLatch.class)
 	@Bean
-	public ClusterLatch clusterLatch(ProcessPoolProperties poolConfig, RedisConnectionFactory redisConnectionFactory) {
-		return new RedisSharedLatch(applicationName, poolConfig.getPoolSize(), DEFAULT_LATCH_LIFESPAN, redisConnectionFactory);
+	public Lifespan lifespan(RedisTemplate<String, Object> redisOperations) {
+		return new RedisKeyLifespan(threadPoolTaskScheduler(), redisOperations);
+	}
+	
+	@ConditionalOnMissingBean(TaskScheduler.class)
+	@Bean
+	public TaskScheduler threadPoolTaskScheduler() {
+		ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+		scheduler.setPoolSize(8);
+		scheduler.setThreadNamePrefix("taskScheduler-");
+		scheduler.setWaitForTasksToCompleteOnShutdown(true);
+		scheduler.setAwaitTerminationSeconds(300);
+		return scheduler;
+	}
+
+	@ConditionalOnMissingBean(SharedLatch.class)
+	@Bean
+	public SharedLatch clusterLatch(ProcessPoolProperties poolConfig, RedisConnectionFactory redisConnectionFactory) {
+		return new ContextClusterLatch(applicationName, poolConfig.getPoolSize(), redisConnectionFactory);
 	}
 
 	@ConditionalOnMissingBean(WorkQueue.class)

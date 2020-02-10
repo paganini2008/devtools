@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.paganini2008.springworld.cluster.multicast.ContextMulticastGroup;
+import com.github.paganini2008.springworld.redis.concurrents.SharedLatch;
 
 /**
  * 
@@ -19,7 +20,7 @@ import com.github.paganini2008.springworld.cluster.multicast.ContextMulticastGro
 public class ProcessPoolExecutor implements ProcessPool {
 
 	@Autowired
-	private ClusterLatch clusterLatch;
+	private SharedLatch sharedLatch;
 
 	@Autowired
 	private ContextMulticastGroup contextMulticastGroup;
@@ -41,8 +42,8 @@ public class ProcessPoolExecutor implements ProcessPool {
 		if (arguments != null) {
 			signature.setArguments(arguments);
 		}
-		boolean acquired = poolConfig.getTimeout() > 0 ? clusterLatch.acquire(poolConfig.getTimeout(), TimeUnit.SECONDS)
-				: clusterLatch.acquire();
+		boolean acquired = poolConfig.getTimeout() > 0 ? sharedLatch.acquire(poolConfig.getTimeout(), TimeUnit.SECONDS)
+				: sharedLatch.acquire();
 		if (acquired) {
 			contextMulticastGroup.unicast(TOPIC_IDENTITY, signature);
 		} else {
@@ -58,7 +59,7 @@ public class ProcessPoolExecutor implements ProcessPool {
 		}
 		running.set(false);
 		workQueue.waitForTermination();
-		clusterLatch.join();
+		sharedLatch.join();
 		
 	}
 

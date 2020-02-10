@@ -58,7 +58,7 @@ public class RedisMessageHandlerBeanProcessor implements BeanPostProcessor {
 
 		@Override
 		public void onMessage(Object message) {
-			MethodUtils.invokeMethod(targetBean, annotation.callbackMethod(), message);
+			MethodUtils.invokeMethodsWithAnnotation(targetBean, OnMessage.class, message);
 		}
 
 		@Override

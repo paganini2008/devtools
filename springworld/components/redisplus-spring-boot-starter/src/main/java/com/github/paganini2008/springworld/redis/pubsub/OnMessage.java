@@ -6,11 +6,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springframework.stereotype.Component;
-
 /**
  * 
- * MessageHandler
+ * OnMessage
  *
  * @author Fred Feng
  * @created 2020-01
@@ -19,12 +17,6 @@ import org.springframework.stereotype.Component;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Component
-public @interface MessageHandler {
-
-	String value();
-
-	boolean ephemeral() default false;
-
+@Target(ElementType.METHOD)
+public @interface OnMessage {
 }
