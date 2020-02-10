@@ -82,7 +82,7 @@ public class RedisKeyLifespan implements Lifespan {
 	}
 
 	@Override
-	public void unwatch(String key) {
+	public void expire(String key) {
 		deletedKeyNames.add(key);
 		log.info("No longer to watch redis key: " + key);
 	}

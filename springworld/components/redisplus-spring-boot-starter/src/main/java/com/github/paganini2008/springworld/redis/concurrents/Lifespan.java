@@ -15,6 +15,6 @@ public interface Lifespan {
 
 	void watch(String key, long timeout, long checkInterval, TimeUnit timeUnit);
 
-	void unwatch(String key);
+	void expire(String key);
 
 }
