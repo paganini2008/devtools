@@ -9,7 +9,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
 import com.github.paganini2008.springworld.cluster.ContextClusterConfig;
-import com.github.paganini2008.springworld.pubsub.RedisMessageHandler;
+import com.github.paganini2008.springworld.redis.pubsub.RedisMessageHandler;
 
 /**
  * 

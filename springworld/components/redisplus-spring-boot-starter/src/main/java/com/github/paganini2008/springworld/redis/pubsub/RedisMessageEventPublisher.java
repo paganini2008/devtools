@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.pubsub;
+package com.github.paganini2008.springworld.redis.pubsub;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

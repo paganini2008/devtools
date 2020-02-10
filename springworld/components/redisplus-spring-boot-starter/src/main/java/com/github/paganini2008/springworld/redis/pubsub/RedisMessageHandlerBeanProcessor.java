@@ -1,9 +1,8 @@
-package com.github.paganini2008.springworld.pubsub;
+package com.github.paganini2008.springworld.redis.pubsub;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.stereotype.Component;
 
 import com.github.paganini2008.devtools.reflection.MethodUtils;
 
@@ -16,7 +15,6 @@ import com.github.paganini2008.devtools.reflection.MethodUtils;
  * @revised 2019-08
  * @version 1.0
  */
-@Component
 public class RedisMessageHandlerBeanProcessor implements BeanPostProcessor {
 
 	@Autowired

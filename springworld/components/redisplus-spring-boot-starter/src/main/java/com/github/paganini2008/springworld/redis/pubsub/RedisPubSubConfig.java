@@ -1,4 +1,4 @@
-package com.github.paganini2008.springworld.pubsub;
+package com.github.paganini2008.springworld.redis.pubsub;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -119,6 +119,11 @@ public class RedisPubSubConfig {
 	@Bean("redis-message-sender")
 	public RedisMessageSender redisMessageSender() {
 		return new RedisMessageSender();
+	}
+
+	@Bean
+	public RedisMessageHandlerBeanProcessor redisMessageHandlerBeanProcessor() {
+		return new RedisMessageHandlerBeanProcessor();
 	}
 
 }
