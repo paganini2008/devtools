@@ -11,7 +11,7 @@ import com.github.paganini2008.springworld.cluster.ContextMasterStandbyEvent;
  * JobServerStandbyAware
  *
  * @author Fred Feng
- * @created 2019-08
+ * @created 2018-03
  * @revised 2019-08
  * @version 1.0
  */
