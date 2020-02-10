@@ -14,6 +14,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
  * 
  * @author Fred Feng
  * @created 2019-11
+ * @revised 2019-12
  * @version 1.0
  */
 @Configuration
@@ -35,6 +36,7 @@ public class SpringSchedulerConfig {
 	}
 
 	@Bean
+	@ConditionalOnMissingBean(JobManager.class)
 	public JobManager jobManager() {
 		return new MemoryJobManager();
 	}
