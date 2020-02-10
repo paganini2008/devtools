@@ -9,9 +9,9 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>socketbird-spring-boot-starter</artifactId>
+	<artifactId>transport-spring-boot-starter</artifactId>
 	<packaging>jar</packaging>
-	<name>socketbird-spring-boot-starter</name>
+	<name>transport-spring-boot-starter</name>
 	<url>http://maven.apache.org</url>
 
 	<dependencies>

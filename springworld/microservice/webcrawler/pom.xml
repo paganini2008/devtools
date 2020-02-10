@@ -25,7 +25,7 @@
 
 		<dependency>
 			<groupId>com.github.paganini2008.springworld</groupId>
-			<artifactId>socketbird-spring-boot-starter</artifactId>
+			<artifactId>transport-spring-boot-starter</artifactId>
 			<version>1.0</version>
 		</dependency>
 
