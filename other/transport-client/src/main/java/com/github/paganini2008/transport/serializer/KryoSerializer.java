@@ -57,7 +57,7 @@ public class KryoSerializer implements Serializer {
 
 		inputPool = new Pool<Input>(true, false, inputSize) {
 			protected Input create() {
-				return new Input(1024 * 1024);
+				return new Input(1024);
 			}
 		};
 

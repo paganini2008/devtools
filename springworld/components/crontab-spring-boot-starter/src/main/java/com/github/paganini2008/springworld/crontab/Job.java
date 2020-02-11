@@ -14,13 +14,11 @@ import com.github.paganini2008.devtools.scheduler.cron.CronExpression;
  */
 public interface Job extends Executable {
 
-	default String name() {
-		return "";
-	}
+	String getName();
 
-	CronExpression cron();
+	CronExpression getCronExpression();
 
-	default String description() {
+	default String getDescription() {
 		return "";
 	}
 

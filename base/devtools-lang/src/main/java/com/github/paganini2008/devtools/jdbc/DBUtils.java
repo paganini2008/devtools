@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import com.github.paganini2008.devtools.CaseFormats;
@@ -30,9 +29,9 @@ import com.github.paganini2008.devtools.collection.Tuple;
  */
 public abstract class DBUtils {
 
-	public static void close(Connection conn) throws SQLException {
-		if (conn != null) {
-			conn.close();
+	public static void close(Connection connection) throws SQLException {
+		if (connection != null) {
+			connection.close();
 		}
 	}
 
@@ -48,9 +47,9 @@ public abstract class DBUtils {
 		}
 	}
 
-	public static void closeQuietly(Connection conn) {
+	public static void closeQuietly(Connection connection) {
 		try {
-			close(conn);
+			close(connection);
 		} catch (SQLException e) {
 		}
 	}
@@ -69,62 +68,62 @@ public abstract class DBUtils {
 		}
 	}
 
-	public static void commit(Connection conn) throws SQLException {
-		if (conn != null) {
-			conn.commit();
+	public static void commit(Connection connection) throws SQLException {
+		if (connection != null) {
+			connection.commit();
 		}
 	}
 
-	public static void commitQuietly(Connection conn) {
+	public static void commitQuietly(Connection connection) {
 		try {
-			commit(conn);
+			commit(connection);
 		} catch (SQLException e) {
 		}
 	}
 
-	public static void commitAndClose(Connection conn) throws SQLException {
-		if (conn != null) {
+	public static void commitAndClose(Connection connection) throws SQLException {
+		if (connection != null) {
 			try {
-				conn.commit();
+				connection.commit();
 			} finally {
-				conn.close();
+				connection.close();
 			}
 		}
 	}
 
-	public static void commitAndCloseQuietly(Connection conn) {
+	public static void commitAndCloseQuietly(Connection connection) {
 		try {
-			commitAndClose(conn);
+			commitAndClose(connection);
 		} catch (SQLException e) {
 		}
 	}
 
-	public static void rollback(Connection conn) throws SQLException {
-		if (conn != null) {
-			conn.rollback();
+	public static void rollback(Connection connection) throws SQLException {
+		if (connection != null) {
+			connection.rollback();
 		}
 	}
 
-	public static void rollbackQuietly(Connection conn) {
+	public static void rollbackQuietly(Connection connection) {
 		try {
-			rollback(conn);
+			rollback(connection);
 		} catch (SQLException e) {
 		}
 	}
 
-	public static void rollbackAndClose(Connection conn) throws SQLException {
-		if (conn != null) {
+	public static void rollbackAndClose(Connection connection) throws SQLException {
+		if (connection != null) {
 			try {
-				conn.rollback();
+				connection.rollback();
 			} finally {
-				conn.close();
+				connection.close();
 			}
 		}
 	}
 
-	public static void rollbackAndCloseQuietly(Connection conn) {
+	public static void rollbackAndCloseQuietly(Connection connection) {
 		try {
-			rollbackAndClose(conn);
+			rollbackAndClose(connection);
 		} catch (SQLException e) {
 		}
 	}
@@ -144,14 +143,14 @@ public abstract class DBUtils {
 		}
 	}
 
-	public static void printWarnings(Connection conn) {
-		printWarnings(conn, new PrintWriter(System.err));
+	public static void printWarnings(Connection connection) {
+		printWarnings(connection, new PrintWriter(System.err));
 	}
 
-	public static void printWarnings(Connection conn, PrintWriter pw) {
-		if (conn != null) {
+	public static void printWarnings(Connection connection, PrintWriter pw) {
+		if (connection != null) {
 			try {
-				printStackTrace(conn.getWarnings(), pw);
+				printStackTrace(connection.getWarnings(), pw);
 			} catch (SQLException e) {
 				printStackTrace(e, pw);
 			}
@@ -394,33 +393,21 @@ public abstract class DBUtils {
 		};
 	}
 
-	public static boolean tableExists(DatabaseMetaData dbmd, String schema, String tableName) throws SQLException {
-		ResultSet rs = dbmd.getTables(null, schema, tableName, new String[] { "TABLE" });
-		if (rs != null && rs.next()) {
-			return (tableName.equalsIgnoreCase(rs.getString("TABLE_NAME")));
+	public static boolean existsTable(DatabaseMetaData dbmd, String schema, String tableName) throws SQLException {
+		ResultSet rs = null;
+		try {
+			rs = dbmd.getTables(null, schema, tableName, new String[] { "TABLE" });
+			if (rs != null && rs.next()) {
+				return (tableName.equalsIgnoreCase(rs.getString("TABLE_NAME")));
+			}
+		} finally {
+			closeQuietly(rs);
 		}
 		return false;
 	}
 
-	public static boolean tableExists(Connection conn, String schema, String tableName) throws SQLException {
-		return tableExists(conn.getMetaData(), schema, tableName);
-	}
-
-	public static void main(String[] args) throws SQLException {
-		UnpooledConnectionFactory connectionFactory = new UnpooledConnectionFactory();
-		connectionFactory.setDriverClassName("com.mysql.cj.jdbc.Driver");
-		connectionFactory.setUser("fengy");
-		connectionFactory.setPassword("123456");
-		connectionFactory.setUrl(
-				"jdbc:mysql://localhost:3306/db_mec_hlsh_v2?userUnicode=true&serverTimezone=GMT&characterEncoding=UTF8&useSSL=false&autoReconnect=true&zeroDateTimeBehavior=convertToNull");
-		final AtomicInteger count = new AtomicInteger();
-		DBUtils.scrollingScan(connectionFactory, "select * from mec_area", (Object[]) null, 100, list -> {
-			for (Tuple tuple : list) {
-				System.out.println(tuple);
-				count.incrementAndGet();
-			}
-		});
-		System.out.println("Rows: " + count);
+	public static boolean existsTable(Connection connection, String schema, String tableName) throws SQLException {
+		return existsTable(connection.getMetaData(), schema, tableName);
 	}
 
 }

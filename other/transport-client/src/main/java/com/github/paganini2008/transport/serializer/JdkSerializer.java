@@ -14,12 +14,22 @@ import com.github.paganini2008.transport.Tuple;
  */
 public class JdkSerializer implements Serializer {
 
+	private final boolean compress;
+
+	public JdkSerializer() {
+		this(false);
+	}
+
+	public JdkSerializer(boolean compress) {
+		this.compress = compress;
+	}
+
 	public byte[] serialize(Tuple tuple) {
-		return SerializationUtils.toByteArray(tuple);
+		return SerializationUtils.serialize(tuple, compress);
 	}
 
 	public Tuple deserialize(byte[] bytes) {
-		return SerializationUtils.readObject(bytes);
+		return (Tuple) SerializationUtils.deserialize(bytes, compress);
 	}
 
 }

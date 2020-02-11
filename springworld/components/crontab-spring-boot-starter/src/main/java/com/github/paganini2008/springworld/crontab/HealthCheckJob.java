@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
- * MemoryUsageCheckJob
+ * HealthCheckJob
  *
  * @author Fred Feng
  * @created 2019-08
@@ -21,9 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class MemoryUsageCheckJob implements Job {
-
-	private static final String NAME = "MemoryUsageCheck";
+public class HealthCheckJob implements Job {
 
 	@Autowired
 	private JobManager jobManager;
@@ -42,12 +40,12 @@ public class MemoryUsageCheckJob implements Job {
 	}
 
 	@Override
-	public String name() {
-		return NAME;
+	public String getName() {
+		return getClass().getSimpleName();
 	}
 
 	@Override
-	public CronExpression cron() {
+	public CronExpression getCronExpression() {
 		return CronBuilder.everySecond(5);
 	}
 

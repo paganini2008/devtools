@@ -77,7 +77,7 @@ public class GenericTaskExecutor implements TaskExecutor {
 			}
 		}
 		if (executed == -1) {
-			throw new IllegalStateException("All time are now past.");
+			throw new SchedulingException("All time are now past.");
 		}
 		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(e, () -> {
 			return iterator.hasNext() ? ((CronExpression) iterator.next()).getTimeInMillis() : -1;

@@ -5,9 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.springframework.scheduling.SchedulingException;
+
 import com.github.paganini2008.devtools.Observable;
+import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.scheduler.GenericTaskExecutor;
 import com.github.paganini2008.devtools.scheduler.TaskExecutor;
+import com.github.paganini2008.devtools.scheduler.TaskInterceptorHandler;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,22 +25,28 @@ import lombok.extern.slf4j.Slf4j;
  * @version 1.0
  */
 @Slf4j
-public class MemoryJobManager implements JobManager {
+public class MemoryJobManager implements JobManager, TaskInterceptorHandler {
 
 	private final Observable observable = Observable.unrepeatable();
 	private final Map<Job, TaskExecutor.TaskFuture> store = new ConcurrentHashMap<Job, TaskExecutor.TaskFuture>();
-	private TaskExecutor taskExecutor = new GenericTaskExecutor(8, "crontab");
+	private final TaskExecutor taskExecutor;
 
-	public void setTaskExecutor(TaskExecutor taskExecutor) {
-		this.taskExecutor = taskExecutor;
+	public MemoryJobManager() {
+		this(8);
+	}
+
+	public MemoryJobManager(int nThreads) {
+		taskExecutor = new GenericTaskExecutor(nThreads, "crontab");
+		taskExecutor.setTaskInterceptorHandler(this);
 	}
 
 	public void schedule(final Job... jobs) {
 		for (Job job : jobs) {
+			checkJobNameIfBlank(job);
 			if (!store.containsKey(job)) {
 				observable.addObserver((ob, arg) -> {
-					store.put(job, taskExecutor.schedule(job, job.cron()));
-					log.info("Start to run job: " + job.name());
+					store.put(job, taskExecutor.schedule(job, job.getCronExpression()));
+					log.info("Start to run job: " + job.getName());
 				});
 				log.info("Schedule job: " + job.getClass().getName() + ", current job size: " + countOfJobs());
 			}
@@ -76,11 +86,17 @@ public class MemoryJobManager implements JobManager {
 	}
 
 	public String[] jobNames() {
-		List<String> names = new ArrayList<String>();
+		List<String> names = new ArrayList<String>(store.size());
 		for (Job job : store.keySet()) {
-			names.add(job.name());
+			names.add(job.getName());
 		}
 		return names.toArray(new String[0]);
+	}
+
+	private void checkJobNameIfBlank(Job job) {
+		if (StringUtils.isBlank(job.getName())) {
+			throw new SchedulingException("Job name is blank for class: " + job.getClass().getName());
+		}
 	}
 
 	public void close() {
