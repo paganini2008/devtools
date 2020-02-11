@@ -23,11 +23,10 @@ public class JobServerStandbyAware implements ApplicationListener<ContextMasterS
 
 	@Override
 	public void onApplicationEvent(ContextMasterStandbyEvent event) {
-		jobManager.runNow();
-
 		if (jobManager instanceof PersistentJobsInitializer) {
 			((PersistentJobsInitializer) jobManager).reloadPersistentJobs();
 		}
+		jobManager.runNow();
 	}
 
 }

@@ -11,15 +11,15 @@ package com.github.paganini2008.springworld.crontab;
  */
 public interface JobManager {
 
-	void schedule(Job... jobs);
+	void schedule(Job job);
 
-	boolean hasJob(Job job);
+	boolean hasScheduled(Job job);
 
 	void pauseJob(Job job);
 
 	void resumeJob(Job job);
 
-	void deleteJob(Job job);
+	void unscheduleJob(Job job);
 
 	void runNow();
 

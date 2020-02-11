@@ -20,10 +20,7 @@ import com.github.paganini2008.devtools.primitives.Longs;
  * @author Fred Feng
  * @version 1.0
  */
-public class DateUtils {
-
-	private DateUtils() {
-	}
+public abstract class DateUtils {
 
 	public static final Date[] EMPTY_ARRAY = new Date[0];
 

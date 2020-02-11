@@ -74,7 +74,7 @@ public interface TaskExecutor {
 	 * @created 2013-11
 	 * @version 1.0
 	 */
-	interface TaskDetail {
+	public interface TaskDetail {
 
 		boolean isRunning();
 
@@ -99,7 +99,7 @@ public interface TaskExecutor {
 	 * @created 2013-11
 	 * @version 1.0
 	 */
-	interface TaskFuture {
+	public interface TaskFuture {
 
 		void pause();
 

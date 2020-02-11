@@ -2,6 +2,7 @@ package com.github.paganini2008.springworld.crontab;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -24,6 +25,8 @@ import com.github.paganini2008.devtools.jdbc.DBUtils;
 import com.github.paganini2008.devtools.scheduler.GenericTaskExecutor;
 import com.github.paganini2008.devtools.scheduler.SchedulingException;
 import com.github.paganini2008.devtools.scheduler.TaskExecutor;
+import com.github.paganini2008.devtools.scheduler.TaskExecutor.TaskDetail;
+import com.github.paganini2008.devtools.scheduler.TaskExecutor.TaskFuture;
 import com.github.paganini2008.devtools.scheduler.TaskInterceptorHandler;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,18 +41,22 @@ import lombok.extern.slf4j.Slf4j;
  * @version 1.0
  */
 @Slf4j
-public class JdbcJobManager implements JobManager, PersistentJobsInitializer, TaskInterceptorHandler, ApplicationContextAware {
-	public static final String DEFAULT_TABLE_NAME = "cron_job_detail";
+public class JdbcJobManager implements PersistentJobManager, PersistentJobsInitializer, TaskInterceptorHandler, ApplicationContextAware {
 
-	private static final String DEF_CREATE_TABLE_SQL = "create table cron_job_detail(job_name varchar(255) unique not null, job_descrption varchar(255), job_class varchar(255) not null, job_cron blob not null)";
+	private static final String DEF_DDL_CRON_JOB_DETAIL_SQL = "create table cron_job_detail(job_name varchar(255) unique not null, job_descrption varchar(255), job_class varchar(255) not null, job_cron blob not null)";
+	private static final String DEF_DDL_CRON_JOB_STAT_SQL = "create table cron_job_stat(job_name varchar(255) unique not null, is_running bit not null, completed_count int, failed_count int, last_executed timestamp not null, next_executed timestamp not null)";
+
 	private static final String DEF_SELECT_JOBS_SQL = "select * from cron_job_detail";
-	private static final String DEF_INSERT_JOB_SQL = "insert into cron_job_detail(name,descrption,job_class,cron) values (?,?,?,?)";
-	private static final String DEF_CHECK_JOB_EXISTS_SQL = "select count(*) from cron_job_detail where name=?";
-	private static final String DEF_SELECT_JOB_NAMES_SQL = "select name from cron_job_detail";
-	private static final String DEF_DELETE_JOB_SQL = "delete from cron_job_detail where name=?";
+	private static final String DEF_INSERT_JOB_SQL = "insert into cron_job_detail(job_name,descrption,job_class,job_cron) values (?,?,?,?)";
+	private static final String DEF_CHECK_JOB_EXISTS_SQL = "select count(*) from cron_job_detail where job_name=?";
+	private static final String DEF_SELECT_JOB_NAMES_SQL = "select job_name from cron_job_detail";
+	private static final String DEF_DELETE_JOB_SQL = "delete from cron_job_detail where job_name=?";
+
+	private static final String DEF_INSERT_JOB_STAT_SQL = "insert into cron_job_stat(job_name,is_running,last_executed,next_executed) value(?,?,?,?)";
+	private static final String DEF_UPDATE_JOB_STAT_SQL = "update cron_job_stat set completed_count=?, failed_count=?, is_running=? where job_name=?";
 
 	private final Observable observable = Observable.unrepeatable();
-	private final Map<Job, TaskExecutor.TaskFuture> store = new ConcurrentHashMap<Job, TaskExecutor.TaskFuture>();
+	private final Map<Job, TaskExecutor.TaskFuture> taskFutures = new ConcurrentHashMap<Job, TaskExecutor.TaskFuture>();
 	private final TaskExecutor taskExecutor;
 	private DataSource dataSource;
 	private ApplicationContext context;
@@ -70,8 +77,11 @@ public class JdbcJobManager implements JobManager, PersistentJobsInitializer, Ta
 			Connection connection = null;
 			try {
 				connection = dataSource.getConnection();
-				if (!DBUtils.existsTable(connection, null, DEFAULT_TABLE_NAME)) {
-					DBUtils.executeUpdate(connection, DEF_CREATE_TABLE_SQL);
+				if (!DBUtils.existsTable(connection, null, "cron_job_detail")) {
+					DBUtils.executeUpdate(connection, DEF_DDL_CRON_JOB_DETAIL_SQL);
+				}
+				if (!DBUtils.existsTable(connection, null, "cron_job_stat")) {
+					DBUtils.executeUpdate(connection, DEF_DDL_CRON_JOB_STAT_SQL);
 				}
 			} finally {
 				DBUtils.closeQuietly(connection);
@@ -88,54 +98,60 @@ public class JdbcJobManager implements JobManager, PersistentJobsInitializer, Ta
 		}
 		while (iterator.hasNext()) {
 			Tuple tuple = iterator.next();
-			scheduleCustomizedJob(tuple);
+			reloadPersistentJob(tuple);
 		}
 		log.info("Reload and schedule all customized jobs ok.");
 	}
 
-	private void scheduleCustomizedJob(Tuple tuple) {
-		String jobName = (String) tuple.get("jobName");
-		String jobClassName = (String) tuple.get("jobClass");
+	private void reloadPersistentJob(Tuple tuple) {
+		final String jobName = (String) tuple.get("jobName");
+		final String jobClassName = (String) tuple.get("jobClass");
+
 		Class<?> jobClass = ClassUtils.forName(jobClassName);
 		if (!Job.class.isAssignableFrom(jobClass)) {
 			throw new SchedulingException("Class '" + jobClass.getName() + "' is not a implementor of Job interface.");
 		}
 
-		if (context.getBean(jobName, jobClass) != null) {
+		if (context.getBean(jobClass) != null) {
 			return;
 		}
 
 		Job job = (Job) BeanUtils.instantiate(jobClass);
 		observable.addObserver((ob, arg) -> {
-			if (!store.containsKey(job)) {
-				store.put(job, taskExecutor.schedule(job, job.getCronExpression()));
+			if (!taskFutures.containsKey(job)) {
+				taskFutures.put(job, taskExecutor.schedule(job, job.getCronExpression()));
+				log.info("Schedule job '" + job.getName() + "' ok. Currently job's size is " + countOfJobs());
 			}
 		});
-		log.info("Reload and schedule job: " + job.getClass().getName() + " from db.");
+		log.info("Reload job '" + jobName + "' from database ok.");
 	}
 
-	public void schedule(final Job... jobs) throws SchedulingException {
-		for (Job job : jobs) {
-			checkJobNameIfBlank(job);
-			observable.addObserver((ob, arg) -> {
-				if (!store.containsKey(job)) {
-					store.put(job, taskExecutor.schedule(job, job.getCronExpression()));
-				}
-			});
-			if (!hasJob(job)) {
-				try {
-					DBUtils.executeUpdate(dataSource.getConnection(), DEF_INSERT_JOB_SQL, ps -> {
-						ps.setString(1, job.getName());
-						ps.setString(2, job.getDescription());
-						ps.setString(3, job.getClass().getName());
-						ps.setBytes(4, SerializationUtils.serialize(job.getCronExpression(), false));
-					});
-					log.info("Save job: " + job.getClass().getName() + ", current job size: " + countOfJobs());
-				} catch (SQLException e) {
-					throw new SchedulingException("Failed to save job detail to database.", e);
-				}
+	public void save(Job job) {
+		if (!hasJob(job)) {
+			try {
+				DBUtils.executeUpdate(dataSource.getConnection(), DEF_INSERT_JOB_SQL, ps -> {
+					ps.setString(1, job.getName());
+					ps.setString(2, job.getDescription());
+					ps.setString(3, job.getClass().getName());
+					ps.setBytes(4, SerializationUtils.serialize(job.getCronExpression(), false));
+				});
+				log.info("Save job '" + job.getName() + "' ok.");
+			} catch (SQLException e) {
+				throw new SchedulingException("Failed to save job detail to database.", e);
 			}
 		}
+	}
+
+	public void schedule(final Job job) throws SchedulingException {
+		checkJobNameIfBlank(job);
+		observable.addObserver((ob, arg) -> {
+			save(job);
+
+			if (!taskFutures.containsKey(job)) {
+				taskFutures.put(job, taskExecutor.schedule(job, job.getCronExpression()));
+				log.info("Schedule job '" + job.getName() + "' ok. Currently job's size is " + countOfJobs());
+			}
+		});
 	}
 
 	public void runNow() {
@@ -144,7 +160,11 @@ public class JdbcJobManager implements JobManager, PersistentJobsInitializer, Ta
 	}
 
 	public int countOfJobs() {
-		return jobNames().length;
+		return taskFutures.size();
+	}
+
+	public boolean hasScheduled(Job job) {
+		return taskFutures.containsKey(job);
 	}
 
 	public String[] jobNames() {
@@ -171,43 +191,85 @@ public class JdbcJobManager implements JobManager, PersistentJobsInitializer, Ta
 		}
 	}
 
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.context = applicationContext;
-	}
-
 	public void pauseJob(Job job) {
-		if (hasJob(job)) {
-			store.get(job).pause();
+		if (hasScheduled(job)) {
+			taskFutures.get(job).pause();
 		}
 	}
 
 	public void resumeJob(Job job) {
-		if (hasJob(job)) {
-			store.get(job).resume();
+		if (hasScheduled(job)) {
+			taskFutures.get(job).resume();
+		}
+	}
+
+	public void unscheduleJob(Job job) {
+		if (hasScheduled(job)) {
+			taskExecutor.removeSchedule(job);
+			taskFutures.remove(job);
+			log.info("Unschedule job '" + job.getName() + "' ok.");
 		}
 	}
 
 	public void deleteJob(Job job) {
 		if (hasJob(job)) {
-			taskExecutor.removeSchedule(job);
-			store.remove(job);
 			try {
 				DBUtils.executeUpdate(dataSource.getConnection(), DEF_DELETE_JOB_SQL, new Object[] { job.getName() });
-				log.info("Delete job: " + job.getName());
+				log.info("Delete job '" + job.getName() + "' ok.");
 			} catch (SQLException e) {
 				throw new SchedulingException(e.getMessage(), e);
 			}
 		}
+
+		unscheduleJob(job);
 	}
-	
-	private void checkJobNameIfBlank(Job job) {
+
+	private static void checkJobNameIfBlank(Job job) {
 		if (StringUtils.isBlank(job.getName())) {
-			throw new SchedulingException("Job name is blank for class: " + job.getClass().getName());
+			throw new SchedulingException("Job name is not blank for class: " + job.getClass().getName());
 		}
 	}
 
 	public void close() {
 		taskExecutor.close();
+	}
+
+	public void beforeJobExecution(TaskFuture future) {
+		final Job job = (Job) future.getDetail().getTaskObject();
+		final TaskDetail taskDetail = future.getDetail();
+		if (!hasJob(job)) {
+			try {
+				DBUtils.executeUpdate(dataSource.getConnection(), DEF_INSERT_JOB_STAT_SQL, ps -> {
+					ps.setString(1, job.getName());
+					ps.setBoolean(2, taskDetail.isRunning());
+					ps.setTimestamp(3, new Timestamp(taskDetail.lastExecuted()));
+					ps.setTimestamp(4, new Timestamp(taskDetail.nextExecuted()));
+				});
+			} catch (SQLException e) {
+				throw new SchedulingException("Failed to save job detail to database.", e);
+			}
+		}
+	}
+
+	public void afterJobExecution(TaskFuture future) {
+		final Job job = (Job) future.getDetail().getTaskObject();
+		final TaskDetail taskDetail = future.getDetail();
+		if (!hasJob(job)) {
+			try {
+				DBUtils.executeUpdate(dataSource.getConnection(), DEF_UPDATE_JOB_STAT_SQL, ps -> {
+					ps.setInt(1, taskDetail.completedCount());
+					ps.setInt(2, taskDetail.failedCount());
+					ps.setBoolean(3, taskDetail.isRunning());
+					ps.setString(4, job.getName());
+				});
+			} catch (SQLException e) {
+				throw new SchedulingException("Failed to save job detail to database.", e);
+			}
+		}
+	}
+
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.context = applicationContext;
 	}
 
 }

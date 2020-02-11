@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MemoryJobManager implements JobManager, TaskInterceptorHandler {
 
 	private final Observable observable = Observable.unrepeatable();
-	private final Map<Job, TaskExecutor.TaskFuture> store = new ConcurrentHashMap<Job, TaskExecutor.TaskFuture>();
+	private final Map<Job, TaskExecutor.TaskFuture> taskFutures = new ConcurrentHashMap<Job, TaskExecutor.TaskFuture>();
 	private final TaskExecutor taskExecutor;
 
 	public MemoryJobManager() {
@@ -40,40 +40,37 @@ public class MemoryJobManager implements JobManager, TaskInterceptorHandler {
 		taskExecutor.setTaskInterceptorHandler(this);
 	}
 
-	public void schedule(final Job... jobs) {
-		for (Job job : jobs) {
-			checkJobNameIfBlank(job);
-			if (!store.containsKey(job)) {
-				observable.addObserver((ob, arg) -> {
-					store.put(job, taskExecutor.schedule(job, job.getCronExpression()));
-					log.info("Start to run job: " + job.getName());
-				});
-				log.info("Schedule job: " + job.getClass().getName() + ", current job size: " + countOfJobs());
+	public void schedule(final Job job) {
+		checkJobNameIfBlank(job);
+		observable.addObserver((ob, arg) -> {
+			if (!hasScheduled(job)) {
+				taskFutures.put(job, taskExecutor.schedule(job, job.getCronExpression()));
+				log.info("Schedule job '" + job.getName() + "' ok. Currently job's size is " + countOfJobs());
 			}
-		}
+		});
 	}
 
-	public void deleteJob(Job job) {
-		if (hasJob(job)) {
+	public void unscheduleJob(Job job) {
+		if (hasScheduled(job)) {
 			taskExecutor.removeSchedule(job);
-			store.remove(job);
+			taskFutures.remove(job);
 		}
 	}
 
 	public void pauseJob(Job job) {
-		if (hasJob(job)) {
-			store.get(job).pause();
+		if (hasScheduled(job)) {
+			taskFutures.get(job).pause();
 		}
 	}
 
 	public void resumeJob(Job job) {
-		if (hasJob(job)) {
-			store.get(job).resume();
+		if (hasScheduled(job)) {
+			taskFutures.get(job).resume();
 		}
 	}
 
-	public boolean hasJob(Job job) {
-		return store.containsKey(job);
+	public boolean hasScheduled(Job job) {
+		return taskFutures.containsKey(job);
 	}
 
 	public void runNow() {
@@ -82,20 +79,20 @@ public class MemoryJobManager implements JobManager, TaskInterceptorHandler {
 	}
 
 	public int countOfJobs() {
-		return store.size();
+		return taskFutures.size();
 	}
 
 	public String[] jobNames() {
-		List<String> names = new ArrayList<String>(store.size());
-		for (Job job : store.keySet()) {
+		List<String> names = new ArrayList<String>(taskFutures.size());
+		for (Job job : taskFutures.keySet()) {
 			names.add(job.getName());
 		}
 		return names.toArray(new String[0]);
 	}
 
-	private void checkJobNameIfBlank(Job job) {
+	private static void checkJobNameIfBlank(Job job) {
 		if (StringUtils.isBlank(job.getName())) {
-			throw new SchedulingException("Job name is blank for class: " + job.getClass().getName());
+			throw new SchedulingException("Job name is not blank for class: " + job.getClass().getName());
 		}
 	}
 
