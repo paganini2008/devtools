@@ -1,16 +1,22 @@
 package com.github.paganini2008.springworld.crontab;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.SchedulingException;
 
 import com.github.paganini2008.devtools.Observable;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.scheduler.GenericTaskExecutor;
 import com.github.paganini2008.devtools.scheduler.TaskExecutor;
+import com.github.paganini2008.devtools.scheduler.TaskExecutor.TaskDetail;
+import com.github.paganini2008.devtools.scheduler.TaskExecutor.TaskFuture;
 import com.github.paganini2008.devtools.scheduler.TaskInterceptorHandler;
 
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +45,12 @@ public class MemoryJobManager implements JobManager, TaskInterceptorHandler {
 		taskExecutor = new GenericTaskExecutor(nThreads, "crontab");
 		taskExecutor.setTaskInterceptorHandler(this);
 	}
+
+	@Autowired
+	private RedisTemplate<String, Object> redisTemplate;
+
+	@Value("${spring.application.name}")
+	private String applicationName;
 
 	public void schedule(final Job job) {
 		checkJobNameIfBlank(job);
@@ -101,4 +113,25 @@ public class MemoryJobManager implements JobManager, TaskInterceptorHandler {
 			taskExecutor.close();
 		}
 	}
+
+	public void beforeJobExecution(TaskFuture future) {
+		final Job job = (Job) future.getDetail().getTaskObject();
+		final TaskDetail taskDetail = future.getDetail();
+		JobInfo jobInfo = new JobInfo();
+		jobInfo.setJobName(job.getName());
+		jobInfo.setDescription(job.getDescription());
+		jobInfo.setRunning(taskDetail.isRunning());
+		jobInfo.setCompletedCount(taskDetail.completedCount());
+		jobInfo.setFailedCount(taskDetail.failedCount());
+		jobInfo.setLastExecuted(new Date(taskDetail.lastExecuted()));
+		jobInfo.setNextExecuted(new Date(taskDetail.nextExecuted()));
+
+		String key = String.format("crontab:%s:%s", applicationName, job.getName());
+		redisTemplate.opsForValue().set(key, jobInfo);
+	}
+
+	public void afterJobExecution(TaskFuture future) {
+		beforeJobExecution(future);
+	}
+
 }
