@@ -43,9 +43,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JdbcJobManager implements PersistentJobManager, PersistentJobsInitializer, TaskInterceptorHandler, ApplicationContextAware {
 
-	private static final String DEF_DDL_CRON_JOB_DETAIL_SQL = "create table cron_job_detail(job_name varchar(255) unique not null, job_description varchar(255), job_class varchar(255) not null, running bit not null, paused bit not null, completed_count int default 0, failed_count int default 0, last_executed timestamp, next_executed timestamp)";
+	public static String DEF_DDL_CRON_JOB_DETAIL_SQL = "create table cron_job_detail(job_name varchar(255) unique not null, job_description varchar(255), job_class varchar(255) not null, running tinyint(1) not null, paused tinyint(1) not null, completed_count int default 0, failed_count int default 0, last_executed timestamp null, next_executed timestamp null, create_date timestamp default current_timestamp)";
 
-	private static final String DEF_INSERT_JOB_SQL = "insert into cron_job_detail(job_name,description,job_class,running,paused) values (?,?,?,?,?)";
+	private static final String DEF_INSERT_JOB_SQL = "insert into cron_job_detail(job_name,job_description,job_class,running,paused) values (?,?,?,?,?)";
 	private static final String DEF_CHECK_JOB_EXISTS_SQL = "select count(*) from cron_job_detail where job_name=?";
 	private static final String DEF_SELECT_JOB_NAMES_SQL = "select job_name from cron_job_detail";
 	private static final String DEF_SELECT_JOBS_SQL = "select * from cron_job_detail";
@@ -260,7 +260,7 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 	public void beforeJobExecution(TaskFuture future) {
 		final Job job = (Job) future.getDetail().getTaskObject();
 		final TaskDetail taskDetail = future.getDetail();
-		if (!hasJob(job)) {
+		if (hasJob(job)) {
 			Connection connection = null;
 			try {
 				connection = dataSource.getConnection();
@@ -290,34 +290,26 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 	}
 
 	public ResultSetSlice<JobInfo> getJobInfos() {
-		Connection connection = null;
-		try {
-			connection = dataSource.getConnection();
-			final ResultSetSlice<Tuple> delegate = DBUtils.pagingQuery(connection, DEF_SELECT_JOBS_SQL, (Object[]) null);
-			return new ResultSetSlice<JobInfo>() {
+		final ResultSetSlice<Tuple> delegate = DBUtils.pagingQuery(dataSource, DEF_SELECT_JOBS_SQL, (Object[]) null);
+		return new ResultSetSlice<JobInfo>() {
 
-				@Override
-				public int totalCount() {
-					return delegate.totalCount();
+			@Override
+			public int totalCount() {
+				return delegate.totalCount();
+			}
+
+			@Override
+			public List<JobInfo> list(int maxResults, int firstResult) {
+				List<JobInfo> dataList = new ArrayList<JobInfo>(maxResults);
+				for (Tuple tuple : delegate.list(maxResults, firstResult)) {
+					JobInfo jobInfo = tuple.toBean(JobInfo.class);
+					jobInfo.setStartDate(startDate);
+					dataList.add(jobInfo);
 				}
+				return dataList;
+			}
 
-				@Override
-				public List<JobInfo> list(int maxResults, int firstResult) {
-					List<JobInfo> dataList = new ArrayList<JobInfo>(maxResults);
-					for (Tuple tuple : delegate.list(maxResults, firstResult)) {
-						JobInfo jobInfo = tuple.toBean(JobInfo.class);
-						jobInfo.setStartDate(startDate);
-						dataList.add(jobInfo);
-					}
-					return dataList;
-				}
-
-			};
-		} catch (SQLException e) {
-			throw new SchedulingException(e.getMessage(), e);
-		} finally {
-			DBUtils.closeQuietly(connection);
-		}
+		};
 	}
 
 }

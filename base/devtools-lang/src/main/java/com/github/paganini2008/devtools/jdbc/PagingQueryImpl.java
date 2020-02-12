@@ -16,19 +16,21 @@ import com.github.paganini2008.devtools.collection.Tuple;
  */
 public class PagingQueryImpl implements PagingQuery<Tuple> {
 
-	private final Connection connection;
+	private final ConnectionFactory connectionFactory;
 	private final PageableSql pageableSql;
 	private final PreparedStatementSetter callback;
 
-	public PagingQueryImpl(Connection connection, PageableSql pageableSql, PreparedStatementSetter callback) {
-		this.connection = connection;
+	public PagingQueryImpl(ConnectionFactory connectionFactory, PageableSql pageableSql, PreparedStatementSetter callback) {
+		this.connectionFactory = connectionFactory;
 		this.pageableSql = pageableSql;
 		this.callback = callback;
 	}
 
 	public int totalCount() {
 		final String sql = pageableSql.countableSql();
+		Connection connection = null;
 		try {
+			connection = connectionFactory.getConnection();
 			Object result = DBUtils.executeOneResultQuery(connection, sql);
 			return result instanceof Number ? ((Number) result).intValue() : 0;
 		} catch (SQLException e) {
@@ -38,7 +40,9 @@ public class PagingQueryImpl implements PagingQuery<Tuple> {
 
 	public Iterator<Tuple> iterator(int maxResults, int firstResult) {
 		final String execution = pageableSql.pageableSql(maxResults, firstResult);
+		Connection connection = null;
 		try {
+			connection = connectionFactory.getConnection();
 			return DBUtils.executeQuery(connection, execution, callback);
 		} catch (SQLException e) {
 			throw new JdbcException(e.getMessage(), e);
