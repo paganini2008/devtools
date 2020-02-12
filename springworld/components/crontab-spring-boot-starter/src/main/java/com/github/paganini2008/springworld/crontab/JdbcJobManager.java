@@ -20,7 +20,6 @@ import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.beans.BeanUtils;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.Tuple;
-import com.github.paganini2008.devtools.io.SerializationUtils;
 import com.github.paganini2008.devtools.jdbc.DBUtils;
 import com.github.paganini2008.devtools.jdbc.ResultSetSlice;
 import com.github.paganini2008.devtools.scheduler.SchedulingException;
@@ -44,19 +43,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JdbcJobManager implements PersistentJobManager, PersistentJobsInitializer, TaskInterceptorHandler, ApplicationContextAware {
 
-	private static final String DEF_DDL_CRON_JOB_DETAIL_SQL = "create table cron_job_detail(job_name varchar(255) unique not null, job_descrption varchar(255), job_class varchar(255) not null, job_cron blob not null)";
-	private static final String DEF_DDL_CRON_JOB_STAT_SQL = "create table cron_job_stat(job_name varchar(255) unique not null, running bit not null, paused bit not null, completed_count int default 0, failed_count int default 0, last_executed timestamp, next_executed timestamp)";
+	private static final String DEF_DDL_CRON_JOB_DETAIL_SQL = "create table cron_job_detail(job_name varchar(255) unique not null, job_descrption varchar(255), job_class varchar(255) not null, running bit not null, paused bit not null, completed_count int default 0, failed_count int default 0, last_executed timestamp, next_executed timestamp)";
 
-	private static final String DEF_SELECT_JOBS_SQL = "select * from cron_job_detail";
-	private static final String DEF_INSERT_JOB_SQL = "insert into cron_job_detail(job_name,descrption,job_class,job_cron) values (?,?,?,?)";
+	private static final String DEF_INSERT_JOB_SQL = "insert into cron_job_detail(job_name,descrption,job_class,running,paused) values (?,?,?,?,?)";
 	private static final String DEF_CHECK_JOB_EXISTS_SQL = "select count(*) from cron_job_detail where job_name=?";
 	private static final String DEF_SELECT_JOB_NAMES_SQL = "select job_name from cron_job_detail";
+	private static final String DEF_SELECT_JOBS_SQL = "select * from cron_job_detail";
 	private static final String DEF_DELETE_JOB_SQL = "delete from cron_job_detail where job_name=?";
-
-	private static final String DEF_INSERT_JOB_STAT_SQL = "insert into cron_job_stat(job_name,running,paused) value(?,?,?)";
-	private static final String DEF_UPDATE_JOB_STAT_SQL = "update cron_job_stat set running=?, paused=?, completed_count=?, failed_count=?, last_executed=?, next_executed=? where job_name=?";
-
-	private static final String DEF_SELECT_JOB_INFO_SQL = "select a.job_name,a.descrption,a.job_class,b.running,b.paused,b.completed_count,b.failed_count,b.last_executed,b.next_executed from cron_job_detail a join cron_job_stat b on a.job_name=b.job_name";
+	private static final String DEF_UPDATE_JOB_SQL = "update cron_job_detail set running=?, paused=?, completed_count=?, failed_count=?, last_executed=?, next_executed=? where job_name=?";
 
 	private final Observable observable = Observable.unrepeatable();
 	private final TaskExecutor taskExecutor;
@@ -83,9 +77,6 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 					connection = dataSource.getConnection();
 					if (!DBUtils.existsTable(connection, null, "cron_job_detail")) {
 						DBUtils.executeUpdate(connection, DEF_DDL_CRON_JOB_DETAIL_SQL);
-					}
-					if (!DBUtils.existsTable(connection, null, "cron_job_stat")) {
-						DBUtils.executeUpdate(connection, DEF_DDL_CRON_JOB_STAT_SQL);
 					}
 				} finally {
 					DBUtils.closeQuietly(connection);
@@ -147,12 +138,8 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 					ps.setString(1, job.getName());
 					ps.setString(2, job.getDescription());
 					ps.setString(3, job.getClass().getName());
-					ps.setBytes(4, SerializationUtils.serialize(job.getCronExpression(), false));
-				});
-				DBUtils.executeUpdate(dataSource.getConnection(), DEF_INSERT_JOB_STAT_SQL, ps -> {
-					ps.setString(1, job.getName());
-					ps.setBoolean(2, false);
-					ps.setBoolean(3, false);
+					ps.setBoolean(4, false);
+					ps.setBoolean(5, false);
 				});
 				connection.commit();
 				log.info("Save job '" + job.getName() + "' ok.");
@@ -280,7 +267,7 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 			Connection connection = null;
 			try {
 				connection = dataSource.getConnection();
-				DBUtils.executeUpdate(connection, DEF_UPDATE_JOB_STAT_SQL, ps -> {
+				DBUtils.executeUpdate(connection, DEF_UPDATE_JOB_SQL, ps -> {
 					ps.setBoolean(1, taskDetail.isRunning());
 					ps.setBoolean(2, future.isPaused());
 					ps.setInt(3, taskDetail.completedCount());
@@ -309,7 +296,7 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 		Connection connection = null;
 		try {
 			connection = dataSource.getConnection();
-			final ResultSetSlice<Tuple> delegate = DBUtils.pagingQuery(connection, DEF_SELECT_JOB_INFO_SQL, (Object[]) null);
+			final ResultSetSlice<Tuple> delegate = DBUtils.pagingQuery(connection, DEF_SELECT_JOBS_SQL, (Object[]) null);
 			return new ResultSetSlice<JobInfo>() {
 
 				@Override
