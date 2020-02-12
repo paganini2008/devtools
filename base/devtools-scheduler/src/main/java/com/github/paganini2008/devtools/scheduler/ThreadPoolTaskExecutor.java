@@ -17,25 +17,25 @@ import com.github.paganini2008.devtools.scheduler.cron.CronExpression;
 
 /**
  * 
- * GenericTaskExecutor
+ * ThreadPoolTaskExecutor
  *
  * @author Fred Feng
  * @revised 2019-07
  * @created 2018-05
  * @version 1.0
  */
-public class GenericTaskExecutor implements TaskExecutor {
+public class ThreadPoolTaskExecutor implements TaskExecutor {
 
 	private final ScheduledExecutorService executor;
 	private final ConcurrentMap<Executable, TaskFuture> taskFutures = new ConcurrentHashMap<Executable, TaskFuture>();
 	private TaskInterceptorHandler interceptorHandler = new TaskInterceptorHandler() {
 	};
 
-	public GenericTaskExecutor(int nThreads, String threadNamePrefix) {
+	public ThreadPoolTaskExecutor(int nThreads, String threadNamePrefix) {
 		executor = Executors.newScheduledThreadPool(nThreads, new PooledThreadFactory(threadNamePrefix));
 	}
 
-	public GenericTaskExecutor(ScheduledExecutorService executor) {
+	public ThreadPoolTaskExecutor(ScheduledExecutorService executor) {
 		this.executor = executor;
 	}
 
@@ -106,6 +106,10 @@ public class GenericTaskExecutor implements TaskExecutor {
 
 	public int taskCount() {
 		return taskFutures.size();
+	}
+
+	public TaskFuture getTaskFuture(Executable task) {
+		return taskFutures.get(task);
 	}
 
 	public boolean isClosed() {
@@ -255,7 +259,7 @@ public class GenericTaskExecutor implements TaskExecutor {
 
 	public static void main(String[] args) throws Exception {
 		CronExpression expression = CronBuilder.everySecond();
-		GenericTaskExecutor es = new GenericTaskExecutor(2, null);
+		ThreadPoolTaskExecutor es = new ThreadPoolTaskExecutor(2, null);
 		final TaskFuture taskFuture = es.schedule(new Executable() {
 			int n = 0;
 

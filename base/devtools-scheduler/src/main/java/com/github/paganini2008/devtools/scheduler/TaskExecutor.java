@@ -57,7 +57,9 @@ public interface TaskExecutor {
 
 	void removeSchedule(Executable task);
 
-	boolean hasScheduled(Executable e);
+	boolean hasScheduled(Executable task);
+
+	TaskFuture getTaskFuture(Executable task);
 
 	int taskCount();
 
@@ -85,6 +87,12 @@ public interface TaskExecutor {
 		long lastExecuted();
 
 		long nextExecuted();
+
+		void completedCount(int count);
+
+		void failedCount(int count);
+
+		void nextExecuted(long time);
 
 		Executable getTaskObject();
 

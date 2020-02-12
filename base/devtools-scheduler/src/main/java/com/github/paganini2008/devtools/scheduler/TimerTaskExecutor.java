@@ -10,14 +10,14 @@ import com.github.paganini2008.devtools.scheduler.cron.CronExpression;
 
 /**
  * 
- * SimpleTaskExecutor
+ * TimerTaskExecutor
  *
  * @author Fred Feng
  * @revised 2019-07
  * @created 2013-11
  * @version 1.0
  */
-public class SimpleTaskExecutor implements TaskExecutor {
+public class TimerTaskExecutor implements TaskExecutor {
 
 	private volatile boolean running;
 	private final Timer timer;
@@ -25,11 +25,11 @@ public class SimpleTaskExecutor implements TaskExecutor {
 	private TaskInterceptorHandler interceptorHandler = new TaskInterceptorHandler() {
 	};
 
-	public SimpleTaskExecutor() {
+	public TimerTaskExecutor() {
 		this(new Timer());
 	}
 
-	public SimpleTaskExecutor(Timer timer) {
+	public TimerTaskExecutor(Timer timer) {
 		this.timer = timer;
 		this.running = true;
 	}
@@ -113,9 +113,13 @@ public class SimpleTaskExecutor implements TaskExecutor {
 	public void setTaskInterceptorHandler(TaskInterceptorHandler interceptorHandler) {
 		this.interceptorHandler = interceptorHandler;
 	}
-	
-	public boolean hasScheduled(Executable e) {
-		return taskFutures.containsKey(e);
+
+	public boolean hasScheduled(Executable task) {
+		return taskFutures.containsKey(task);
+	}
+
+	public TaskFuture getTaskFuture(Executable task) {
+		return taskFutures.get(task);
 	}
 
 	/**
@@ -139,7 +143,7 @@ public class SimpleTaskExecutor implements TaskExecutor {
 			this.timerTask = timerTask;
 			this.taskDetail = taskDetail;
 		}
-		
+
 		public void pause() {
 			paused = true;
 		}

@@ -6,8 +6,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.sql.DataSource;
 
@@ -19,15 +17,16 @@ import com.github.paganini2008.devtools.ClassUtils;
 import com.github.paganini2008.devtools.Observable;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.beans.BeanUtils;
+import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.Tuple;
 import com.github.paganini2008.devtools.io.SerializationUtils;
 import com.github.paganini2008.devtools.jdbc.DBUtils;
-import com.github.paganini2008.devtools.scheduler.GenericTaskExecutor;
 import com.github.paganini2008.devtools.scheduler.SchedulingException;
 import com.github.paganini2008.devtools.scheduler.TaskExecutor;
 import com.github.paganini2008.devtools.scheduler.TaskExecutor.TaskDetail;
 import com.github.paganini2008.devtools.scheduler.TaskExecutor.TaskFuture;
 import com.github.paganini2008.devtools.scheduler.TaskInterceptorHandler;
+import com.github.paganini2008.devtools.scheduler.ThreadPoolTaskExecutor;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,7 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 public class JdbcJobManager implements PersistentJobManager, PersistentJobsInitializer, TaskInterceptorHandler, ApplicationContextAware {
 
 	private static final String DEF_DDL_CRON_JOB_DETAIL_SQL = "create table cron_job_detail(job_name varchar(255) unique not null, job_descrption varchar(255), job_class varchar(255) not null, job_cron blob not null)";
-	private static final String DEF_DDL_CRON_JOB_STAT_SQL = "create table cron_job_stat(job_name varchar(255) unique not null, is_running bit not null, completed_count int, failed_count int, last_executed timestamp not null, next_executed timestamp not null)";
+	private static final String DEF_DDL_CRON_JOB_STAT_SQL = "create table cron_job_stat(job_name varchar(255) unique not null, is_running bit not null, completed_count int default 0, failed_count int default 0, last_executed timestamp, next_executed timestamp)";
 
 	private static final String DEF_SELECT_JOBS_SQL = "select * from cron_job_detail";
 	private static final String DEF_INSERT_JOB_SQL = "insert into cron_job_detail(job_name,descrption,job_class,job_cron) values (?,?,?,?)";
@@ -52,11 +51,10 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 	private static final String DEF_SELECT_JOB_NAMES_SQL = "select job_name from cron_job_detail";
 	private static final String DEF_DELETE_JOB_SQL = "delete from cron_job_detail where job_name=?";
 
-	private static final String DEF_INSERT_JOB_STAT_SQL = "insert into cron_job_stat(job_name,is_running,last_executed,next_executed) value(?,?,?,?)";
-	private static final String DEF_UPDATE_JOB_STAT_SQL = "update cron_job_stat set completed_count=?, failed_count=?, is_running=? where job_name=?";
+	private static final String DEF_INSERT_JOB_STAT_SQL = "insert into cron_job_stat(job_name,is_running) value(?,?)";
+	private static final String DEF_UPDATE_JOB_STAT_SQL = "update cron_job_stat set is_running=?, completed_count=?, failed_count=?, last_executed=?, next_executed=? where job_name=?";
 
 	private final Observable observable = Observable.unrepeatable();
-	private final Map<Job, TaskExecutor.TaskFuture> taskFutures = new ConcurrentHashMap<Job, TaskExecutor.TaskFuture>();
 	private final TaskExecutor taskExecutor;
 	private DataSource dataSource;
 	private ApplicationContext context;
@@ -66,39 +64,46 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 	}
 
 	public JdbcJobManager(int nThreads) {
-		taskExecutor = new GenericTaskExecutor(nThreads, "crontab");
+		taskExecutor = new ThreadPoolTaskExecutor(nThreads, "crontab");
 		taskExecutor.setTaskInterceptorHandler(this);
 	}
 
-	public void setDataSource(DataSource dataSource) throws SQLException {
+	public void setDataSource(DataSource dataSource, boolean autoDDL) throws SQLException {
 		if (dataSource != null) {
 			this.dataSource = dataSource;
-
-			Connection connection = null;
-			try {
-				connection = dataSource.getConnection();
-				if (!DBUtils.existsTable(connection, null, "cron_job_detail")) {
-					DBUtils.executeUpdate(connection, DEF_DDL_CRON_JOB_DETAIL_SQL);
+			if (autoDDL) {
+				Connection connection = null;
+				try {
+					connection = dataSource.getConnection();
+					if (!DBUtils.existsTable(connection, null, "cron_job_detail")) {
+						DBUtils.executeUpdate(connection, DEF_DDL_CRON_JOB_DETAIL_SQL);
+					}
+					if (!DBUtils.existsTable(connection, null, "cron_job_stat")) {
+						DBUtils.executeUpdate(connection, DEF_DDL_CRON_JOB_STAT_SQL);
+					}
+				} finally {
+					DBUtils.closeQuietly(connection);
 				}
-				if (!DBUtils.existsTable(connection, null, "cron_job_stat")) {
-					DBUtils.executeUpdate(connection, DEF_DDL_CRON_JOB_STAT_SQL);
-				}
-			} finally {
-				DBUtils.closeQuietly(connection);
 			}
 		}
 	}
 
 	public void reloadPersistentJobs() {
-		Iterator<Tuple> iterator;
+		Connection connection = null;
+		List<Tuple> dataList = null;
 		try {
-			iterator = DBUtils.executeQuery(dataSource.getConnection(), DEF_SELECT_JOBS_SQL);
+			connection = dataSource.getConnection();
+			Iterator<Tuple> iterator = DBUtils.executeQuery(connection, DEF_SELECT_JOBS_SQL);
+			dataList = CollectionUtils.toList(iterator);
 		} catch (SQLException e) {
 			throw new SchedulingException(e.getMessage(), e);
+		} finally {
+			DBUtils.closeQuietly(connection);
 		}
-		while (iterator.hasNext()) {
-			Tuple tuple = iterator.next();
-			reloadPersistentJob(tuple);
+		if (CollectionUtils.isNotCollection(dataList)) {
+			for (Tuple tuple : dataList) {
+				reloadPersistentJob(tuple);
+			}
 		}
 		log.info("Reload and schedule all customized jobs ok.");
 	}
@@ -118,8 +123,8 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 
 		Job job = (Job) BeanUtils.instantiate(jobClass);
 		observable.addObserver((ob, arg) -> {
-			if (!taskFutures.containsKey(job)) {
-				taskFutures.put(job, taskExecutor.schedule(job, job.getCronExpression()));
+			if (!hasScheduled(job)) {
+				taskExecutor.schedule(job, job.getCronExpression());
 				log.info("Schedule job '" + job.getName() + "' ok. Currently job's size is " + countOfJobs());
 			}
 		});
@@ -128,16 +133,27 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 
 	public void save(Job job) {
 		if (!hasJob(job)) {
+			Connection connection = null;
 			try {
-				DBUtils.executeUpdate(dataSource.getConnection(), DEF_INSERT_JOB_SQL, ps -> {
+				connection = dataSource.getConnection();
+				connection.setAutoCommit(false);
+				DBUtils.executeUpdate(connection, DEF_INSERT_JOB_SQL, ps -> {
 					ps.setString(1, job.getName());
 					ps.setString(2, job.getDescription());
 					ps.setString(3, job.getClass().getName());
 					ps.setBytes(4, SerializationUtils.serialize(job.getCronExpression(), false));
 				});
+				DBUtils.executeUpdate(dataSource.getConnection(), DEF_INSERT_JOB_STAT_SQL, ps -> {
+					ps.setString(1, job.getName());
+					ps.setBoolean(2, false);
+				});
+				connection.commit();
 				log.info("Save job '" + job.getName() + "' ok.");
 			} catch (SQLException e) {
+				DBUtils.rollbackQuietly(connection);
 				throw new SchedulingException("Failed to save job detail to database.", e);
+			} finally {
+				DBUtils.closeQuietly(connection);
 			}
 		}
 	}
@@ -147,8 +163,8 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 		observable.addObserver((ob, arg) -> {
 			save(job);
 
-			if (!taskFutures.containsKey(job)) {
-				taskFutures.put(job, taskExecutor.schedule(job, job.getCronExpression()));
+			if (!hasScheduled(job)) {
+				taskExecutor.schedule(job, job.getCronExpression());
 				log.info("Schedule job '" + job.getName() + "' ok. Currently job's size is " + countOfJobs());
 			}
 		});
@@ -160,64 +176,74 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 	}
 
 	public int countOfJobs() {
-		return taskFutures.size();
+		return taskExecutor.taskCount();
 	}
 
 	public boolean hasScheduled(Job job) {
-		return taskFutures.containsKey(job);
+		return taskExecutor.hasScheduled(job);
 	}
 
 	public String[] jobNames() {
 		List<String> names = new ArrayList<String>();
 		Iterator<Tuple> iterator;
+		Connection connection = null;
 		try {
-			iterator = DBUtils.executeQuery(dataSource.getConnection(), DEF_SELECT_JOB_NAMES_SQL);
+			connection = dataSource.getConnection();
+			iterator = DBUtils.executeQuery(connection, DEF_SELECT_JOB_NAMES_SQL);
 		} catch (SQLException e) {
 			throw new SchedulingException(e.getMessage(), e);
+		} finally {
+			DBUtils.closeQuietly(connection);
 		}
 		while (iterator.hasNext()) {
-			names.add((String) iterator.next().get("name"));
+			names.add((String) iterator.next().get("jobName"));
 		}
 		return names.toArray(new String[0]);
 	}
 
 	public boolean hasJob(Job job) {
+		Connection connection = null;
 		try {
-			Object result = DBUtils.executeOneResultQuery(dataSource.getConnection(), DEF_CHECK_JOB_EXISTS_SQL,
-					new Object[] { job.getName() });
+			connection = dataSource.getConnection();
+			Object result = DBUtils.executeOneResultQuery(connection, DEF_CHECK_JOB_EXISTS_SQL, new Object[] { job.getName() });
 			return result instanceof Number ? ((Number) result).intValue() > 0 : false;
 		} catch (SQLException e) {
 			throw new SchedulingException(e.getMessage(), e);
+		} finally {
+			DBUtils.closeQuietly(connection);
 		}
 	}
 
 	public void pauseJob(Job job) {
 		if (hasScheduled(job)) {
-			taskFutures.get(job).pause();
+			taskExecutor.getTaskFuture(job).pause();
 		}
 	}
 
 	public void resumeJob(Job job) {
 		if (hasScheduled(job)) {
-			taskFutures.get(job).resume();
+			taskExecutor.getTaskFuture(job).resume();
 		}
 	}
 
 	public void unscheduleJob(Job job) {
 		if (hasScheduled(job)) {
 			taskExecutor.removeSchedule(job);
-			taskFutures.remove(job);
 			log.info("Unschedule job '" + job.getName() + "' ok.");
 		}
 	}
 
 	public void deleteJob(Job job) {
 		if (hasJob(job)) {
+			Connection connection = null;
 			try {
-				DBUtils.executeUpdate(dataSource.getConnection(), DEF_DELETE_JOB_SQL, new Object[] { job.getName() });
+				connection = dataSource.getConnection();
+				DBUtils.executeUpdate(connection, DEF_DELETE_JOB_SQL, new Object[] { job.getName() });
 				log.info("Delete job '" + job.getName() + "' ok.");
 			} catch (SQLException e) {
 				throw new SchedulingException(e.getMessage(), e);
+			} finally {
+				DBUtils.closeQuietly(connection);
 			}
 		}
 
@@ -238,34 +264,27 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 		final Job job = (Job) future.getDetail().getTaskObject();
 		final TaskDetail taskDetail = future.getDetail();
 		if (!hasJob(job)) {
+			Connection connection = null;
 			try {
-				DBUtils.executeUpdate(dataSource.getConnection(), DEF_INSERT_JOB_STAT_SQL, ps -> {
-					ps.setString(1, job.getName());
-					ps.setBoolean(2, taskDetail.isRunning());
-					ps.setTimestamp(3, new Timestamp(taskDetail.lastExecuted()));
-					ps.setTimestamp(4, new Timestamp(taskDetail.nextExecuted()));
+				connection = dataSource.getConnection();
+				DBUtils.executeUpdate(connection, DEF_UPDATE_JOB_STAT_SQL, ps -> {
+					ps.setBoolean(1, taskDetail.isRunning());
+					ps.setInt(2, taskDetail.completedCount());
+					ps.setInt(3, taskDetail.failedCount());
+					ps.setTimestamp(4, new Timestamp(taskDetail.lastExecuted()));
+					ps.setTimestamp(5, new Timestamp(taskDetail.nextExecuted()));
+					ps.setString(6, job.getName());
 				});
 			} catch (SQLException e) {
 				throw new SchedulingException("Failed to save job detail to database.", e);
+			} finally {
+				DBUtils.closeQuietly(connection);
 			}
 		}
 	}
 
 	public void afterJobExecution(TaskFuture future) {
-		final Job job = (Job) future.getDetail().getTaskObject();
-		final TaskDetail taskDetail = future.getDetail();
-		if (!hasJob(job)) {
-			try {
-				DBUtils.executeUpdate(dataSource.getConnection(), DEF_UPDATE_JOB_STAT_SQL, ps -> {
-					ps.setInt(1, taskDetail.completedCount());
-					ps.setInt(2, taskDetail.failedCount());
-					ps.setBoolean(3, taskDetail.isRunning());
-					ps.setString(4, job.getName());
-				});
-			} catch (SQLException e) {
-				throw new SchedulingException("Failed to save job detail to database.", e);
-			}
-		}
+		beforeJobExecution(future);
 	}
 
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

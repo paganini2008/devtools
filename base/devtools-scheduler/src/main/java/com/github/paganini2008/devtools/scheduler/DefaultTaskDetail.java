@@ -51,6 +51,18 @@ public class DefaultTaskDetail implements TaskDetail {
 		return nextExecuted;
 	}
 
+	public void completedCount(int count) {
+		completedCount.set(count);
+	}
+
+	public void failedCount(int count) {
+		failedCount.set(count);
+	}
+
+	public void nextExecuted(long time) {
+		nextExecuted = time;
+	}
+
 	public Executable getTaskObject() {
 		return task;
 	}
