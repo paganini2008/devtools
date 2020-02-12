@@ -121,6 +121,7 @@ public class MemoryJobManager implements JobManager, TaskInterceptorHandler {
 
 		JobInfo jobInfo = new JobInfo();
 		jobInfo.setJobName(job.getName());
+		jobInfo.setJobClass(job.getClass().getName());
 		jobInfo.setDescription(job.getDescription());
 		jobInfo.setRunning(taskDetail.isRunning());
 		jobInfo.setPaused(future.isPaused());

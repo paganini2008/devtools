@@ -43,9 +43,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JdbcJobManager implements PersistentJobManager, PersistentJobsInitializer, TaskInterceptorHandler, ApplicationContextAware {
 
-	private static final String DEF_DDL_CRON_JOB_DETAIL_SQL = "create table cron_job_detail(job_name varchar(255) unique not null, job_descrption varchar(255), job_class varchar(255) not null, running bit not null, paused bit not null, completed_count int default 0, failed_count int default 0, last_executed timestamp, next_executed timestamp)";
+	private static final String DEF_DDL_CRON_JOB_DETAIL_SQL = "create table cron_job_detail(job_name varchar(255) unique not null, job_description varchar(255), job_class varchar(255) not null, running bit not null, paused bit not null, completed_count int default 0, failed_count int default 0, last_executed timestamp, next_executed timestamp)";
 
-	private static final String DEF_INSERT_JOB_SQL = "insert into cron_job_detail(job_name,descrption,job_class,running,paused) values (?,?,?,?,?)";
+	private static final String DEF_INSERT_JOB_SQL = "insert into cron_job_detail(job_name,description,job_class,running,paused) values (?,?,?,?,?)";
 	private static final String DEF_CHECK_JOB_EXISTS_SQL = "select count(*) from cron_job_detail where job_name=?";
 	private static final String DEF_SELECT_JOB_NAMES_SQL = "select job_name from cron_job_detail";
 	private static final String DEF_SELECT_JOBS_SQL = "select * from cron_job_detail";
@@ -133,7 +133,6 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 			Connection connection = null;
 			try {
 				connection = dataSource.getConnection();
-				connection.setAutoCommit(false);
 				DBUtils.executeUpdate(connection, DEF_INSERT_JOB_SQL, ps -> {
 					ps.setString(1, job.getName());
 					ps.setString(2, job.getDescription());
@@ -141,10 +140,8 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 					ps.setBoolean(4, false);
 					ps.setBoolean(5, false);
 				});
-				connection.commit();
 				log.info("Save job '" + job.getName() + "' ok.");
 			} catch (SQLException e) {
-				DBUtils.rollbackQuietly(connection);
 				throw new SchedulingException("Failed to save job detail to database.", e);
 			} finally {
 				DBUtils.closeQuietly(connection);
