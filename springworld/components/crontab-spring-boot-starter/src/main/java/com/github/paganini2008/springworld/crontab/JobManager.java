@@ -1,5 +1,9 @@
 package com.github.paganini2008.springworld.crontab;
 
+import java.util.Date;
+
+import com.github.paganini2008.devtools.jdbc.ResultSetSlice;
+
 /**
  * 
  * JobManager
@@ -23,10 +27,14 @@ public interface JobManager {
 
 	void runNow();
 
-	int countOfJobs();
+	int countOfScheduling();
 
 	String[] jobNames();
 
+	Date getStartDate();
+	
 	void close();
+	
+	ResultSetSlice<JobInfo> getJobInfos();
 
 }

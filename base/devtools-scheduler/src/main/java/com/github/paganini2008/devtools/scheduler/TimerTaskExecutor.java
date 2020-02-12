@@ -152,6 +152,10 @@ public class TimerTaskExecutor implements TaskExecutor {
 			paused = false;
 		}
 
+		public boolean isPaused() {
+			return paused;
+		}
+
 		public boolean cancel() {
 			return (done |= cancelled = timerTask.cancel());
 		}

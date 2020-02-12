@@ -11,11 +11,13 @@ import org.springframework.scheduling.SchedulingException;
 
 import com.github.paganini2008.devtools.Observable;
 import com.github.paganini2008.devtools.StringUtils;
+import com.github.paganini2008.devtools.jdbc.ResultSetSlice;
 import com.github.paganini2008.devtools.scheduler.TaskExecutor;
 import com.github.paganini2008.devtools.scheduler.TaskExecutor.TaskDetail;
 import com.github.paganini2008.devtools.scheduler.TaskExecutor.TaskFuture;
 import com.github.paganini2008.devtools.scheduler.TaskInterceptorHandler;
 import com.github.paganini2008.devtools.scheduler.ThreadPoolTaskExecutor;
+import com.github.paganini2008.springworld.redis.RedisHashSlice;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,6 +36,7 @@ public class MemoryJobManager implements JobManager, TaskInterceptorHandler {
 	private final Observable observable = Observable.unrepeatable();
 	private final Map<String, Job> store = new ConcurrentHashMap<String, Job>();
 	private final TaskExecutor taskExecutor;
+	private final Date startDate;
 
 	public MemoryJobManager() {
 		this(8);
@@ -42,6 +45,7 @@ public class MemoryJobManager implements JobManager, TaskInterceptorHandler {
 	public MemoryJobManager(int nThreads) {
 		taskExecutor = new ThreadPoolTaskExecutor(nThreads, "crontab");
 		taskExecutor.setTaskInterceptorHandler(this);
+		this.startDate = new Date();
 	}
 
 	@Autowired
@@ -55,7 +59,7 @@ public class MemoryJobManager implements JobManager, TaskInterceptorHandler {
 		observable.addObserver((ob, arg) -> {
 			if (!hasScheduled(job)) {
 				taskExecutor.schedule(job, job.getCronExpression());
-				log.info("Schedule job '" + job.getName() + "' ok. Currently job's size is " + countOfJobs());
+				log.info("Schedule job '" + job.getName() + "' ok. Currently scheduling's size is " + countOfScheduling());
 			}
 		});
 	}
@@ -87,12 +91,16 @@ public class MemoryJobManager implements JobManager, TaskInterceptorHandler {
 		log.info("Run all jobs now.");
 	}
 
-	public int countOfJobs() {
+	public int countOfScheduling() {
 		return taskExecutor.taskCount();
 	}
 
 	public String[] jobNames() {
 		return store.keySet().toArray(new String[0]);
+	}
+
+	public Date getStartDate() {
+		return startDate;
 	}
 
 	private static void checkJobNameIfBlank(Job job) {
@@ -115,12 +123,14 @@ public class MemoryJobManager implements JobManager, TaskInterceptorHandler {
 		jobInfo.setJobName(job.getName());
 		jobInfo.setDescription(job.getDescription());
 		jobInfo.setRunning(taskDetail.isRunning());
+		jobInfo.setPaused(future.isPaused());
 		jobInfo.setCompletedCount(taskDetail.completedCount());
 		jobInfo.setFailedCount(taskDetail.failedCount());
 		jobInfo.setLastExecuted(new Date(taskDetail.lastExecuted()));
 		jobInfo.setNextExecuted(new Date(taskDetail.nextExecuted()));
+		jobInfo.setStartDate(startDate);
 
-		String key = String.format("crontab:%s:%s", applicationName);
+		String key = String.format("crontab:%s:", applicationName);
 		redisTemplate.opsForHash().put(key, jobInfo.getJobName(), jobInfo);
 	}
 
@@ -128,4 +138,9 @@ public class MemoryJobManager implements JobManager, TaskInterceptorHandler {
 		beforeJobExecution(future);
 	}
 
+	@Override
+	public ResultSetSlice<JobInfo> getJobInfos() {
+		String key = String.format("crontab:%s:", applicationName);
+		return new RedisHashSlice<JobInfo>(key, redisTemplate);
+	}
 }

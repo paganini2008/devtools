@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.Tuple;
 import com.github.paganini2008.devtools.io.SerializationUtils;
 import com.github.paganini2008.devtools.jdbc.DBUtils;
+import com.github.paganini2008.devtools.jdbc.ResultSetSlice;
 import com.github.paganini2008.devtools.scheduler.SchedulingException;
 import com.github.paganini2008.devtools.scheduler.TaskExecutor;
 import com.github.paganini2008.devtools.scheduler.TaskExecutor.TaskDetail;
@@ -43,7 +45,7 @@ import lombok.extern.slf4j.Slf4j;
 public class JdbcJobManager implements PersistentJobManager, PersistentJobsInitializer, TaskInterceptorHandler, ApplicationContextAware {
 
 	private static final String DEF_DDL_CRON_JOB_DETAIL_SQL = "create table cron_job_detail(job_name varchar(255) unique not null, job_descrption varchar(255), job_class varchar(255) not null, job_cron blob not null)";
-	private static final String DEF_DDL_CRON_JOB_STAT_SQL = "create table cron_job_stat(job_name varchar(255) unique not null, is_running bit not null, completed_count int default 0, failed_count int default 0, last_executed timestamp, next_executed timestamp)";
+	private static final String DEF_DDL_CRON_JOB_STAT_SQL = "create table cron_job_stat(job_name varchar(255) unique not null, running bit not null, paused bit not null, completed_count int default 0, failed_count int default 0, last_executed timestamp, next_executed timestamp)";
 
 	private static final String DEF_SELECT_JOBS_SQL = "select * from cron_job_detail";
 	private static final String DEF_INSERT_JOB_SQL = "insert into cron_job_detail(job_name,descrption,job_class,job_cron) values (?,?,?,?)";
@@ -51,13 +53,16 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 	private static final String DEF_SELECT_JOB_NAMES_SQL = "select job_name from cron_job_detail";
 	private static final String DEF_DELETE_JOB_SQL = "delete from cron_job_detail where job_name=?";
 
-	private static final String DEF_INSERT_JOB_STAT_SQL = "insert into cron_job_stat(job_name,is_running) value(?,?)";
-	private static final String DEF_UPDATE_JOB_STAT_SQL = "update cron_job_stat set is_running=?, completed_count=?, failed_count=?, last_executed=?, next_executed=? where job_name=?";
+	private static final String DEF_INSERT_JOB_STAT_SQL = "insert into cron_job_stat(job_name,running,paused) value(?,?,?)";
+	private static final String DEF_UPDATE_JOB_STAT_SQL = "update cron_job_stat set running=?, paused=?, completed_count=?, failed_count=?, last_executed=?, next_executed=? where job_name=?";
+
+	private static final String DEF_SELECT_JOB_INFO_SQL = "select a.job_name,a.descrption,a.job_class,b.running,b.paused,b.completed_count,b.failed_count,b.last_executed,b.next_executed from cron_job_detail a join cron_job_stat b on a.job_name=b.job_name";
 
 	private final Observable observable = Observable.unrepeatable();
 	private final TaskExecutor taskExecutor;
 	private DataSource dataSource;
 	private ApplicationContext context;
+	private final Date startDate;
 
 	public JdbcJobManager() {
 		this(8);
@@ -66,6 +71,7 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 	public JdbcJobManager(int nThreads) {
 		taskExecutor = new ThreadPoolTaskExecutor(nThreads, "crontab");
 		taskExecutor.setTaskInterceptorHandler(this);
+		this.startDate = new Date();
 	}
 
 	public void setDataSource(DataSource dataSource, boolean autoDDL) throws SQLException {
@@ -125,7 +131,7 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 		observable.addObserver((ob, arg) -> {
 			if (!hasScheduled(job)) {
 				taskExecutor.schedule(job, job.getCronExpression());
-				log.info("Schedule job '" + job.getName() + "' ok. Currently job's size is " + countOfJobs());
+				log.info("Schedule job '" + job.getName() + "' ok. Currently scheduling's size is " + countOfScheduling());
 			}
 		});
 		log.info("Reload job '" + jobName + "' from database ok.");
@@ -146,6 +152,7 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 				DBUtils.executeUpdate(dataSource.getConnection(), DEF_INSERT_JOB_STAT_SQL, ps -> {
 					ps.setString(1, job.getName());
 					ps.setBoolean(2, false);
+					ps.setBoolean(3, false);
 				});
 				connection.commit();
 				log.info("Save job '" + job.getName() + "' ok.");
@@ -165,7 +172,7 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 
 			if (!hasScheduled(job)) {
 				taskExecutor.schedule(job, job.getCronExpression());
-				log.info("Schedule job '" + job.getName() + "' ok. Currently job's size is " + countOfJobs());
+				log.info("Schedule job '" + job.getName() + "' ok. Currently scheduling's size is " + countOfScheduling());
 			}
 		});
 	}
@@ -175,7 +182,7 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 		log.info("Run all jobs now.");
 	}
 
-	public int countOfJobs() {
+	public int countOfScheduling() {
 		return taskExecutor.taskCount();
 	}
 
@@ -190,13 +197,13 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 		try {
 			connection = dataSource.getConnection();
 			iterator = DBUtils.executeQuery(connection, DEF_SELECT_JOB_NAMES_SQL);
+			while (iterator.hasNext()) {
+				names.add((String) iterator.next().get("jobName"));
+			}
 		} catch (SQLException e) {
 			throw new SchedulingException(e.getMessage(), e);
 		} finally {
 			DBUtils.closeQuietly(connection);
-		}
-		while (iterator.hasNext()) {
-			names.add((String) iterator.next().get("jobName"));
 		}
 		return names.toArray(new String[0]);
 	}
@@ -250,6 +257,10 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 		unscheduleJob(job);
 	}
 
+	public Date getStartDate() {
+		return startDate;
+	}
+
 	private static void checkJobNameIfBlank(Job job) {
 		if (StringUtils.isBlank(job.getName())) {
 			throw new SchedulingException("Job name is not blank for class: " + job.getClass().getName());
@@ -257,7 +268,9 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 	}
 
 	public void close() {
-		taskExecutor.close();
+		if (taskExecutor != null) {
+			taskExecutor.close();
+		}
 	}
 
 	public void beforeJobExecution(TaskFuture future) {
@@ -269,11 +282,12 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 				connection = dataSource.getConnection();
 				DBUtils.executeUpdate(connection, DEF_UPDATE_JOB_STAT_SQL, ps -> {
 					ps.setBoolean(1, taskDetail.isRunning());
-					ps.setInt(2, taskDetail.completedCount());
-					ps.setInt(3, taskDetail.failedCount());
-					ps.setTimestamp(4, new Timestamp(taskDetail.lastExecuted()));
-					ps.setTimestamp(5, new Timestamp(taskDetail.nextExecuted()));
-					ps.setString(6, job.getName());
+					ps.setBoolean(2, future.isPaused());
+					ps.setInt(3, taskDetail.completedCount());
+					ps.setInt(4, taskDetail.failedCount());
+					ps.setTimestamp(5, new Timestamp(taskDetail.lastExecuted()));
+					ps.setTimestamp(6, new Timestamp(taskDetail.nextExecuted()));
+					ps.setString(7, job.getName());
 				});
 			} catch (SQLException e) {
 				throw new SchedulingException("Failed to save job detail to database.", e);
@@ -289,6 +303,37 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.context = applicationContext;
+	}
+
+	public ResultSetSlice<JobInfo> getJobInfos() {
+		Connection connection = null;
+		try {
+			connection = dataSource.getConnection();
+			final ResultSetSlice<Tuple> delegate = DBUtils.pagingQuery(connection, DEF_SELECT_JOB_INFO_SQL, (Object[]) null);
+			return new ResultSetSlice<JobInfo>() {
+
+				@Override
+				public int totalCount() {
+					return delegate.totalCount();
+				}
+
+				@Override
+				public List<JobInfo> list(int maxResults, int firstResult) {
+					List<JobInfo> dataList = new ArrayList<JobInfo>(maxResults);
+					for (Tuple tuple : delegate.list(maxResults, firstResult)) {
+						JobInfo jobInfo = tuple.toBean(JobInfo.class);
+						jobInfo.setStartDate(startDate);
+						dataList.add(jobInfo);
+					}
+					return dataList;
+				}
+
+			};
+		} catch (SQLException e) {
+			throw new SchedulingException(e.getMessage(), e);
+		} finally {
+			DBUtils.closeQuietly(connection);
+		}
 	}
 
 }

@@ -3,6 +3,7 @@ package com.github.paganini2008.devtools.collection;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -13,25 +14,22 @@ import java.util.Set;
  * @version 1.0
  */
 @SuppressWarnings("all")
-public class SetUtils {
-
-	private SetUtils() {
-	}
+public abstract class SetUtils {
 
 	public static <T> Set<T> unmodifiableSet(T... args) {
 		return Collections.unmodifiableSet(create(args));
 	}
 
 	public static <T> Set<T> unmodifiableSet(Collection<T> c) {
-		return Collections.unmodifiableSet(toSet(c));
+		return Collections.unmodifiableSet((c instanceof Set ? (Set<T>) c : new HashSet(c)));
 	}
 
 	public static <T> Set<T> create(T... args) {
-		return args != null ? new LinkedHashSet<T>(Arrays.asList(args)) : new LinkedHashSet();
+		return toSet(Arrays.asList(args));
 	}
 
 	public static <T> Set<T> toSet(Collection<T> c) {
-		return c instanceof LinkedHashSet ? (LinkedHashSet<T>) c : new LinkedHashSet(c);
+		return c instanceof Set ? (Set<T>) c : new HashSet(c);
 	}
 
 	public static boolean isSet(Object obj) {

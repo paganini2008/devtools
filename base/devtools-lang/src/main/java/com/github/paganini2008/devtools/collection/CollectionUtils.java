@@ -21,10 +21,7 @@ import com.github.paganini2008.devtools.StringUtils;
  * @version 1.0
  */
 @SuppressWarnings("all")
-public class CollectionUtils {
-
-	private CollectionUtils() {
-	}
+public abstract class CollectionUtils {
 
 	public static <T> Collection<T> unmodifiableCollection(T... args) {
 		return unmodifiableCollection(Arrays.asList(args));

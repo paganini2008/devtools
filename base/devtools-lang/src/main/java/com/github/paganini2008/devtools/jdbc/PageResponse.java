@@ -8,6 +8,7 @@ import java.util.List;
  * 
  * @author Fred Feng
  * @created 2019-04
+ * @revised 2019-04
  */
 public interface PageResponse<T> extends Iterable<PageResponse<T>> {
 
@@ -24,9 +25,9 @@ public interface PageResponse<T> extends Iterable<PageResponse<T>> {
 	int getTotalPages();
 
 	int getTotalRecords();
-	
+
 	int getOffset();
-	
+
 	int getPageSize();
 
 	List<T> getContent();

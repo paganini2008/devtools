@@ -118,6 +118,8 @@ public interface TaskExecutor {
 		boolean isCancelled();
 
 		boolean isDone();
+		
+		boolean isPaused();
 
 		TaskDetail getDetail();
 

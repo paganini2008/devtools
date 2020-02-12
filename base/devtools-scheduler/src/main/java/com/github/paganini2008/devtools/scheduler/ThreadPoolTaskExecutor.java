@@ -198,6 +198,10 @@ public class ThreadPoolTaskExecutor implements TaskExecutor {
 			return !scheduledFuture.isDone() ? scheduledFuture.cancel(false) : true;
 		}
 
+		public boolean isPaused() {
+			return paused;
+		}
+
 		public boolean isCancelled() {
 			return scheduledFuture.isCancelled();
 		}

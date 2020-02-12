@@ -3,6 +3,8 @@ package com.github.paganini2008.springworld.crontab;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -27,9 +29,14 @@ public class JobInfo implements Serializable {
 	private String jobClass;
 	private String description;
 	private boolean running;
+	private boolean paused;
 	private int completedCount;
 	private int failedCount;
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date lastExecuted;
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date nextExecuted;
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date startDate;
 
 }

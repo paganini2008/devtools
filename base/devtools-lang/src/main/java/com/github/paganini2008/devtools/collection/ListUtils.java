@@ -21,10 +21,7 @@ import com.github.paganini2008.devtools.ObjectUtils;
  * @version 1.0
  */
 @SuppressWarnings("all")
-public class ListUtils {
-
-	private ListUtils() {
-	}
+public abstract class ListUtils {
 
 	public static boolean isList(Object obj) {
 		return obj == null ? false : obj instanceof List;
@@ -55,7 +52,7 @@ public class ListUtils {
 	}
 
 	public static <T> List<T> toList(Collection<T> c) {
-		return c instanceof ArrayList ? (ArrayList<T>) c : new ArrayList<T>(c);
+		return c instanceof List ? (List<T>) c : new ArrayList<T>(c);
 	}
 
 	private static int indexFor(List<?> list, int index) {
@@ -144,6 +141,21 @@ public class ListUtils {
 		for (int i = srcFrom, j = destFrom; i < size && j < size; i++, j++) {
 			dest.set(j, src.get(i));
 		}
+	}
+
+	public static <T> List<T> slice(List<T> list, int limit) {
+		return slice(list, limit, 0);
+	}
+
+	public static <T> List<T> slice(List<T> list, int limit, int offset) {
+		Assert.isNull(list, "List must not be null.");
+		int length = list.size();
+		if (limit > 0 && offset >= 0) {
+			return Collections.unmodifiableList(list.subList(offset, Math.min(offset + limit, length)));
+		} else if (limit == -1 && offset >= 0) {
+			return Collections.unmodifiableList(list.subList(offset, length));
+		}
+		throw new IllegalArgumentException("limit=" + limit + ", offset=" + offset);
 	}
 
 	public static <T extends Comparable<T>> void asc(List<T> list) {

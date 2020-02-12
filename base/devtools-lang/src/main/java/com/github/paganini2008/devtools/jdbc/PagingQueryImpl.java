@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.collection.Tuple;
 
 /**
  * 
- * SqlQueryImpl
+ * PagingQueryImpl
  *
  * @author Fred Feng
  * @revised 2019-07

@@ -28,7 +28,7 @@ public class HealthCheckJob implements Job {
 
 	public boolean execute() {
 		if (log.isTraceEnabled()) {
-			log.trace("Current job count: {}, memory: {}", jobManager.countOfJobs(), getMemoryUsage());
+			log.trace("Current job count: {}, memory: {}", jobManager.countOfScheduling(), getMemoryUsage());
 		}
 		return true;
 	}
