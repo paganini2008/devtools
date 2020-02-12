@@ -1,5 +1,6 @@
 package com.github.paganini2008.devtools.collection;
 
+import java.beans.PropertyDescriptor;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -9,6 +10,7 @@ import com.github.paganini2008.devtools.CaseFormats;
 import com.github.paganini2008.devtools.MissingKeyException;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.beans.BeanUtils;
+import com.github.paganini2008.devtools.beans.PropertyUtils;
 
 /**
  * 
@@ -84,8 +86,9 @@ public class TupleImpl extends KeyConversionMap<String, String, Object> implemen
 	}
 
 	public void fill(Object object) {
-		for (String key : keySet()) {
-			BeanUtils.setProperty(object, key, get(key));
+		Map<String, PropertyDescriptor> desc = PropertyUtils.getPropertyDescriptors(object.getClass());
+		for (String key : desc.keySet()) {
+			PropertyUtils.setProperty(object, key, get(key));
 		}
 	}
 

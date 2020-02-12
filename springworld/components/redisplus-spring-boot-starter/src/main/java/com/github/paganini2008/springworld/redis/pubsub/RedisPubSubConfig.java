@@ -37,20 +37,14 @@ public class RedisPubSubConfig {
 	@Value("${spring.redis.pubsub.channel:pubsub}")
 	private String channel;
 
-	@ConditionalOnMissingBean(ObjectMapper.class)
-	@Bean
-	public ObjectMapper objectMapper() {
-		ObjectMapper om = new ObjectMapper();
-		om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-		om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
-		return om;
-	}
-
 	@Bean
 	@ConditionalOnMissingBean(RedisSerializer.class)
 	public RedisSerializer<Object> redisSerializer() {
 		Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<Object>(Object.class);
-		jackson2JsonRedisSerializer.setObjectMapper(objectMapper());
+		ObjectMapper om = new ObjectMapper();
+		om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+		om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+		jackson2JsonRedisSerializer.setObjectMapper(om);
 		return jackson2JsonRedisSerializer;
 	}
 
