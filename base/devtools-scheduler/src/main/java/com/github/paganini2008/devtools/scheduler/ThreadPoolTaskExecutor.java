@@ -140,7 +140,7 @@ public class ThreadPoolTaskExecutor implements TaskExecutor {
 		CronTask(Executable task, DefaultTaskDetail taskDetail) {
 			this.task = task;
 			this.taskDetail = taskDetail;
-		}
+		} 
 
 		public void run() {
 			if (taskDetail.nextExecuted == -1) {
