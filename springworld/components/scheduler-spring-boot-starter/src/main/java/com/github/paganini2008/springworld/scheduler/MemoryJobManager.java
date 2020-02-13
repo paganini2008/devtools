@@ -6,7 +6,7 @@ import java.util.concurrent.ScheduledFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 
 import com.github.paganini2008.devtools.Observable;
@@ -31,7 +31,7 @@ public class MemoryJobManager implements JobManager {
 	private final Map<String, ScheduledFuture<?>> jobFutureCache = new ConcurrentHashMap<String, ScheduledFuture<?>>();
 
 	@Autowired
-	private ThreadPoolTaskScheduler taskScheduler;
+	private TaskScheduler taskScheduler;
 
 	@Value("${spring.task-scheduler.failedjob.retries:0}")
 	private int retries;

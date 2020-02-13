@@ -15,7 +15,7 @@ import com.github.paganini2008.springworld.scheduler.quartz.QuartzConfig;
  * @version 1.0
  */
 @Configuration
-@Import({ SpringSchedulerConfig.class, QuartzConfig.class, JobBeanAwarePostProcessor.class, JobServerStandbyAware.class,
+@Import({ SpringSchedulerConfig.class, QuartzConfig.class, JobBeanPostProcessor.class, JobServerStandbyAware.class,
 		LoadBalancedJobBeanProcessor.class})
 public class SpringSchedulerAutoConfiguration {
 }

@@ -26,7 +26,7 @@ public class SpringSchedulerConfig {
 
 	@Bean
 	@ConditionalOnMissingBean(TaskScheduler.class)
-	public ThreadPoolTaskScheduler taskScheduler() {
+	public TaskScheduler taskScheduler() {
 		ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
 		taskScheduler.setPoolSize(poolSize);
 		taskScheduler.setThreadNamePrefix("task-scheduler-");

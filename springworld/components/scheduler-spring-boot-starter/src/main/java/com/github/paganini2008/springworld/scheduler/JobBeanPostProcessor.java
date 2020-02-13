@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
-public class JobBeanAwarePostProcessor implements BeanPostProcessor {
+public class JobBeanPostProcessor implements BeanPostProcessor {
 
 	@Autowired
 	private JobManager jobManager;
@@ -28,12 +28,12 @@ public class JobBeanAwarePostProcessor implements BeanPostProcessor {
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 		if (bean.getClass().isAnnotationPresent(Job.class)) {
-			Job jobInfo = bean.getClass().getAnnotation(Job.class);
+			Job info = bean.getClass().getAnnotation(Job.class);
 			try {
-				jobManager.scheduleJob(bean, StringUtils.isNotBlank(jobInfo.name()) ? jobInfo.name() : beanName, jobInfo.description(),
-						jobInfo.cron());
+				jobManager.scheduleJob(bean, StringUtils.isNotBlank(info.name()) ? info.name() : beanName, info.description(),
+						info.value());
 			} catch (Exception e) {
-				log.warn("Unable to schedule job: {}/{}, because of the reason '{}'", jobInfo.name(), bean.getClass().getName(),
+				log.warn("Unable to schedule job: {}/{}, because of the reason '{}'", info.name(), bean.getClass().getName(),
 						e.getMessage());
 			}
 		}
