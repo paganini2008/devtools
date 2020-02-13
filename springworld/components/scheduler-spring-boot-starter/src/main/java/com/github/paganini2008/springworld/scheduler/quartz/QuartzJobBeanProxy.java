@@ -87,7 +87,7 @@ public class QuartzJobBeanProxy implements Job {
 		return new Method[] { onStart, executable, onEnd, onError };
 	}
 
-	@Value("${spring.task-scheduler.failedjob.retries:0}")
+	@Value("${spring.task-scheduler.job.failure.retries:0}")
 	private int retries;
 
 	@Autowired
