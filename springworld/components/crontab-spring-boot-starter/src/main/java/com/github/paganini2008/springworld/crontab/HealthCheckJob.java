@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class HealthCheckJob implements Job {
+public class HealthCheckJob implements CronJob {
 
 	@Autowired
 	private JobManager jobManager;

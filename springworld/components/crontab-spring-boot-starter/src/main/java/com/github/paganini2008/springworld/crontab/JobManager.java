@@ -29,8 +29,6 @@ public interface JobManager {
 
 	int countOfScheduling();
 
-	String[] jobNames();
-
 	Date getStartDate();
 	
 	void close();

@@ -15,19 +15,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import com.github.paganini2008.devtools.ClassUtils;
-import com.github.paganini2008.devtools.Observable;
-import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.beans.BeanUtils;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.Tuple;
 import com.github.paganini2008.devtools.jdbc.DBUtils;
 import com.github.paganini2008.devtools.jdbc.ResultSetSlice;
 import com.github.paganini2008.devtools.scheduler.SchedulingException;
-import com.github.paganini2008.devtools.scheduler.TaskExecutor;
 import com.github.paganini2008.devtools.scheduler.TaskExecutor.TaskDetail;
 import com.github.paganini2008.devtools.scheduler.TaskExecutor.TaskFuture;
-import com.github.paganini2008.devtools.scheduler.TaskInterceptorHandler;
-import com.github.paganini2008.devtools.scheduler.ThreadPoolTaskExecutor;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,31 +36,25 @@ import lombok.extern.slf4j.Slf4j;
  * @version 1.0
  */
 @Slf4j
-public class JdbcJobManager implements PersistentJobManager, PersistentJobsInitializer, TaskInterceptorHandler, ApplicationContextAware {
+public class JdbcJobManager extends AbstractJobManager implements PersistentJobManager, PersistentJobsInitializer, ApplicationContextAware {
 
 	public static String DEF_DDL_CRON_JOB_DETAIL_SQL = "create table cron_job_detail(job_name varchar(255) unique not null, job_description varchar(255), job_class varchar(255) not null, running tinyint(1) not null, paused tinyint(1) not null, completed_count int default 0, failed_count int default 0, last_executed timestamp null, next_executed timestamp null, create_date timestamp default current_timestamp)";
 
 	private static final String DEF_INSERT_JOB_SQL = "insert into cron_job_detail(job_name,job_description,job_class,running,paused) values (?,?,?,?,?)";
 	private static final String DEF_CHECK_JOB_EXISTS_SQL = "select count(*) from cron_job_detail where job_name=?";
-	private static final String DEF_SELECT_JOB_NAMES_SQL = "select job_name from cron_job_detail";
 	private static final String DEF_SELECT_JOBS_SQL = "select * from cron_job_detail";
 	private static final String DEF_DELETE_JOB_SQL = "delete from cron_job_detail where job_name=?";
 	private static final String DEF_UPDATE_JOB_SQL = "update cron_job_detail set running=?, paused=?, completed_count=?, failed_count=?, last_executed=?, next_executed=? where job_name=?";
 
-	private final Observable observable = Observable.unrepeatable();
-	private final TaskExecutor taskExecutor;
 	private DataSource dataSource;
 	private ApplicationContext context;
-	private final Date startDate;
 
 	public JdbcJobManager() {
 		this(8);
 	}
 
 	public JdbcJobManager(int nThreads) {
-		taskExecutor = new ThreadPoolTaskExecutor(nThreads, "crontab");
-		taskExecutor.setTaskInterceptorHandler(this);
-		this.startDate = new Date();
+		super(nThreads);
 	}
 
 	public void setDataSource(DataSource dataSource, boolean autoDDL) throws SQLException {
@@ -119,13 +108,17 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 		}
 
 		Job job = (Job) BeanUtils.instantiate(jobClass);
-		observable.addObserver((ob, arg) -> {
-			if (!hasScheduled(job)) {
-				taskExecutor.schedule(job, job.getCronExpression());
-				log.info("Schedule job '" + job.getName() + "' ok. Currently scheduling's size is " + countOfScheduling());
-			}
-		});
+		schedule(job);
 		log.info("Reload job '" + jobName + "' from database ok.");
+	}
+	
+	
+
+	@Override
+	public void schedule(Job job) {
+		checkJobNameIfBlank(job);
+		save(job);
+		super.schedule(job);
 	}
 
 	public void save(Job job) {
@@ -148,50 +141,7 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 			}
 		}
 	}
-
-	public void schedule(final Job job) throws SchedulingException {
-		checkJobNameIfBlank(job);
-		observable.addObserver((ob, arg) -> {
-			save(job);
-
-			if (!hasScheduled(job)) {
-				taskExecutor.schedule(job, job.getCronExpression());
-				log.info("Schedule job '" + job.getName() + "' ok. Currently scheduling's size is " + countOfScheduling());
-			}
-		});
-	}
-
-	public void runNow() {
-		observable.notifyObservers();
-		log.info("Run all jobs now.");
-	}
-
-	public int countOfScheduling() {
-		return taskExecutor.taskCount();
-	}
-
-	public boolean hasScheduled(Job job) {
-		return taskExecutor.hasScheduled(job);
-	}
-
-	public String[] jobNames() {
-		List<String> names = new ArrayList<String>();
-		Iterator<Tuple> iterator;
-		Connection connection = null;
-		try {
-			connection = dataSource.getConnection();
-			iterator = DBUtils.executeQuery(connection, DEF_SELECT_JOB_NAMES_SQL);
-			while (iterator.hasNext()) {
-				names.add((String) iterator.next().get("jobName"));
-			}
-		} catch (SQLException e) {
-			throw new SchedulingException(e.getMessage(), e);
-		} finally {
-			DBUtils.closeQuietly(connection);
-		}
-		return names.toArray(new String[0]);
-	}
-
+	
 	public boolean hasJob(Job job) {
 		Connection connection = null;
 		try {
@@ -202,25 +152,6 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 			throw new SchedulingException(e.getMessage(), e);
 		} finally {
 			DBUtils.closeQuietly(connection);
-		}
-	}
-
-	public void pauseJob(Job job) {
-		if (hasScheduled(job)) {
-			taskExecutor.getTaskFuture(job).pause();
-		}
-	}
-
-	public void resumeJob(Job job) {
-		if (hasScheduled(job)) {
-			taskExecutor.getTaskFuture(job).resume();
-		}
-	}
-
-	public void unscheduleJob(Job job) {
-		if (hasScheduled(job)) {
-			taskExecutor.removeSchedule(job);
-			log.info("Unschedule job '" + job.getName() + "' ok.");
 		}
 	}
 
@@ -243,12 +174,6 @@ public class JdbcJobManager implements PersistentJobManager, PersistentJobsIniti
 
 	public Date getStartDate() {
 		return startDate;
-	}
-
-	private static void checkJobNameIfBlank(Job job) {
-		if (StringUtils.isBlank(job.getName())) {
-			throw new SchedulingException("Job name is not blank for class: " + job.getClass().getName());
-		}
 	}
 
 	public void close() {
