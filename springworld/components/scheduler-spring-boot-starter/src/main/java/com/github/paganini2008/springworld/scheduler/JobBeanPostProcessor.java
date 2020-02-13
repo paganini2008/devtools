@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
- * JobBeanAwarePostProcessor
+ * JobBeanPostProcessor
  * 
  * @author Fred Feng
  * @created 2019-11
