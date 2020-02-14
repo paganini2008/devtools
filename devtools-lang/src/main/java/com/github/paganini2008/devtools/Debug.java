@@ -11,7 +11,7 @@ import java.util.Map;
  * @author Fred Feng
  * @version 1.0
  */
-public class Debug {
+public abstract class Debug {
 
 	public static <T> void print(Enumeration<T> en) {
 		while (en.hasMoreElements()) {
@@ -37,9 +37,6 @@ public class Debug {
 				System.out.println(en);
 			}
 		}
-	}
-
-	private Debug() {
 	}
 
 }

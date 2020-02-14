@@ -11,6 +11,7 @@ import com.github.paganini2008.devtools.StringUtils;
  * 
  * @author Fred Feng
  * @revised 2019-05
+ * @created 2014-07
  * @version 1.0
  */
 public class RegexTokenizer implements Enumeration<String> {

@@ -14,10 +14,7 @@ import com.github.paganini2008.devtools.primitives.Longs;
  * @author Fred Feng
  * @version 1.0
  */
-public class RandomUtils {
-
-	private RandomUtils() {
-	}
+public abstract class RandomUtils {
 
 	public static byte randomChoice(byte[] choice) {
 		return choice[randomInt(0, choice.length)];

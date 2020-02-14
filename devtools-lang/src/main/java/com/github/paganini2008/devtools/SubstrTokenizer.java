@@ -6,6 +6,8 @@ import java.util.Enumeration;
  * The SubstrTokenizer can break a string into tokens by some words.
  * 
  * @author Fred Feng
+ * @created 2014-07
+ * @revised 2019-12
  * @version 1.0
  */
 public class SubstrTokenizer implements Enumeration<String> {
