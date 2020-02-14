@@ -73,7 +73,7 @@ public class UnpooledConnectionFactory implements ConnectionFactory {
 	}
 
 	public Connection getConnection() throws SQLException {
-		Connection connection = DBUtils.getConnection(url, user, password);
+		Connection connection = JdbcUtils.getConnection(url, user, password);
 		if (autoCommit != null) {
 			connection.setAutoCommit(autoCommit);
 		}

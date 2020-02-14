@@ -127,7 +127,7 @@ public class UnpooledDataSource extends AbstractDataSource {
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}
-		Connection connection = DBUtils.getConnection(url, user, password);
+		Connection connection = JdbcUtils.getConnection(url, user, password);
 		configureConnection(connection);
 		return new ConnectionProxy(connection, semaphore).getProxyConnection();
 	}
@@ -173,7 +173,7 @@ public class UnpooledDataSource extends AbstractDataSource {
 			} else if (methodName.equals("toString")) {
 				return realConnection.toString();
 			} else if (CLOSE.hashCode() == methodName.hashCode() && CLOSE.equals(methodName)) {
-				DBUtils.closeQuietly(realConnection);
+				JdbcUtils.closeQuietly(realConnection);
 				semaphore.release();
 				return null;
 			} else {

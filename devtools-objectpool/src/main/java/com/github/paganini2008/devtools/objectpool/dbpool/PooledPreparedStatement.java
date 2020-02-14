@@ -6,7 +6,7 @@ import java.lang.reflect.Proxy;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import com.github.paganini2008.devtools.jdbc.DBUtils;
+import com.github.paganini2008.devtools.jdbc.JdbcUtils;
 import com.github.paganini2008.devtools.logging.Log;
 import com.github.paganini2008.devtools.logging.LogFactory;
 
@@ -60,7 +60,7 @@ public class PooledPreparedStatement implements InvocationHandler {
 	}
 
 	public void close() {
-		DBUtils.closeQuietly(realStatement);
+		JdbcUtils.closeQuietly(realStatement);
 	}
 
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {

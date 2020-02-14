@@ -11,7 +11,7 @@ import com.github.paganini2008.devtools.RandomUtils;
 import com.github.paganini2008.devtools.Sequence;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.Tuple;
-import com.github.paganini2008.devtools.jdbc.DBUtils;
+import com.github.paganini2008.devtools.jdbc.JdbcUtils;
 import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
 import com.github.paganini2008.devtools.objectpool.dbpool.GenericDataSource;
 import com.github.paganini2008.devtools.objectpool.dbpool.QuerySpan;
@@ -35,13 +35,13 @@ public class TestDbPool {
 				Connection connection = null;
 				try {
 					connection = ds.getConnection();
-					Iterator<Tuple> iterator = DBUtils.executeQuery(connection, "select * from mec_area where level=?",
+					Iterator<Tuple> iterator = JdbcUtils.executeQuery(connection, "select * from mec_area where level=?",
 							new Object[] { RandomUtils.randomInt(1, 4) });
 					System.out.println(CollectionUtils.getFirst(iterator));
 				} catch (SQLException e) {
 					e.printStackTrace();
 				} finally {
-					DBUtils.closeQuietly(connection);
+					JdbcUtils.closeQuietly(connection);
 				}
 			});
 		}

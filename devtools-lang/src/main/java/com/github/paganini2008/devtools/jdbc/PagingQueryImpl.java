@@ -18,9 +18,9 @@ public class PagingQueryImpl implements PagingQuery<Tuple> {
 
 	private final ConnectionFactory connectionFactory;
 	private final PageableSql pageableSql;
-	private final PreparedStatementSetter callback;
+	private final PreparedStatementCallback callback;
 
-	public PagingQueryImpl(ConnectionFactory connectionFactory, PageableSql pageableSql, PreparedStatementSetter callback) {
+	public PagingQueryImpl(ConnectionFactory connectionFactory, PageableSql pageableSql, PreparedStatementCallback callback) {
 		this.connectionFactory = connectionFactory;
 		this.pageableSql = pageableSql;
 		this.callback = callback;
@@ -31,7 +31,7 @@ public class PagingQueryImpl implements PagingQuery<Tuple> {
 		Connection connection = null;
 		try {
 			connection = connectionFactory.getConnection();
-			Object result = DBUtils.executeOneResultQuery(connection, sql);
+			Object result = JdbcUtils.executeOneResultQuery(connection, sql);
 			return result instanceof Number ? ((Number) result).intValue() : 0;
 		} catch (SQLException e) {
 			throw new JdbcException(e.getMessage(), e);
@@ -43,7 +43,7 @@ public class PagingQueryImpl implements PagingQuery<Tuple> {
 		Connection connection = null;
 		try {
 			connection = connectionFactory.getConnection();
-			return DBUtils.executeQuery(connection, execution, callback);
+			return JdbcUtils.executeQuery(connection, execution, callback);
 		} catch (SQLException e) {
 			throw new JdbcException(e.getMessage(), e);
 		}
