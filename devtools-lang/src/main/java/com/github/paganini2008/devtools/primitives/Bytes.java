@@ -21,12 +21,15 @@ import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.LruMap;
 
 /**
- * Bytes
  * 
+ * Bytes
+ *
  * @author Fred Feng
+ * @created 2012-01
+ * @revised 2020-02
  * @version 1.0
  */
-public class Bytes {
+public abstract class Bytes {
 
 	public static final byte[] EMPTY_ARRAY = new byte[0];
 
@@ -36,9 +39,6 @@ public class Bytes {
 
 	public static void clearCache() {
 		cache.clear();
-	}
-
-	private Bytes() {
 	}
 
 	public static byte[] clone(byte[] array) {

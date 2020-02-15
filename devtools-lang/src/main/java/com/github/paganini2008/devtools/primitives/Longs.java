@@ -20,12 +20,15 @@ import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.LruMap;
 
 /**
- * Longs
  * 
+ * Longs
+ *
  * @author Fred Feng
+ * @created 2012-01
+ * @revised 2020-02
  * @version 1.0
  */
-public class Longs {
+public abstract class Longs {
 
 	public static final long[] EMPTY_LONG_ARRAY = new long[0];
 
@@ -39,9 +42,6 @@ public class Longs {
 
 	public static void clearCache() {
 		cache.clear();
-	}
-
-	private Longs() {
 	}
 
 	public static long[] clone(long[] array) {
@@ -1062,5 +1062,108 @@ public class Longs {
 			}
 			return left.length - right.length;
 		}
+	}
+
+	public static String toBinaryString(long number) {
+		char[] chs = new char[Long.SIZE];
+		for (int i = 0, l = Long.SIZE; i < l; i++) {
+			chs[l - 1 - i] = (char) ((number >> i & 1) + '0');
+		}
+		return new String(chs);
+	}
+
+	public static long parseBinaryString(String binaryString) {
+		if (binaryString.charAt(0) == '0') {
+			return Long.parseLong(binaryString, 2);
+		}
+		StringBuilder str = new StringBuilder();
+		for (char bit : binaryString.toCharArray()) {
+			str.append((bit == '0') ? 1 : 0);
+		}
+		long convertedLong = Long.parseLong(str.toString(), 2);
+		return -(convertedLong + 1);
+	}
+
+	public static long shiftLeft(long number, int amount) {
+		String original = toBinaryString(number);
+		StringBuilder dest = new StringBuilder();
+		amount &= 63;
+		dest.append(original.toCharArray(), amount, original.length() - amount);
+		for (int i = 0; i < amount; i++) {
+			dest.append(0);
+		}
+		return parseBinaryString(dest.toString());
+	}
+
+	public static long shiftRight(long number, int amount) {
+		String original = toBinaryString(number);
+		StringBuilder dest = new StringBuilder();
+		amount &= 63;
+		dest.append(original.toCharArray(), 0, original.length() - amount);
+		for (int i = 0; i < amount; i++) {
+			dest.insert(0, number < 0 ? 1 : 0);
+		}
+		return parseBinaryString(dest.toString());
+	}
+
+	public static long unsignedShiftRight(long number, int amount) {
+		String original = toBinaryString(number);
+		StringBuilder dest = new StringBuilder();
+		amount &= 63;
+		dest.append(original.toCharArray(), 0, original.length() - amount);
+		for (int i = 0; i < amount; i++) {
+			dest.insert(0, 0);
+		}
+		return Long.parseLong(dest.toString(), 2);
+	}
+
+	public static long and(long left, long right) {
+		String leftOrig = toBinaryString(left);
+		String rightOrig = toBinaryString(right);
+		char[] leftArray = leftOrig.toCharArray();
+		char[] rightArray = rightOrig.toCharArray();
+		char[] array = new char[leftOrig.length()];
+		for (int i = 0; i < array.length; i++) {
+			array[i] = leftArray[i] == '1' && rightArray[i] == '1' ? '1' : '0';
+		}
+		String binaryString = new String(array);
+		return parseBinaryString(binaryString);
+	}
+
+	public static long or(long left, long right) {
+		String leftOrig = toBinaryString(left);
+		String rightOrig = toBinaryString(right);
+		char[] leftArray = leftOrig.toCharArray();
+		char[] rightArray = rightOrig.toCharArray();
+		char[] array = new char[leftOrig.length()];
+		for (int i = 0; i < array.length; i++) {
+			array[i] = leftArray[i] == '1' || rightArray[i] == '1' ? '1' : '0';
+		}
+		String binaryString = new String(array);
+		return parseBinaryString(binaryString);
+	}
+
+	public static long xor(long left, long right) {
+		String leftOrig = toBinaryString(left);
+		String rightOrig = toBinaryString(right);
+		char[] leftArray = leftOrig.toCharArray();
+		char[] rightArray = rightOrig.toCharArray();
+		char[] array = new char[leftOrig.length()];
+		for (int i = 0; i < array.length; i++) {
+			array[i] = leftArray[i] == rightArray[i] ? '0' : '1';
+		}
+		String binaryString = new String(array);
+		return parseBinaryString(binaryString);
+	}
+
+	public static long not(long number) {
+		String orig = toBinaryString(number);
+		char[] leftArray = orig.toCharArray();
+		char[] array = new char[orig.length()];
+		for (int i = 0; i < array.length; i++) {
+			array[i] = leftArray[i] == '1' ? '0' : '1';
+		}
+		String binaryString = new String(array);
+		return parseBinaryString(binaryString);
 	}
 }

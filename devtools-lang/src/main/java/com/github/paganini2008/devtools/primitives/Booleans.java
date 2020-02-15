@@ -13,13 +13,16 @@ import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.ListUtils;
 
 /**
- * Booleans
  * 
+ * Booleans
+ *
  * @author Fred Feng
+ * @created 2012-01
+ * @revised 2020-02
  * @version 1.0
  */
 @SuppressWarnings("all")
-public class Booleans {
+public abstract class Booleans {
 
 	private static final List<String> trueOrFalses = ListUtils
 			.create(new String[] { "TRUE", "FALSE", "true", "false", "YES", "NO", "yes", "no", "ON", "OFF", "on", "off", "1", "0" });
@@ -30,9 +33,6 @@ public class Booleans {
 	public static final boolean[] EMPTY_ARRAY = new boolean[0];
 
 	public static final Boolean[] EMPTY_OBJECT_ARRAY = new Boolean[0];
-
-	private Booleans() {
-	}
 
 	public static void addTrueAndFalse(char trueChar, char falseChar) {
 		trueOrFalseChars.add(trueChar);

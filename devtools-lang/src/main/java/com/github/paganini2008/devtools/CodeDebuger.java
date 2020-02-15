@@ -17,23 +17,26 @@ import javax.tools.ToolProvider;
 import com.github.paganini2008.devtools.io.FileUtils;
 
 /**
- * Eval
+ * CodeDebuger
  * 
  * @author Fred Feng
  * @version 1.0
  */
-public class Eval {
+public class CodeDebuger {
 
-	private static final String prefix = "temp_";
+	private static final String classNamePrefix = "Temp_";
 	private static final String classPath;
+
 	static {
-		classPath = Eval.class.getClassLoader().getResource("").getPath();
+		classPath = CodeDebuger.class.getClassLoader().getResource("").getPath();
 		System.out.println(classPath);
 	}
 
-	private static final String executionReturn;
-	private static final String executionVoid;
+	private static final String executionWithReturn;
+	private static final String executionWithVoid;
+
 	static {
+
 		StringBuilder javaSource = new StringBuilder();
 		javaSource.append("public class $");
 		javaSource.append("{");
@@ -43,9 +46,9 @@ public class Eval {
 		javaSource.append("        return result;");
 		javaSource.append("    }");
 		javaSource.append("}");
-		executionReturn = javaSource.toString();
-
+		executionWithReturn = javaSource.toString();
 		javaSource.delete(0, javaSource.length());
+
 		javaSource = new StringBuilder();
 		javaSource.append("public class $");
 		javaSource.append("{");
@@ -55,20 +58,14 @@ public class Eval {
 		javaSource.append("        return null;");
 		javaSource.append("    }");
 		javaSource.append("}");
-		executionVoid = javaSource.toString();
+		executionWithVoid = javaSource.toString();
 	}
 
-	private final String expression;
-
-	public Eval(String expression) {
-		this.expression = expression;
-	}
-
-	private Class<?> loadClass(String className, String pattern) throws EvalException {
+	private static Class<?> loadClass(String className, String pattern, String javaCode) throws EvalException {
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
-		JavaFileObject file = new JavaStringSource(className, StringUtils.parseText(pattern, "$", new Object[] { className, expression }));
+		JavaFileObject file = new JavaStringSource(className, StringUtils.format(pattern, "$", new Object[] { className, javaCode }));
 		List<JavaFileObject> javaObjects = Arrays.asList(file);
 		List<String> options = new ArrayList<String>();
 		options.add("-d");
@@ -86,13 +83,13 @@ public class Eval {
 		throw new EvalException("JavaCompiler error.", diagnostics.getDiagnostics());
 	}
 
-	public Object call() throws EvalException {
-		String className = prefix + UUID.randomUUID().toString().replaceAll("-", "");
-		Class<?> clazz = loadClass(className, executionVoid);
+	public static void execute(String javaCode) throws EvalException {
+		String className = classNamePrefix + UUID.randomUUID().toString().replaceAll("-", "");
+		Class<?> clazz = loadClass(className, executionWithVoid, javaCode);
 		try {
 			Method method = clazz.getMethod("getObject");
 			method.setAccessible(true);
-			return method.invoke(clazz.newInstance());
+			method.invoke(clazz.newInstance());
 		} catch (Exception e) {
 			throw new IllegalStateException("Unable to execute target method.", e);
 		} finally {
@@ -101,14 +98,15 @@ public class Eval {
 				try {
 					FileUtils.deleteFile(abondon);
 				} catch (IOException e) {
+					throw new IllegalStateException(e);
 				}
 			}
 		}
 	}
 
-	public Object execute() throws EvalException {
-		String className = prefix + UUID.randomUUID().toString().replaceAll("-", "");
-		Class<?> clazz = loadClass(className, executionReturn);
+	public static Object executeAndReturn(String javaCode) throws EvalException {
+		final String className = classNamePrefix + UUID.randomUUID().toString().replaceAll("-", "");
+		Class<?> clazz = loadClass(className, executionWithReturn, javaCode);
 		try {
 			Method method = clazz.getMethod("getObject");
 			method.setAccessible(true);
@@ -116,20 +114,19 @@ public class Eval {
 		} catch (Exception e) {
 			throw new IllegalStateException("Unable to execute target method.", e);
 		} finally {
-
 			File abondon = new File(classPath, className + ".class");
 			if (abondon.exists()) {
 				try {
 					FileUtils.deleteFile(abondon);
 				} catch (IOException e) {
+					throw new IllegalStateException(e);
 				}
 			}
 		}
 	}
 
 	public static void main(String[] args) throws Exception {
-		Object rval = new Eval("System.out.println(System.currentTimeMillis())").call();
-		System.out.println(rval);
+		CodeDebuger.execute("System.out.println(System.currentTimeMillis());");
 	}
 
 }

@@ -6,12 +6,12 @@ import java.util.Map;
 
 /**
  * 
- * Debug
+ * Debuger
  * 
  * @author Fred Feng
  * @version 1.0
  */
-public abstract class Debug {
+public abstract class Debuger {
 
 	public static <T> void print(Enumeration<T> en) {
 		while (en.hasMoreElements()) {

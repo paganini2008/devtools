@@ -22,13 +22,13 @@ import com.github.paganini2008.devtools.collection.LruMap;
 /**
  * 
  * Shorts
- * 
+ *
  * @author Fred Feng
- * @revised 2019-07
- * @created 2014-05
+ * @created 2012-01
+ * @revised 2020-02
  * @version 1.0
  */
-public class Shorts {
+public abstract class Shorts {
 
 	public static final short[] EMPTY_SHORT_ARRAY = new short[0];
 
@@ -42,9 +42,6 @@ public class Shorts {
 
 	public static void clearCache() {
 		cache.clear();
-	}
-
-	private Shorts() {
 	}
 
 	public static short[] clone(short[] array) {

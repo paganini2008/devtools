@@ -19,12 +19,15 @@ import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.LruMap;
 
 /**
- * Doubles
  * 
+ * Doubles
+ *
  * @author Fred Feng
+ * @created 2012-01
+ * @revised 2020-02
  * @version 1.0
  */
-public class Doubles {
+public abstract class Doubles {
 
 	public static final double[] EMPTY_ARRAY = new double[0];
 
@@ -36,9 +39,6 @@ public class Doubles {
 
 	public static void clearCache() {
 		cache.clear();
-	}
-
-	private Doubles() {
 	}
 
 	public static double[] clone(double[] array) {

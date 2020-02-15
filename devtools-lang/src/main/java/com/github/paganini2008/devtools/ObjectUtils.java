@@ -22,10 +22,7 @@ import com.github.paganini2008.devtools.primitives.Shorts;
  * @author Fred Feng
  * @version 1.0
  */
-public class ObjectUtils {
-
-	private ObjectUtils() {
-	}
+public abstract class ObjectUtils {
 
 	public static String toString(Object other) {
 		return other != null ? other.toString().trim() : "";
@@ -69,7 +66,7 @@ public class ObjectUtils {
 		}
 		return left == right;
 	}
-	
+
 	public static String deepToString(Object obj) {
 		if (obj == null) {
 			return "";
@@ -94,7 +91,7 @@ public class ObjectUtils {
 		} else if (CollectionUtils.isCollection(obj)) {
 			str = CollectionUtils.toString((Collection<?>) obj);
 		} else if (MapUtils.isMap(obj)) {
-			str = MapUtils.toString((Map<?,?>) obj);
+			str = MapUtils.toString((Map<?, ?>) obj);
 		} else if (CollectionUtils.isIterator(obj)) {
 			str = CollectionUtils.toString((Iterator<?>) obj);
 		} else if (CollectionUtils.isEnumeration(obj)) {
@@ -189,7 +186,7 @@ public class ObjectUtils {
 			} else if (result instanceof Iterable) {
 				hash = CollectionUtils.deepHashCode((Iterable<?>) result);
 			} else if (result instanceof Map) {
-				hash = MapUtils.deepHashCode((Map<?,?>) result);
+				hash = MapUtils.deepHashCode((Map<?, ?>) result);
 			} else if (result instanceof Iterator) {
 				hash = CollectionUtils.deepHashCode((Iterator<?>) result);
 			} else if (result instanceof Enumeration) {

@@ -14,12 +14,15 @@ import com.github.paganini2008.devtools.CharValueOverflowException;
 import com.github.paganini2008.devtools.StringUtils;
 
 /**
- * Chars
  * 
+ * Chars
+ *
  * @author Fred Feng
+ * @created 2012-01
+ * @revised 2020-02
  * @version 1.0
  */
-public class Chars {
+public abstract class Chars {
 
 	public static final char LF = '\n';
 
@@ -30,9 +33,6 @@ public class Chars {
 	public static final char[] EMPTY_ARRAY = new char[0];
 
 	public static final Character[] EMPTY_OBJECT_ARRAY = new Character[0];
-
-	private Chars() {
-	}
 
 	public static char[] clone(char[] array) {
 		return array != null ? array.clone() : null;

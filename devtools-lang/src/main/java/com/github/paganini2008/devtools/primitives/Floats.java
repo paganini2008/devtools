@@ -19,12 +19,15 @@ import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.LruMap;
 
 /**
- * Floats
  * 
+ * Floats
+ *
  * @author Fred Feng
+ * @created 2012-01
+ * @revised 2020-02
  * @version 1.0
  */
-public class Floats {
+public abstract class Floats {
 
 	public static final float[] EMPTY_ARRAY = new float[0];
 
@@ -32,14 +35,11 @@ public class Floats {
 
 	private static final LruMap<String, Float> cache = new LruMap<String, Float>(128);
 
+	public static final int BYTES = Float.SIZE / Byte.SIZE;
+	
 	public static void clearCache() {
 		cache.clear();
 	}
-
-	private Floats() {
-	}
-
-	public static final int BYTES = Float.SIZE / Byte.SIZE;
 
 	public static float[] clone(float[] array) {
 		return array != null ? array.clone() : null;
