@@ -17,10 +17,7 @@ import com.github.paganini2008.devtools.primitives.Chars;
  * @author Fred Feng
  * @version 1.0
  */
-public class StringUtils {
-
-	private StringUtils() {
-	}
+public abstract class StringUtils {
 
 	public static final String lineSeparator = System.getProperty("line.separator");
 
