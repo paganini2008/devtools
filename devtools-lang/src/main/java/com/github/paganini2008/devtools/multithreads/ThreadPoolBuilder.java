@@ -10,8 +10,8 @@ import com.github.paganini2008.devtools.multithreads.latch.Latch;
  * ThreadPoolBuilder
  *
  * @author Fred Feng
- * @revised 2019-07
- * @created 2016-02
+ * 
+ * 
  */
 public class ThreadPoolBuilder {
 

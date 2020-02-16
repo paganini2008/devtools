@@ -7,7 +7,7 @@ import java.util.Iterator;
  * AbstractCache
  * 
  * @author Fred Feng
- * @created 2016-11
+ * 
  * @version 1.0
  */
 public abstract class AbstractCache implements Cache {

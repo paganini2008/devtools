@@ -18,8 +18,8 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * MethodUtils
  * 
  * @author Fred Feng
- * @revised 2019-05
- * @created 2012-01
+ * 
+ * 
  * @version 1.0
  */
 public abstract class MethodUtils {
@@ -213,8 +213,8 @@ public abstract class MethodUtils {
 	 * DeclaredMethodIterator
 	 * 
 	 * @author Fred Feng
-	 * @created 2012-05
-	 * @revised 2019-05
+	 * 
+	 * 
 	 * @version 1.0
 	 */
 	public static class DeclaredMethodIterator implements Iterator<Method> {
@@ -250,8 +250,8 @@ public abstract class MethodUtils {
 	 * MethodIterator
 	 * 
 	 * @author Fred Feng
-	 * @created 2012-05
-	 * @revised 2019-05
+	 * 
+	 * 
 	 * @version 1.0
 	 */
 	public static class MethodIterator implements Iterator<Method> {

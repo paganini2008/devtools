@@ -11,8 +11,8 @@ import com.github.paganini2008.devtools.collection.Tuple;
  * PagingQueryImpl
  *
  * @author Fred Feng
- * @revised 2019-07
- * @created 2019-07
+ * 
+ * 
  */
 public class PagingQueryImpl implements PagingQuery<Tuple> {
 

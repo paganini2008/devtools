@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * LruQueue
  * 
  * @author Fred Feng
- * @created 2016-08
+ * 
  * @version 1.0
  */
 public class LruQueue<E> extends AbstractQueue<E> implements Queue<E>, Serializable {

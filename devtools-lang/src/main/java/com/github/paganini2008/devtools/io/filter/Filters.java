@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.io.filter.MatchNameFileFilter.MatchMode;
  * Filters
  * 
  * @author Fred Feng
- * @revised 2019-05
+ * 
  * @version 1.0
  */
 public class Filters {

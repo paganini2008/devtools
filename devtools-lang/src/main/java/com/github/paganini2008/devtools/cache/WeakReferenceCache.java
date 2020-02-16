@@ -10,7 +10,7 @@ import com.github.paganini2008.devtools.collection.WeakReferenceMap;
  * WeakReferenceCache
  * 
  * @author Fred Feng
- * @created 2016-11
+ * 
  * @version 1.0
  */
 public class WeakReferenceCache extends AbstractCache {

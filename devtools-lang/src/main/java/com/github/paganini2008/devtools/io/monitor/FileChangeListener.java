@@ -5,8 +5,8 @@ package com.github.paganini2008.devtools.io.monitor;
  * FileChangeListener
  * 
  * @author Fred Feng
- * @created 2014-07
- * @revised 2019-12
+ * 
+ * 
  * @version 1.0
  */
 public interface FileChangeListener {

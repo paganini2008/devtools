@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * LruMap
  * 
  * @author Fred Feng
- * @created 2014-05
+ * 
  * @version 1.0
  * @see LinkedHashMap
  */

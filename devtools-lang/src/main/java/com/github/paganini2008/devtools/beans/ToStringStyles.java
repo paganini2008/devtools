@@ -13,8 +13,8 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * ToStringStyles
  * 
  * @author Fred Feng
- * @created 2012-05
- * @revised 2019-08
+ * 
+ * 
  * @version 1.0
  */
 public abstract class ToStringStyles {

@@ -8,8 +8,8 @@ import java.sql.SQLException;
  * PreparedStatementCallback
  *
  * @author Fred Feng
- * @created 2016-02
- * @revised 2020-01
+ * 
+ * 
  * @version 1.0
  */
 @FunctionalInterface

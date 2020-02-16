@@ -5,8 +5,8 @@ package com.github.paganini2008.devtools.jdbc;
  * JdbcException
  *
  * @author Fred Feng
- * @revised 2019-07
- * @created 2019-07
+ * 
+ * 
  */
 public class JdbcException extends RuntimeException {
 

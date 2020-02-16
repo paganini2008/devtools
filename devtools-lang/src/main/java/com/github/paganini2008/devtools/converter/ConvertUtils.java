@@ -5,8 +5,8 @@ package com.github.paganini2008.devtools.converter;
  * ConvertUtils
  * 
  * @author Fred Feng
- * @created 2016-01
- * @revised 2019-05
+ * 
+ * 
  * @version 1.0
  */
 public class ConvertUtils {

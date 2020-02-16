@@ -5,8 +5,8 @@ package com.github.paganini2008.devtools.beans;
  * BeanPropertyAccessException
  * 
  * @author Fred Feng
- * @revised 2019-05
- * @revised 2012-08
+ * 
+ * 
  * @version 1.0
  */
 public class BeanPropertyAccessException extends RuntimeException {

@@ -28,8 +28,8 @@ import com.github.paganini2008.devtools.net.UrlUtils;
  * HttpClient
  * 
  * @author Fred Feng
- * @created 2016-11
- * @revised 2019-12
+ * 
+ * 
  * @version 1.0
  */
 public class HttpClient {

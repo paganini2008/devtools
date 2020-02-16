@@ -15,8 +15,8 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
  * FileMonitor
  * 
  * @author Fred Feng
- * @created 2014-07
- * @revised 2019-12
+ * 
+ * 
  * @version 1.0
  */
 public class FileMonitor implements Executable {

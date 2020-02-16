@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
  * SortedCache
  * 
  * @author Fred Feng
- * @created 2016-11
+ * 
  * @version 1.0
  */
 public class SortedCache extends LimitedCache {

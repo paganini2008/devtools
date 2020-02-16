@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * LruList
  * 
  * @author Fred Feng
- * @created 2015-08
+ * 
  * @version 1.0
  */
 public class LruList<E> extends AbstractList<E> implements List<E>, Serializable {

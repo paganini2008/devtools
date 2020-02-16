@@ -9,8 +9,8 @@ import java.util.Map;
  * FileEntry
  * 
  * @author Fred Feng
- * @created 2014-07
- * @revised 2019-12
+ * 
+ * 
  * @version 1.0
  */
 public class FileEntry implements Serializable {

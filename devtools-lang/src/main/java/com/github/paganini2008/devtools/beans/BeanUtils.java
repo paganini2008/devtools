@@ -8,8 +8,8 @@ import com.github.paganini2008.devtools.reflection.ConstructorUtils;
  * BeanUtils
  * 
  * @author Fred Feng
- * @revised 2019-07
- * @created 2012-08
+ * 
+ * 
  * @version 1.0
  */
 public abstract class BeanUtils {

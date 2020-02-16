@@ -26,8 +26,8 @@ import com.github.paganini2008.devtools.primitives.Floats;
  * EnhancedDirectoryWalker
  * 
  * @author Fred Feng
- * @revised 2019-05
- * @created 2016-11
+ * 
+ * 
  * @version 1.0
  */
 public class EnhancedDirectoryWalker {
@@ -47,8 +47,8 @@ public class EnhancedDirectoryWalker {
 	 * EnhancedFileInfo
 	 *
 	 * @author Fred Feng
-	 * @revised 2019-07
-	 * @created 2016-11
+	 * 
+	 * 
 	 */
 	public interface EnhancedFileInfo extends FileInfo {
 
@@ -81,8 +81,8 @@ public class EnhancedDirectoryWalker {
 	 * RootInfo
 	 *
 	 * @author Fred Feng
-	 * @revised 2019-07
-	 * @created 2016-11
+	 * 
+	 * 
 	 */
 	static class RootInfo implements FileInfo {
 
@@ -141,8 +141,8 @@ public class EnhancedDirectoryWalker {
 	 * FileInfoImpl
 	 * 
 	 * @author Fred Feng
-	 * @revised 2019-05
-	 * @created 2016-11
+	 * 
+	 * 
 	 * @version 1.0
 	 */
 	static class FileInfoImpl implements EnhancedFileInfo {

@@ -21,8 +21,8 @@ import com.github.paganini2008.devtools.Sequence;
  * ThreadUtils
  * 
  * @author Fred Feng
- * @revised 2019-05
- * @created 2012-01
+ * 
+ * 
  * @version 1.0
  */
 public abstract class ThreadUtils {
@@ -286,7 +286,7 @@ public abstract class ThreadUtils {
 	 * SerialExecutable
 	 * 
 	 * @author Fred Feng
-	 * @revised 2019-05
+	 * 
 	 */
 	public static class SerialExecutable implements Executable {
 

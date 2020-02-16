@@ -5,8 +5,8 @@ package com.github.paganini2008.devtools.beans;
  * BeanInstantiationException
  * 
  * @author Fred Feng
- * @created 2019-07
- * @revised 2017-07
+ * 
+ * 
  * @version 1.0
  */
 public class BeanInstantiationException extends RuntimeException {

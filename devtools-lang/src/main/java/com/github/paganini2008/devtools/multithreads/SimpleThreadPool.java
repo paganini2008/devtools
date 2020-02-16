@@ -18,8 +18,8 @@ import com.github.paganini2008.devtools.Sequence;
  * SimpleThreadPool
  * 
  * @author Fred Feng
- * @revised 2019-05
- * @created 2012-01
+ * 
+ * 
  * @version 1.0
  */
 public class SimpleThreadPool implements ThreadPool {
@@ -98,8 +98,8 @@ public class SimpleThreadPool implements ThreadPool {
 	 * IdleQueueKeeper
 	 * 
 	 * @author Fred Feng
-	 * @revised 2019-05
-	 * @created 2019-05
+	 * 
+	 * 
 	 * @version 1.0
 	 */
 	class IdleQueueKeeper implements Executable {
@@ -122,8 +122,8 @@ public class SimpleThreadPool implements ThreadPool {
 	 * Reference
 	 *
 	 * @author Fred Feng
-	 * @revised 2019-07
-	 * @created 2019-02
+	 * 
+	 * 
 	 * @version 1.0
 	 */
 	static class Reference<R> {
@@ -154,8 +154,8 @@ public class SimpleThreadPool implements ThreadPool {
 	 * PromiseRunnable
 	 *
 	 * @author Fred Feng
-	 * @revised 2019-07
-	 * @created 2019-02
+	 * 
+	 * 
 	 * @version 1.0
 	 */
 	static class PromiseRunnable<R> implements Runnable {
@@ -315,8 +315,8 @@ public class SimpleThreadPool implements ThreadPool {
 	 * Sync
 	 * 
 	 * @author Fred Feng
-	 * @revised 2019-05
-	 * @created 2012-01
+	 * 
+	 * 
 	 * @version 1.0
 	 */
 	static class Sync {
@@ -412,8 +412,8 @@ public class SimpleThreadPool implements ThreadPool {
 	 * PoolManager
 	 *
 	 * @author Fred Feng
-	 * @revised 2019-07
-	 * @created 2012-01
+	 * 
+	 * 
 	 * @version 1.0
 	 */
 	class PoolManager {
@@ -476,8 +476,8 @@ public class SimpleThreadPool implements ThreadPool {
 	 * WorkerThread
 	 *
 	 * @author Fred Feng
-	 * @revised 2019-07
-	 * @created 2012-01
+	 * 
+	 * 
 	 * @version 1.0
 	 */
 	class WorkerThread implements Runnable {

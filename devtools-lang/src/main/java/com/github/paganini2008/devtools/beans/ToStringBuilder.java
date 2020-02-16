@@ -17,8 +17,6 @@ import com.github.paganini2008.devtools.collection.MapUtils;
  * ToStringBuilder
  * 
  * @author Fred Feng
- * @created 2012-05
- * @revised 2019-07
  * @version 1.0
  */
 public abstract class ToStringBuilder {
@@ -103,7 +101,7 @@ public abstract class ToStringBuilder {
 	 * PublicPropertyFilter
 	 * 
 	 * @author Fred Feng
-	 * @revised 2019-05
+	 * 
 	 * @version 1.0
 	 */
 	private static class PublicPropertyFilter implements PropertyFilter {

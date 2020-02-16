@@ -10,8 +10,8 @@ import java.lang.annotation.Target;
  * PropertyMapper
  * 
  * @author Fred Feng
- * @revised 2019-07
- * @created 2014-05
+ * 
+ * 
  * @version 1.0
  */
 @Retention(RetentionPolicy.RUNTIME)

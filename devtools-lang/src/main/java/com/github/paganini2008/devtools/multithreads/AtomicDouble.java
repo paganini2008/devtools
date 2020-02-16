@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicLongFieldUpdater;
  * AtomicDouble
  * 
  * @author Fred Feng
- * @created 2014-03
+ * 
  * @version 1.0
  */
 public class AtomicDouble extends Number {

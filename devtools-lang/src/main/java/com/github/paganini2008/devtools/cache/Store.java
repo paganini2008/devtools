@@ -6,7 +6,7 @@ import java.util.Set;
  * Store
  * 
  * @author Fred Feng
- * @created 2016-11
+ * 
  * @version 1.0
  */
 public interface Store {

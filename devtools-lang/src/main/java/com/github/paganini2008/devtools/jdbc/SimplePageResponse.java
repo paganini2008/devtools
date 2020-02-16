@@ -9,8 +9,8 @@ import java.util.List;
  * SimplePageResponse
  * 
  * @author Fred Feng
- * @created 2019-04
- * @revised 2019-04
+ * 
+ * 
  */
 public class SimplePageResponse<T> implements PageResponse<T>, Serializable {
 

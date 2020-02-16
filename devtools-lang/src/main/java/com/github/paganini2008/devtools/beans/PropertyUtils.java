@@ -24,8 +24,6 @@ import com.github.paganini2008.devtools.reflection.MethodUtils;
  * PropertyUtils
  * 
  * @author Fred Feng
- * @revised 2019-05
- * @created 2012-08
  * @version 1.0
  */
 public abstract class PropertyUtils {

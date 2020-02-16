@@ -15,8 +15,8 @@ import com.github.paganini2008.devtools.collection.CaseInsensitiveMap;
  * HttpBaseImpl
  * 
  * @author Fred Feng
- * @created 2016-11
- * @revised 2019-12
+ * 
+ * 
  * @version 1.0
  */
 @SuppressWarnings("unchecked")

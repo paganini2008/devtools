@@ -23,8 +23,8 @@ import com.github.paganini2008.devtools.collection.LruMap;
  * Floats
  *
  * @author Fred Feng
- * @created 2012-01
- * @revised 2020-02
+ * 
+ * 
  * @version 1.0
  */
 public abstract class Floats {

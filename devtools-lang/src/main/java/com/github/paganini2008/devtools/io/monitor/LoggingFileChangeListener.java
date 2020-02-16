@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.logging.LogFactory;
  * LoggingFileChangeListener
  * 
  * @author Fred Feng
- * @created 2019-12
+ * 
  * @version 1.0
  */
 public class LoggingFileChangeListener implements FileChangeListener {

@@ -7,8 +7,8 @@ import java.io.File;
  * FileInfo
  * 
  * @author Fred Feng
- * @revised 2019-05
- * @created 2013-06
+ * 
+ * 
  * @version 1.0
  */
 public interface FileInfo {

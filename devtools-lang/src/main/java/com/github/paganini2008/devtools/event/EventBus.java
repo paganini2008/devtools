@@ -21,8 +21,8 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
  * EventBus
  * 
  * @author Fred Feng
- * @revised 2019-05
- * @created 2019-05
+ * 
+ * 
  * @version 1.0
  */
 public class EventBus<E extends Event<T>, T> implements EventPubSub<E, T> {
@@ -58,7 +58,7 @@ public class EventBus<E extends Event<T>, T> implements EventPubSub<E, T> {
 	 * EventHandler
 	 * 
 	 * @author Fred Feng
-	 * @revised 2019-05
+	 * 
 	 * @version 1.0
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -118,7 +118,7 @@ public class EventBus<E extends Event<T>, T> implements EventPubSub<E, T> {
 	 * EventGroup
 	 * 
 	 * @author Fred Feng
-	 * @revised 2019-05
+	 * 
 	 * @version 1.0
 	 */
 	static class EventGroup<E extends Event<T>, T> implements EventSubscriber<E, T> {

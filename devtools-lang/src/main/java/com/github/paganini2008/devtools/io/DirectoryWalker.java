@@ -23,8 +23,8 @@ import com.github.paganini2008.devtools.primitives.Floats;
  * DirectoryWalker
  *
  * @author Fred Feng
- * @revised 2019-07
- * @created 2013-06
+ * 
+ * 
  */
 public class DirectoryWalker {
 
@@ -43,8 +43,8 @@ public class DirectoryWalker {
 	 * FileInfoImpl
 	 *
 	 * @author Fred Feng
-	 * @revised 2019-07
-	 * @created 2013-06
+	 * 
+	 * 
 	 */
 	static class FileInfoImpl implements FileInfo {
 

@@ -5,8 +5,8 @@ package com.github.paganini2008.devtools.multithreads;
  * Executable
  *
  * @author Fred Feng
- * @revised 2019-07
- * @created 2013-10
+ * 
+ * 
  * @version 1.0
  */
 @FunctionalInterface

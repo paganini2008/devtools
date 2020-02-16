@@ -7,7 +7,7 @@ import java.util.Set;
  * MasterStandbyCache
  * 
  * @author Fred Feng
- * @revised 2019-05
+ * 
  * @version 1.0
  */
 public class MasterStandbyCache extends AbstractCache {

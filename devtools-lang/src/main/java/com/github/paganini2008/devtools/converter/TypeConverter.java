@@ -4,8 +4,8 @@ package com.github.paganini2008.devtools.converter;
  * TypeConverter. A dataType convert to ananother dataType.
  * 
  * @author Fred Feng
- * @created 2016-01
- * @revised 2019-05
+ * 
+ * 
  * @version 1.0
  */
 public interface TypeConverter {

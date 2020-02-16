@@ -10,8 +10,8 @@ import com.github.paganini2008.devtools.StringUtils;
  * PathUtils
  *
  * @author Fred Feng
- * @revised 2019-07
- * @created 2013-05
+ * 
+ * 
  * @version 1.0
  */
 public class PathUtils {

@@ -14,8 +14,8 @@ import com.github.paganini2008.devtools.Sequence;
  * Producer
  * 
  * @author Fred Feng
- * @revised 2019-05
- * @created 2014-03
+ * 
+ * 
  * @version 1.0
  */
 public final class Producer<X, R> {
@@ -94,7 +94,7 @@ public final class Producer<X, R> {
 	 * Consumer
 	 * 
 	 * @author Fred Feng
-	 * @revised 2019-05
+	 * 
 	 * @version 1.0
 	 */
 	public static interface Consumer<X, R> {

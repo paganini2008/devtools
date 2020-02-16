@@ -8,8 +8,8 @@ import java.util.Locale;
  * CaseInsensitiveMap
  * 
  * @author Fred Feng
- * @created 2018-03
- * @revised 2019-07
+ * 
+ * 
  * @version 1.0
  */
 public class CaseInsensitiveMap<V> extends KeyConversionMap<String, String, V> {

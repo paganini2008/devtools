@@ -25,8 +25,8 @@ import com.github.paganini2008.devtools.collection.Tuple;
  * JdbcUtils
  * 
  * @author Fred Feng
- * @revised 2019-08
- * @created 2012-12
+ * 
+ * 
  * @version 1.0
  */
 public abstract class JdbcUtils {

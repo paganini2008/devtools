@@ -14,8 +14,8 @@ import com.github.paganini2008.devtools.reflection.MethodUtils;
  * EqualsBuilder
  * 
  * @author Fred Feng
- * @created 2012-05
- * @revised 2019-07
+ * 
+ * 
  * @version 1.0
  */
 public abstract class EqualsBuilder {

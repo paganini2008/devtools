@@ -7,8 +7,8 @@ import java.util.List;
  * PageResponse
  * 
  * @author Fred Feng
- * @created 2019-04
- * @revised 2019-04
+ * 
+ * 
  */
 public interface PageResponse<T> extends Iterable<PageResponse<T>> {
 

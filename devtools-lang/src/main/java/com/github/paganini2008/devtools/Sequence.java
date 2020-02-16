@@ -11,8 +11,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * Sequence
  * 
  * @author Fred Feng
- * @revised 2019-06
- * @created 2018-05
+ * 
+ * 
  * @version 1.0
  */
 public abstract class Sequence {

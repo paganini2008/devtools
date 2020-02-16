@@ -17,8 +17,8 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * FieldUtils
  * 
  * @author Fred Feng
- * @revised 2019-05
- * @created 2012-01
+ * 
+ * 
  * @version 1.0
  */
 public abstract class FieldUtils {
@@ -193,8 +193,8 @@ public abstract class FieldUtils {
 	 * DeclaredFieldIterator
 	 * 
 	 * @author Fred Feng
-	 * @revised 2019-07
-	 * @created 2019-06
+	 * 
+	 * 
 	 * @version 1.0
 	 */
 	public static class DeclaredFieldIterator implements Iterator<Field> {
@@ -230,8 +230,8 @@ public abstract class FieldUtils {
 	 * FieldIterator
 	 * 
 	 * @author Fred Feng
-	 * @revised 2019-07
-	 * @created 2019-06
+	 * 
+	 * 
 	 * @version 1.0
 	 */
 	public static class FieldIterator implements Iterator<Field> {
