@@ -19,10 +19,7 @@ import com.github.paganini2008.devtools.regex.RegexUtils;
  * @author Fred Feng
  * @version 1.0
  */
-public class NetUtils {
-
-	private NetUtils() {
-	}
+public abstract class NetUtils {
 
 	public static final String LOCALHOST = "127.0.0.1";
 

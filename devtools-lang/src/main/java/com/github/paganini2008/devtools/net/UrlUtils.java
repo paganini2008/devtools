@@ -38,10 +38,7 @@ import com.github.paganini2008.devtools.io.IOUtils;
  * @author Fred Feng
  * @version 1.0
  */
-public class UrlUtils {
-
-	private UrlUtils() {
-	}
+public abstract class UrlUtils {
 
 	private static SSLSocketFactory sslSocketFactory;
 

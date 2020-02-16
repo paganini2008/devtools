@@ -18,10 +18,7 @@ import com.github.paganini2008.devtools.collection.LruMap;
  * @author Fred Feng
  * @version 1.0
  */
-public class RegexUtils {
-
-	private RegexUtils() {
-	}
+public abstract class RegexUtils {
 
 	private static final ConcurrentMap<Integer, LruMap<String, Pattern>> cache = new ConcurrentHashMap<Integer, LruMap<String, Pattern>>();
 
