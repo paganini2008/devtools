@@ -10,6 +10,7 @@
 	<artifactId>devtools-bean-streaming</artifactId>
 	<packaging>jar</packaging>
  
+    <version>1.0-RC1</version>
 	<name>devtools-bean-streaming</name>
 	<url>https://github.com/paganini2008/devtools</url>
 

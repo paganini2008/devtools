@@ -7,13 +7,13 @@
 		<groupId>com.github.paganini2008</groupId>
 		<version>1.0</version>
 		<relativePath>../pom.xml</relativePath>
-	</parent> 
- 
+	</parent>
+
 	<artifactId>devtools-scheduler</artifactId>
 	<packaging>jar</packaging>
 
 	<name>devtools-scheduler</name>
-	<url>https://github.com/paganini2008/devtools</url> 
+	<url>https://github.com/paganini2008/devtools</url>
 
 	<dependencies>
 		<dependency>
@@ -23,7 +23,7 @@
 		</dependency>
 	</dependencies>
 
-<build>
+	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
