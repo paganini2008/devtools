@@ -10,6 +10,7 @@
 	</parent>
 
 	<artifactId>devtools-lang</artifactId>
+	<version>1.0</version>
 	<packaging>jar</packaging>
 
 	<name>devtools-lang</name>
