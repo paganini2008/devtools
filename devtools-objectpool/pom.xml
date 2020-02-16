@@ -13,7 +13,7 @@
 	<packaging>jar</packaging>
  
 	<name>devtools-objectpool</name>
-	<url>http://maven.apache.org</url>
+	<url>https://github.com/paganini2008/devtools</url>
 
 	<dependencies>
 		<dependency>

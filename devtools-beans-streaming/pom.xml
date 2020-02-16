@@ -7,11 +7,11 @@
 		<version>1.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<artifactId>devtools-bean</artifactId>
+	<artifactId>devtools-bean-streaming</artifactId>
 	<packaging>jar</packaging>
  
-	<name>devtools-bean</name>
-	<url>http://maven.apache.org</url>
+	<name>devtools-bean-streaming</name>
+	<url>https://github.com/paganini2008/devtools</url>
 
 	<dependencies>
 		<dependency>
