@@ -1,8 +1,9 @@
 package com.github.paganini2008.devtools;
 
 /**
- * BooleanFormatException
  * 
+ * BooleanFormatException
+ *
  * @author Fred Feng
  * @version 1.0
  */

@@ -11,16 +11,11 @@ import com.github.paganini2008.devtools.io.StringArrayWriter;
 /**
  * 
  * ExceptionUtils
- * 
+ *
  * @author Fred Feng
- * @revised 2019-07
- * @created 2016-12
  * @version 1.0
  */
-public class ExceptionUtils {
-
-	private ExceptionUtils() {
-	}
+public abstract class ExceptionUtils {
 	
 	public static String[] toArray(Throwable e) {
 		if (e == null) {

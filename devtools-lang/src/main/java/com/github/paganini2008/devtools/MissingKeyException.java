@@ -3,9 +3,9 @@ package com.github.paganini2008.devtools;
 /**
  * 
  * MissingKeyException
- * 
+ *
  * @author Fred Feng
- * @created 2019-03
+ * @version 1.0
  */
 public class MissingKeyException extends IllegalStateException {
 

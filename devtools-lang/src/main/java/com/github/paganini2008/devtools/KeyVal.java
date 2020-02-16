@@ -5,9 +5,8 @@ import java.io.Serializable;
 /**
  * 
  * KeyVal
- * 
+ *
  * @author Fred Feng
- * @revised 2019-05
  * @version 1.0
  */
 public class KeyVal<K, V> implements Serializable {

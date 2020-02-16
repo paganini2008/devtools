@@ -13,11 +13,9 @@ import com.github.paganini2008.devtools.reflection.MethodUtils;
 /**
  * 
  * HashCodeBuilder
- * 
+ *
  * @author Fred Feng
- * @created 2012-05
- * @revised 2019-07
- * @version 1.0
+ * @version 1.1
  */
 public abstract class HashCodeBuilder {
 

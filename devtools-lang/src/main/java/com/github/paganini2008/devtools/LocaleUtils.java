@@ -4,12 +4,14 @@ import java.util.Locale;
 
 import com.github.paganini2008.devtools.collection.LruMap;
 
-
-
-public class LocaleUtils {
-
-	private LocaleUtils() {
-	}
+/**
+ * 
+ * LocaleUtils
+ *
+ * @author Fred Feng
+ * @version 1.0
+ */
+public abstract class LocaleUtils {
 
 	private static final LruMap<String, Locale> localeCache = new LruMap<String, Locale>(16);
 

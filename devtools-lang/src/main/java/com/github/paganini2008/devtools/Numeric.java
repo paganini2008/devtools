@@ -5,6 +5,13 @@ import java.math.BigInteger;
 
 import com.github.paganini2008.devtools.math.BigDecimalUtils;
 
+/**
+ * 
+ * Numeric
+ *
+ * @author Fred Feng
+ * @version 1.0
+ */
 public class Numeric extends Number {
 
 	private static final long serialVersionUID = 7879573969079837365L;

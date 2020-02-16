@@ -17,8 +17,6 @@ import com.github.paganini2008.devtools.primitives.Shorts;
  * ArrayUtils
  *
  * @author Fred Feng
- * @revised 2019-07
- * @created 2012-01
  * @version 1.0
  */
 @SuppressWarnings("all")

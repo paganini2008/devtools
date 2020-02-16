@@ -4,6 +4,13 @@ import java.net.URI;
 
 import javax.tools.SimpleJavaFileObject;
 
+/**
+ * 
+ * JavaStringSource
+ *
+ * @author Fred Feng
+ * @version 1.0
+ */
 public class JavaStringSource extends SimpleJavaFileObject {
 
 	private final String name;

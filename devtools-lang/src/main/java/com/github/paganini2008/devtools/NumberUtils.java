@@ -13,10 +13,7 @@ import com.github.paganini2008.devtools.math.BigDecimalUtils;
  * @author Fred Feng
  * @version 1.0
  */
-public class NumberUtils {
-
-	private NumberUtils() {
-	}
+public abstract class NumberUtils {
 
 	private final static LruMap<String, DecimalFormat> formatCache = new LruMap<String, DecimalFormat>(128);
 

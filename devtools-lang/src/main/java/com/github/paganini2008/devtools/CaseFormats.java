@@ -5,10 +5,9 @@ import java.util.function.Function;
 /**
  * 
  * CaseFormats
- * 
+ *
  * @author Fred Feng
- * @revised 2019-07
- * @created 2018-03
+ * @version 1.0
  */
 public abstract class CaseFormats {
 	

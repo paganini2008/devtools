@@ -11,14 +11,14 @@
 
 	<artifactId>devtools-lang</artifactId>
 	<packaging>jar</packaging>
- 
+
 	<name>devtools-lang</name>
 	<url>https://github.com/paganini2008/devtools</url>
 
 	<dependencies>
 	</dependencies>
 
-<build>
+	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

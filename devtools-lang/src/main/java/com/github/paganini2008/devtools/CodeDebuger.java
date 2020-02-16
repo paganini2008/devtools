@@ -61,7 +61,7 @@ public class CodeDebuger {
 		executionWithVoid = javaSource.toString();
 	}
 
-	private static Class<?> loadClass(String className, String pattern, String javaCode) throws EvalException {
+	private static Class<?> loadClass(String className, String pattern, String javaCode) throws IllegalStateException {
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
@@ -80,10 +80,10 @@ public class CodeDebuger {
 			} catch (ClassNotFoundException e) {
 			}
 		}
-		throw new EvalException("JavaCompiler error.", diagnostics.getDiagnostics());
+		throw new IllegalStateException("JavaCompiler error: \n" + diagnostics.getDiagnostics());
 	}
 
-	public static void execute(String javaCode) throws EvalException {
+	public static void execute(String javaCode) {
 		String className = classNamePrefix + UUID.randomUUID().toString().replaceAll("-", "");
 		Class<?> clazz = loadClass(className, executionWithVoid, javaCode);
 		try {
@@ -104,7 +104,7 @@ public class CodeDebuger {
 		}
 	}
 
-	public static Object executeAndReturn(String javaCode) throws EvalException {
+	public static Object executeAndReturn(String javaCode) {
 		final String className = classNamePrefix + UUID.randomUUID().toString().replaceAll("-", "");
 		Class<?> clazz = loadClass(className, executionWithReturn, javaCode);
 		try {

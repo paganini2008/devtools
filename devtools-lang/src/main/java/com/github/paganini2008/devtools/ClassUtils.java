@@ -13,10 +13,8 @@ import com.github.paganini2008.devtools.collection.MapUtils;
 /**
  * 
  * ClassUtils
- * 
+ *
  * @author Fred Feng
- * @created 2011-08
- * @revised 2019-05
  * @version 1.0
  */
 @SuppressWarnings("all")
