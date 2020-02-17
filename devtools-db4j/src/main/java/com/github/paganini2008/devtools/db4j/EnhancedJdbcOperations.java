@@ -16,8 +16,8 @@ import com.github.paganini2008.devtools.db4j.mapper.RowMapper;
  * EnhancedJdbcOperations
  *
  * @author Fred Feng
- * @created 2016-02
- * @revised 2020-01
+ * 
+ * 
  * @version 1.0
  */
 public class EnhancedJdbcOperations extends JdbcOperations {

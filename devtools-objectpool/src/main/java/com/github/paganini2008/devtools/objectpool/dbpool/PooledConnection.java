@@ -14,8 +14,8 @@ import com.github.paganini2008.devtools.logging.LogFactory;
  * A proxy object of java.sql.Connection with ConnectionPool
  * 
  * @author Fred Feng
- * @revised 2019-07
- * @created 2014-03
+ * 
+ * 
  * @version 1.0
  */
 public class PooledConnection implements InvocationHandler {

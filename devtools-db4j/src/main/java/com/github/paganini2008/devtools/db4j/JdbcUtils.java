@@ -11,8 +11,8 @@ import com.github.paganini2008.devtools.jdbc.PreparedStatementCallback;
  * JdbcUtils
  *
  * @author Fred Feng
- * @created 2016-02
- * @revised 2020-01
+ * 
+ * 
  * @version 1.0
  */
 public abstract class JdbcUtils {

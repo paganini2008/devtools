@@ -14,8 +14,8 @@ import com.github.paganini2008.devtools.comparator.ReverseComparator;
  * BeanSort
  * 
  * @author Fred Feng
- * @revised 2019-07
- * @created 2014-05
+ * 
+ * 
  * @version 1.0
  */
 @SuppressWarnings("all")
@@ -26,7 +26,7 @@ public class BeanSort<E> extends AbstractComparator<E> implements Sort<E> {
 	 * ComparatorChain
 	 * 
 	 * @author Fred Feng
-	 * @revised 2019-07
+	 * 
 	 * @version 1.0
 	 */
 	static class ComparatorChain<E, T extends Comparable<T>> implements Comparator<E> {

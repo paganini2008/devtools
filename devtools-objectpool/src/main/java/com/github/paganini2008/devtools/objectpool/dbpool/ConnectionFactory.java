@@ -13,8 +13,8 @@ import com.github.paganini2008.devtools.objectpool.ObjectFactory;
  * Build a java.sql.Connection object factory.
  * 
  * @author Fred Feng
- * @revised 2019-07
- * @created 2014-03
+ * 
+ * 
  * @version 1.0
  */
 public class ConnectionFactory implements ObjectFactory {

@@ -14,8 +14,8 @@ import com.github.paganini2008.devtools.db4j.type.TypeHandler;
  * ColumnNameRowMapper
  *
  * @author Fred Feng
- * @created 2016-02
- * @revised 2020-01
+ * 
+ * 
  * @version 1.0
  */
 public class ColumnNameRowMapper<T> implements RowMapper<T> {

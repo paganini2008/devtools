@@ -16,8 +16,8 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
  * SimpleObjectPool
  * 
  * @author Fred Feng
- * @revised 2019-07
- * @created 2014-03
+ * 
+ * 
  * @version 1.0
  */
 public class SimpleObjectPool implements ObjectPool {
@@ -53,8 +53,8 @@ public class SimpleObjectPool implements ObjectPool {
 	 * PooledObject
 	 * 
 	 * @author Fred Feng
-	 * @revised 2019-07
-	 * @created 2012-02
+	 * 
+	 * 
 	 * @version 1.0
 	 */
 	static class PooledObject implements ObjectDetail {

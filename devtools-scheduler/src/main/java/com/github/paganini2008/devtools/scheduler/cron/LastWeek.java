@@ -12,8 +12,8 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * LastWeek
  *
  * @author Fred Feng
- * @created 2019-07
- * @revised 2019-07
+ * 
+ * 
  * @version 1.0
  */
 public class LastWeek implements Week, Serializable {

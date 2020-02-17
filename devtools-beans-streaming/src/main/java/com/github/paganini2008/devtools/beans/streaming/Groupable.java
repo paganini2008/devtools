@@ -10,7 +10,7 @@ import com.github.paganini2008.devtools.jdbc.ResultSetSlice;
  * Groupable
  * 
  * @author Fred Feng
- * @revised 2019-07
+ * 
  * @version 1.0
  */
 public interface Groupable<E> {

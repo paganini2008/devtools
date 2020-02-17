@@ -12,8 +12,8 @@ import com.github.paganini2008.devtools.jdbc.PreparedStatementCallback;
  * PreparedStatementSetterUtils
  *
  * @author Fred Feng
- * @created 2016-02
- * @revised 2020-01
+ * 
+ * 
  * @version 1.0
  */
 public abstract class PreparedStatementSetterUtils {

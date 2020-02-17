@@ -8,7 +8,7 @@ import java.sql.SQLException;
  * PreparedStatementCreator
  * 
  * @author Fred Feng
- * @created 2016-02
+ * 
  * @version 1.0
  */
 @FunctionalInterface

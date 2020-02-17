@@ -15,8 +15,8 @@ import com.github.paganini2008.devtools.db4j.type.TypeHandler;
  * ColumnIndexRowMapper
  *
  * @author Fred Feng
- * @created 2016-02
- * @revised 2020-01
+ * 
+ * 
  * @version 1.0
  */
 public class ColumnIndexRowMapper<T> implements RowMapper<T> {

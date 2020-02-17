@@ -8,8 +8,8 @@ import java.util.Map;
  * Group
  * 
  * @author Fred Feng
- * @revised 2019-07
- * @created 2014-05
+ * 
+ * 
  * @version 1.0
  */
 public interface Group<E> extends Summary<E> {

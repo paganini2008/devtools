@@ -7,8 +7,8 @@ import java.util.List;
  * QuerySpan
  *
  * @author Fred Feng
- * @revised 2019-07
- * @created 2014-03
+ * 
+ * 
  */
 public interface QuerySpan {
 

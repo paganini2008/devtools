@@ -11,8 +11,8 @@ import com.github.paganini2008.devtools.scheduler.cron.CronExpression;
  * TaskExecutor
  *
  * @author Fred Feng
- * @revised 2019-07
- * @created 2013-11
+ * 
+ * 
  * @version 1.0
  */
 public interface TaskExecutor {
@@ -72,8 +72,8 @@ public interface TaskExecutor {
 	 * TaskDetail
 	 *
 	 * @author Fred Feng
-	 * @revised 2019-07
-	 * @created 2013-11
+	 * 
+	 * 
 	 * @version 1.0
 	 */
 	public interface TaskDetail {
@@ -103,8 +103,8 @@ public interface TaskExecutor {
 	 * TaskFuture
 	 *
 	 * @author Fred Feng
-	 * @revised 2019-07
-	 * @created 2013-11
+	 * 
+	 * 
 	 * @version 1.0
 	 */
 	public interface TaskFuture {

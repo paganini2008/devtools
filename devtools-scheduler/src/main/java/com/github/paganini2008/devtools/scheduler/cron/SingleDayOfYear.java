@@ -13,8 +13,8 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * SingleDayOfYear
  *
  * @author Fred Feng
- * @created 2019-07
- * @revised 2019-07
+ * 
+ * 
  * @version 1.0
  */
 public class SingleDayOfYear implements OneDay, Serializable {

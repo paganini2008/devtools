@@ -10,7 +10,7 @@ import com.github.paganini2008.devtools.jdbc.ResultSetSlice;
  * MemoryResultSetSlice
  * 
  * @author Fred Feng
- * @revised 2019-07
+ * 
  * @version 1.0
  */
 public class MemoryResultSetSlice<E, T> implements ResultSetSlice<T> {

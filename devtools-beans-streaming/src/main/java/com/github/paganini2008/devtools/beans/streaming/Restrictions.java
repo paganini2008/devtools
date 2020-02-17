@@ -13,7 +13,7 @@ import com.github.paganini2008.devtools.beans.PropertyUtils;
  * Restrictions
  * 
  * @author Fred Feng
- * @revised 2019-07
+ * 
  * @version 1.0
  */
 @SuppressWarnings("unchecked")

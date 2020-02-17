@@ -14,8 +14,8 @@ import com.github.paganini2008.devtools.date.DateUtils;
  * SingleMonth
  *
  * @author Fred Feng
- * @revised 2019-07
- * @created 2019-07
+ * 
+ * 
  * @version 1.0
  */
 public class SingleMonth implements OneMonth, Serializable {

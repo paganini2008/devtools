@@ -7,7 +7,7 @@ import java.util.function.Function;
  * Orders
  * 
  * @author Fred Feng
- * @revised 2019-07
+ * 
  * @version 1.0
  */
 public abstract class Orders {
