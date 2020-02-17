@@ -13,8 +13,7 @@ import com.github.paganini2008.devtools.jdbc.AbstractDataSource;
  * GenericDataSource
  *
  * @author Fred Feng
- * 
- * 
+ * @version 1.0
  */
 public class GenericDataSource extends AbstractDataSource {
 
@@ -66,8 +65,8 @@ public class GenericDataSource extends AbstractDataSource {
 		this.connectionPool.setMaxSize(maxSize);
 	}
 
-	public void setMaxUses(int maxUses) {
-		this.connectionPool.setMaxUses(maxUses);
+	public void setMaxUsage(int usage) {
+		this.connectionPool.setMaxUsage(usage);
 	}
 
 	public void setTestWhileIdle(boolean testWhileIdle) {
@@ -94,8 +93,8 @@ public class GenericDataSource extends AbstractDataSource {
 		this.connectionPool.getQueryStatistics().setAcceptableExecutionTime(acceptableExecutionTime);
 	}
 
-	public void setStatisticalSqlSampleCount(int statisticalSqlSampleCount) {
-		this.connectionPool.getQueryStatistics().setStatisticalSqlSampleCount(statisticalSqlSampleCount);
+	public void setStatisticalSampleCount(int statisticalSampleCount) {
+		this.connectionPool.getQueryStatistics().setStatisticalSampleCount(statisticalSampleCount);
 	}
 
 	public Map<String, QuerySpan> getStatisticsResult(String daily) {

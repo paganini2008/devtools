@@ -9,29 +9,29 @@ import com.github.paganini2008.devtools.collection.LruMap;
 import com.github.paganini2008.devtools.date.DateUtils;
 
 /**
- * Query statistics within recent seven-day
+ * Query statistics recent seven-day
  * 
  * @author Fred Feng
  * @version 1.0
  */
 public class DailyQueryStatistics {
 
-	public final static String timeFormat = "dd/MM/yyyy";
+	private final static String dateFormatPattern = "dd/MM/yyyy";
 	private final LruMap<String, ConcurrentMap<String, QuerySpan>> dailyStatistics;
 
 	public DailyQueryStatistics() {
 		dailyStatistics = new LruMap<String, ConcurrentMap<String, QuerySpan>>(7);
 	}
 
-	private int statisticalSqlSampleCount = 60;
+	private int statisticalSampleCount = 60;
 	private long acceptableExecutionTime = 1000L;
 
 	public Map<String, QuerySpan> getStatisticsResult(String daily) {
 		return dailyStatistics.containsKey(daily) ? new HashMap<String, QuerySpan>(dailyStatistics.get(daily)) : null;
 	}
 
-	public void setStatisticalSqlSampleCount(int statisticalSqlSampleCount) {
-		this.statisticalSqlSampleCount = statisticalSqlSampleCount;
+	public void setStatisticalSampleCount(int statisticalSampleCount) {
+		this.statisticalSampleCount = statisticalSampleCount;
 	}
 
 	public void setAcceptableExecutionTime(long acceptableExecutionTime) {
@@ -39,7 +39,7 @@ public class DailyQueryStatistics {
 	}
 
 	public QuerySpan executed(String sql, Object[] parameters, long startTime, long endTime) {
-		final String daily = DateUtils.format(endTime, timeFormat);
+		final String daily = DateUtils.format(endTime, dateFormatPattern);
 		ConcurrentMap<String, QuerySpan> data = dailyStatistics.get(daily);
 		if (data == null) {
 			dailyStatistics.put(daily, new ConcurrentHashMap<String, QuerySpan>());
@@ -47,7 +47,7 @@ public class DailyQueryStatistics {
 		}
 		QuerySpan qs = data.get(sql);
 		if (qs == null) {
-			data.putIfAbsent(sql, new QuerySpanImpl(statisticalSqlSampleCount, acceptableExecutionTime));
+			data.putIfAbsent(sql, new QuerySpanImpl(statisticalSampleCount, acceptableExecutionTime));
 			qs = data.get(sql);
 		}
 		qs.record(new QueryTraceImpl(sql, parameters, startTime, endTime));

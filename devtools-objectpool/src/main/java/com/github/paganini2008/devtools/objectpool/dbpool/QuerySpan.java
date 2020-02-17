@@ -4,11 +4,10 @@ import java.util.List;
 
 /**
  * 
- * QuerySpan
+ * QuerySpan 
  *
  * @author Fred Feng
- * 
- * 
+ * @version 1.0
  */
 public interface QuerySpan {
 

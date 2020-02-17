@@ -11,7 +11,7 @@
 
 	<artifactId>devtools-objectpool</artifactId>
 	<packaging>jar</packaging>
- 
+
 	<name>devtools-objectpool</name>
 	<url>https://github.com/paganini2008/devtools</url>
 
@@ -21,8 +21,14 @@
 			<artifactId>devtools-lang</artifactId>
 			<version>1.0</version>
 		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.18</version>
+		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<plugins>
 			<plugin>

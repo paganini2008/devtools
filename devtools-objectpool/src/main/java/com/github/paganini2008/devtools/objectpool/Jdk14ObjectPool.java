@@ -13,16 +13,14 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 
 /**
  * 
- * SimpleObjectPool
+ * Jdk14ObjectPool
  * 
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
-public class SimpleObjectPool implements ObjectPool {
+public class Jdk14ObjectPool implements ObjectPool {
 
-	private static final Log log = LogFactory.getLog(SimpleObjectPool.class);
+	private static final Log log = LogFactory.getLog(ObjectPool.class);
 	private final Object lock = new Object();
 	private final LinkedList<Object> busyQueue = new LinkedList<Object>();
 	private final LinkedList<Object> idleQueue = new LinkedList<Object>();
@@ -30,7 +28,7 @@ public class SimpleObjectPool implements ObjectPool {
 	private int maxPoolSize = 8;
 	private int minIdleSize = 1;
 	private int maxIdleSize;
-	private int maxUses = -1;
+	private int maxUsage = -1;
 	private long checkIdleSizeInterval = 60L * 1000;
 	private int maxTestTimes = 3;
 	private volatile int poolSize;
@@ -43,7 +41,7 @@ public class SimpleObjectPool implements ObjectPool {
 	private Timer timer = new Timer();
 	private final ObjectFactory objectFactory;
 
-	public SimpleObjectPool(ObjectFactory objectFactory) {
+	public Jdk14ObjectPool(ObjectFactory objectFactory) {
 		this.objectFactory = objectFactory;
 		this.running = true;
 	}
@@ -64,7 +62,7 @@ public class SimpleObjectPool implements ObjectPool {
 		private long lastBorrowed;
 		private long lastReturned;
 		private long lastTested;
-		private int uses;
+		private int usage;
 
 		PooledObject(Object object) {
 			this.created = System.currentTimeMillis();
@@ -103,12 +101,12 @@ public class SimpleObjectPool implements ObjectPool {
 			this.lastTested = lastTested;
 		}
 
-		public int getUses() {
-			return uses;
+		public int getUsage() {
+			return usage;
 		}
 
-		public void setUses(int uses) {
-			this.uses = uses;
+		public void setUsage(int usage) {
+			this.usage = usage;
 		}
 
 		public static PooledObject of(Object object) {
@@ -210,12 +208,12 @@ public class SimpleObjectPool implements ObjectPool {
 		return poolSize;
 	}
 
-	public int getMaxUses() {
-		return maxUses;
+	public int getMaxUsage() {
+		return maxUsage;
 	}
 
-	public void setMaxUses(int maxUses) {
-		this.maxUses = maxUses;
+	public void setMaxUsage(int maxUsage) {
+		this.maxUsage = maxUsage;
 	}
 
 	public long getCheckObjectExpiredInterval() {
@@ -286,7 +284,7 @@ public class SimpleObjectPool implements ObjectPool {
 						pooledObject = pooledObjects.get(object);
 					}
 					pooledObject.setLastBorrowed(System.currentTimeMillis());
-					pooledObject.setUses(pooledObject.getUses() + 1);
+					pooledObject.setUsage(pooledObject.getUsage() + 1);
 					return object;
 				}
 			} catch (Exception e) {
@@ -346,7 +344,7 @@ public class SimpleObjectPool implements ObjectPool {
 				if (log.isDebugEnabled()) {
 					log.debug("Giveback object: " + object);
 				}
-				if (pooledObject.getUses() == maxUses) {
+				if (pooledObject.getUsage() == maxUsage) {
 					discardObject(pooledObject.getObject());
 				} else {
 					busyQueue.remove(pooledObject.getObject());

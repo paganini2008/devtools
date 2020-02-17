@@ -9,10 +9,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.github.paganini2008.devtools.Sequence;
 import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
-import com.github.paganini2008.devtools.objectpool.GenericObjectPool;
+import com.github.paganini2008.devtools.objectpool.Jdk14ObjectPool;
 import com.github.paganini2008.devtools.objectpool.ObjectFactory;
 
-public class TestObjectPool {
+/**
+ * 
+ * TestJdk14ObjectPool
+ *
+ * @author Fred Feng
+ * @version 1.0
+ */
+public class TestJdk14ObjectPool {
 
 	public static class Resource {
 
@@ -22,12 +29,12 @@ public class TestObjectPool {
 			this.id = id;
 		}
 
-		public String say(int i) {
-			return ThreadUtils.currentThreadName() + ", Hello: " + i;
+		public String doSomething(int i) {
+			return ThreadUtils.currentThreadName() + " do something: " + i;
 		}
 
 		public String toString() {
-			return "Resource: " + id;
+			return "ID: " + id;
 		}
 
 	}
@@ -47,21 +54,21 @@ public class TestObjectPool {
 	}
 
 	public static void main(String[] args) throws Exception {
-		GenericObjectPool objectPool = new GenericObjectPool(new ResourceFactory());
+		Jdk14ObjectPool objectPool = new Jdk14ObjectPool(new ResourceFactory());
 		objectPool.setMaxPoolSize(10);
 		objectPool.setMaxIdleSize(3);
-		Executor executor = Executors.newFixedThreadPool(50);
+		Executor executor = Executors.newFixedThreadPool(10);
 		AtomicInteger score = new AtomicInteger();
 		List<Throwable> errors = new ArrayList<>();
-		for (final int i : Sequence.forEach(0, 10000)) {
+		for (final int i : Sequence.forEach(0, 1000000)) {
 			executor.execute(() -> {
 				score.incrementAndGet();
 				Resource resource = null;
 				try {
 					resource = (Resource) objectPool.borrowObject();
-					//ThreadUtils.randomSleep(1000L);
+					// ThreadUtils.randomSleep(1000L);
 					System.out.println(
-							resource.say(i) + " :: busySize: " + objectPool.getBusySize() + ", idleSize: " + objectPool.getIdleSize());
+							resource.doSomething(i) + " :: busySize: " + objectPool.getBusySize() + ", idleSize: " + objectPool.getIdleSize());
 				} catch (Exception e) {
 					e.printStackTrace();
 					errors.add(e);
@@ -78,10 +85,10 @@ public class TestObjectPool {
 		System.out.println(score);
 		objectPool.close();
 		ExecutorUtils.gracefulShutdown(executor, 60000);
-		if(errors.size()>0) {
+		if (errors.size() > 0) {
 			System.out.println(errors);
 		}
-		System.out.println("TestMain.main()");
+		System.out.println("Done.");
 	}
 
 }

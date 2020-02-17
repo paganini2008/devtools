@@ -10,11 +10,9 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 import com.github.paganini2008.devtools.objectpool.GenericObjectPool;
 
 /**
- * ConnectionPool contains the objectPool as a connection provider.
+ * ConnectionPool
  * 
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public class ConnectionPool {
@@ -22,11 +20,11 @@ public class ConnectionPool {
 	private static final Log logger = LogFactory.getLog(ConnectionPool.class);
 
 	public ConnectionPool() {
-		connectionFactory = new ConnectionFactory(this);
+		connectionFactory = new ConnectionObjectFactory(this);
 		objectPool = new GenericObjectPool(connectionFactory);
 	}
 
-	private final ConnectionFactory connectionFactory;
+	private final ConnectionObjectFactory connectionFactory;
 	private final GenericObjectPool objectPool;
 
 	private DailyQueryStatistics queryStatistics = new DailyQueryStatistics();
@@ -72,8 +70,8 @@ public class ConnectionPool {
 		this.objectPool.setMaxPoolSize(maxSize);
 	}
 
-	public void setMaxUses(int maxAge) {
-		this.objectPool.setMaxUses(maxAge);
+	public void setMaxUsage(int usage) {
+		this.objectPool.setMaxUsage(usage);
 	}
 
 	public void setMaxWaitTime(long maxWaitTime) {

@@ -14,8 +14,6 @@ import com.github.paganini2008.devtools.logging.LogFactory;
  * Pooled PreparedStatement object
  * 
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public class PooledPreparedStatement implements InvocationHandler {

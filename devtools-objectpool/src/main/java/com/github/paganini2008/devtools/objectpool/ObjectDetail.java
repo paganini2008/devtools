@@ -5,8 +5,6 @@ package com.github.paganini2008.devtools.objectpool;
  * ObjectDetail
  * 
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public interface ObjectDetail {
@@ -21,6 +19,6 @@ public interface ObjectDetail {
 
 	long getLastTested();
 
-	int getUses();
+	int getUsage();
 
 }

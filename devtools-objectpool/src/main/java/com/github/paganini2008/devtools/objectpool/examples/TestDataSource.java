@@ -16,7 +16,14 @@ import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
 import com.github.paganini2008.devtools.objectpool.dbpool.GenericDataSource;
 import com.github.paganini2008.devtools.objectpool.dbpool.QuerySpan;
 
-public class TestDbPool {
+/**
+ * 
+ * TestDataSource
+ *
+ * @author Fred Feng
+ * @version 1.0
+ */
+public class TestDataSource {
 
 	static {
 		System.setProperty("devtools.logging.com.github.paganini2008.devtools.objectpool", "debug");
@@ -26,9 +33,10 @@ public class TestDbPool {
 		GenericDataSource ds = new GenericDataSource();
 		ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
 		ds.setUrl(
-				"jdbc:mysql://10.200.28.42:9998/db_mec_hlsh_v2?userUnicode=true&characterEncoding=UTF8&useSSL=false&serverTimezone=UTC&autoReconnect=true&zeroDateTimeBehavior=convertToNull");
-		ds.setUser("fengyan");
-		ds.setPassword("Allyes@911");
+				"jdbc:mysql://localhost:3306/db_mec_hlsh_v2?userUnicode=true&characterEncoding=UTF8&useSSL=false&serverTimezone=UTC&autoReconnect=true&zeroDateTimeBehavior=convertToNull");
+		ds.setUser("fengy");
+		ds.setPassword("123456");
+		ds.setAcceptableExecutionTime(100);
 		Executor executor = Executors.newFixedThreadPool(10);
 		for (final int i : Sequence.forEach(0, 10000)) {
 			executor.execute(() -> {
@@ -46,7 +54,7 @@ public class TestDbPool {
 			});
 		}
 		System.in.read();
-		Map<String, QuerySpan> results = ds.getStatisticsResult("30/07/2019");
+		Map<String, QuerySpan> results = ds.getStatisticsResult("17/02/2020");
 		System.out.println(results);
 		ds.close();
 		ExecutorUtils.gracefulShutdown(executor, 60000);

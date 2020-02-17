@@ -26,13 +26,11 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
  * GenericObjectPool
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public class GenericObjectPool implements ObjectPool {
 
-	private static final Log log = LogFactory.getLog(GenericObjectPool.class);
+	private static final Log log = LogFactory.getLog(ObjectPool.class);
 	private final Lock lock = new ReentrantLock();
 	private final Condition condition = lock.newCondition();
 	private final LinkedList<Object> busyQueue = new LinkedList<Object>();
@@ -41,7 +39,7 @@ public class GenericObjectPool implements ObjectPool {
 	private int maxPoolSize = 8;
 	private int minIdleSize = 1;
 	private int maxIdleSize;
-	private int maxUses = -1;
+	private int maxUsage = -1;
 	private long checkIdleSizeInterval = 60L * 1000;
 	private int maxTestTimes = 3;
 
@@ -66,8 +64,6 @@ public class GenericObjectPool implements ObjectPool {
 	 * PooledObject
 	 * 
 	 * @author Fred Feng
-	 * 
-	 * 
 	 * @version 1.0
 	 */
 	static class PooledObject implements ObjectDetail {
@@ -77,7 +73,7 @@ public class GenericObjectPool implements ObjectPool {
 		private long lastBorrowed;
 		private long lastReturned;
 		private long lastTested;
-		private int uses;
+		private int usage;
 
 		PooledObject(Object object) {
 			this.created = System.currentTimeMillis();
@@ -116,12 +112,12 @@ public class GenericObjectPool implements ObjectPool {
 			this.lastTested = lastTested;
 		}
 
-		public int getUses() {
-			return uses;
+		public int getUsage() {
+			return usage;
 		}
 
-		public void setUses(int uses) {
-			this.uses = uses;
+		public void setUsage(int usage) {
+			this.usage = usage;
 		}
 
 		public static PooledObject of(Object object) {
@@ -228,12 +224,12 @@ public class GenericObjectPool implements ObjectPool {
 		return poolSize;
 	}
 
-	public int getMaxUses() {
-		return maxUses;
+	public int getMaxUsage() {
+		return maxUsage;
 	}
 
-	public void setMaxUses(int maxUses) {
-		this.maxUses = maxUses;
+	public void setMaxUsage(int maxUsage) {
+		this.maxUsage = maxUsage;
 	}
 
 	public long getCheckObjectExpiredInterval() {
@@ -359,7 +355,7 @@ public class GenericObjectPool implements ObjectPool {
 						pooledObject = pooledObjects.get(object);
 					}
 					pooledObject.setLastBorrowed(System.currentTimeMillis());
-					pooledObject.setUses(pooledObject.getUses() + 1);
+					pooledObject.setUsage(pooledObject.getUsage() + 1);
 					return object;
 				}
 			} catch (Exception e) {
@@ -378,7 +374,7 @@ public class GenericObjectPool implements ObjectPool {
 				if (log.isDebugEnabled()) {
 					log.debug("Giveback object: " + object);
 				}
-				if (pooledObject.getUses() == maxUses) {
+				if (pooledObject.getUsage() == maxUsage) {
 					discardObject(pooledObject.getObject());
 				} else {
 					busyQueue.remove(pooledObject.getObject());
@@ -449,7 +445,7 @@ public class GenericObjectPool implements ObjectPool {
 		public int compare(Object left, Object right) {
 			PooledObject leftDetail = pooledObjects.get(left);
 			PooledObject rightDetail = pooledObjects.get(right);
-			return rightDetail.getUses() - leftDetail.getUses();
+			return rightDetail.getUsage() - leftDetail.getUsage();
 		}
 	};
 

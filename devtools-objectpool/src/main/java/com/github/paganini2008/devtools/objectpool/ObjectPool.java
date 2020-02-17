@@ -1,16 +1,16 @@
 package com.github.paganini2008.devtools.objectpool;
 
 /**
- * A container of some object.
  * 
+ * ObjectPool
+ *
  * @author Fred Feng
- * 
  * @version 1.0
  */
 public interface ObjectPool {
 
 	/**
-	 * Get object's detail
+	 * Get the pooled object's detail
 	 * 
 	 * @param object
 	 * @return
@@ -18,7 +18,7 @@ public interface ObjectPool {
 	ObjectDetail getDetail(Object object);
 
 	/**
-	 * Borrow it until it's available.
+	 * Borrow one from pool until it's available.
 	 * 
 	 * @return
 	 * @throws Exception
@@ -26,32 +26,32 @@ public interface ObjectPool {
 	Object borrowObject() throws Exception;
 
 	/**
-	 * Borrow it if you can in some time.
+	 * Borrow one from pool within given time(ms).
 	 * 
-	 * @param time
+	 * @param timeout
 	 * @return
 	 * @throws Exception
 	 */
 	Object borrowObject(long timeout) throws Exception;
 
 	/**
-	 * Please give back the pooled object on each calling.
+	 * Give back the pooled object to pool.
 	 * 
-	 * @param o
+	 * @param object
 	 * @throws Exception
 	 */
-	void givebackObject(Object o) throws Exception;
+	void givebackObject(Object object) throws Exception;
 
 	/**
-	 * Do it when the pooled object was invalid or expired
+	 * Discard this one when it was invalid or expired.
 	 * 
-	 * @param o
+	 * @param object
 	 * @throws Exception
 	 */
-	void discardObject(Object o) throws Exception;
+	void discardObject(Object object) throws Exception;
 
 	/**
-	 * Close it
+	 * Close the pool.
 	 * 
 	 * @throws Exception
 	 */

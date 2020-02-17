@@ -9,7 +9,7 @@ import java.lang.reflect.UndeclaredThrowableException;
  * @author Fred Feng
  * @version 1.0
  */
-public class ExceptionUtils {
+public abstract class ExceptionUtils {
 
 	public static Throwable unwrapThrowable(Throwable wrapped) {
 		Throwable unwrapped = wrapped;
@@ -22,8 +22,5 @@ public class ExceptionUtils {
 				return unwrapped;
 			}
 		}
-	}
-	
-	private ExceptionUtils(){
 	}
 }

@@ -10,11 +10,10 @@ import com.github.paganini2008.devtools.collection.LruSet;
 
 /**
  * 
- * QuerySpanImpl
+ * QuerySpanImpl 
  *
  * @author Fred Feng
- * 
- * 
+ * @version 1.0
  */
 public class QuerySpanImpl implements QuerySpan, Serializable {
 

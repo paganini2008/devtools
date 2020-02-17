@@ -1,11 +1,9 @@
 package com.github.paganini2008.devtools.objectpool;
 
 /**
- * Implement this interface to build your object factory. To manage the objects
- * in it.
+ * Customized ObjectFactory interface to manage some reused objects.
  * 
  * @author Fred Feng
- * 
  * @version 1.0
  */
 public interface ObjectFactory {
@@ -19,22 +17,22 @@ public interface ObjectFactory {
 	Object createObject() throws Exception;
 
 	/**
-	 * Validate/Test a object if valid/actived/opened or not.
+	 * Verify the pooled object when it is idle or borrowed.
 	 * 
-	 * @param o
+	 * @param object
 	 * @return
 	 * @throws Exception
 	 */
-	default boolean testObject(Object o) throws Exception {
+	default boolean testObject(Object object) throws Exception {
 		return true;
 	}
 
 	/**
-	 * Close/Release a object and remove it from the pool.
+	 * Release the pooled object and remove it from the pool.
 	 * 
-	 * @param o
+	 * @param object
 	 * @throws Exception
 	 */
-	void destroyObject(Object o) throws Exception;
+	void destroyObject(Object object) throws Exception;
 
 }
