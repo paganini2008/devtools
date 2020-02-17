@@ -13,8 +13,6 @@ import com.github.paganini2008.devtools.scheduler.cron.CronExpression;
  * TimerTaskExecutor
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public class TimerTaskExecutor implements TaskExecutor {
@@ -127,8 +125,6 @@ public class TimerTaskExecutor implements TaskExecutor {
 	 * CronTask
 	 *
 	 * @author Fred Feng
-	 * 
-	 * 
 	 * @version 1.0
 	 */
 	static class TaskFutureImpl implements TaskFuture {

@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.function.Function;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
-import com.github.paganini2008.devtools.date.DateUtils;
 
 /**
  * 
@@ -85,15 +84,6 @@ public class EveryYear implements Year, Serializable {
 	
 	public Week lastWeek() {
 		return new LastWeekOfYear(CollectionUtils.getFirst(this));
-	}
-
-	public static void main(String[] args) {
-		Day every = CronBuilder.thisYear().toYear(2025).Feb().andAug().toDec().lastDay();
-		while (every.hasNext()) {
-			Day time = every.next();
-			System.out.println(DateUtils.format(time.getTime()));
-			//System.out.println(time.getLasyDay());
-		}
 	}
 
 }

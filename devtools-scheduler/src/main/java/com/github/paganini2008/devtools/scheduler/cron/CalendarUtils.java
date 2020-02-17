@@ -8,8 +8,6 @@ import java.util.Date;
  * CalendarUtils
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public abstract class CalendarUtils {

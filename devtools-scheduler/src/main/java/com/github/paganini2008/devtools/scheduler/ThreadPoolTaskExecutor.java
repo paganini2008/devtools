@@ -20,8 +20,6 @@ import com.github.paganini2008.devtools.scheduler.cron.CronExpression;
  * ThreadPoolTaskExecutor
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public class ThreadPoolTaskExecutor implements TaskExecutor {

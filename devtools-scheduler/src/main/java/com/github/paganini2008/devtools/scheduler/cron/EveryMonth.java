@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.function.Function;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
-import com.github.paganini2008.devtools.date.DateUtils;
 
 /**
  * 
@@ -112,14 +111,6 @@ public class EveryMonth implements Month, Serializable {
 
 	public Week everyWeek(Function<Month, Integer> from, Function<Month, Integer> to, int interval) {
 		return new EveryWeek(CollectionUtils.getFirst(this), from, to, interval);
-	}
-
-	public static void main(String[] args) {
-		Second every = CronBuilder.thisYear().Aug().lastDay().everyHour(2).minute(20).andMinute(30).second(5).toSecond(10);
-		while (every.hasNext()) {
-			Second time = every.next();
-			System.out.println(DateUtils.format(time.getTime()));
-		}
 	}
 
 }

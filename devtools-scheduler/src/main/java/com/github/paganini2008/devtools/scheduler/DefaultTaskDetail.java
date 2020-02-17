@@ -12,8 +12,6 @@ import com.github.paganini2008.devtools.scheduler.TaskExecutor.TaskDetail;
  * DefaultTaskDetail
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public class DefaultTaskDetail implements TaskDetail {

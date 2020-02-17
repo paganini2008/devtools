@@ -11,8 +11,6 @@ import com.github.paganini2008.devtools.scheduler.cron.CronExpression;
  * TaskExecutor
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public interface TaskExecutor {

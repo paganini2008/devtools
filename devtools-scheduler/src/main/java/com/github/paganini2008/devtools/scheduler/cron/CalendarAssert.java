@@ -9,8 +9,6 @@ import com.github.paganini2008.devtools.date.DateUtils;
  * CalendarAssert
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public abstract class CalendarAssert {
@@ -18,7 +16,7 @@ public abstract class CalendarAssert {
 	public static void checkYear(int year) {
 		int thisYear = DateUtils.getYear();
 		if (year < thisYear) {
-			throw new IllegalArgumentException("Year: '" + year + "' is not past.");
+			throw new IllegalArgumentException("Year: '" + year + "' is past.");
 		}
 	}
 

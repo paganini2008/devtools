@@ -9,15 +9,13 @@ import com.github.paganini2008.devtools.date.DateUtils;
  * CronBuilder
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public abstract class CronBuilder {
 
 	private static final int END_YEAR_OF_THE_WORLD = 9999;
 
-	public static OneYear thisYear() {
+	public static OneYear year() {
 		return year(DateUtils.getYear());
 	}
 
@@ -25,28 +23,52 @@ public abstract class CronBuilder {
 		return new SingleYear(year);
 	}
 
-	public static OneMonth thisMonth() {
-		return thisYear().month(DateUtils.getMonth());
+	public static OneMonth month() {
+		return year().month(DateUtils.getMonth());
 	}
 
 	public static OneMonth month(int year, int month) {
 		return year(year).month(month);
 	}
 
-	public static OneWeek thisWeek() {
-		return thisMonth().week(DateUtils.getWeekOfMonth());
+	public static OneWeek week() {
+		return month().week(DateUtils.getWeekOfMonth());
 	}
 
 	public static OneWeek week(int year, int month, int week) {
 		return month(year, month).week(week);
 	}
 
-	public static OneDay today() {
-		return thisMonth().day(DateUtils.getDate());
+	public static OneDay day() {
+		return month().day(DateUtils.getDate());
 	}
 
 	public static OneDay day(int year, int month, int day) {
 		return month(year, month).day(day);
+	}
+
+	public static OneHour hour() {
+		return day().hour(DateUtils.getHourOfDay());
+	}
+
+	public static OneHour hour(int hourOfDay) {
+		return day().hour(hourOfDay);
+	}
+
+	public static OneMinute minute() {
+		return hour().minute(DateUtils.getMinute());
+	}
+
+	public static OneMinute minute(int minute) {
+		return hour().minute(minute);
+	}
+
+	public static OneMinute at(int hourOfDay, int minute) {
+		return day().hour(hourOfDay).minute(minute);
+	}
+
+	public static OneSecond at(int hourOfDay, int minute, int second) {
+		return day().hour(hourOfDay).minute(minute).second(second);
 	}
 
 	public static Year everyYear() {

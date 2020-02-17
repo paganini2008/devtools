@@ -8,8 +8,6 @@ import java.util.function.Function;
  * Day
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public interface Day extends Iterator<Day>, CronExpression {
@@ -36,15 +34,15 @@ public interface Day extends Iterator<Day>, CronExpression {
 		return everyHour(d -> from, d -> to, interval);
 	}
 
-	default OneHour am() {
-		return hour(0).toHour(12);
+	OneHour hour(int hourOfDay);
+
+	default OneMinute at(int hourOfDay, int minute) {
+		return hour(hourOfDay).minute(minute);
 	}
 
-	default OneHour pm() {
-		return hour(12).toHour(23);
+	default OneSecond at(int hourOfDay, int minute, int second) {
+		return hour(hourOfDay).minute(minute).second(second);
 	}
-
-	OneHour hour(int hour);
 
 	Hour everyHour(Function<Day, Integer> from, Function<Day, Integer> to, int interval);
 

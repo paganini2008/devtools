@@ -9,8 +9,6 @@ import java.util.function.Function;
  * Week
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public interface Week extends Iterator<Week>, CronExpression {
