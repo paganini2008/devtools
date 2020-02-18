@@ -8,11 +8,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import com.github.paganini2008.devtools.date.DateUtils;
-import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
 import com.github.paganini2008.devtools.multithreads.PooledThreadFactory;
-import com.github.paganini2008.devtools.scheduler.cron.CronBuilder;
 import com.github.paganini2008.devtools.scheduler.cron.CronExpression;
 
 /**
@@ -25,7 +22,7 @@ import com.github.paganini2008.devtools.scheduler.cron.CronExpression;
 public class ThreadPoolTaskExecutor implements TaskExecutor {
 
 	private final ScheduledExecutorService executor;
-	private final ConcurrentMap<Executable, TaskFuture> taskFutures = new ConcurrentHashMap<Executable, TaskFuture>();
+	private final ConcurrentMap<Task, TaskFuture> taskFutures = new ConcurrentHashMap<Task, TaskFuture>();
 	private TaskInterceptorHandler interceptorHandler = new TaskInterceptorHandler() {
 	};
 
@@ -37,34 +34,34 @@ public class ThreadPoolTaskExecutor implements TaskExecutor {
 		this.executor = executor;
 	}
 
-	public TaskFuture schedule(Executable e, long delay) {
-		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(e, () -> System.currentTimeMillis() + delay);
+	public TaskFuture schedule(Task task, long delay) {
+		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(task, () -> System.currentTimeMillis() + delay);
 		taskDetail.nextExecuted = System.currentTimeMillis() + delay;
-		final SimpleTask task = new SimpleTask(e, taskDetail);
-		ScheduledFuture<?> scheduledFuture = executor.schedule(task, delay, TimeUnit.MILLISECONDS);
-		taskFutures.put(e, new TaskFutureImpl(taskDetail, scheduledFuture));
-		return taskFutures.get(e);
+		final SimpleTask wrapped = new SimpleTask(task, taskDetail);
+		ScheduledFuture<?> scheduledFuture = executor.schedule(wrapped, delay, TimeUnit.MILLISECONDS);
+		taskFutures.put(task, new TaskFutureImpl(taskDetail, scheduledFuture));
+		return taskFutures.get(task);
 	}
 
-	public TaskFuture scheduleAtFixedRate(Executable e, long delay, long period) {
-		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(e, () -> System.currentTimeMillis() + delay);
+	public TaskFuture scheduleAtFixedRate(Task task, long delay, long period) {
+		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(task, () -> System.currentTimeMillis() + delay);
 		taskDetail.nextExecuted = System.currentTimeMillis() + delay;
-		final SimpleTask task = new SimpleTask(e, taskDetail);
-		ScheduledFuture<?> scheduledFuture = executor.scheduleAtFixedRate(task, delay, period, TimeUnit.MILLISECONDS);
-		taskFutures.put(e, new TaskFutureImpl(taskDetail, scheduledFuture));
-		return taskFutures.get(e);
+		final SimpleTask wrapped = new SimpleTask(task, taskDetail);
+		ScheduledFuture<?> scheduledFuture = executor.scheduleAtFixedRate(wrapped, delay, period, TimeUnit.MILLISECONDS);
+		taskFutures.put(task, new TaskFutureImpl(taskDetail, scheduledFuture));
+		return taskFutures.get(task);
 	}
 
-	public TaskFuture scheduleWithFixedDelay(Executable e, long delay, long period) {
-		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(e, () -> System.currentTimeMillis() + delay);
+	public TaskFuture scheduleWithFixedDelay(Task task, long delay, long period) {
+		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(task, () -> System.currentTimeMillis() + delay);
 		taskDetail.nextExecuted = System.currentTimeMillis() + delay;
-		final SimpleTask task = new SimpleTask(e, taskDetail);
-		ScheduledFuture<?> scheduledFuture = executor.scheduleWithFixedDelay(task, delay, period, TimeUnit.MILLISECONDS);
-		taskFutures.put(e, new TaskFutureImpl(taskDetail, scheduledFuture));
-		return taskFutures.get(e);
+		final SimpleTask wrapped = new SimpleTask(task, taskDetail);
+		ScheduledFuture<?> scheduledFuture = executor.scheduleWithFixedDelay(wrapped, delay, period, TimeUnit.MILLISECONDS);
+		taskFutures.put(task, new TaskFutureImpl(taskDetail, scheduledFuture));
+		return taskFutures.get(task);
 	}
 
-	public TaskFuture schedule(Executable e, CronExpression cronExpression) {
+	public TaskFuture schedule(Task task, CronExpression cronExpression) {
 		final Iterator<?> iterator = (Iterator<?>) cronExpression;
 		long executed = -1;
 		while (iterator.hasNext()) {
@@ -77,28 +74,31 @@ public class ThreadPoolTaskExecutor implements TaskExecutor {
 		if (executed == -1) {
 			throw new SchedulingException("All time are now past.");
 		}
-		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(e, () -> {
+		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(task, () -> {
 			return iterator.hasNext() ? ((CronExpression) iterator.next()).getTimeInMillis() : -1;
 		});
 		taskDetail.nextExecuted = executed;
-		final CronTask task = new CronTask(e, taskDetail);
-		ScheduledFuture<?> scheduledFuture = executor.schedule(task, executed - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
-		taskFutures.put(e, new TaskFutureImpl(taskDetail, scheduledFuture));
-		return taskFutures.get(e);
+		final CronTask wrapped = new CronTask(task, taskDetail);
+		ScheduledFuture<?> scheduledFuture = executor.schedule(wrapped, executed - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+		taskFutures.put(task, new TaskFutureImpl(taskDetail, scheduledFuture));
+		return taskFutures.get(task);
 	}
 
 	public void setTaskInterceptorHandler(TaskInterceptorHandler interceptorHandler) {
 		this.interceptorHandler = interceptorHandler;
 	}
 
-	public boolean hasScheduled(Executable e) {
-		return taskFutures.containsKey(e);
+	public boolean hasScheduled(Task task) {
+		return taskFutures.containsKey(task);
 	}
 
-	public void removeSchedule(Executable e) {
-		TaskFuture taskFuture = taskFutures.remove(e);
+	public void removeSchedule(Task task) {
+		TaskFuture taskFuture = taskFutures.remove(task);
 		if (taskFuture != null) {
 			taskFuture.cancel();
+		}
+		if (taskFutures.isEmpty()) {
+			close();
 		}
 	}
 
@@ -106,7 +106,7 @@ public class ThreadPoolTaskExecutor implements TaskExecutor {
 		return taskFutures.size();
 	}
 
-	public TaskFuture getTaskFuture(Executable task) {
+	public TaskFuture getTaskFuture(Task task) {
 		return taskFutures.get(task);
 	}
 
@@ -123,56 +123,11 @@ public class ThreadPoolTaskExecutor implements TaskExecutor {
 
 	/**
 	 * 
-	 * CronTask
+	 * TaskFutureImpl
 	 *
 	 * @author Fred Feng
-	 * 
-	 * 
 	 * @version 1.0
 	 */
-	class CronTask implements Runnable {
-
-		final Executable task;
-		final DefaultTaskDetail taskDetail;
-
-		CronTask(Executable task, DefaultTaskDetail taskDetail) {
-			this.task = task;
-			this.taskDetail = taskDetail;
-		} 
-
-		public void run() {
-			if (taskDetail.nextExecuted == -1) {
-				removeSchedule(task);
-				return;
-			}
-			boolean result = false;
-			final long now = System.currentTimeMillis();
-			final TaskFutureImpl taskFuture = ((TaskFutureImpl) taskFutures.get(task));
-			taskDetail.running.set(true);
-			try {
-				taskDetail.lastExecuted = now;
-				taskDetail.nextExecuted = taskDetail.trigger.getNextFireTime();
-				interceptorHandler.beforeJobExecution(taskFuture);
-				result = taskFuture.paused ? true : task.execute();
-				taskDetail.completedCount.incrementAndGet();
-			} catch (Exception e) {
-				taskDetail.failedCount.incrementAndGet();
-				result = task.onError(e);
-			} finally {
-				taskDetail.running.set(false);
-				interceptorHandler.afterJobExecution(taskFuture);
-				if (result) {
-					ScheduledFuture<?> scheduledFuture = executor.schedule(this, taskDetail.nextExecuted - System.currentTimeMillis(),
-							TimeUnit.MILLISECONDS);
-					taskFuture.scheduledFuture = scheduledFuture;
-				} else {
-					removeSchedule(task);
-					task.onCancellation();
-				}
-			}
-		}
-	}
-
 	static class TaskFutureImpl implements TaskFuture {
 
 		final TaskDetail taskDetail;
@@ -216,20 +171,81 @@ public class ThreadPoolTaskExecutor implements TaskExecutor {
 
 	/**
 	 * 
+	 * CronTask
+	 *
+	 * @author Fred Feng
+	 * @version 1.0
+	 */
+	class CronTask implements Runnable {
+
+		final Task task;
+		final Cancellable cancellable;
+		final DefaultTaskDetail taskDetail;
+
+		CronTask(Task task, DefaultTaskDetail taskDetail) {
+			this.task = task;
+			this.cancellable = task.cancellable();
+			this.taskDetail = taskDetail;
+		}
+
+		public void run() {
+			if (taskDetail.nextExecuted == -1) {
+				removeSchedule(task);
+				return;
+			}
+			boolean result = false;
+			final long now = System.currentTimeMillis();
+			final TaskFutureImpl taskFuture = ((TaskFutureImpl) taskFutures.get(task));
+			Throwable throwing = null;
+			taskDetail.running.set(true);
+			try {
+				taskDetail.lastExecuted = now;
+				taskDetail.nextExecuted = taskDetail.trigger.getNextFireTime();
+				interceptorHandler.beforeJobExecution(taskFuture);
+				if (!cancellable.cancel(taskDetail)) {
+					result = (taskFuture.paused ? true : task.execute());
+					taskDetail.completedCount.incrementAndGet();
+				} else {
+					throw new CancellationException(taskDetail);
+				}
+			} catch (Throwable e) {
+				throwing = e;
+				if (!(e instanceof CancellationException)) {
+					taskDetail.failedCount.incrementAndGet();
+					result = task.onError(e);
+				}
+			} finally {
+				taskDetail.running.set(false);
+				interceptorHandler.afterJobExecution(taskFuture, throwing);
+
+				if (result) {
+					ScheduledFuture<?> scheduledFuture = executor.schedule(this, taskDetail.nextExecuted - System.currentTimeMillis(),
+							TimeUnit.MILLISECONDS);
+					taskFuture.scheduledFuture = scheduledFuture;
+				} else {
+					removeSchedule(task);
+					task.onCancellation(throwing);
+				}
+			}
+		}
+	}
+
+	/**
+	 * 
 	 * SimpleTask
 	 *
 	 * @author Fred Feng
-	 * 
-	 * 
 	 * @version 1.0
 	 */
 	class SimpleTask implements Runnable {
 
-		final Executable task;
+		final Task task;
+		final Cancellable cancellable;
 		final DefaultTaskDetail taskDetail;
 
-		SimpleTask(Executable task, DefaultTaskDetail taskDetail) {
+		SimpleTask(Task task, DefaultTaskDetail taskDetail) {
 			this.task = task;
+			this.cancellable = task.cancellable();
 			this.taskDetail = taskDetail;
 		}
 
@@ -237,47 +253,35 @@ public class ThreadPoolTaskExecutor implements TaskExecutor {
 			boolean result = false;
 			final long now = System.currentTimeMillis();
 			final TaskFutureImpl taskFuture = ((TaskFutureImpl) taskFutures.get(task));
+			Throwable throwing = null;
 			taskDetail.running.set(true);
 			try {
 				taskDetail.lastExecuted = now;
 				taskDetail.nextExecuted = taskDetail.trigger.getNextFireTime();
 				interceptorHandler.beforeJobExecution(taskFuture);
-				result = task.execute();
-				taskDetail.completedCount.incrementAndGet();
-			} catch (Exception e) {
-				taskDetail.failedCount.incrementAndGet();
-				result = task.onError(e);
+				if (!cancellable.cancel(taskDetail)) {
+					result = (taskFuture.paused ? true : task.execute());
+					taskDetail.completedCount.incrementAndGet();
+				} else {
+					throw new CancellationException(taskDetail);
+				}
+			} catch (Throwable e) {
+				throwing = e;
+				if (!(e instanceof CancellationException)) {
+					taskDetail.failedCount.incrementAndGet();
+					result = task.onError(e);
+				}
 			} finally {
 				taskDetail.running.set(false);
-				interceptorHandler.afterJobExecution(taskFuture);
+				interceptorHandler.afterJobExecution(taskFuture, throwing);
+
 				if (!result) {
 					removeSchedule(task);
-					task.onCancellation();
+					task.onCancellation(throwing);
 				}
 			}
 		}
 
-	}
-
-	public static void main(String[] args) throws Exception {
-		CronExpression expression = CronBuilder.everySecond();
-		ThreadPoolTaskExecutor es = new ThreadPoolTaskExecutor(2, null);
-		final TaskFuture taskFuture = es.schedule(new Executable() {
-			int n = 0;
-
-			public boolean execute() {
-				System.out.println("1111: " + DateUtils.format(System.currentTimeMillis()));
-				return ++n < 10;
-			}
-
-			public void onCancellation() {
-				System.out.println("取消: " + this.toString());
-			}
-
-		}, expression);
-
-		System.in.read();
-		es.close();
 	}
 
 }

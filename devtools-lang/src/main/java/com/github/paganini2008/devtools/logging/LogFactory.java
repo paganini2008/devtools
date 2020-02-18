@@ -2,7 +2,6 @@ package com.github.paganini2008.devtools.logging;
 
 import com.github.paganini2008.devtools.ServiceLoader;
 import com.github.paganini2008.devtools.ServiceNotFoundException;
-import com.github.paganini2008.devtools.SystemPropertyUtils;
 import com.github.paganini2008.devtools.collection.LruMap;
 
 /**
@@ -14,12 +13,9 @@ import com.github.paganini2008.devtools.collection.LruMap;
  */
 public final class LogFactory {
 
-	private final static LruMap<String, Log> cache;
+	private final static LruMap<String, Log> cache = new LruMap<String, Log>(1024);
 
 	static {
-		final int size = SystemPropertyUtils.getInteger("lazycat.logging.cacheSize", 1024);
-		cache = new LruMap<String, Log>(size);
-
 		ServiceLoader.lookupPath("META-INF/spi/com/github/paganini2008/devtools/logging");
 
 		initialize(new LoggerFactoryBuilder() {

@@ -21,8 +21,6 @@ import com.github.paganini2008.devtools.Sequence;
  * ThreadUtils
  * 
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public abstract class ThreadUtils {
@@ -221,15 +219,17 @@ public abstract class ThreadUtils {
 		final Timer timer = new Timer();
 		timer.scheduleAtFixedRate(new TimerTask() {
 			public void run() {
+				Exception throwing = null;
 				boolean result = true;
 				try {
 					result = e.execute();
 				} catch (Exception error) {
+					throwing = error;
 					result = e.onError(error);
 				} finally {
 					if (!result) {
 						timer.cancel();
-						e.onCancellation();
+						e.onCancellation(throwing);
 					}
 				}
 			}
@@ -265,15 +265,17 @@ public abstract class ThreadUtils {
 		final Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
 			public void run() {
+				Throwable throwing = null;
 				boolean result = true;
 				try {
 					result = e.execute();
-				} catch (Exception error) {
+				} catch (Throwable error) {
+					throwing = error;
 					result = e.onError(error);
 				} finally {
 					if (!result) {
 						timer.cancel();
-						e.onCancellation();
+						e.onCancellation(throwing);
 					}
 				}
 			}

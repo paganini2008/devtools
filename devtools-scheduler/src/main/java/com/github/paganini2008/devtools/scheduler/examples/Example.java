@@ -1,6 +1,13 @@
 package com.github.paganini2008.devtools.scheduler.examples;
 
+import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.date.DateUtils;
+import com.github.paganini2008.devtools.scheduler.Cancellable;
+import com.github.paganini2008.devtools.scheduler.Cancellables;
+import com.github.paganini2008.devtools.scheduler.CancellationException;
+import com.github.paganini2008.devtools.scheduler.Task;
+import com.github.paganini2008.devtools.scheduler.ThreadPoolTaskExecutor;
+import com.github.paganini2008.devtools.scheduler.TimerTaskExecutor;
 import com.github.paganini2008.devtools.scheduler.cron.CronBuilder;
 import com.github.paganini2008.devtools.scheduler.cron.CronExpression;
 
@@ -11,7 +18,7 @@ import com.github.paganini2008.devtools.scheduler.cron.CronExpression;
  * @author Fred Feng
  * @version 1.0
  */
-public class Example {
+public abstract class Example {
 
 	// */5 * * * * ?
 	public static CronExpression getCron1() {
@@ -83,15 +90,105 @@ public class Example {
 		return CronBuilder.everyMonth().week(3).Fri().at(23, 10);
 	}
 
-	public static void main(String[] args) {
-		// getCron14().forEach(cron -> {
-		// System.out.println(DateUtils.format(cron.getTime()));
-		// });
+	public static void test1() throws Exception {
+		getCron14().forEach(cron -> {
+			System.out.println(DateUtils.format(cron.getTime()));
+		});
+
+		System.out.println(StringUtils.repeat("-", 32));
 
 		getCron13().forEach(cron -> {
 			System.out.println(DateUtils.format(cron.getTime()));
 		});
 
+		System.out.println(StringUtils.repeat("-", 32));
+		getCron12().forEach(cron -> {
+			System.out.println(DateUtils.format(cron.getTime()));
+		});
+	}
+
+	public static void test2() throws Exception {
+		CronBuilder.everySecond().test(new Task() {
+
+			@Override
+			public boolean execute() {
+				System.out.println("Running at: " + DateUtils.format(System.currentTimeMillis()));
+				return true;
+			}
+
+			@Override
+			public Cancellable cancellable() {
+				return Cancellables.cancelIfRuns(10);
+			}
+
+			public void onCancellation(Throwable e) {
+				if (e instanceof CancellationException) {
+					System.out.println(((CancellationException) e).getTaskDetail());
+				} else {
+					System.out.println("Cancelled.");
+				}
+			}
+
+		});
+
+	}
+
+	public static void test3() throws Exception {
+		CronExpression expression = CronBuilder.everySecond();
+		TimerTaskExecutor executor = new TimerTaskExecutor();
+		executor.schedule(new Task() {
+
+			@Override
+			public boolean execute() {
+				System.out.println("Run at: " + DateUtils.format(System.currentTimeMillis()));
+				return true;
+			}
+
+			@Override
+			public Cancellable cancellable() {
+				return Cancellables.cancelIfRuns(10);
+			}
+
+			@Override
+			public void onCancellation(Throwable e) {
+				System.out.println("Cancelled.");
+			}
+
+		}, expression);
+
+		System.in.read();
+		executor.close();
+	}
+
+	public static void test4() throws Exception {
+		CronExpression expression = CronBuilder.everySecond();
+		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor(8, null);
+		executor.schedule(new Task() {
+
+			@Override
+			public boolean execute() {
+				System.out.println("Run at: " + DateUtils.format(System.currentTimeMillis()));
+				return true;
+			}
+
+			@Override
+			public Cancellable cancellable() {
+				return Cancellables.cancelIfRuns(-1);
+			}
+
+			@Override
+			public void onCancellation(Throwable e) {
+				System.out.println("Cancelled.");
+			}
+
+		}, expression);
+
+		System.in.read();
+		executor.close();
+	}
+
+	public static void main(String[] args) throws Exception {
+		test1();
 	}
 
 }

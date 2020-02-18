@@ -14,7 +14,7 @@ public interface TaskInterceptorHandler {
 	default void beforeJobExecution(TaskFuture future) {
 	}
 
-	default void afterJobExecution(TaskFuture future) {
+	default void afterJobExecution(TaskFuture future, Throwable throwing) {
 	}
 
 }

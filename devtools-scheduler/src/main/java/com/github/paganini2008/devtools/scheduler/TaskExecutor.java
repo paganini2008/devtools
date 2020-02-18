@@ -3,7 +3,6 @@ package com.github.paganini2008.devtools.scheduler;
 import java.util.concurrent.TimeUnit;
 
 import com.github.paganini2008.devtools.date.DateUtils;
-import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.scheduler.cron.CronExpression;
 
 /**
@@ -15,49 +14,49 @@ import com.github.paganini2008.devtools.scheduler.cron.CronExpression;
  */
 public interface TaskExecutor {
 
-	TaskFuture schedule(Executable task, long delay);
+	TaskFuture schedule(Task task, long delay);
 
-	TaskFuture scheduleAtFixedRate(Executable task, long delay, long period);
+	TaskFuture scheduleAtFixedRate(Task task, long delay, long period);
 
-	TaskFuture scheduleWithFixedDelay(Executable task, long delay, long period);
+	TaskFuture scheduleWithFixedDelay(Task task, long delay, long period);
 
-	TaskFuture schedule(Executable task, CronExpression cronExpression);
+	TaskFuture schedule(Task task, CronExpression cronExpression);
 
-	default TaskFuture schedule(Executable task, long delay, TimeUnit timeUnit) {
+	default TaskFuture schedule(Task task, long delay, TimeUnit timeUnit) {
 		return schedule(task, DateUtils.convertToMillis(delay, timeUnit));
 	}
 
-	default TaskFuture scheduleAtFixedRate(Executable task, long period, TimeUnit timeUnit) {
+	default TaskFuture scheduleAtFixedRate(Task task, long period, TimeUnit timeUnit) {
 		return scheduleAtFixedRate(task, period, period, timeUnit);
 	}
 
-	default TaskFuture scheduleAtFixedRate(Executable task, long delay, long period, TimeUnit timeUnit) {
+	default TaskFuture scheduleAtFixedRate(Task task, long delay, long period, TimeUnit timeUnit) {
 		return scheduleAtFixedRate(task, DateUtils.convertToMillis(delay, timeUnit), DateUtils.convertToMillis(period, timeUnit));
 	}
 
-	default TaskFuture scheduleAtFixedRate(Executable task, long delay, TimeUnit timeUnit, long period, TimeUnit periodTimeUnit) {
+	default TaskFuture scheduleAtFixedRate(Task task, long delay, TimeUnit timeUnit, long period, TimeUnit periodTimeUnit) {
 		return scheduleAtFixedRate(task, DateUtils.convertToMillis(delay, timeUnit), DateUtils.convertToMillis(period, periodTimeUnit));
 	}
 
-	default TaskFuture scheduleWithFixedDelay(Executable task, long period, TimeUnit timeUnit) {
+	default TaskFuture scheduleWithFixedDelay(Task task, long period, TimeUnit timeUnit) {
 		return scheduleWithFixedDelay(task, period, period, timeUnit);
 	}
 
-	default TaskFuture scheduleWithFixedDelay(Executable task, long delay, long period, TimeUnit timeUnit) {
+	default TaskFuture scheduleWithFixedDelay(Task task, long delay, long period, TimeUnit timeUnit) {
 		return scheduleWithFixedDelay(task, DateUtils.convertToMillis(delay, timeUnit), DateUtils.convertToMillis(period, timeUnit));
 	}
 
-	default TaskFuture scheduleWithFixedDelay(Executable task, long delay, TimeUnit timeUnit, long period, TimeUnit periodTimeUnit) {
+	default TaskFuture scheduleWithFixedDelay(Task task, long delay, TimeUnit timeUnit, long period, TimeUnit periodTimeUnit) {
 		return scheduleWithFixedDelay(task, DateUtils.convertToMillis(delay, timeUnit), DateUtils.convertToMillis(period, periodTimeUnit));
 	}
 
 	void setTaskInterceptorHandler(TaskInterceptorHandler interceptorHandler);
 
-	void removeSchedule(Executable task);
+	void removeSchedule(Task task);
 
-	boolean hasScheduled(Executable task);
+	boolean hasScheduled(Task task);
 
-	TaskFuture getTaskFuture(Executable task);
+	TaskFuture getTaskFuture(Task task);
 
 	int taskCount();
 
@@ -70,8 +69,6 @@ public interface TaskExecutor {
 	 * TaskDetail
 	 *
 	 * @author Fred Feng
-	 * 
-	 * 
 	 * @version 1.0
 	 */
 	public interface TaskDetail {
@@ -92,7 +89,7 @@ public interface TaskExecutor {
 
 		void nextExecuted(long time);
 
-		Executable getTaskObject();
+		Task getTaskObject();
 
 	}
 
@@ -101,8 +98,6 @@ public interface TaskExecutor {
 	 * TaskFuture
 	 *
 	 * @author Fred Feng
-	 * 
-	 * 
 	 * @version 1.0
 	 */
 	public interface TaskFuture {

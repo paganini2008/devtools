@@ -4,7 +4,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.github.paganini2008.devtools.date.DateUtils;
-import com.github.paganini2008.devtools.multithreads.Executable;
 import com.github.paganini2008.devtools.scheduler.TaskExecutor.TaskDetail;
 
 /**
@@ -16,7 +15,7 @@ import com.github.paganini2008.devtools.scheduler.TaskExecutor.TaskDetail;
  */
 public class DefaultTaskDetail implements TaskDetail {
 
-	final Executable task;
+	final Task task;
 	final Trigger trigger;
 	final AtomicBoolean running = new AtomicBoolean(false);
 	final AtomicInteger completedCount = new AtomicInteger(0);
@@ -24,7 +23,7 @@ public class DefaultTaskDetail implements TaskDetail {
 	volatile long lastExecuted = -1;
 	volatile long nextExecuted = -1;
 
-	DefaultTaskDetail(Executable task, Trigger trigger) {
+	DefaultTaskDetail(Task task, Trigger trigger) {
 		this.task = task;
 		this.trigger = trigger;
 	}
@@ -61,7 +60,7 @@ public class DefaultTaskDetail implements TaskDetail {
 		nextExecuted = time;
 	}
 
-	public Executable getTaskObject() {
+	public Task getTaskObject() {
 		return task;
 	}
 

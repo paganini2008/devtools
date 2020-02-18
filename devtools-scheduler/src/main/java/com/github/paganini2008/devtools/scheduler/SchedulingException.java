@@ -10,6 +10,10 @@ package com.github.paganini2008.devtools.scheduler;
 public class SchedulingException extends RuntimeException {
 
 	private static final long serialVersionUID = -5503002820477023202L;
+	
+	public SchedulingException() {
+		super();
+	}
 
 	public SchedulingException(String msg) {
 		super(msg);

@@ -13,7 +13,7 @@ import com.github.paganini2008.devtools.date.DateUtils;
  */
 public abstract class CronBuilder {
 
-	private static final int END_YEAR_OF_THE_WORLD = 9999;
+	public static final int LAST_YEAR_OF_THE_WORLD = 9999;
 
 	public static OneYear year() {
 		return year(DateUtils.getYear());
@@ -76,7 +76,7 @@ public abstract class CronBuilder {
 	}
 
 	public static Year everyYear(int interval) {
-		return everyYear(DateUtils.getYear(), END_YEAR_OF_THE_WORLD, interval);
+		return everyYear(DateUtils.getYear(), LAST_YEAR_OF_THE_WORLD, interval);
 	}
 
 	public static Year everyYear(int fromYear, int toYear, int interval) {
