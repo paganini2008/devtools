@@ -13,14 +13,14 @@ import javax.sql.DataSource;
 public interface DriverManagerDataSource extends DataSource {
 
 	/**
-	 * Set schema username
+	 * Set username
 	 * 
 	 * @param user
 	 */
 	void setUser(String user);
 
 	/**
-	 * Set schema password
+	 * Set password
 	 * 
 	 * @param password
 	 */
@@ -41,7 +41,7 @@ public interface DriverManagerDataSource extends DataSource {
 	void setDriverClassName(String driverClassName) throws SQLException;
 
 	/**
-	 * Close the connection pool
+	 * Close the DataSource
 	 */
 	void close() throws SQLException;
 

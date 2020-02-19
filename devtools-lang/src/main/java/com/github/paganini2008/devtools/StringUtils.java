@@ -438,7 +438,7 @@ public abstract class StringUtils {
 		if (args == null || args.length == 0) {
 			return text;
 		}
-		PlaceholderTokenizer placeholderTokenizer = new PlaceholderTokenizer(prefix, suffix);
+		PlaceholderTokenParser placeholderTokenizer = new PlaceholderTokenParser(prefix, suffix);
 		return placeholderTokenizer.parse(text, str -> {
 			return args[Integer.parseInt(str)];
 		});
@@ -451,7 +451,7 @@ public abstract class StringUtils {
 		if (params == null || params.size() == 0) {
 			return text;
 		}
-		PlaceholderTokenizer placeholderTokenizer = new PlaceholderTokenizer(prefix, suffix);
+		PlaceholderTokenParser placeholderTokenizer = new PlaceholderTokenParser(prefix, suffix);
 		return placeholderTokenizer.parse(text, key -> {
 			return params.get(key);
 		});
@@ -463,7 +463,7 @@ public abstract class StringUtils {
 		if (params == null || params.size() == 0) {
 			return text;
 		}
-		PrefixationTokenizer prefixationTokenizer = new PrefixationTokenizer(token);
+		PrefixationTokenParser prefixationTokenizer = new PrefixationTokenParser(token);
 		return prefixationTokenizer.parse(text, key -> {
 			return params.get(key);
 		});
@@ -475,7 +475,7 @@ public abstract class StringUtils {
 		if (args == null || args.length == 0) {
 			return text;
 		}
-		PrefixationTokenizer prefixationTokenizer = new PrefixationTokenizer(token);
+		PrefixationTokenParser prefixationTokenizer = new PrefixationTokenParser(token);
 		return prefixationTokenizer.parse(text, str -> {
 			return args[Integer.parseInt(str)];
 		});
@@ -487,7 +487,7 @@ public abstract class StringUtils {
 		if (args == null || args.length == 0) {
 			return text;
 		}
-		SimpleTokenizer simpleTokenizer = new SimpleTokenizer(token);
+		SimpleTokenParser simpleTokenizer = new SimpleTokenParser(token);
 		return simpleTokenizer.parse(text, index -> {
 			return args[Integer.min(index, args.length - 1)];
 		});

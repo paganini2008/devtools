@@ -9,41 +9,40 @@ import com.github.paganini2008.devtools.jdbc.PreparedStatementCallback;
 
 /**
  * 
- * PreparedStatementSetterUtils
+ * PreparedStatementCallbackUtils
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
-public abstract class PreparedStatementSetterUtils {
+public abstract class PreparedStatementCallbackUtils {
 
 	public static PreparedStatementCallback batchPrepare(List<Object[]> parametersList, JdbcType[] jdbcTypes,
 			TypeHandlerRegistry typeHandlerRegistry) {
-		return new BatchArgumentJdbcTypePrepareStatementSetter(parametersList, jdbcTypes, typeHandlerRegistry);
+		return new BatchArgumentJdbcTypePreparedStatementCallback(parametersList, jdbcTypes, typeHandlerRegistry);
 	}
 
 	public static PreparedStatementCallback batchPrepare(List<Object[]> parametersList, TypeHandlerRegistry typeHandlerRegistry) {
-		return new BatchArgumentPrepareStatementSetter(parametersList, typeHandlerRegistry);
+		return new BatchArgumentPreparedStatementCallback(parametersList, typeHandlerRegistry);
 	}
 
 	public static PreparedStatementCallback prepare(Object[] parameters, JdbcType[] jdbcTypes, TypeHandlerRegistry typeHandlerRegistry) {
-		return new ArgumentJdbcTypePrepareStatementSetter(parameters, jdbcTypes, typeHandlerRegistry);
+		return new ArgumentJdbcTypePreparedStatementCallback(parameters, jdbcTypes, typeHandlerRegistry);
 	}
 
 	public static PreparedStatementCallback prepare(Object[] parameters, TypeHandlerRegistry typeHandlerRegistry) {
-		return new ArgumentPrepareStatementSetter(parameters, typeHandlerRegistry);
+		return new ArgumentPreparedStatementCallback(parameters, typeHandlerRegistry);
 	}
 
 	/**
-	 * BatchJdbcTypePrepareStatementSetter
 	 * 
+	 * BatchArgumentJdbcTypePreparedStatementCallback
+	 *
 	 * @author Fred Feng
 	 * @version 1.0
 	 */
-	private static class BatchArgumentJdbcTypePrepareStatementSetter implements PreparedStatementCallback {
+	private static class BatchArgumentJdbcTypePreparedStatementCallback implements PreparedStatementCallback {
 
-		private BatchArgumentJdbcTypePrepareStatementSetter(List<Object[]> parametersList, JdbcType[] jdbcTypes,
+		private BatchArgumentJdbcTypePreparedStatementCallback(List<Object[]> parametersList, JdbcType[] jdbcTypes,
 				TypeHandlerRegistry typeHandlerRegistry) {
 			this.parametersList = parametersList;
 			this.jdbcTypes = jdbcTypes;
@@ -78,14 +77,14 @@ public abstract class PreparedStatementSetterUtils {
 	}
 
 	/**
-	 * BatchArgumentPrepareStatementSetter
+	 * BatchArgumentPreparedStatementCallback
 	 * 
 	 * @author Fred Feng
 	 * @version 1.0
 	 */
-	private static class BatchArgumentPrepareStatementSetter implements PreparedStatementCallback {
+	private static class BatchArgumentPreparedStatementCallback implements PreparedStatementCallback {
 
-		private BatchArgumentPrepareStatementSetter(List<Object[]> parametersList, TypeHandlerRegistry typeHandlerRegistry) {
+		private BatchArgumentPreparedStatementCallback(List<Object[]> parametersList, TypeHandlerRegistry typeHandlerRegistry) {
 			this.parametersList = parametersList;
 			this.typeHandlerRegistry = typeHandlerRegistry;
 		}
@@ -114,14 +113,14 @@ public abstract class PreparedStatementSetterUtils {
 	}
 
 	/**
-	 * ArgumentJdbcTypePrepareStatementSetter
+	 * ArgumentJdbcTypePreparedStatementCallback
 	 * 
 	 * @author Fred Feng
 	 * @version 1.0
 	 */
-	private static class ArgumentJdbcTypePrepareStatementSetter implements PreparedStatementCallback {
+	private static class ArgumentJdbcTypePreparedStatementCallback implements PreparedStatementCallback {
 
-		private ArgumentJdbcTypePrepareStatementSetter(Object[] parameters, JdbcType[] jdbcTypes, TypeHandlerRegistry typeHandlerRegistry) {
+		private ArgumentJdbcTypePreparedStatementCallback(Object[] parameters, JdbcType[] jdbcTypes, TypeHandlerRegistry typeHandlerRegistry) {
 			this.parameters = parameters;
 			this.jdbcTypes = jdbcTypes;
 			this.typeHandlerRegistry = typeHandlerRegistry;
@@ -149,14 +148,14 @@ public abstract class PreparedStatementSetterUtils {
 	}
 
 	/**
-	 * ArgumentPrepareStatementSetter
+	 * ArgumentPreparedStatementCallback
 	 * 
 	 * @author Fred Feng
 	 * @version 1.0
 	 */
-	private static class ArgumentPrepareStatementSetter implements PreparedStatementCallback {
+	private static class ArgumentPreparedStatementCallback implements PreparedStatementCallback {
 
-		private ArgumentPrepareStatementSetter(Object[] parameters, TypeHandlerRegistry typeHandlerRegistry) {
+		private ArgumentPreparedStatementCallback(Object[] parameters, TypeHandlerRegistry typeHandlerRegistry) {
 			this.parameters = parameters;
 			this.typeHandlerRegistry = typeHandlerRegistry;
 		}

@@ -4,12 +4,12 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- * PreparedStatementAction
+ * PreparedStatementExecutor
  * 
  * @author Fred Feng
  * @version 1.0
  */
-public interface PreparedStatementAction<T> {
+public interface PreparedStatementExecutor<T> {
 
 	T execute(PreparedStatement ps) throws SQLException;
 

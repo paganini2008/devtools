@@ -14,7 +14,7 @@ import com.github.paganini2008.devtools.db4j.JdbcType;
  * @author Fred Feng
  * @version 1.0
  */
-public class ArrayTypeHandler extends BaseTypeHandler {
+public class ArrayTypeHandler extends BasicTypeHandler {
 
 	public ArrayTypeHandler() {
 		super();

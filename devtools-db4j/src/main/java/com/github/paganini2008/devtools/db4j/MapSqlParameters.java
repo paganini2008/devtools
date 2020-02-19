@@ -4,20 +4,20 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * MapParameterListSource
+ * MapSqlParameters
  * 
  * @author Fred Feng
  * @version 1.0
  */
-public class MapParameterListSource extends ParameterSourceSupport implements ParameterListSource {
+public class MapSqlParameters extends AbstractSqlParameter implements SqlParameters {
 
 	private final List<Map<String, Object>> parameterList;
 
-	public MapParameterListSource(List<Map<String, Object>> parameterList) {
+	public MapSqlParameters(List<Map<String, Object>> parameterList) {
 		this(parameterList, null);
 	}
 
-	public MapParameterListSource(List<Map<String, Object>> parameterList, Map<String, JdbcType> jdbcTypeMap) {
+	public MapSqlParameters(List<Map<String, Object>> parameterList, Map<String, JdbcType> jdbcTypeMap) {
 		this.parameterList = parameterList;
 		if (jdbcTypeMap != null) {
 			for (Map.Entry<String, JdbcType> e : jdbcTypeMap.entrySet()) {

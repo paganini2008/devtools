@@ -8,37 +8,35 @@ import com.github.paganini2008.devtools.jdbc.PreparedStatementCallback;
 
 /**
  * 
- * JdbcUtils
+ * Db4jUtils
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
-public abstract class JdbcUtils {
+public abstract class Db4jUtils {
 
-	public static PreparedStatementCallback newBatchArgumentTypePrepareStatementSetter(List<Object[]> parameterList, int[] jdbcTypes) {
-		return new BatchArgumentTypePrepareStatementSetter(parameterList, jdbcTypes);
+	public static PreparedStatementCallback batchPrepare(List<Object[]> parameterList, int[] jdbcTypes) {
+		return new BatchArgumentJdbcTypePreparedStatementCallback(parameterList, jdbcTypes);
 	}
 
-	public static PreparedStatementCallback newBatchArgumentTypePrepareStatementSetter(List<Object[]> parameterList, JdbcType[] jdbcTypes) {
-		return new BatchArgumentTypePrepareStatementSetter(parameterList, jdbcTypes);
+	public static PreparedStatementCallback batchPrepare(List<Object[]> parameterList, JdbcType[] jdbcTypes) {
+		return new BatchArgumentJdbcTypePreparedStatementCallback(parameterList, jdbcTypes);
 	}
 
-	public static PreparedStatementCallback newBatchArgumentPrepareStatementSetter(List<Object[]> parameterList) {
-		return new BatchArgumentPrepareStatementSetter(parameterList);
+	public static PreparedStatementCallback batchPrepare(List<Object[]> parameterList) {
+		return new BatchArgumentPreparedStatementCallback(parameterList);
 	}
 
-	public static PreparedStatementCallback newArgumentPrepareStatementSetter(Object[] parameters) {
-		return new ArgumentPrepareStatementSetter(parameters);
+	public static PreparedStatementCallback prepare(Object[] parameters) {
+		return new ArgumentPreparedStatementCallback(parameters);
 	}
 
-	public static PreparedStatementCallback newArgumentTypePrepareStatementSetter(Object[] parameters, int[] jdbcTypes) {
-		return new ArgumentTypePrepareStatementSetter(parameters, jdbcTypes);
+	public static PreparedStatementCallback prepare(Object[] parameters, int[] jdbcTypes) {
+		return new ArgumentJdbcTypePreparedStatementCallback(parameters, jdbcTypes);
 	}
 
-	public static PreparedStatementCallback newArgumentTypePrepareStatementSetter(Object[] parameters, JdbcType[] jdbcTypes) {
-		return new ArgumentTypePrepareStatementSetter(parameters, jdbcTypes);
+	public static PreparedStatementCallback prepare(Object[] parameters, JdbcType[] jdbcTypes) {
+		return new ArgumentJdbcTypePreparedStatementCallback(parameters, jdbcTypes);
 	}
 
 	private static int[] getSqlTypes(JdbcType[] jdbcTypes) {
@@ -49,13 +47,13 @@ public abstract class JdbcUtils {
 		return sqlTypes;
 	}
 
-	private static class BatchArgumentTypePrepareStatementSetter implements PreparedStatementCallback {
-		BatchArgumentTypePrepareStatementSetter(List<Object[]> parameterList, int[] sqlTypes) {
+	private static class BatchArgumentJdbcTypePreparedStatementCallback implements PreparedStatementCallback {
+		BatchArgumentJdbcTypePreparedStatementCallback(List<Object[]> parameterList, int[] sqlTypes) {
 			this.parameterList = parameterList;
 			this.sqlTypes = sqlTypes;
 		}
 
-		BatchArgumentTypePrepareStatementSetter(List<Object[]> parameterList, JdbcType[] jdbcTypes) {
+		BatchArgumentJdbcTypePreparedStatementCallback(List<Object[]> parameterList, JdbcType[] jdbcTypes) {
 			this(parameterList, getSqlTypes(jdbcTypes));
 		}
 
@@ -81,8 +79,8 @@ public abstract class JdbcUtils {
 		}
 	}
 
-	private static class BatchArgumentPrepareStatementSetter implements PreparedStatementCallback {
-		BatchArgumentPrepareStatementSetter(List<Object[]> parameterList) {
+	private static class BatchArgumentPreparedStatementCallback implements PreparedStatementCallback {
+		BatchArgumentPreparedStatementCallback(List<Object[]> parameterList) {
 			this.parameterList = parameterList;
 		}
 
@@ -102,9 +100,9 @@ public abstract class JdbcUtils {
 		}
 	}
 
-	private static class ArgumentPrepareStatementSetter implements PreparedStatementCallback {
+	private static class ArgumentPreparedStatementCallback implements PreparedStatementCallback {
 
-		ArgumentPrepareStatementSetter(Object[] parameters) {
+		ArgumentPreparedStatementCallback(Object[] parameters) {
 			this.parameters = parameters;
 		}
 
@@ -119,14 +117,14 @@ public abstract class JdbcUtils {
 		}
 	}
 
-	private static class ArgumentTypePrepareStatementSetter implements PreparedStatementCallback {
+	private static class ArgumentJdbcTypePreparedStatementCallback implements PreparedStatementCallback {
 
-		ArgumentTypePrepareStatementSetter(Object[] parameters, int[] sqlTypes) {
+		ArgumentJdbcTypePreparedStatementCallback(Object[] parameters, int[] sqlTypes) {
 			this.parameters = parameters;
 			this.sqlTypes = sqlTypes;
 		}
 
-		ArgumentTypePrepareStatementSetter(Object[] parameters, JdbcType[] jdbcTypes) {
+		ArgumentJdbcTypePreparedStatementCallback(Object[] parameters, JdbcType[] jdbcTypes) {
 			this(parameters, getSqlTypes(jdbcTypes));
 		}
 

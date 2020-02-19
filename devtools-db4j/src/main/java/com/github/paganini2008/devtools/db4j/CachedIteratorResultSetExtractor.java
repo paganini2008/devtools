@@ -11,17 +11,17 @@ import com.github.paganini2008.devtools.db4j.mapper.RowMapper;
 import com.sun.rowset.CachedRowSetImpl;
 
 /**
- * DetachedIteratorResultSetExtractor
+ * CachedIteratorResultSetExtractor
  * 
  * @author Fred Feng
  * @version 1.0
  */
 @SuppressWarnings("restriction")
-public class DetachedIteratorResultSetExtractor<T> implements ResultSetExtractor<Iterator<T>> {
+public class CachedIteratorResultSetExtractor<T> implements ResultSetExtractor<Iterator<T>> {
 
 	private final RowMapper<T> rowMapper;
 
-	DetachedIteratorResultSetExtractor(RowMapper<T> rowMapper) {
+	CachedIteratorResultSetExtractor(RowMapper<T> rowMapper) {
 		if (rowMapper == null) {
 			throw new IllegalArgumentException("RowMapper must not be null.");
 		}

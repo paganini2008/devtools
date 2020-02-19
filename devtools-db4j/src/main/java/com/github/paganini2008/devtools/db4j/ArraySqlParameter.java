@@ -1,16 +1,16 @@
 package com.github.paganini2008.devtools.db4j;
 
 /**
- * ArrayParameterSource
+ * ArraySqlParameter
  * 
  * @author Fred Feng
  * @version 1.0
  */
-public class ArrayParameterSource extends ParameterSourceSupport implements ParameterSource {
+public class ArraySqlParameter extends AbstractSqlParameter implements SqlParameter {
 
 	private final Object[] arguments;
 
-	public ArrayParameterSource(Object[] arguments) {
+	public ArraySqlParameter(Object[] arguments) {
 		this.arguments = arguments;
 	}
 

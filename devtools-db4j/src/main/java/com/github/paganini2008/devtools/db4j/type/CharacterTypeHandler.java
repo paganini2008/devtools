@@ -13,7 +13,7 @@ import com.github.paganini2008.devtools.db4j.JdbcType;
  * @author Fred Feng
  * @version 1.0
  */
-public class CharacterTypeHandler extends BaseTypeHandler {
+public class CharacterTypeHandler extends BasicTypeHandler {
 
 	public CharacterTypeHandler() {
 		super();

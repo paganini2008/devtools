@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * ParameterSourceSupport
+ * AbstractSqlParameter
  * 
  * @author Fred Feng
  * @version 1.0
  */
-public abstract class ParameterSourceSupport {
+public abstract class AbstractSqlParameter {
 
 	private final Map<String, JdbcType> jdbcTypeMap = new HashMap<String, JdbcType>();
 

@@ -8,9 +8,7 @@ import java.util.Map;
  * @author Fred Feng
  * @version 1.0
  */
-public interface KeyHolder {
-
-	KeyHolder addKeyName(String keyName);
+public interface GeneratedKey {
 
 	String[] getKeyNames();
 
@@ -18,6 +16,10 @@ public interface KeyHolder {
 
 	Object getKey(String keyName);
 
-	void load(Map<String, Object> map);
+	void setValues(Map<String, Object> map);
+
+	static GeneratedKey forNames(String... columnNames) {
+		return new GeneratedKeyImpl(columnNames);
+	}
 
 }

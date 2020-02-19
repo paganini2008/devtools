@@ -4,18 +4,16 @@ import java.util.function.Function;
 
 /**
  * 
- * SimpleTokenizer
+ * SimpleTokenParser
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
-public class SimpleTokenizer implements Tokenizer<Integer, String> {
+public class SimpleTokenParser implements TokenParser<Integer, String> {
 
 	private final String placeholder;
 
-	public SimpleTokenizer(String placeholder) {
+	public SimpleTokenParser(String placeholder) {
 		this.placeholder = placeholder;
 	}
 

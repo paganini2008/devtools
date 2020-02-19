@@ -15,7 +15,7 @@ import com.github.paganini2008.devtools.db4j.JdbcType;
  * @author Fred Feng
  * @version 1.0
  */
-public class BlobTypeHandler extends BaseTypeHandler {
+public class BlobTypeHandler extends BasicTypeHandler {
 
 	public BlobTypeHandler() {
 		super();

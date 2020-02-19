@@ -9,6 +9,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
+	<version>1.0-RC1</version>
 	<artifactId>devtools-lang</artifactId>
 	<packaging>jar</packaging>
 

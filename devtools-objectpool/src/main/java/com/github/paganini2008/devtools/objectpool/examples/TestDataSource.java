@@ -43,7 +43,7 @@ public class TestDataSource {
 				Connection connection = null;
 				try {
 					connection = ds.getConnection();
-					Iterator<Tuple> iterator = JdbcUtils.executeQuery(connection, "select * from mec_area where level=?",
+					Iterator<Tuple> iterator = JdbcUtils.executeQuery(connection, "select * from mec_area where level=? limit 1",
 							new Object[] { RandomUtils.randomInt(1, 4) });
 					System.out.println(CollectionUtils.getFirst(iterator));
 				} catch (SQLException e) {
@@ -54,11 +54,11 @@ public class TestDataSource {
 			});
 		}
 		System.in.read();
-		Map<String, QuerySpan> results = ds.getStatisticsResult("17/02/2020");
+		Map<String, QuerySpan> results = ds.getStatisticsResult("19/02/2020");
 		System.out.println(results);
 		ds.close();
 		ExecutorUtils.gracefulShutdown(executor, 60000);
-		System.out.println("TestDbPool.main()");
+		System.out.println("TestDataSource.main()");
 	}
 
 }

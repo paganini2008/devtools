@@ -9,14 +9,14 @@ import com.github.paganini2008.devtools.converter.ConvertUtils;
 import com.github.paganini2008.devtools.db4j.JdbcType;
 
 /**
- * BaseTypeHandler
+ * BasicTypeHandler
  * 
  * @author Fred Feng
  * @version 1.0
  */
-public abstract class BaseTypeHandler implements TypeHandler {
+public abstract class BasicTypeHandler implements TypeHandler {
 
-	protected BaseTypeHandler() {
+	protected BasicTypeHandler() {
 	}
 
 	public void setValue(PreparedStatement ps, int parameterIndex, Object parameter, JdbcType jdbcType) throws SQLException {

@@ -18,7 +18,7 @@
 		<dependency>
 			<groupId>com.github.paganini2008</groupId>
 			<artifactId>devtools-lang</artifactId>
-			<version>1.0</version>
+			<version>1.0-RC1</version>
 		</dependency>
 	</dependencies>
 	

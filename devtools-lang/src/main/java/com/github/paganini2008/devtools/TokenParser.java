@@ -4,14 +4,12 @@ import java.util.function.Function;
 
 /**
  * 
- * Tokenizer
+ * TokenParser
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
-public interface Tokenizer<T, R> {
+public interface TokenParser<T, R> {
 
 	R parse(String text, Function<T, Object> function);
 

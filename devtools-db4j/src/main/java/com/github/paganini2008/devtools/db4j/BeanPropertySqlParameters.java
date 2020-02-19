@@ -5,14 +5,14 @@ import java.util.List;
 import com.github.paganini2008.devtools.beans.PropertyUtils;
 
 /**
- * ObjectParameterListSource
+ * BeanPropertySqlParameters
  * 
  * @author Fred Feng
  * @version 1.0
  */
-public class ObjectParameterListSource extends ParameterSourceSupport implements ParameterListSource {
+public class BeanPropertySqlParameters extends AbstractSqlParameter implements SqlParameters {
 
-	public ObjectParameterListSource(List<?> objectList) {
+	public BeanPropertySqlParameters(List<?> objectList) {
 		this.objectList = objectList;
 	}
 

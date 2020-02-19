@@ -15,7 +15,7 @@ import com.github.paganini2008.devtools.db4j.JdbcType;
  * @author Fred Feng
  * @version 1.0
  */
-public class BigIntegerTypeHandler extends BaseTypeHandler {
+public class BigIntegerTypeHandler extends BasicTypeHandler {
 
 	public BigIntegerTypeHandler() {
 		super();

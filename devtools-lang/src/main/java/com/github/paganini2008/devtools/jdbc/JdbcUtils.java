@@ -25,8 +25,6 @@ import com.github.paganini2008.devtools.collection.Tuple;
  * JdbcUtils
  * 
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public abstract class JdbcUtils {
@@ -218,7 +216,7 @@ public abstract class JdbcUtils {
 			rs = sm.executeQuery(sql);
 			return toIterator(rs, observable);
 		} finally {
-			closeAfterDone(observable, rs, sm);
+			closeLazily(observable, rs, sm);
 		}
 	}
 
@@ -251,11 +249,11 @@ public abstract class JdbcUtils {
 			rs = ps.executeQuery();
 			return toIterator(rs, observable);
 		} finally {
-			closeAfterDone(observable, rs, ps);
+			closeLazily(observable, rs, ps);
 		}
 	}
 
-	private static void closeAfterDone(Observable observable, final ResultSet rs, final Statement ps) {
+	private static void closeLazily(Observable observable, final ResultSet rs, final Statement ps) {
 		observable.addObserver(new Observer() {
 			public void update(Observable ob, Object arg) {
 				closeQuietly(rs);
@@ -342,43 +340,43 @@ public abstract class JdbcUtils {
 
 	public static void scrollingScan(ConnectionFactory connectionFactory, PageableSql pageableSql, PreparedStatementCallback callback,
 			int pageSize, Consumer<List<Tuple>> consumer) throws SQLException {
-		PagingQuery<Tuple> query = pagingQuery(connectionFactory, pageableSql, callback);
+		PageableQuery<Tuple> query = pagableQuery(connectionFactory, pageableSql, callback);
 		for (PageResponse<Tuple> pageResponse : query.forEachPage(1, pageSize)) {
 			consumer.accept(pageResponse.getContent());
 		}
 	}
 
-	public static PagingQuery<Tuple> pagingQuery(DataSource dataSource, String sql, Object[] args) {
-		return pagingQuery(dataSource, sql, setParameters(args));
+	public static PageableQuery<Tuple> pagableQuery(DataSource dataSource, String sql, Object[] args) {
+		return pagableQuery(dataSource, sql, setParameters(args));
 	}
 
-	public static PagingQuery<Tuple> pagingQuery(DataSource dataSource, String sql, PreparedStatementCallback callback) {
-		return pagingQuery(dataSource, new DefaultPageableSql(sql), callback);
+	public static PageableQuery<Tuple> pagableQuery(DataSource dataSource, String sql, PreparedStatementCallback callback) {
+		return pagableQuery(dataSource, new DefaultPageableSql(sql), callback);
 	}
 
-	public static PagingQuery<Tuple> pagingQuery(DataSource dataSource, PageableSql pageableSql, Object[] args) {
-		return new PagingQueryImpl(new PooledConnectionFactory(dataSource), pageableSql, setParameters(args));
+	public static PageableQuery<Tuple> pagableQuery(DataSource dataSource, PageableSql pageableSql, Object[] args) {
+		return new PageableQueryImpl(new PooledConnectionFactory(dataSource), pageableSql, setParameters(args));
 	}
 
-	public static PagingQuery<Tuple> pagingQuery(DataSource dataSource, PageableSql pageableSql, PreparedStatementCallback callback) {
-		return new PagingQueryImpl(new PooledConnectionFactory(dataSource), pageableSql, callback);
+	public static PageableQuery<Tuple> pagableQuery(DataSource dataSource, PageableSql pageableSql, PreparedStatementCallback callback) {
+		return new PageableQueryImpl(new PooledConnectionFactory(dataSource), pageableSql, callback);
 	}
 
-	public static PagingQuery<Tuple> pagingQuery(ConnectionFactory connectionFactory, String sql, Object[] args) {
-		return pagingQuery(connectionFactory, sql, setParameters(args));
+	public static PageableQuery<Tuple> pagableQuery(ConnectionFactory connectionFactory, String sql, Object[] args) {
+		return pagableQuery(connectionFactory, sql, setParameters(args));
 	}
 
-	public static PagingQuery<Tuple> pagingQuery(ConnectionFactory connectionFactory, String sql, PreparedStatementCallback callback) {
-		return pagingQuery(connectionFactory, new DefaultPageableSql(sql), callback);
+	public static PageableQuery<Tuple> pagableQuery(ConnectionFactory connectionFactory, String sql, PreparedStatementCallback callback) {
+		return pagableQuery(connectionFactory, new DefaultPageableSql(sql), callback);
 	}
 
-	public static PagingQuery<Tuple> pagingQuery(ConnectionFactory connectionFactory, PageableSql pageableSql, Object[] args) {
-		return pagingQuery(connectionFactory, pageableSql, setParameters(args));
+	public static PageableQuery<Tuple> pagableQuery(ConnectionFactory connectionFactory, PageableSql pageableSql, Object[] args) {
+		return pagableQuery(connectionFactory, pageableSql, setParameters(args));
 	}
 
-	public static PagingQuery<Tuple> pagingQuery(ConnectionFactory connectionFactory, PageableSql pageableSql,
+	public static PageableQuery<Tuple> pagableQuery(ConnectionFactory connectionFactory, PageableSql pageableSql,
 			PreparedStatementCallback callback) {
-		return new PagingQueryImpl(connectionFactory, pageableSql, callback);
+		return new PageableQueryImpl(connectionFactory, pageableSql, callback);
 	}
 
 	public static void setParameters(PreparedStatement ps, Object[] args) throws SQLException {

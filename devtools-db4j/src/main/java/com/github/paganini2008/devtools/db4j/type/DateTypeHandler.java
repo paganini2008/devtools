@@ -15,7 +15,7 @@ import com.github.paganini2008.devtools.db4j.JdbcType;
  * @author Fred Feng
  * @version 1.0
  */
-public class DateTypeHandler extends BaseTypeHandler {
+public class DateTypeHandler extends BasicTypeHandler {
 
 	public DateTypeHandler() {
 		super();

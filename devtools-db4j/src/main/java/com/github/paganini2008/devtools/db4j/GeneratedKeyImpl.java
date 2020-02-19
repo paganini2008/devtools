@@ -4,18 +4,19 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.github.paganini2008.devtools.StringUtils;
-
 /**
- * GeneratedKeyHolder
+ * GeneratedKeyImpl
  * 
  * @author Fred Feng
  * @version 1.0
  */
-public class GeneratedKeyHolder implements KeyHolder {
+public class GeneratedKeyImpl implements GeneratedKey {
 
-	public GeneratedKeyHolder() {
+	GeneratedKeyImpl(String... columnNames) {
 		keys = new LinkedHashMap<String, Object>();
+		for (String columnName : columnNames) {
+			keys.put(columnName, null);
+		}
 	}
 
 	private final Map<String, Object> keys;
@@ -35,24 +36,13 @@ public class GeneratedKeyHolder implements KeyHolder {
 		return keys.get(keyName);
 	}
 
-	public KeyHolder addKeyName(String keyName) {
-		if (StringUtils.isNotBlank(keyName)) {
-			keys.put(keyName, null);
-		}
-		return this;
-	}
-
 	public String[] getKeyNames() {
 		return keys.keySet().toArray(new String[keys.size()]);
 	}
 
-	public void load(Map<String, Object> map) {
-		Object[] values = map.values().toArray();
-		int index = 0;
-		for (Map.Entry<String, Object> entry : keys.entrySet()) {
-			if (index < values.length) {
-				entry.setValue(values[index++]);
-			}
+	public void setValues(Map<String, Object> map) {
+		if (map != null) {
+			keys.putAll(map);
 		}
 	}
 

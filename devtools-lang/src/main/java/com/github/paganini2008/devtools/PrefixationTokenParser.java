@@ -4,16 +4,14 @@ import java.util.function.Function;
 
 /**
  * 
- * PrefixationTokenizer
+ * PrefixationTokenParser
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
-public class PrefixationTokenizer implements Tokenizer<String, String> {
+public class PrefixationTokenParser implements TokenParser<String, String> {
 
-	public PrefixationTokenizer(String token) {
+	public PrefixationTokenParser(String token) {
 		this.token = token;
 	}
 

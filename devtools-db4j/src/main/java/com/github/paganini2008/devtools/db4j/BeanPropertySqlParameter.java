@@ -5,18 +5,18 @@ import java.util.Map;
 import com.github.paganini2008.devtools.beans.PropertyUtils;
 
 /**
- * ObjectParameterSource
+ * BeanPropertySqlParameter
  * 
  * @author Fred Feng
  * @version 1.0
  */
-public class ObjectParameterSource extends ParameterSourceSupport implements ParameterSource {
+public class BeanPropertySqlParameter extends AbstractSqlParameter implements SqlParameter {
 
-	public ObjectParameterSource(Object object) {
+	public BeanPropertySqlParameter(Object object) {
 		this(object, null);
 	}
 
-	public ObjectParameterSource(Object object, Map<String, JdbcType> jdbcTypeMap) {
+	public BeanPropertySqlParameter(Object object, Map<String, JdbcType> jdbcTypeMap) {
 		this.object = object;
 		if (jdbcTypeMap != null) {
 			for (Map.Entry<String, JdbcType> e : jdbcTypeMap.entrySet()) {

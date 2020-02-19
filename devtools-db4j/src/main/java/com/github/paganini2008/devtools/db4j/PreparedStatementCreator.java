@@ -8,10 +8,8 @@ import java.sql.SQLException;
  * PreparedStatementCreator
  * 
  * @author Fred Feng
- * 
  * @version 1.0
  */
-@FunctionalInterface
 public interface PreparedStatementCreator {
 
 	PreparedStatement createPreparedStatement(Connection connection) throws SQLException;

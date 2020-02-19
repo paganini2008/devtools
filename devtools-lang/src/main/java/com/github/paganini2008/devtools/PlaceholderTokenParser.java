@@ -4,17 +4,17 @@ import java.util.function.Function;
 
 /**
  * 
- * PlaceholderTokenizer
+ * PlaceholderTokenParser
  *
  * @author Fred Feng
  * @version 1.0
  */
-public class PlaceholderTokenizer implements Tokenizer<String, String> {
+public class PlaceholderTokenParser implements TokenParser<String, String> {
 
 	private final String prefix;
 	private final String suffix;
 
-	public PlaceholderTokenizer(String prefix, String suffix) {
+	public PlaceholderTokenParser(String prefix, String suffix) {
 		this.prefix = prefix;
 		this.suffix = suffix;
 	}

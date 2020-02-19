@@ -34,4 +34,8 @@ public class DefaultPageableSql implements PageableSql {
 		return copy.toString();
 	}
 
+	protected String getSql() {
+		return sql;
+	}
+
 }

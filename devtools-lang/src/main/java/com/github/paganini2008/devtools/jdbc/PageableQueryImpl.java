@@ -8,19 +8,18 @@ import com.github.paganini2008.devtools.collection.Tuple;
 
 /**
  * 
- * PagingQueryImpl
+ * PageableQueryImpl
  *
  * @author Fred Feng
- * 
- * 
+ * @version 1.0
  */
-public class PagingQueryImpl implements PagingQuery<Tuple> {
+public class PageableQueryImpl implements PageableQuery<Tuple> {
 
 	private final ConnectionFactory connectionFactory;
 	private final PageableSql pageableSql;
 	private final PreparedStatementCallback callback;
 
-	public PagingQueryImpl(ConnectionFactory connectionFactory, PageableSql pageableSql, PreparedStatementCallback callback) {
+	public PageableQueryImpl(ConnectionFactory connectionFactory, PageableSql pageableSql, PreparedStatementCallback callback) {
 		this.connectionFactory = connectionFactory;
 		this.pageableSql = pageableSql;
 		this.callback = callback;
@@ -34,7 +33,7 @@ public class PagingQueryImpl implements PagingQuery<Tuple> {
 			Object result = JdbcUtils.executeOneResultQuery(connection, sql);
 			return result instanceof Number ? ((Number) result).intValue() : 0;
 		} catch (SQLException e) {
-			throw new JdbcException(e.getMessage(), e);
+			throw new PageableException(e.getMessage(), e);
 		}
 	}
 
@@ -45,7 +44,7 @@ public class PagingQueryImpl implements PagingQuery<Tuple> {
 			connection = connectionFactory.getConnection();
 			return JdbcUtils.executeQuery(connection, execution, callback);
 		} catch (SQLException e) {
-			throw new JdbcException(e.getMessage(), e);
+			throw new PageableException(e.getMessage(), e);
 		}
 	}
 

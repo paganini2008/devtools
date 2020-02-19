@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 import com.github.paganini2008.devtools.db4j.JdbcType;
 
-public class LongTypeHandler extends BaseTypeHandler {
+public class LongTypeHandler extends BasicTypeHandler {
 
 	public LongTypeHandler() {
 		super();

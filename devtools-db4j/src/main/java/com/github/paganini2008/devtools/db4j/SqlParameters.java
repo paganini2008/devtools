@@ -1,12 +1,12 @@
 package com.github.paganini2008.devtools.db4j;
 
 /**
- * ParameterListSource
+ * SqlParameters
  * 
  * @author Fred Feng
  * @version 1.0
  */
-public interface ParameterListSource {
+public interface SqlParameters {
 
 	int getSize();
 

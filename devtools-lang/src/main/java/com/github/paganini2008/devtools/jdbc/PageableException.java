@@ -2,21 +2,20 @@ package com.github.paganini2008.devtools.jdbc;
 
 /**
  * 
- * JdbcException
+ * PageableException
  *
  * @author Fred Feng
- * 
- * 
+ * @version 1.0
  */
-public class JdbcException extends RuntimeException {
+public class PageableException extends RuntimeException {
 
 	private static final long serialVersionUID = -2514330548661823215L;
 
-	public JdbcException(String msg) {
+	public PageableException(String msg) {
 		super(msg);
 	}
 
-	public JdbcException(String msg, Throwable cause) {
+	public PageableException(String msg, Throwable cause) {
 		super(msg, cause);
 	}
 

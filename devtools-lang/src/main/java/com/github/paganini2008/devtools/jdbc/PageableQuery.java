@@ -8,13 +8,12 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
 
 /**
  * 
- * PagingQuery
+ * PageableQuery
  *
  * @author Fred Feng
- * 
- * 
+ * @version 1.0
  */
-public interface PagingQuery<T> extends ResultSetSlice<T> {
+public interface PageableQuery<T> extends ResultSetSlice<T> {
 
 	default List<T> list(int maxResults, int firstResult) {
 		List<T> list = new ArrayList<T>();
