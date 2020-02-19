@@ -22,10 +22,7 @@ import com.github.paganini2008.devtools.collection.LruMap;
  * @author Fred Feng
  * @version 1.0
  */
-public class BigDecimalUtils {
-
-	private BigDecimalUtils() {
-	}
+public abstract class BigDecimalUtils {
 
 	public static final BigDecimal PI = BigDecimal.valueOf(Math.PI);
 
@@ -519,14 +516,6 @@ public class BigDecimalUtils {
 		return m.subtract(n, mc);
 	}
 
-	/**
-	 * 两数相减
-	 * 
-	 * @param a
-	 * @param b
-	 * @param mc
-	 * @return
-	 */
 	public static BigDecimal subtract(String a, String b, MathContext mc) {
 		BigDecimal m = parse(a);
 		BigDecimal n = parse(b);
@@ -536,71 +525,26 @@ public class BigDecimalUtils {
 		return m.subtract(n, mc);
 	}
 
-	/**
-	 * 两数相减并格式化
-	 * 
-	 * @param a
-	 * @param b
-	 * @param pattern
-	 * @param defaultValue
-	 * @return
-	 */
 	public static String subtractAndFormat(String a, String b, String pattern, String defaultValue) {
 		BigDecimal val = subtract(a, b);
 		return format(val, pattern, defaultValue);
 	}
 
-	/**
-	 * 两数相减并格式化
-	 * 
-	 * @param a
-	 * @param b
-	 * @param pattern
-	 * @param defaultValue
-	 * @return
-	 */
 	public static String subtractAndFormat(Number a, Number b, String pattern, String defaultValue) {
 		BigDecimal val = subtract(a, b);
 		return format(val, pattern, defaultValue);
 	}
 
-	/**
-	 * 两数相减并格式化
-	 * 
-	 * @param a
-	 * @param b
-	 * @param mc
-	 * @param pattern
-	 * @param defaultValue
-	 * @return
-	 */
 	public static String subtractAndFormat(String a, String b, MathContext mc, String pattern, String defaultValue) {
 		BigDecimal val = subtract(a, b, mc);
 		return format(val, pattern, defaultValue);
 	}
 
-	/**
-	 * 两数相减并格式化
-	 * 
-	 * @param a
-	 * @param b
-	 * @param mc
-	 * @param pattern
-	 * @param defaultValue
-	 * @return
-	 */
 	public static String subtractAndFormat(Number a, Number b, MathContext mc, String pattern, String defaultValue) {
 		BigDecimal val = subtract(a, b, mc);
 		return format(val, pattern, defaultValue);
 	}
 
-	/**
-	 * 两数相乘
-	 * 
-	 * @param a
-	 * @param b
-	 * @return
-	 */
 	public static BigDecimal multiply(Number a, Number b) {
 		BigDecimal m = valueOf(a);
 		BigDecimal n = valueOf(b);
@@ -610,13 +554,6 @@ public class BigDecimalUtils {
 		return m.multiply(n);
 	}
 
-	/**
-	 * 两数相乘
-	 * 
-	 * @param a
-	 * @param b
-	 * @return
-	 */
 	public static BigDecimal multiply(String a, String b) {
 		BigDecimal m = parse(a);
 		BigDecimal n = parse(b);
@@ -626,14 +563,6 @@ public class BigDecimalUtils {
 		return m.multiply(n);
 	}
 
-	/**
-	 * 两数相乘
-	 * 
-	 * @param a
-	 * @param b
-	 * @param mc
-	 * @return
-	 */
 	public static BigDecimal multiply(Number a, Number b, MathContext mc) {
 		BigDecimal m = valueOf(a);
 		BigDecimal n = valueOf(b);
@@ -643,14 +572,6 @@ public class BigDecimalUtils {
 		return m.multiply(n, mc);
 	}
 
-	/**
-	 * 两数相乘
-	 * 
-	 * @param a
-	 * @param b
-	 * @param mc
-	 * @return
-	 */
 	public static BigDecimal multiply(String a, String b, MathContext mc) {
 		BigDecimal m = parse(a);
 		BigDecimal n = parse(b);
@@ -660,68 +581,26 @@ public class BigDecimalUtils {
 		return m.multiply(n, mc);
 	}
 
-	/**
-	 * 两数相乘并格式化
-	 * 
-	 * @param a
-	 * @param b
-	 * @param pattern
-	 * @return
-	 */
 	public static String multiplyAndFormat(String a, String b, String pattern, String defaultValue) {
 		BigDecimal val = multiply(a, b);
 		return format(val, pattern, defaultValue);
 	}
 
-	/**
-	 * 两数相乘并格式化
-	 * 
-	 * @param a
-	 * @param b
-	 * @param pattern
-	 * @return
-	 */
 	public static String multiplyAndFormat(Number a, Number b, String pattern, String defaultValue) {
 		BigDecimal val = multiply(a, b);
 		return format(val, pattern, defaultValue);
 	}
 
-	/**
-	 * 两数相乘并格式化
-	 * 
-	 * @param a
-	 * @param b
-	 * @param mc
-	 * @param pattern
-	 * @return
-	 */
 	public static String multiplyAndFormat(String a, String b, MathContext mc, String pattern, String defaultValue) {
 		BigDecimal val = multiply(a, b, mc);
 		return format(val, pattern, defaultValue);
 	}
 
-	/**
-	 * 两数相乘并格式化
-	 * 
-	 * @param a
-	 * @param b
-	 * @param mc
-	 * @param pattern
-	 * @return
-	 */
 	public static String multiplyAndFormat(Number a, Number b, MathContext mc, String pattern, String defaultValue) {
 		BigDecimal val = multiply(a, b, mc);
 		return format(val, pattern, defaultValue);
 	}
 
-	/**
-	 * 两数相除
-	 * 
-	 * @param a
-	 * @param b
-	 * @param mc
-	 * @return
-	 */
 	public static BigDecimal divide(Number a, Number b, MathContext mc) {
 		BigDecimal m = valueOf(a);
 		BigDecimal n = valueOf(b);
@@ -735,14 +614,6 @@ public class BigDecimalUtils {
 		}
 	}
 
-	/**
-	 * 两数相除
-	 * 
-	 * @param a
-	 * @param b
-	 * @param mc
-	 * @return
-	 */
 	public static BigDecimal divide(String a, String b, MathContext mc) {
 		BigDecimal m = parse(a);
 		BigDecimal n = parse(b);
@@ -756,15 +627,6 @@ public class BigDecimalUtils {
 		}
 	}
 
-	/**
-	 * 两数相除
-	 * 
-	 * @param a
-	 * @param b
-	 * @param scale
-	 * @param roundingMode
-	 * @return
-	 */
 	public static BigDecimal divide(Number a, Number b, int scale, RoundingMode roundingMode) {
 		BigDecimal m = valueOf(a);
 		BigDecimal n = valueOf(b);
@@ -778,15 +640,6 @@ public class BigDecimalUtils {
 		}
 	}
 
-	/**
-	 * 两数相除
-	 * 
-	 * @param a
-	 * @param b
-	 * @param scale
-	 * @param roundingMode
-	 * @return
-	 */
 	public static BigDecimal divide(String a, String b, int scale, RoundingMode roundingMode) {
 		BigDecimal m = parse(a);
 		BigDecimal n = parse(b);
@@ -800,362 +653,135 @@ public class BigDecimalUtils {
 		}
 	}
 
-	/**
-	 * 两数相除并格式化
-	 * 
-	 * @param a
-	 * @param b
-	 * @param mc
-	 * @param pattern
-	 * @param defaultValue
-	 * @return
-	 */
 	public static String divideAndFormat(String a, String b, MathContext mc, String pattern, String defaultValue) {
 		BigDecimal val = divide(a, b, mc);
 		return format(val, pattern, defaultValue);
 	}
 
-	/**
-	 * 两数相除并格式化
-	 * 
-	 * @param a
-	 * @param b
-	 * @param mc
-	 * @param pattern
-	 * @param defaultValue
-	 * @return
-	 */
 	public static String divideAndFormat(Number a, Number b, MathContext mc, String pattern, String defaultValue) {
 		BigDecimal val = divide(a, b, mc);
 		return format(val, pattern, defaultValue);
 	}
 
-	/**
-	 * 两数相除并格式化
-	 * 
-	 * @param a
-	 * @param b
-	 * @param scale
-	 * @param roundingMode
-	 * @param pattern
-	 * @param defaultValue
-	 * @return
-	 */
 	public static String divideAndFormat(String a, String b, int scale, RoundingMode roundingMode, String pattern, String defaultValue) {
 		BigDecimal val = divide(a, b, scale, roundingMode);
 		return format(val, pattern, defaultValue);
 	}
 
-	/**
-	 * 两数相除并格式化
-	 * 
-	 * @param a
-	 * @param b
-	 * @param scale
-	 * @param roundingMode
-	 * @param pattern
-	 * @param defaultValue
-	 * @return
-	 */
 	public static String divideAndFormat(Number a, Number b, int scale, RoundingMode roundingMode, String pattern, String defaultValue) {
 		BigDecimal val = divide(a, b, scale, roundingMode);
 		return format(val, pattern, defaultValue);
 	}
 
-	/**
-	 * 向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，向上舍入
-	 * 
-	 * @param value
-	 * @param scale
-	 * @return
-	 */
 	public static BigDecimal round(String value, int scale) {
 		return setScale(value, scale, RoundingMode.HALF_UP);
 	}
 
-	/**
-	 * 向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，向上舍入
-	 * 
-	 * @param value
-	 * @return
-	 */
 	public static BigInteger round(String value) {
 		return setScale(value, RoundingMode.HALF_UP);
 	}
 
-	/**
-	 * 向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，向上舍入
-	 * 
-	 * @param value
-	 * @param scale
-	 * @return
-	 */
 	public static BigDecimal round(Number value, int scale) {
 		return setScale(value, scale, RoundingMode.HALF_UP);
 	}
 
-	/**
-	 * 向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，向上舍入
-	 * 
-	 * @param value
-	 * @return
-	 */
 	public static BigInteger round(Number value) {
 		return setScale(value, RoundingMode.HALF_UP);
 	}
 
-	/**
-	 * 向负无穷方向舍入
-	 * 
-	 * @param value
-	 * @param scale
-	 * @return
-	 */
 	public static BigDecimal floor(String value, int scale) {
 		return setScale(value, scale, RoundingMode.FLOOR);
 	}
 
-	/**
-	 * 向负无穷方向舍入
-	 * 
-	 * @param value
-	 * @return
-	 */
 	public static BigInteger floor(String value) {
 		return setScale(value, RoundingMode.FLOOR);
 	}
 
-	/**
-	 * 向负无穷方向舍入
-	 * 
-	 * @param value
-	 * @param scale
-	 * @return
-	 */
 	public static BigDecimal floor(Number value, int scale) {
 		return setScale(value, scale, RoundingMode.FLOOR);
 	}
 
-	/**
-	 * 向负无穷方向舍入
-	 * 
-	 * @param value
-	 * @return
-	 */
 	public static BigInteger floor(Number value) {
 		return setScale(value, RoundingMode.FLOOR);
 	}
 
-	/**
-	 * 向正无穷方向舍入
-	 * 
-	 * @param value
-	 * @param scale
-	 * @return
-	 */
 	public static BigDecimal ceil(String value, int scale) {
 		return setScale(value, scale, RoundingMode.CEILING);
 	}
 
-	/**
-	 * 向正无穷方向舍入
-	 * 
-	 * @param value
-	 * @return
-	 */
 	public static BigInteger ceil(String value) {
 		return setScale(value, RoundingMode.CEILING);
 	}
 
-	/**
-	 * 向正无穷方向舍入
-	 * 
-	 * @param value
-	 * @param scale
-	 * @return
-	 */
 	public static BigDecimal ceil(Number value, int scale) {
 		return setScale(value, scale, RoundingMode.CEILING);
 	}
 
-	/**
-	 * 向正无穷方向舍入
-	 * 
-	 * @param value
-	 * @return
-	 */
 	public static BigInteger ceil(Number value) {
 		return setScale(value, RoundingMode.CEILING);
 	}
 
-	/**
-	 * 向零方向舍入
-	 * 
-	 * @param value
-	 * @param scale
-	 * @return
-	 */
 	public static BigDecimal down(String value, int scale) {
 		return setScale(value, scale, RoundingMode.DOWN);
 	}
 
-	/**
-	 * 向零方向舍入
-	 * 
-	 * @param value
-	 * @return
-	 */
 	public static BigInteger down(String value) {
 		return setScale(value, RoundingMode.DOWN);
 	}
 
-	/**
-	 * 向零方向舍入
-	 * 
-	 * @param arg
-	 * @param scale
-	 * @return
-	 */
 	public static BigDecimal down(Number value, int scale) {
 		return setScale(value, scale, RoundingMode.DOWN);
 	}
 
-	/**
-	 * 向零方向舍入
-	 * 
-	 * @param value
-	 * @return
-	 */
 	public static BigInteger down(Number value) {
 		return setScale(value, RoundingMode.DOWN);
 	}
 
-	/**
-	 * 向远离零的方向舍入
-	 * 
-	 * @param value
-	 * @param scale
-	 * @return
-	 */
 	public static BigDecimal up(String value, int scale) {
 		return setScale(value, scale, RoundingMode.UP);
 	}
 
-	/**
-	 * 向远离零的方向舍入
-	 * 
-	 * @param value
-	 * @return
-	 */
 	public static BigInteger up(String value) {
 		return setScale(value, RoundingMode.UP);
 	}
 
-	/**
-	 * 向远离零的方向舍入
-	 * 
-	 * @param arg
-	 * @param scale
-	 * @return
-	 */
 	public static BigDecimal up(Number value, int scale) {
 		return setScale(value, scale, RoundingMode.UP);
 	}
 
-	/**
-	 * 向远离零的方向舍入
-	 * 
-	 * @param value
-	 * @return
-	 */
 	public static BigInteger up(Number value) {
 		return setScale(value, RoundingMode.UP);
 	}
 
-	/**
-	 * 向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，向下舍入
-	 * 
-	 * @param value
-	 * @param scale
-	 * @return
-	 */
 	public static BigDecimal roundDown(String value, int scale) {
 		return setScale(value, scale, RoundingMode.HALF_DOWN);
 	}
 
-	/**
-	 * 向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，向下舍入
-	 * 
-	 * @param value
-	 * @return
-	 */
 	public static BigInteger roundDown(String value) {
 		return setScale(value, RoundingMode.HALF_DOWN);
 	}
 
-	/**
-	 * 向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，向下舍入
-	 * 
-	 * @param arg
-	 * @param scale
-	 * @return
-	 */
 	public static BigDecimal roundDown(Number value, int scale) {
 		return setScale(value, scale, RoundingMode.HALF_DOWN);
 	}
 
-	/**
-	 * 向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，向下舍入
-	 * 
-	 * @param value
-	 * @return
-	 */
 	public static BigInteger roundDown(Number value) {
 		return setScale(value, RoundingMode.HALF_DOWN);
 	}
 
-	/**
-	 * 向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，如果保留位数是奇数，使用ROUND_HALF_UP，如果是偶数，
-	 * 使用ROUND_HALF_DOWN
-	 * 
-	 * @param value
-	 * @param scale
-	 * @return
-	 */
 	public static BigDecimal roundEven(String value, int scale) {
 		return setScale(value, scale, RoundingMode.HALF_EVEN);
 	}
 
-	/**
-	 * 向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，如果保留位数是奇数，使用ROUND_HALF_UP，如果是偶数，
-	 * 使用ROUND_HALF_DOWN
-	 * 
-	 * @param value
-	 * @return
-	 */
+
 	public static BigInteger roundEven(String value) {
 		return setScale(value, RoundingMode.HALF_EVEN);
 	}
 
-	/**
-	 * 向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，如果保留位数是奇数，使用ROUND_HALF_UP，如果是偶数，
-	 * 使用ROUND_HALF_DOWN
-	 * 
-	 * @param arg
-	 * @param scale
-	 * @return
-	 */
 	public static BigDecimal roundEven(Number value, int scale) {
 		return setScale(value, scale, RoundingMode.HALF_EVEN);
 	}
 
-	/**
-	 * 向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，如果保留位数是奇数，使用ROUND_HALF_UP，如果是偶数，
-	 * 使用ROUND_HALF_DOWN
-	 * 
-	 * @param value
-	 * @return
-	 */
 	public static BigInteger roundEven(Number value) {
 		return setScale(value, RoundingMode.HALF_EVEN);
 	}

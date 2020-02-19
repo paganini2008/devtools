@@ -15,14 +15,12 @@ import com.github.paganini2008.devtools.Sequence;
 
 /**
  * 
- * SimpleThreadPool
+ * Jdk14ThreadPool
  * 
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
-public class SimpleThreadPool implements ThreadPool {
+public class Jdk14ThreadPool implements ThreadPool {
 
 	private static long threadSerialNo = 0;
 	private final PoolManager poolManager;
@@ -35,7 +33,7 @@ public class SimpleThreadPool implements ThreadPool {
 	private Timer timer;
 	private RejectedExecutionHandler rejectedExecutionHandler;
 
-	public SimpleThreadPool(int maxPoolSize, long timeout, int queueSize) {
+	public Jdk14ThreadPool(int maxPoolSize, long timeout, int queueSize) {
 		this.poolManager = new PoolManager(maxPoolSize);
 		this.sync = new Sync(maxPoolSize);
 		this.timeout = timeout;
@@ -625,7 +623,7 @@ public class SimpleThreadPool implements ThreadPool {
 	}
 
 	public static void main3(String[] args) throws IOException {
-		SimpleThreadPool threadPool = new SimpleThreadPool(10, 1000L, Integer.MAX_VALUE);
+		Jdk14ThreadPool threadPool = new Jdk14ThreadPool(10, 1000L, Integer.MAX_VALUE);
 		Promise<Long> p = threadPool.submit(new Action<Long>() {
 
 			public Long execute() throws Exception {
@@ -639,32 +637,36 @@ public class SimpleThreadPool implements ThreadPool {
 		threadPool.shutdown();
 		System.out.println("SimpleThreadPool.main()");
 	}
+	
+	public static void main(String[] args)throws IOException {
+		test2();
+	}
 
-	public static void main(String[] args) throws IOException {
-		SimpleThreadPool threadPool = new SimpleThreadPool(10, 1000L, Integer.MAX_VALUE);
-		List<Promise<Long> > promises = new CopyOnWriteArrayList<Promise<Long>>();
+	public static void test1() throws IOException {
+		Jdk14ThreadPool threadPool = new Jdk14ThreadPool(10, 1000L, Integer.MAX_VALUE);
+		List<Promise<Long>> promises = new CopyOnWriteArrayList<Promise<Long>>();
 		for (final int i : Sequence.forEach(0, 100)) {
 			Promise<Long> p = threadPool.submit(new Action<Long>() {
 
 				public Long execute() throws Exception {
 					ThreadUtils.randomSleep(1000L);
-					System.out.println(ThreadUtils.currentThreadName()+" say: " + i);
+					System.out.println(ThreadUtils.currentThreadName() + " say: " + i);
 					return new Long(i);
 				}
 
 			});
 			promises.add(p);
 		}
-		for(Promise<Long> p: promises) {
+		for (Promise<Long> p : promises) {
 			System.out.println("***: " + p.get());
 		}
 		System.in.read();
 		threadPool.shutdown();
-		System.out.println("SimpleThreadPool.main()");
+		System.out.println("Jdk14ThreadPool.main()");
 	}
 
-	public static void main2(String[] args) throws IOException {
-		SimpleThreadPool threadPool = new SimpleThreadPool(10, 0L, Integer.MAX_VALUE);
+	public static void test2() throws IOException {
+		Jdk14ThreadPool threadPool = new Jdk14ThreadPool(10, 0L, Integer.MAX_VALUE);
 		final AtomicInteger score = new AtomicInteger(0);
 		for (final int i : Sequence.forEach(0, 500000)) {
 			threadPool.apply(new Runnable() {
@@ -673,15 +675,15 @@ public class SimpleThreadPool implements ThreadPool {
 					System.out.println(Thread.currentThread().getName() + ": " + i + ", PoolSize: " + threadPool.getPoolSize()
 							+ ", waitSize: " + threadPool.getQueueSize() + ", idleSize: " + threadPool.getIdleThreadSize());
 					if (i % 3 == 0) {
-						throw new IllegalStateException("111111111111111111-->3");
+						throw new IllegalStateException("Error!");
 					}
 					score.incrementAndGet();
 				}
 			});
 		}
-		System.out.println("SimpleThreadPool.main(): " + score);
+		System.out.println("Jdk14ThreadPool.main(): " + score);
 		System.in.read();
 		threadPool.shutdown();
-		System.out.println("SimpleThreadPool.main()2: " + score);
+		System.out.println("Jdk14ThreadPool.main()2: " + score);
 	}
 }

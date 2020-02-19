@@ -16,7 +16,7 @@ import com.github.paganini2008.devtools.reflection.ConstructorUtils;
 @SuppressWarnings("all")
 public class ServiceLoader<T> {
 
-	private static final String DEFAULT_LOOKUP_PATH = "META-INF/spi/lazycat/";
+	private static final String DEFAULT_LOOKUP_PATH = "META-INF/spi/com/github/paganini2008/devtools/";
 
 	private static String lookupPath = DEFAULT_LOOKUP_PATH;
 
@@ -44,8 +44,7 @@ public class ServiceLoader<T> {
 			String name = lookupPath + "/" + interfaceClass.getName();
 			mapper = ResourceUtils.getResource(name, classLoader);
 		} catch (Exception e) {
-			throw new ServiceNotFoundException(
-					"Cannot find service '" + interfaceClass.getName() + "' on '" + lookupPath + "'.");
+			throw new ServiceNotFoundException("Cannot find service '" + interfaceClass.getName() + "' on '" + lookupPath + "'.");
 		}
 		for (Map.Entry<String, String> en : mapper.entrySet()) {
 			Class<?> cl;
@@ -55,8 +54,8 @@ public class ServiceLoader<T> {
 				throw new ServiceNotFoundException("Service class '" + en.getValue() + "' is not found.", e);
 			}
 			if (!interfaceClass.isAssignableFrom(cl)) {
-				throw new ServiceNotFoundException("Service class '" + en.getValue() + "' doesn't implement for '"
-						+ interfaceClass.getName() + "'.");
+				throw new ServiceNotFoundException(
+						"Service class '" + en.getValue() + "' doesn't implement for '" + interfaceClass.getName() + "'.");
 			}
 			serviceClasses.put(en.getKey(), (Class<T>) cl);
 		}

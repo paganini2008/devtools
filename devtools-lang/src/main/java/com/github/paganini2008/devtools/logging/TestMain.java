@@ -19,7 +19,7 @@ public class TestMain {
 		final ExtendedLoggerFactory loggerFactory = new ExtendedLoggerFactory();
 		loggerFactory.getConfiguration().addHandler("file",
 				Handlers.fileHandler("d:/sql/test.log", SizeUnit.MB.toBytes(10).intValue(), "info"));
-		loggerFactory.getConfiguration().bindHandler("org.lazycat.lang", new String[] { "file" });
+		loggerFactory.getConfiguration().bindHandler("com.github.paganini2008.http", new String[] { "file" });
 		LogFactory.initialize(new LoggerFactoryBuilder() {
 			public LoggerFactory getFactory() {
 				return loggerFactory;

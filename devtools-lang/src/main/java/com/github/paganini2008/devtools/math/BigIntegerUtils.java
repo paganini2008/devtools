@@ -18,10 +18,7 @@ import com.github.paganini2008.devtools.collection.LruMap;
  * @author Fred Feng
  * @version 1.0
  */
-public class BigIntegerUtils {
-
-	private BigIntegerUtils() {
-	}
+public abstract class BigIntegerUtils {
 
 	private static class BigIntegerCache {
 

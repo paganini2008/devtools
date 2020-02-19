@@ -8,8 +8,6 @@ import java.util.List;
  * EnumUtils
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public abstract class EnumUtils {
