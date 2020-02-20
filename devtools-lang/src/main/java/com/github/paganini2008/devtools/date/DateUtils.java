@@ -23,7 +23,7 @@ import com.github.paganini2008.devtools.collection.LruMap;
 public abstract class DateUtils {
 
 	public static final Date[] EMPTY_ARRAY = new Date[0];
-	public final static String DEFAULT_DATE_PATTERN = "yyyy-MM-dd HH:mm:s";
+	public final static String DEFAULT_DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
 	public final static SimpleDateFormat DEFAULT_DATE_FORMATTER = new SimpleDateFormat(DEFAULT_DATE_PATTERN, Locale.ENGLISH);
 	private final static LruMap<String, SimpleDateFormat> dateFormatterCache = new LruMap<String, SimpleDateFormat>(16);
 
@@ -126,7 +126,11 @@ public abstract class DateUtils {
 		}
 		Assert.isNull(df, "DateFormat can not be null.");
 		synchronized (DateUtils.class) {
-			return df.format(ms);
+			try {
+				return df.format(ms);
+			} catch (RuntimeException e) {
+				return defaultValue;
+			}
 		}
 	}
 
