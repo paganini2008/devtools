@@ -4,6 +4,9 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -90,6 +93,10 @@ public class StandardTypeConverter implements TypeConverter {
 			put(Charset.class, new CharsetConverter());
 			put(UUID.class, new UUIDConverter());
 			put(Locale.class, new LocaleConverter());
+			
+			put(LocalDate.class, new LocalDateConverter());
+			put(LocalTime.class, new LocalTimeConverter());
+			put(LocalDateTime.class, new LocalDateTimeConverter());
 		}
 	};
 

@@ -7,7 +7,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import com.github.paganini2008.devtools.ArrayUtils;
 import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.StringUtils;
 
@@ -184,11 +183,9 @@ public abstract class CalendarUtils {
 		Calendar[] array = new Calendar[dates.length];
 		int j = 0;
 		for (Date date : dates) {
-			if (date != null) {
-				array[j++] = toCalendar(date, timeZone, defaultValue);
-			}
+			array[j++] = toCalendar(date, timeZone, defaultValue);
 		}
-		return ArrayUtils.ensureCapacity(array, j);
+		return array;
 	}
 
 	public static Long getTimeInMillis(Calendar date) {
@@ -208,11 +205,9 @@ public abstract class CalendarUtils {
 		Long[] values = new Long[dates.length];
 		int j = 0;
 		for (Calendar date : dates) {
-			if (date != null) {
-				values[j++] = getTimeInMillis(date, defaultValue);
-			}
+			values[j++] = getTimeInMillis(date, defaultValue);
 		}
-		return ArrayUtils.ensureCapacity(values, j);
+		return values;
 	}
 
 	public static Calendar valueOf(int year, int month, int date) {

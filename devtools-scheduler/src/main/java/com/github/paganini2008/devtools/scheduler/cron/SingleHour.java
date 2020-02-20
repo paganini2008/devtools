@@ -13,11 +13,9 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * SingleHour
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
-public class SingleHour implements OneHour , Serializable{
+public class SingleHour implements OneHour, Serializable {
 
 	private static final long serialVersionUID = 8124589572544886753L;
 	private final TreeMap<Integer, Calendar> siblings;
