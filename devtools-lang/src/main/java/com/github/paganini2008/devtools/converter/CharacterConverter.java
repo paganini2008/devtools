@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.primitives.Chars;
  * @author Fred Feng
  * @version 1.0
  */
-public class CharacterConverter extends BaseConverter<Character> {
+public class CharacterConverter extends BasicConverter<Character> {
 
 	private final Converter<String, Character> stringConverter = new Converter<String, Character>() {
 		public Character getValue(String source, Character defaultValue) {

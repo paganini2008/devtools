@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.primitives.Booleans;
  * @author Fred Feng
  * @version 1.0
  */
-public class BooleanConverter extends BaseConverter<Boolean> {
+public class BooleanConverter extends BasicConverter<Boolean> {
 
 	private final Converter<String, Boolean> booleanConverter = new Converter<String, Boolean>() {
 		public Boolean getValue(String source, Boolean defaultValue) {

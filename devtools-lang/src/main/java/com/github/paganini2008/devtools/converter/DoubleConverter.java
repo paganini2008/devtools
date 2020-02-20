@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.primitives.Doubles;
  * @author Fred Feng
  * @version 1.0
  */
-public class DoubleConverter extends BaseConverter<Double> {
+public class DoubleConverter extends BasicConverter<Double> {
 
 	private final Converter<Number, Double> numberConverter = new Converter<Number, Double>() {
 		public Double getValue(Number source, Double defaultValue) {

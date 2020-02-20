@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.github.paganini2008.devtools.date.DateUtils;
 import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
 import com.github.paganini2008.devtools.multithreads.ThreadPool;
 import com.github.paganini2008.devtools.multithreads.ThreadPoolBuilder;
@@ -222,7 +221,7 @@ public class DirectoryWalker {
 						+ ", completedRatio: " + completedRatio + ", elapsed: " + elapsed);
 			}
 		});
-		System.out.println(DateUtils.formatDurationAsHour(fileInfo.getElapsed()));
+		System.out.println(fileInfo.getElapsed());
 		System.out.println(fileInfo);
 		System.in.read();
 		System.out.println("Completed.");

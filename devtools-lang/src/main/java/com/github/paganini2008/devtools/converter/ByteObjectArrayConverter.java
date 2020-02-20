@@ -11,7 +11,7 @@ import com.github.paganini2008.devtools.primitives.Bytes;
  * @author Fred Feng
  * @version 1.0
  */
-public class ByteObjectArrayConverter extends BaseConverter<Byte[]> {
+public class ByteObjectArrayConverter extends BasicConverter<Byte[]> {
 
 	private final Converter<CharSequence, Byte[]> charSequenceConverter = new Converter<CharSequence, Byte[]>() {
 		public Byte[] getValue(CharSequence source, Byte[] defaultValue) {

@@ -2,6 +2,7 @@ package com.github.paganini2008.devtools.scheduler.cron;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * 
@@ -12,6 +13,12 @@ import java.util.Date;
  */
 public abstract class CalendarUtils {
 
+	private static TimeZone timeZone = TimeZone.getDefault();
+
+	public static void setTimeZone(TimeZone timeZone) {
+		CalendarUtils.timeZone = timeZone;
+	}
+
 	public static Calendar setField(Date date, int calendarField, int value) {
 		return setField(date, calendarField, value, true);
 	}
@@ -19,6 +26,7 @@ public abstract class CalendarUtils {
 	public static Calendar setField(Date date, int calendarField, int value, boolean reset) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
+		calendar.setTimeZone(timeZone);
 		return setField(calendar, calendarField, value, reset);
 	}
 

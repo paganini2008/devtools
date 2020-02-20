@@ -1,9 +1,11 @@
 package com.github.paganini2008.devtools.date;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import com.github.paganini2008.devtools.ArrayUtils;
 import com.github.paganini2008.devtools.Assert;
@@ -15,23 +17,20 @@ import com.github.paganini2008.devtools.StringUtils;
  * @author Fred Feng
  * @version 1.0
  */
-public class CalendarUtils {
-
-	private CalendarUtils() {
-	}
+public abstract class CalendarUtils {
 
 	public static final Calendar[] EMPTY_ARRAY = new Calendar[0];
 
-	public static String[] format(Calendar[] dates, String pattern) {
-		return format(dates, new SimpleDateFormat(pattern));
+	public static String[] formatMany(Calendar[] dates) {
+		return formatMany(dates, DateUtils.DEFAULT_DATE_FORMATTER);
 	}
 
-	public static String[] format(Calendar[] dates, DateFormat df) {
-		return format(dates, df, null);
+	public static String[] formatMany(Calendar[] dates, DateFormat df) {
+		return formatMany(dates, df, null);
 	}
 
-	public static String[] format(Calendar[] dates, DateFormat df, String defaultValue) {
-		Assert.isNull(dates, "Date array must not be null.");
+	public static String[] formatMany(Calendar[] dates, DateFormat df, String defaultValue) {
+		Assert.isNull(dates, "Calendar array can not be null.");
 		String[] values = new String[dates.length];
 		int i = 0;
 		for (Calendar date : dates) {
@@ -40,19 +39,27 @@ public class CalendarUtils {
 		return values;
 	}
 
-	public static String format(Calendar c, String pattern) {
-		return format(c, pattern, "");
+	public static String[] formatMany(Calendar[] dates, String datePattern) {
+		return formatMany(dates, datePattern, "");
 	}
 
-	public static String format(Calendar c, String pattern, String defaultValue) {
+	public static String[] formatMany(Calendar[] dates, String datePattern, String defaultValue) {
+		return formatMany(dates, DateUtils.getDateFormatter(datePattern), defaultValue);
+	}
+
+	public static String format(Calendar c, String datePattern) {
+		return format(c, datePattern, "");
+	}
+
+	public static String format(Calendar c, String datePattern, String defaultValue) {
 		if (c == null) {
 			return defaultValue;
 		}
-		return DateUtils.format(c.getTime(), pattern, defaultValue);
+		return DateUtils.format(c.getTime(), datePattern, defaultValue);
 	}
 
 	public static String format(Calendar cal) {
-		return format(cal, DateUtils.DEFAULT_FORMAT);
+		return format(cal, DateUtils.DEFAULT_DATE_FORMATTER);
 	}
 
 	public static String format(Calendar c, DateFormat df) {
@@ -66,91 +73,119 @@ public class CalendarUtils {
 		return DateUtils.format(c.getTime(), df, defaultValue);
 	}
 
-	public static Calendar parse(String date, String[] patterns) {
-		return parse(date, patterns, null);
+	public static Calendar parse(String date, String datePattern) {
+		return parse(date, datePattern, null);
 	}
 
-	public static Calendar parse(String date, String[] patterns, Calendar defaultValue) {
+	public static Calendar parse(String date, String[] datePatterns) {
+		return parse(date, datePatterns, null);
+	}
+
+	public static Calendar parse(String date, String datePattern, Calendar defaultValue) {
 		if (StringUtils.isBlank(date)) {
 			return defaultValue;
 		}
-		Date value = DateUtils.parse(date, patterns);
-		return valueOf(value, defaultValue);
+		Date value = DateUtils.parse(date, datePattern);
+		return toCalendar(value, TimeZone.getDefault(), defaultValue);
 	}
 
-	public static Calendar[] parses(String[] dates, String[] patterns) {
-		return parses(dates, patterns, null);
+	public static Calendar parse(String date, String[] datePatterns, Calendar defaultValue) {
+		if (StringUtils.isBlank(date)) {
+			return defaultValue;
+		}
+		Date value = DateUtils.parse(date, datePatterns);
+		return toCalendar(value, TimeZone.getDefault(), defaultValue);
 	}
 
-	public static Calendar[] parses(String[] dates, String[] patterns, Calendar defaultValue) {
+	public static Calendar[] parseMany(String[] dates, String[] datePatterns) {
+		return parseMany(dates, datePatterns, null);
+	}
+
+	public static Calendar[] parseMany(String[] dates, String[] datePatterns, Calendar defaultValue) {
 		Calendar[] array = new Calendar[dates.length];
 		int j = 0;
 		for (String date : dates) {
-			array[j++] = parse(date, patterns, defaultValue);
+			array[j++] = parse(date, datePatterns, defaultValue);
 		}
 		return array;
 	}
 
-	public static Calendar[] valuesOf(long[] dates) {
+	public static Calendar[] toCalendarArray(long[] dates, TimeZone timeZone) {
 		Calendar[] array = new Calendar[dates.length];
 		int i = 0;
 		for (long date : dates) {
-			array[i++] = valueOf(date);
+			array[i++] = toCalendar(date, timeZone);
 		}
 		return array;
 	}
 
-	public static Calendar valueOf(Long ms) {
-		return valueOf(ms, null);
+	public static Calendar[] toCalendarArray(Long[] dates, TimeZone timeZone) {
+		return toCalendarArray(dates, timeZone, null);
 	}
 
-	public static Calendar valueOf(Long ms, Calendar defaultValue) {
+	public static Calendar[] toCalendarArray(Long[] dates, TimeZone timeZone, Calendar defaultValue) {
+		Calendar[] array = new Calendar[dates.length];
+		int i = 0;
+		for (long date : dates) {
+			array[i++] = toCalendar(date, timeZone, defaultValue);
+		}
+		return array;
+	}
+
+	public static Calendar toCalendar(Long ms, TimeZone timeZone) {
+		return toCalendar(ms, timeZone, null);
+	}
+
+	public static Calendar toCalendar(Long ms, TimeZone timeZone, Calendar defaultValue) {
 		if (ms == null) {
 			return defaultValue;
 		}
 		Calendar c = Calendar.getInstance();
+		c.setTimeZone(timeZone);
 		c.setTimeInMillis(ms);
 		return c;
 	}
 
-	public static Calendar valueOf(Date date) {
-		return valueOf(date, null);
+	public static Calendar toCalendar(Date date, TimeZone timeZone) {
+		return toCalendar(date, timeZone, null);
 	}
 
-	public static Calendar valueOf(Date date, Calendar defaultValue) {
+	public static Calendar toCalendar(Date date, TimeZone timeZone, Calendar defaultValue) {
 		if (date == null) {
 			return defaultValue;
 		}
 		Calendar c = Calendar.getInstance();
+		c.setTimeZone(timeZone);
 		c.setTime(date);
 		return c;
 	}
 
-	public static Calendar[] valuesOf(Date[] dates) {
-		return valuesOf(dates, null);
+	public static Calendar toCalendar(LocalDateTime localDateTime, TimeZone timeZone) {
+		return toCalendar(localDateTime, timeZone, null);
 	}
 
-	public static Calendar[] valuesOf(Date[] dates, Calendar defaultValue) {
+	public static Calendar toCalendar(LocalDateTime localDateTime, TimeZone timeZone, Calendar defaultValue) {
+		return localDateTime != null ? toCalendar(DateUtils.toDate(localDateTime, timeZone.toZoneId()), timeZone) : defaultValue;
+	}
+
+	public static Calendar toCalendar(LocalDate localDate, TimeZone timeZone) {
+		return toCalendar(localDate, timeZone, null);
+	}
+
+	public static Calendar toCalendar(LocalDate localDate, TimeZone timeZone, Calendar defaultValue) {
+		return localDate != null ? toCalendar(DateUtils.toDate(localDate, timeZone.toZoneId()), timeZone) : defaultValue;
+	}
+
+	public static Calendar[] toCalendarArray(Date[] dates, TimeZone timeZone) {
+		return toCalendarArray(dates, timeZone, null);
+	}
+
+	public static Calendar[] toCalendarArray(Date[] dates, TimeZone timeZone, Calendar defaultValue) {
 		Calendar[] array = new Calendar[dates.length];
 		int j = 0;
 		for (Date date : dates) {
 			if (date != null) {
-				array[j++] = valueOf(date, defaultValue);
-			}
-		}
-		return ArrayUtils.ensureCapacity(array, j);
-	}
-
-	public static Calendar[] valuesOf(Long[] dates) {
-		return valuesOf(dates, null);
-	}
-
-	public static Calendar[] valuesOf(Long[] dates, Calendar defaultValue) {
-		Calendar[] array = new Calendar[dates.length];
-		int j = 0;
-		for (Long date : dates) {
-			if (date != null) {
-				array[j++] = valueOf(date, defaultValue);
+				array[j++] = toCalendar(date, timeZone, defaultValue);
 			}
 		}
 		return ArrayUtils.ensureCapacity(array, j);
@@ -161,10 +196,7 @@ public class CalendarUtils {
 	}
 
 	public static Long getTimeInMillis(Calendar date, Long defaultValue) {
-		if (date == null) {
-			return defaultValue;
-		}
-		return date.getTimeInMillis();
+		return date != null ? date.getTimeInMillis() : defaultValue;
 	}
 
 	public static Long[] getTimeInMillis(Calendar[] dates) {
@@ -172,7 +204,7 @@ public class CalendarUtils {
 	}
 
 	public static Long[] getTimeInMillis(Calendar[] dates, Long defaultValue) {
-		Assert.isNull(dates, "Date string array must not be null.");
+		Assert.isNull(dates, "Calendar array can not be null.");
 		Long[] values = new Long[dates.length];
 		int j = 0;
 		for (Calendar date : dates) {
@@ -192,7 +224,5 @@ public class CalendarUtils {
 		c.set(year, month - 1, date, hour, minute, second);
 		return c;
 	}
-
-	
 
 }

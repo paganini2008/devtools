@@ -20,7 +20,7 @@ import com.github.paganini2008.devtools.date.DateUtils;
  * @author Fred Feng
  * @version 1.0
  */
-public class StringArrayConverter extends BaseConverter<String[]> {
+public class StringArrayConverter extends BasicConverter<String[]> {
 
 	private final Converter<CharSequence, String[]> charSequenceConverter = new Converter<CharSequence, String[]>() {
 		public String[] getValue(CharSequence source, String[] defaultValue) {
@@ -37,7 +37,7 @@ public class StringArrayConverter extends BaseConverter<String[]> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return DateUtils.format(source, config.getDateFormat());
+			return DateUtils.formatMany(source, config.getDateFormat());
 		}
 	};
 
@@ -46,7 +46,7 @@ public class StringArrayConverter extends BaseConverter<String[]> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return CalendarUtils.format(source, config.getDateFormat());
+			return CalendarUtils.formatMany(source, config.getDateFormat());
 		}
 	};
 
@@ -55,7 +55,7 @@ public class StringArrayConverter extends BaseConverter<String[]> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return NumberUtils.formats(source, config.getDecimalFormat());
+			return NumberUtils.formats(source, config.getDecimalFormatter());
 		}
 	};
 

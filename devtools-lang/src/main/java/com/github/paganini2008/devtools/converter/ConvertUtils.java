@@ -13,7 +13,7 @@ public class ConvertUtils {
 
 	static final TypeConverter INSTANCE = new StandardTypeConverter();
 
-	public static <T> void registerConverter(Class<T> requiredType, BaseConverter<T> converter) {
+	public static <T> void registerConverter(Class<T> requiredType, BasicConverter<T> converter) {
 		INSTANCE.register(requiredType, converter);
 	}
 
@@ -25,7 +25,7 @@ public class ConvertUtils {
 		INSTANCE.contains(requiredType);
 	}
 
-	public static <T> BaseConverter<T> lookupConverter(Class<T> requiredType) {
+	public static <T> BasicConverter<T> lookupConverter(Class<T> requiredType) {
 		return INSTANCE.lookup(requiredType);
 	}
 

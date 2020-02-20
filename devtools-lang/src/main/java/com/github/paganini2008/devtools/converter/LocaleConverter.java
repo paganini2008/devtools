@@ -10,7 +10,7 @@ import com.github.paganini2008.devtools.LocaleUtils;
  * @author Fred Feng
  * @version 1.0
  */
-public class LocaleConverter extends BaseConverter<Locale> {
+public class LocaleConverter extends BasicConverter<Locale> {
 
 	private final Converter<String, Locale> stringConverter = new Converter<String, Locale>() {
 		public Locale getValue(String source, Locale defaultValue) {

@@ -11,7 +11,7 @@ import com.github.paganini2008.devtools.primitives.Longs;
  * @author Fred Feng
  * @version 1.0
  */
-public class LongArrayConverter extends BaseConverter<long[]> {
+public class LongArrayConverter extends BasicConverter<long[]> {
 
 	private final Converter<CharSequence, long[]> charSequenceConverter = new Converter<CharSequence, long[]>() {
 		public long[] getValue(CharSequence source, long[] defaultValue) {

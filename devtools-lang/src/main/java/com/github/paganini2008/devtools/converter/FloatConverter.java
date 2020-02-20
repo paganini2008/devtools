@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.primitives.Floats;
  * @author Fred Feng
  * @version 1.0
  */
-public class FloatConverter extends BaseConverter<Float> {
+public class FloatConverter extends BasicConverter<Float> {
 
 	private final Converter<Number, Float> numberConverter = new Converter<Number, Float>() {
 		public Float getValue(Number source, Float defaultValue) {

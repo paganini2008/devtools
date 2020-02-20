@@ -10,7 +10,7 @@ import com.github.paganini2008.devtools.math.BigIntegerUtils;
  * @author Fred Feng
  * @version 1.0
  */
-public class BigIntegerArrayConverter extends BaseConverter<BigInteger[]> {
+public class BigIntegerArrayConverter extends BasicConverter<BigInteger[]> {
 
 	private final Converter<byte[], BigInteger[]> nativeByteArrayConverter = new Converter<byte[], BigInteger[]>() {
 		public BigInteger[] getValue(byte[] source, BigInteger[] defaultValue) {

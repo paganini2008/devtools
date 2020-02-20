@@ -11,7 +11,7 @@ import com.github.paganini2008.devtools.primitives.Ints;
  * @author Fred Feng
  * @version 1.0
  */
-public class IntegerObjectArrayConverter extends BaseConverter<Integer[]> {
+public class IntegerObjectArrayConverter extends BasicConverter<Integer[]> {
 
 	private final Converter<CharSequence, Integer[]> charSequenceConverter = new Converter<CharSequence, Integer[]>() {
 		public Integer[] getValue(CharSequence source, Integer[] defaultValue) {

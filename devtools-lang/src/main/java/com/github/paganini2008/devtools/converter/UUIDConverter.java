@@ -10,7 +10,7 @@ import com.github.paganini2008.devtools.StringUtils;
  * @author Fred Feng
  * @version 1.0
  */
-public class UUIDConverter extends BaseConverter<UUID> {
+public class UUIDConverter extends BasicConverter<UUID> {
 
 	private final Converter<String, UUID> stringConverter = new Converter<String, UUID>() {
 		public UUID getValue(String source, UUID defaultValue) {

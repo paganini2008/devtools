@@ -5,7 +5,7 @@ import java.util.List;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.primitives.Ints;
 
-public class IntArrayConverter extends BaseConverter<int[]> {
+public class IntArrayConverter extends BasicConverter<int[]> {
 
 	private final Converter<CharSequence, int[]> charSequenceConverter = new Converter<CharSequence, int[]>() {
 		public int[] getValue(CharSequence source, int[] defaultValue) {

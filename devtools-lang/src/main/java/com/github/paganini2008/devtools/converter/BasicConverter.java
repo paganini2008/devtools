@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * BaseConverter
+ * BasicConverter
  * 
  * @author Fred Feng
  * @version 1.0
  */
-public abstract class BaseConverter<T> implements Converter<Object, T>, ConverterManager<T> {
+public abstract class BasicConverter<T> implements Converter<Object, T>, ConverterManager<T> {
 
 	private final Map<Class<?>, Converter<?, T>> converterRegistry = new HashMap<Class<?>, Converter<?, T>>();
 	protected ConverterConfig config = new ConverterConfig();

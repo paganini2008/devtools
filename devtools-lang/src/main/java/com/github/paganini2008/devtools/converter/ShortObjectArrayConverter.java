@@ -11,7 +11,7 @@ import com.github.paganini2008.devtools.primitives.Shorts;
  * @author Fred Feng
  * @version 1.0
  */
-public class ShortObjectArrayConverter extends BaseConverter<Short[]> {
+public class ShortObjectArrayConverter extends BasicConverter<Short[]> {
 
 	private final Converter<CharSequence, Short[]> charSequenceConverter = new Converter<CharSequence, Short[]>() {
 		public Short[] getValue(CharSequence source, Short[] defaultValue) {

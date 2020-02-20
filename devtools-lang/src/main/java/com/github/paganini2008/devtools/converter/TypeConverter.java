@@ -10,13 +10,13 @@ package com.github.paganini2008.devtools.converter;
  */
 public interface TypeConverter {
 
-	<T> void register(Class<T> javaType, BaseConverter<T> converter);
+	<T> void register(Class<T> javaType, BasicConverter<T> converter);
 
 	void remove(Class<?> javaType);
 
 	boolean contains(Class<?> javaType);
 
-	<T> BaseConverter<T> lookup(Class<T> javaType);
+	<T> BasicConverter<T> lookup(Class<T> javaType);
 
 	<T> T convert(Object value, Class<T> requiredType, T defaultValue);
 

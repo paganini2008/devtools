@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.primitives.Chars;
  * @author Fred Feng
  * @version 1.0
  */
-public class CharacterObjectArrayConverter extends BaseConverter<Character[]> {
+public class CharacterObjectArrayConverter extends BasicConverter<Character[]> {
 
 	private final Converter<char[], Character[]> nativeCharArrayConverter = new Converter<char[], Character[]>() {
 		public Character[] getValue(char[] source, Character[] defaultValue) {

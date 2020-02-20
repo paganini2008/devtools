@@ -3,16 +3,16 @@ package com.github.paganini2008.devtools.date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import com.github.paganini2008.devtools.ArrayUtils;
 import com.github.paganini2008.devtools.Assert;
-import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.LruMap;
-import com.github.paganini2008.devtools.primitives.Longs;
 
 /**
  * DateUtils
@@ -23,16 +23,16 @@ import com.github.paganini2008.devtools.primitives.Longs;
 public abstract class DateUtils {
 
 	public static final Date[] EMPTY_ARRAY = new Date[0];
+	public final static String DEFAULT_DATE_PATTERN = "yyyy-MM-dd HH:mm:s";
+	public final static SimpleDateFormat DEFAULT_DATE_FORMATTER = new SimpleDateFormat(DEFAULT_DATE_PATTERN, Locale.ENGLISH);
+	private final static LruMap<String, SimpleDateFormat> dateFormatterCache = new LruMap<String, SimpleDateFormat>(16);
 
-	public final static SimpleDateFormat DEFAULT_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-	private final static LruMap<String, SimpleDateFormat> dateFormatCache = new LruMap<String, SimpleDateFormat>(16);
-
-	private static SimpleDateFormat getDateFormat(String pattern) {
-		SimpleDateFormat sdf = dateFormatCache.get(pattern);
+	public static DateFormat getDateFormatter(String datePattern) {
+		Assert.hasNoText(datePattern, "Date pattern can not be blank.");
+		SimpleDateFormat sdf = dateFormatterCache.get(datePattern);
 		if (sdf == null) {
-			dateFormatCache.put(pattern, new SimpleDateFormat(pattern, Locale.ENGLISH));
-			sdf = dateFormatCache.get(pattern);
+			dateFormatterCache.put(datePattern, new SimpleDateFormat(datePattern, Locale.ENGLISH));
+			sdf = dateFormatterCache.get(datePattern);
 		}
 		return sdf;
 	}
@@ -45,7 +45,31 @@ public abstract class DateUtils {
 		return ms != null ? new Date(ms) : defaultValue;
 	}
 
-	public static Date[] toDates(long[] dates) {
+	public static Date toDate(Calendar calendar) {
+		return toDate(calendar, null);
+	}
+
+	public static Date toDate(Calendar calendar, Date defaultValue) {
+		return calendar != null ? calendar.getTime() : defaultValue;
+	}
+
+	public static Date toDate(LocalDate localDate, ZoneId zoneId) {
+		return toDate(localDate, zoneId, null);
+	}
+
+	public static Date toDate(LocalDate localDate, ZoneId zoneId, Date defaultValue) {
+		return localDate != null ? Date.from(localDate.atStartOfDay(zoneId).toInstant()) : defaultValue;
+	}
+
+	public static Date toDate(LocalDateTime localDateTime, ZoneId zoneId) {
+		return toDate(localDateTime, zoneId, null);
+	}
+
+	public static Date toDate(LocalDateTime localDateTime, ZoneId zoneId, Date defaultValue) {
+		return localDateTime != null ? Date.from(localDateTime.atZone(zoneId).toInstant()) : defaultValue;
+	}
+
+	public static Date[] toDateArray(long[] dates) {
 		Date[] array = new Date[dates.length];
 		int i = 0;
 		for (long date : dates) {
@@ -54,11 +78,11 @@ public abstract class DateUtils {
 		return array;
 	}
 
-	public static Date[] toDates(Long[] mss) {
-		return toDates(mss, null);
+	public static Date[] toDateArray(Long[] mss) {
+		return toDateArray(mss, null);
 	}
 
-	public static Date[] toDates(Long[] mss, Date defaultValue) {
+	public static Date[] toDateArray(Long[] mss, Date defaultValue) {
 		Date[] array = new Date[mss.length];
 		int i = 0;
 		for (Long ms : mss) {
@@ -67,62 +91,55 @@ public abstract class DateUtils {
 		return array;
 	}
 
-	public static Date valueOf(Calendar c) {
-		return valueOf(c, null);
+	public static Date[] toDateArray(Calendar[] array) {
+		return toDateArray(array, null);
 	}
 
-	public static Date valueOf(Calendar c, Date defaultValue) {
-		return c != null ? c.getTime() : defaultValue;
-	}
-
-	public static Date[] valuesOf(Calendar[] cs) {
-		return valuesOf(cs, null);
-	}
-
-	public static Date[] valuesOf(Calendar[] cs, Date defaultValue) {
-		Date[] array = new Date[cs.length];
+	public static Date[] toDateArray(Calendar[] array, Date defaultValue) {
+		Date[] result = new Date[array.length];
 		int i = 0;
-		for (Calendar c : cs) {
-			array[i++] = valueOf(c, defaultValue);
+		for (Calendar c : array) {
+			result[i++] = toDate(c, defaultValue);
 		}
-		return array;
+		return result;
+	}
+
+	public static String format(Long ms, String datePattern) {
+		return format(ms, datePattern, "");
+	}
+
+	public static String format(Long ms, String datePattern, String defaultValue) {
+		return format(ms, getDateFormatter(datePattern), defaultValue);
 	}
 
 	public static String format(Long ms) {
-		return format(ms, DEFAULT_FORMAT);
-	}
-
-	public static String format(Long ms, String pattern) {
-		return format(ms, pattern, "");
-	}
-
-	public static String format(Long ms, String pattern, String defaultValue) {
-		return format(ms, getDateFormat(pattern), defaultValue);
-	}
-
-	public static String format(Long ms, DateFormat df, String defaultValue) {
-		if (ms == null) {
-			return defaultValue;
-		}
-		synchronized (DateUtils.class) {
-			return df != null ? df.format(ms) : DEFAULT_FORMAT.format(ms);
-		}
+		return format(ms, DEFAULT_DATE_FORMATTER);
 	}
 
 	public static String format(Long ms, DateFormat df) {
 		return format(ms, df, "");
 	}
 
-	public static String format(Date date, String pattern) {
-		return format(date, pattern, "");
+	public static String format(Long ms, DateFormat df, String defaultValue) {
+		if (ms == null) {
+			return defaultValue;
+		}
+		Assert.isNull(df, "DateFormat can not be null.");
+		synchronized (DateUtils.class) {
+			return df.format(ms);
+		}
 	}
 
-	public static String format(Date date, String pattern, String defaultValue) {
-		return format(date, getDateFormat(pattern), defaultValue);
+	public static String format(Date date, String datePattern) {
+		return format(date, datePattern, "");
+	}
+
+	public static String format(Date date, String datePattern, String defaultValue) {
+		return format(date, getDateFormatter(datePattern), defaultValue);
 	}
 
 	public static String format(Date date) {
-		return format(date, DEFAULT_FORMAT);
+		return format(date, DEFAULT_DATE_FORMATTER);
 	}
 
 	public static String format(Date date, DateFormat df) {
@@ -133,12 +150,16 @@ public abstract class DateUtils {
 		return format(date.getTime(), df, defaultValue);
 	}
 
-	public static String[] format(Date[] dates, DateFormat df) {
-		return format(dates, df, "");
+	public static String[] formatMany(Date[] dates) {
+		return formatMany(dates, DEFAULT_DATE_FORMATTER);
 	}
 
-	public static String[] format(Date[] dates, DateFormat df, String defaultValue) {
-		Assert.isNull(dates, "Date string array must not be null.");
+	public static String[] formatMany(Date[] dates, DateFormat df) {
+		return formatMany(dates, df, "");
+	}
+
+	public static String[] formatMany(Date[] dates, DateFormat df, String defaultValue) {
+		Assert.isNull(dates, "Date array can not be null.");
 		String[] values = new String[dates.length];
 		int i = 0;
 		for (Date date : dates) {
@@ -147,27 +168,35 @@ public abstract class DateUtils {
 		return values;
 	}
 
+	public static String[] formatMany(Date[] dates, String datePattern) {
+		return formatMany(dates, datePattern, "");
+	}
+
+	public static String[] formatMany(Date[] dates, String datePattern, String defaultValue) {
+		return formatMany(dates, getDateFormatter(datePattern), defaultValue);
+	}
+
 	public static String reformat(String str, String srcFormat, String destFormat) {
 		return reformat(str, srcFormat, destFormat, str);
 	}
 
 	public static String reformat(String str, String srcFormat, String destFormat, String defaultValue) {
 		try {
-			SimpleDateFormat leftSdf = getDateFormat(srcFormat);
+			DateFormat leftSdf = getDateFormatter(srcFormat);
 			Date date = leftSdf.parse(str);
-			SimpleDateFormat rightSdf = getDateFormat(destFormat);
+			DateFormat rightSdf = getDateFormatter(destFormat);
 			return rightSdf.format(date);
 		} catch (ParseException e) {
 			return defaultValue;
 		}
 	}
 
-	public static Date parse(String str, String pattern) {
-		return parse(str, pattern, null);
+	public static Date parse(String str, String datePattern) {
+		return parse(str, datePattern, null);
 	}
 
-	public static Date parse(String str, String pattern, Date defaultValue) {
-		SimpleDateFormat sdf = getDateFormat(pattern);
+	public static Date parse(String str, String datePattern, Date defaultValue) {
+		DateFormat sdf = getDateFormatter(datePattern);
 		synchronized (DateUtils.class) {
 			try {
 				return sdf.parse(str);
@@ -177,14 +206,14 @@ public abstract class DateUtils {
 		}
 	}
 
-	public static Date parse(String str, String[] patterns) {
-		return parse(str, patterns, null);
+	public static Date parse(String str, String[] datePatterns) {
+		return parse(str, datePatterns, null);
 	}
 
-	public static Date parse(String str, String[] patterns, Date defaultValue) {
+	public static Date parse(String str, String[] datePatterns, Date defaultValue) {
 		Date date = null;
-		for (String pattern : patterns) {
-			date = parse(str, pattern, null);
+		for (String datePattern : datePatterns) {
+			date = parse(str, datePattern, null);
 			if (date != null) {
 				return date;
 			}
@@ -302,10 +331,7 @@ public abstract class DateUtils {
 	}
 
 	public static Long getTimeInMillis(Date date, Long defaultValue) {
-		if (date == null) {
-			return defaultValue;
-		}
-		return date.getTime();
+		return date != null ? date.getTime() : defaultValue;
 	}
 
 	public static Long[] getTimeInMillis(Date[] dates) {
@@ -320,36 +346,6 @@ public abstract class DateUtils {
 			values[i++] = getTimeInMillis(date, defaultValue);
 		}
 		return values;
-	}
-
-	public static String formatDurationAsMinute(long ms) {
-		return formatDurationAsMinute(ms, "#m:#s:#ms");
-	}
-
-	public static String formatDurationAsMinute(long ms, String pattern) {
-		return formatDuration(ms, DurationType.MINUTE, pattern);
-	}
-
-	public static String formatDurationAsHour(long ms) {
-		return formatDurationAsHour(ms, "#H:#m:#s:#ms");
-	}
-
-	public static String formatDurationAsHour(long ms, String pattern) {
-		return formatDuration(ms, DurationType.HOUR, pattern);
-	}
-
-	public static String formatDurationAsDay(long ms) {
-		return formatDurationAsDay(ms, "#D:#H:#m:#s:#ms");
-	}
-
-	public static String formatDurationAsDay(long ms, String pattern) {
-		return formatDuration(ms, DurationType.DAY, pattern);
-	}
-
-	public static String formatDuration(long ms, DurationType type, String pattern) {
-		long[] args = type.toArray(ms);
-		Long[] array = Longs.toWrappers(args);
-		return StringUtils.format(pattern, "#", array);
 	}
 
 	public static Date valueOf(int year, int month, int date) {
@@ -390,34 +386,18 @@ public abstract class DateUtils {
 		return c.getTime();
 	}
 
-	public static Date valueOf(Long ms) {
-		return valueOf(ms, null);
+	public static Date[] parseMany(String[] strings, String[] datePatterns) {
+		return parseMany(strings, datePatterns, null);
 	}
 
-	public static Date valueOf(Long ms, Date defaultValue) {
-		if (ms == null) {
-			return defaultValue;
-		}
-		return new Date(ms);
-	}
-
-	public static Date[] parses(String[] strs, String[] patterns) {
-		return parses(strs, patterns, true);
-	}
-
-	public static Date[] parses(String[] strs, String[] patterns, boolean thrown) {
-		Date[] result = new Date[strs.length];
+	public static Date[] parseMany(String[] strings, String[] datePatterns, Date defaultValue) {
+		Assert.isNull(strings, "String array can not be null.");
+		Date[] result = new Date[strings.length];
 		int i = 0;
-		for (String str : strs) {
-			try {
-				result[i++] = parse(str, patterns);
-			} catch (RuntimeException e) {
-				if (thrown) {
-					throw e;
-				}
-			}
+		for (String str : strings) {
+			result[i++] = parse(str, datePatterns, defaultValue);
 		}
-		return ArrayUtils.ensureCapacity(result, i);
+		return result;
 	}
 
 	public static int getYear() {

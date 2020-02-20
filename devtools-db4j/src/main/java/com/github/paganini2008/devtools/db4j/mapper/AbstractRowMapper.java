@@ -82,7 +82,7 @@ public abstract class AbstractRowMapper<T> implements RowMapper<T> {
 		return object;
 	}
 
-	private boolean columnNameCamelCase = true;
+	private boolean useCamelCase = true;
 
 	private final TypeHandlerRegistry typeHandlerRegistry;
 
@@ -91,8 +91,8 @@ public abstract class AbstractRowMapper<T> implements RowMapper<T> {
 	protected abstract void setValue(T object, int columnIndex, String columnName, String columnDisplayName, JdbcType jdbcType,
 			Object columnValue);
 
-	public void setColumnNameCamelCase(boolean columnNameCamelCase) {
-		this.columnNameCamelCase = columnNameCamelCase;
+	public void setUseCamelCase(boolean useCamelCase) {
+		this.useCamelCase = useCamelCase;
 	}
 
 	protected Type getJavaType(ResultSetMetaData rsmd, int columnIndex) {
@@ -115,10 +115,10 @@ public abstract class AbstractRowMapper<T> implements RowMapper<T> {
 
 	protected String getColumnDisplayName(ResultSetMetaData rsmd, int columnIndex) throws SQLException {
 		String columnDisplayName = rsmd.getColumnLabel(columnIndex);
-		return columnNameCamelCase ? StringUtils.toCamelCase(columnDisplayName, "_") : columnDisplayName;
+		return useCamelCase ? StringUtils.toCamelCase(columnDisplayName, "_") : columnDisplayName;
 	}
 
-	protected final String getColumnName(ResultSetMetaData rsmd, int columnIndex) throws SQLException {
+	protected String getColumnName(ResultSetMetaData rsmd, int columnIndex) throws SQLException {
 		return rsmd.getColumnName(columnIndex);
 	}
 

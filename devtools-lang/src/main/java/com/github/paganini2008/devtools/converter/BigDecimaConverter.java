@@ -10,7 +10,7 @@ import com.github.paganini2008.devtools.math.BigDecimalUtils;
  * @author Fred Feng
  * @version 1.0
  */
-public class BigDecimaConverter extends BaseConverter<BigDecimal> {
+public class BigDecimaConverter extends BasicConverter<BigDecimal> {
 
 	private final Converter<Number, BigDecimal> numberConverter = new Converter<Number, BigDecimal>() {
 		public BigDecimal getValue(Number source, BigDecimal defaultValue) {

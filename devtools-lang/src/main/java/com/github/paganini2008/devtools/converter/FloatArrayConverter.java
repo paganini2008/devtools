@@ -11,7 +11,7 @@ import com.github.paganini2008.devtools.primitives.Floats;
  * @author Fred Feng
  * @version 1.0
  */
-public class FloatArrayConverter extends BaseConverter<float[]> {
+public class FloatArrayConverter extends BasicConverter<float[]> {
 
 	private final Converter<CharSequence, float[]> charSequenceConverter = new Converter<CharSequence, float[]>() {
 		public float[] getValue(CharSequence source, float[] defaultValue) {

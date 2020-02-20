@@ -1,10 +1,12 @@
 package com.github.paganini2008.devtools.converter;
 
+import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 
 import com.github.paganini2008.devtools.date.CalendarUtils;
 import com.github.paganini2008.devtools.date.DateUtils;
+import com.github.paganini2008.devtools.date.LocalDateUtils;
 import com.github.paganini2008.devtools.primitives.Longs;
 
 /**
@@ -13,7 +15,7 @@ import com.github.paganini2008.devtools.primitives.Longs;
  * @author Fred Feng
  * @version 1.0
  */
-public class LongConverter extends BaseConverter<Long> {
+public class LongConverter extends BasicConverter<Long> {
 
 	private final Converter<Boolean, Long> booleanConverter = new Converter<Boolean, Long>() {
 		public Long getValue(Boolean source, Long defaultValue) {
@@ -51,6 +53,12 @@ public class LongConverter extends BaseConverter<Long> {
 		}
 	};
 
+	private final Converter<Instant, Long> instantConverter = new Converter<Instant, Long>() {
+		public Long getValue(Instant source, Long defaultValue) {
+			return LocalDateUtils.getTimeInMillis(source, defaultValue);
+		}
+	};
+
 	public LongConverter() {
 		put(Boolean.class, booleanConverter);
 		put(Character.class, characterConverter);
@@ -58,6 +66,7 @@ public class LongConverter extends BaseConverter<Long> {
 		put(String.class, stringConverter);
 		put(Date.class, dateConverter);
 		put(Calendar.class, calendarConverter);
+		put(Instant.class, instantConverter);
 	}
 
 }

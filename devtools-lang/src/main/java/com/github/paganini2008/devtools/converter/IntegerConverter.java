@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.primitives.Ints;
  * @author Fred Feng
  * @version 1.0
  */
-public class IntegerConverter extends BaseConverter<Integer> {
+public class IntegerConverter extends BasicConverter<Integer> {
 
 	private final Converter<Boolean, Integer> booleanConverter = new Converter<Boolean, Integer>() {
 		public Integer getValue(Boolean source, Integer defaultValue) {

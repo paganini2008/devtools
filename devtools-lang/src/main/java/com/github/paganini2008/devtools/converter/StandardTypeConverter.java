@@ -23,7 +23,7 @@ import com.github.paganini2008.devtools.ClassUtils;
 @SuppressWarnings("unchecked")
 public class StandardTypeConverter implements TypeConverter {
 
-	private static final Map<Type, BaseConverter<?>> preparedConverters = new HashMap<Type, BaseConverter<?>>() {
+	private static final Map<Type, BasicConverter<?>> preparedConverters = new HashMap<Type, BasicConverter<?>>() {
 
 		private static final long serialVersionUID = 1L;
 
@@ -93,12 +93,12 @@ public class StandardTypeConverter implements TypeConverter {
 		}
 	};
 
-	private final Map<Type, BaseConverter<?>> converters;
+	private final Map<Type, BasicConverter<?>> converters;
 	private final ConverterConfig config = new ConverterConfig();
 
 	public StandardTypeConverter() {
-		this.converters = new ConcurrentHashMap<Type, BaseConverter<?>>(preparedConverters);
-		for (BaseConverter<?> baseConverter : converters.values()) {
+		this.converters = new ConcurrentHashMap<Type, BasicConverter<?>>(preparedConverters);
+		for (BasicConverter<?> baseConverter : converters.values()) {
 			baseConverter.setConfig(config);
 		}
 	}
@@ -107,7 +107,7 @@ public class StandardTypeConverter implements TypeConverter {
 		return config;
 	}
 
-	public <T> void register(Class<T> javaType, BaseConverter<T> converter) {
+	public <T> void register(Class<T> javaType, BasicConverter<T> converter) {
 		converters.put(javaType, converter);
 	}
 
@@ -119,8 +119,8 @@ public class StandardTypeConverter implements TypeConverter {
 		return converters.containsKey(javaType);
 	}
 
-	public <T> BaseConverter<T> lookup(Class<T> javaType) {
-		return (BaseConverter<T>) converters.get(javaType);
+	public <T> BasicConverter<T> lookup(Class<T> javaType) {
+		return (BasicConverter<T>) converters.get(javaType);
 	}
 
 	public <T> T convert(Object value, Class<T> requiredType, T defaultValue) {
@@ -134,7 +134,7 @@ public class StandardTypeConverter implements TypeConverter {
 			return requiredType.cast(value);
 		} catch (RuntimeException e) {
 		}
-		BaseConverter<T> converter = (BaseConverter<T>) lookup(requiredType);
+		BasicConverter<T> converter = (BasicConverter<T>) lookup(requiredType);
 		if (converter != null) {
 			return converter.getValue(value, defaultValue);
 		}

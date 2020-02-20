@@ -6,7 +6,7 @@ package com.github.paganini2008.devtools.converter;
  * @author Fred Feng
  * @version 1.0
  */
-public class CharArrayConverter extends BaseConverter<char[]> {
+public class CharArrayConverter extends BasicConverter<char[]> {
 
 	private final Converter<CharSequence, char[]> charSequenceConverter = new Converter<CharSequence, char[]>() {
 		public char[] getValue(CharSequence source, char[] defaultValue) {

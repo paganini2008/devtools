@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.primitives.Shorts;
  * @author Fred Feng
  * @version 1.0
  */
-public class ShortConverter extends BaseConverter<Short> {
+public class ShortConverter extends BasicConverter<Short> {
 
 	private final Converter<Boolean, Short> booleanConverter = new Converter<Boolean, Short>() {
 		public Short getValue(Boolean source, Short defaultValue) {

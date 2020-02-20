@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.primitives.Bytes;
  * @author Fred Feng
  * @version 1.0
  */
-public class ByteConverter extends BaseConverter<Byte> {
+public class ByteConverter extends BasicConverter<Byte> {
 
 	private final Converter<Boolean, Byte> booleanConverter = new Converter<Boolean, Byte>() {
 		public Byte getValue(Boolean source, Byte defaultValue) {

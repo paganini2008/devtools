@@ -6,8 +6,6 @@ import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.sql.Clob;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -18,7 +16,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.github.paganini2008.devtools.ArrayUtils;
-import com.github.paganini2008.devtools.CharsetUtils;
 import com.github.paganini2008.devtools.NumberUtils;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.MapUtils;
@@ -40,7 +37,7 @@ import com.github.paganini2008.devtools.primitives.Shorts;
  * @version 1.0
  */
 @SuppressWarnings("all")
-public class StringConverter extends BaseConverter<String> {
+public class StringConverter extends BasicConverter<String> {
 
 	private final Converter<UUID, String> uuidConverter = new Converter<UUID, String>() {
 		public String getValue(UUID source, String defaultValue) {
@@ -68,7 +65,7 @@ public class StringConverter extends BaseConverter<String> {
 
 	private final Converter<Number, String> numberConverter = new Converter<Number, String>() {
 		public String getValue(Number source, String defaultValue) {
-			return NumberUtils.format(source, config.getDecimalFormat(), defaultValue);
+			return NumberUtils.format(source, config.getDecimalFormatter(), defaultValue);
 		}
 	};
 

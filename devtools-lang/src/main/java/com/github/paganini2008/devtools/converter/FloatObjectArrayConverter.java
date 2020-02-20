@@ -5,7 +5,7 @@ import java.util.List;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.primitives.Floats;
 
-public class FloatObjectArrayConverter extends BaseConverter<Float[]> {
+public class FloatObjectArrayConverter extends BasicConverter<Float[]> {
 
 	private final Converter<CharSequence, Float[]> charSequenceConverter = new Converter<CharSequence, Float[]>() {
 		public Float[] getValue(CharSequence source, Float[] defaultValue) {

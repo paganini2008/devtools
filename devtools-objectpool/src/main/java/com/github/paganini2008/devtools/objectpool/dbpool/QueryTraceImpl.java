@@ -3,7 +3,7 @@ package com.github.paganini2008.devtools.objectpool.dbpool;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import com.github.paganini2008.devtools.date.DateUtils;
+import com.github.paganini2008.devtools.date.Duration;
 
 /**
  * QueryTraceImpl
@@ -44,7 +44,7 @@ public class QueryTraceImpl implements QueryTrace, Serializable {
 
 	public String toString() {
 		return "[QueryTrace] sql: " + sql + ", parameters: " + Arrays.toString(parameters) + ", elapsed: "
-				+ DateUtils.formatDurationAsHour(endTime - startTime);
+				+ Duration.MINUTE.format(endTime - startTime);
 	}
 
 }

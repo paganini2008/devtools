@@ -11,7 +11,7 @@ import com.github.paganini2008.devtools.primitives.Doubles;
  * @author Fred Feng
  * @version 1.0
  */
-public class DoubleArrayConverter extends BaseConverter<double[]> {
+public class DoubleArrayConverter extends BasicConverter<double[]> {
 
 	private final Converter<CharSequence, double[]> charSequenceConverter = new Converter<CharSequence, double[]>() {
 		public double[] getValue(CharSequence source, double[] defaultValue) {

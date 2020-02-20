@@ -10,7 +10,7 @@ import com.github.paganini2008.devtools.math.BigDecimalUtils;
  * @author Fred Feng
  * @version 1.0
  */
-public class BigDecimalArrayConverter extends BaseConverter<BigDecimal[]> {
+public class BigDecimalArrayConverter extends BasicConverter<BigDecimal[]> {
 
 	private final Converter<byte[], BigDecimal[]> nativeByteArrayConverter = new Converter<byte[], BigDecimal[]>() {
 		public BigDecimal[] getValue(byte[] source, BigDecimal[] defaultValue) {

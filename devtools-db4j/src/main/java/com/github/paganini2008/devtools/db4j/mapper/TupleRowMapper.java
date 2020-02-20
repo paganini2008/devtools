@@ -10,8 +10,6 @@ import com.github.paganini2008.devtools.db4j.TypeHandlerRegistry;
  * TupleRowMapper
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public class TupleRowMapper extends AbstractRowMapper<Tuple> {

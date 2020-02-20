@@ -10,7 +10,7 @@ import com.github.paganini2008.devtools.math.BigIntegerUtils;
  * @author Fred Feng
  * @version 1.0
  */
-public class BigIntegerConverter extends BaseConverter<BigInteger> {
+public class BigIntegerConverter extends BasicConverter<BigInteger> {
 
 	private final Converter<Number, BigInteger> numberConverter = new Converter<Number, BigInteger>() {
 		public BigInteger getValue(Number source, BigInteger defaultValue) {
