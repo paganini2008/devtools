@@ -18,44 +18,44 @@ import com.github.paganini2008.devtools.primitives.Longs;
 public class LongObjectArrayConverter extends BasicConverter<Long[]> {
 
 	private final Converter<CharSequence, Long[]> charSequenceConverter = new Converter<CharSequence, Long[]>() {
-		public Long[] getValue(CharSequence source, Long[] defaultValue) {
+		public Long[] convertValue(CharSequence source, Long[] defaultValue) {
 			if (StringUtils.isBlank(source)) {
 				return defaultValue;
 			}
 			List<String> result = StringUtils.split(source, config.getDelimiter());
-			return Longs.valuesOf(result.toArray(new String[result.size()]));
+			return Longs.valueOf(result.toArray(new String[result.size()]));
 		}
 	};
 
 	private final Converter<Character[], Long[]> characterObjectArrayConverter = new Converter<Character[], Long[]>() {
-		public Long[] getValue(Character[] source, Long[] defaultValue) {
+		public Long[] convertValue(Character[] source, Long[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
-			return Longs.valuesOf(source);
+			return Longs.valueOf(source);
 		}
 	};
 
 	private final Converter<Boolean[], Long[]> booleanObjectArrayConverter = new Converter<Boolean[], Long[]>() {
-		public Long[] getValue(Boolean[] source, Long[] defaultValue) {
+		public Long[] convertValue(Boolean[] source, Long[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
-			return Longs.valuesOf(source);
+			return Longs.valueOf(source);
 		}
 	};
 
 	private final Converter<Number[], Long[]> numberArrayConverter = new Converter<Number[], Long[]>() {
-		public Long[] getValue(Number[] source, Long[] defaultValue) {
+		public Long[] convertValue(Number[] source, Long[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
-			return Longs.valuesOf(source);
+			return Longs.valueOf(source);
 		}
 	};
 
 	private final Converter<boolean[], Long[]> booleanArrayConverter = new Converter<boolean[], Long[]>() {
-		public Long[] getValue(boolean[] source, Long[] defaultValue) {
+		public Long[] convertValue(boolean[] source, Long[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -64,7 +64,7 @@ public class LongObjectArrayConverter extends BasicConverter<Long[]> {
 	};
 
 	private final Converter<byte[], Long[]> byteArrayConverter = new Converter<byte[], Long[]>() {
-		public Long[] getValue(byte[] source, Long[] defaultValue) {
+		public Long[] convertValue(byte[] source, Long[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -73,7 +73,7 @@ public class LongObjectArrayConverter extends BasicConverter<Long[]> {
 	};
 
 	private final Converter<short[], Long[]> shortArrayConverter = new Converter<short[], Long[]>() {
-		public Long[] getValue(short[] source, Long[] defaultValue) {
+		public Long[] convertValue(short[] source, Long[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -82,7 +82,7 @@ public class LongObjectArrayConverter extends BasicConverter<Long[]> {
 	};
 
 	private final Converter<char[], Long[]> charArrayConverter = new Converter<char[], Long[]>() {
-		public Long[] getValue(char[] source, Long[] defaultValue) {
+		public Long[] convertValue(char[] source, Long[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -91,7 +91,7 @@ public class LongObjectArrayConverter extends BasicConverter<Long[]> {
 	};
 
 	private final Converter<int[], Long[]> intArrayConverter = new Converter<int[], Long[]>() {
-		public Long[] getValue(int[] source, Long[] defaultValue) {
+		public Long[] convertValue(int[] source, Long[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -100,7 +100,7 @@ public class LongObjectArrayConverter extends BasicConverter<Long[]> {
 	};
 
 	private final Converter<long[], Long[]> longArrayConverter = new Converter<long[], Long[]>() {
-		public Long[] getValue(long[] source, Long[] defaultValue) {
+		public Long[] convertValue(long[] source, Long[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -109,16 +109,16 @@ public class LongObjectArrayConverter extends BasicConverter<Long[]> {
 	};
 
 	private final Converter<String[], Long[]> stringConverter = new Converter<String[], Long[]>() {
-		public Long[] getValue(String[] source, Long[] defaultValue) {
+		public Long[] convertValue(String[] source, Long[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
-			return Longs.valuesOf(source);
+			return Longs.valueOf(source);
 		}
 	};
 
 	private final Converter<Date[], Long[]> dateConverter = new Converter<Date[], Long[]>() {
-		public Long[] getValue(Date[] source, Long[] defaultValue) {
+		public Long[] convertValue(Date[] source, Long[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -127,7 +127,7 @@ public class LongObjectArrayConverter extends BasicConverter<Long[]> {
 	};
 
 	private final Converter<Calendar[], Long[]> calendarConverter = new Converter<Calendar[], Long[]>() {
-		public Long[] getValue(Calendar[] source, Long[] defaultValue) {
+		public Long[] convertValue(Calendar[] source, Long[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -136,19 +136,19 @@ public class LongObjectArrayConverter extends BasicConverter<Long[]> {
 	};
 
 	public LongObjectArrayConverter() {
-		put(CharSequence.class, charSequenceConverter);
-		put(Boolean[].class, booleanObjectArrayConverter);
-		put(Character[].class, characterObjectArrayConverter);
-		put(Number[].class, numberArrayConverter);
-		put(String[].class, stringConverter);
-		put(Date.class, dateConverter);
-		put(Calendar.class, calendarConverter);
-		put(char[].class, charArrayConverter);
-		put(boolean[].class, booleanArrayConverter);
-		put(byte[].class, byteArrayConverter);
-		put(short[].class, shortArrayConverter);
-		put(int[].class, intArrayConverter);
-		put(long[].class, longArrayConverter);
+		registerType(CharSequence.class, charSequenceConverter);
+		registerType(Boolean[].class, booleanObjectArrayConverter);
+		registerType(Character[].class, characterObjectArrayConverter);
+		registerType(Number[].class, numberArrayConverter);
+		registerType(String[].class, stringConverter);
+		registerType(Date.class, dateConverter);
+		registerType(Calendar.class, calendarConverter);
+		registerType(char[].class, charArrayConverter);
+		registerType(boolean[].class, booleanArrayConverter);
+		registerType(byte[].class, byteArrayConverter);
+		registerType(short[].class, shortArrayConverter);
+		registerType(int[].class, intArrayConverter);
+		registerType(long[].class, longArrayConverter);
 	}
 
 }

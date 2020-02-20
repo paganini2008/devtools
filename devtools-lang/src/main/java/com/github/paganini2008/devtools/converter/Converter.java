@@ -8,6 +8,6 @@ package com.github.paganini2008.devtools.converter;
  */
 public interface Converter<S, T> {
 
-	T getValue(S source, T defaultValue);
+	T convertValue(S source, T defaultValue);
 
 }

@@ -187,11 +187,11 @@ public abstract class Longs {
 		return result;
 	}
 
-	public static Long[] valuesOf(Number[] array) {
-		return valuesOf(array, null);
+	public static Long[] valueOf(Number[] array) {
+		return valueOf(array, null);
 	}
 
-	public static Long[] valuesOf(Number[] array, Long defaultValue) {
+	public static Long[] valueOf(Number[] array, Long defaultValue) {
 		Long[] result = new Long[array.length];
 		int i = 0;
 		for (Number arg : array) {
@@ -218,11 +218,11 @@ public abstract class Longs {
 		return result;
 	}
 
-	public static Long[] valuesOf(Boolean[] value) {
-		return valuesOf(value, null);
+	public static Long[] valueOf(Boolean[] value) {
+		return valueOf(value, null);
 	}
 
-	public static Long[] valuesOf(Boolean[] value, Long defaultValue) {
+	public static Long[] valueOf(Boolean[] value, Long defaultValue) {
 		Assert.isNull(value, "Source array must not be null.");
 		Long[] result = new Long[value.length];
 		for (int i = 0; i < value.length; i++) {
@@ -231,11 +231,11 @@ public abstract class Longs {
 		return result;
 	}
 
-	public static Long[] valuesOf(Character[] value) {
-		return valuesOf(value, null);
+	public static Long[] valueOf(Character[] value) {
+		return valueOf(value, null);
 	}
 
-	public static Long[] valuesOf(Character[] value, Long defaultValue) {
+	public static Long[] valueOf(Character[] value, Long defaultValue) {
 		Assert.isNull(value, "Source array must not be null.");
 		Long[] result = new Long[value.length];
 		for (int i = 0; i < value.length; i++) {
@@ -580,13 +580,14 @@ public abstract class Longs {
 		return ensureCapacity(result, i);
 	}
 
-	public static long[] toArray(Collection<Long> list) {
-		Assert.isNull(list, "Source list must not be null.");
-		long[] array = new long[list.size()];
+	public static long[] toArray(Collection<?> collection) {
+		Assert.isNull(collection, "Source collection must not be null.");
+		long[] array = new long[collection.size()];
 		int i = 0;
-		for (Long a : list) {
-			if (a != null) {
-				array[i++] = a.longValue();
+		for (Object a : collection) {
+			try {
+				array[i++] = ((Number) a).longValue();
+			} catch (RuntimeException e) {
 			}
 		}
 		return ensureCapacity(array, i);
@@ -653,30 +654,30 @@ public abstract class Longs {
 		}
 	}
 
-	public static Long[] valuesOf(String[] strs) {
-		return valuesOf(strs, null);
+	public static Long[] valueOf(String[] strings) {
+		return valueOf(strings, null);
 	}
 
-	public static Long[] valuesOf(String[] strs, Long defaultValue) {
-		Assert.isNull(strs, "Source array must not be null.");
-		Long[] result = new Long[strs.length];
+	public static Long[] valueOf(String[] strings, Long defaultValue) {
+		Assert.isNull(strings, "Source array must not be null.");
+		Long[] result = new Long[strings.length];
 		int i = 0;
-		for (String str : strs) {
+		for (String str : strings) {
 			result[i++] = valueOf(str, defaultValue);
 		}
 		return result;
 	}
 
-	public static long[] parses(String[] strs) {
-		return parses(strs, true);
+	public static long[] parseMany(String[] strings) {
+		return parseMany(strings, true);
 	}
 
-	public static long[] parses(String[] strs, boolean thrown) {
-		Assert.isNull(strs, "Source array must not be null.");
-		long[] result = new long[strs.length];
+	public static long[] parseMany(String[] strings, boolean thrown) {
+		Assert.isNull(strings, "Source array must not be null.");
+		long[] result = new long[strings.length];
 		int i = 0;
 		long s;
-		for (String str : strs) {
+		for (String str : strings) {
 			try {
 				s = parse(str);
 				result[i++] = s;

@@ -10,8 +10,8 @@ import com.github.paganini2008.devtools.primitives.Chars;
  */
 public class CharacterObjectArrayConverter extends BasicConverter<Character[]> {
 
-	private final Converter<char[], Character[]> nativeCharArrayConverter = new Converter<char[], Character[]>() {
-		public Character[] getValue(char[] source, Character[] defaultValue) {
+	private final Converter<char[], Character[]> charArrayConverter = new Converter<char[], Character[]>() {
+		public Character[] convertValue(char[] source, Character[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -20,7 +20,7 @@ public class CharacterObjectArrayConverter extends BasicConverter<Character[]> {
 	};
 
 	private final Converter<CharSequence, Character[]> stringConverter = new Converter<CharSequence, Character[]>() {
-		public Character[] getValue(CharSequence source, Character[] defaultValue) {
+		public Character[] convertValue(CharSequence source, Character[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -29,8 +29,8 @@ public class CharacterObjectArrayConverter extends BasicConverter<Character[]> {
 	};
 
 	public CharacterObjectArrayConverter() {
-		put(char[].class, nativeCharArrayConverter);
-		put(CharSequence.class, stringConverter);
+		registerType(char[].class, charArrayConverter);
+		registerType(CharSequence.class, stringConverter);
 	}
 
 }

@@ -13,7 +13,7 @@ import com.github.paganini2008.devtools.StringUtils;
 public class CharsetConverter extends BasicConverter<Charset> {
 
 	private final Converter<String, Charset> stringConverter = new Converter<String, Charset>() {
-		public Charset getValue(String source, Charset defaultValue) {
+		public Charset convertValue(String source, Charset defaultValue) {
 			if (StringUtils.isBlank(source)) {
 				return defaultValue;
 			}
@@ -22,7 +22,7 @@ public class CharsetConverter extends BasicConverter<Charset> {
 	};
 
 	public CharsetConverter() {
-		put(String.class, stringConverter);
+		registerType(String.class, stringConverter);
 	}
 
 }

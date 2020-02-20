@@ -14,17 +14,17 @@ import com.github.paganini2008.devtools.primitives.Bytes;
 public class ByteObjectArrayConverter extends BasicConverter<Byte[]> {
 
 	private final Converter<CharSequence, Byte[]> charSequenceConverter = new Converter<CharSequence, Byte[]>() {
-		public Byte[] getValue(CharSequence source, Byte[] defaultValue) {
+		public Byte[] convertValue(CharSequence source, Byte[] defaultValue) {
 			if (StringUtils.isBlank(source)) {
 				return defaultValue;
 			}
 			List<String> result = StringUtils.split(source, config.getDelimiter());
-			return result != null ? Bytes.valuesOf(result.toArray(new String[result.size()])) : defaultValue;
+			return result != null ? Bytes.valueOf(result.toArray(new String[result.size()])) : defaultValue;
 		}
 	};
 
-	private final Converter<char[], Byte[]> nativeCharArrayConverter = new Converter<char[], Byte[]>() {
-		public Byte[] getValue(char[] source, Byte[] defaultValue) {
+	private final Converter<char[], Byte[]> charArrayConverter = new Converter<char[], Byte[]>() {
+		public Byte[] convertValue(char[] source, Byte[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -32,8 +32,8 @@ public class ByteObjectArrayConverter extends BasicConverter<Byte[]> {
 		}
 	};
 
-	private final Converter<boolean[], Byte[]> nativeBooleanArrayConverter = new Converter<boolean[], Byte[]>() {
-		public Byte[] getValue(boolean[] source, Byte[] defaultValue) {
+	private final Converter<boolean[], Byte[]> booleanArrayConverter = new Converter<boolean[], Byte[]>() {
+		public Byte[] convertValue(boolean[] source, Byte[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -41,8 +41,8 @@ public class ByteObjectArrayConverter extends BasicConverter<Byte[]> {
 		}
 	};
 
-	private final Converter<byte[], Byte[]> nativeByteArrayConverter = new Converter<byte[], Byte[]>() {
-		public Byte[] getValue(byte[] source, Byte[] defaultValue) {
+	private final Converter<byte[], Byte[]> byteArrayConverter = new Converter<byte[], Byte[]>() {
+		public Byte[] convertValue(byte[] source, Byte[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -51,30 +51,30 @@ public class ByteObjectArrayConverter extends BasicConverter<Byte[]> {
 	};
 
 	private final Converter<Number[], Byte[]> numberArrayConverter = new Converter<Number[], Byte[]>() {
-		public Byte[] getValue(Number[] source, Byte[] defaultValue) {
+		public Byte[] convertValue(Number[] source, Byte[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
-			return Bytes.valuesOf(source);
+			return Bytes.valueOf(source);
 		}
 	};
 
 	private final Converter<String[], Byte[]> stringArrayConverter = new Converter<String[], Byte[]>() {
-		public Byte[] getValue(String[] source, Byte[] defaultValue) {
+		public Byte[] convertValue(String[] source, Byte[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
-			return Bytes.valuesOf(source);
+			return Bytes.valueOf(source);
 		}
 	};
 
 	public ByteObjectArrayConverter() {
-		put(CharSequence.class, charSequenceConverter);
-		put(Number[].class, numberArrayConverter);
-		put(String[].class, stringArrayConverter);
-		put(boolean[].class, nativeBooleanArrayConverter);
-		put(char[].class, nativeCharArrayConverter);
-		put(byte[].class, nativeByteArrayConverter);
+		registerType(CharSequence.class, charSequenceConverter);
+		registerType(Number[].class, numberArrayConverter);
+		registerType(String[].class, stringArrayConverter);
+		registerType(boolean[].class, booleanArrayConverter);
+		registerType(char[].class, charArrayConverter);
+		registerType(byte[].class, byteArrayConverter);
 	}
 
 }

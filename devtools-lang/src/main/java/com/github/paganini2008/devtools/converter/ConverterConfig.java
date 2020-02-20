@@ -26,7 +26,7 @@ public final class ConverterConfig {
 	private DateTimeFormatter dateFormatter = LocalDateUtils.DEFAULT_DATE_FORMATTER;
 	private DateTimeFormatter timeFormatter = LocalDateUtils.DEFAULT_TIME_FORMATTER;
 	private DateTimeFormatter dateTimeFormatter = LocalDateUtils.DEFAULT_DATETIME_FORMATTER;
-	private Charset charset = CharsetUtils.UTF_8;
+	private Charset stringCharset = CharsetUtils.UTF_8;
 	private String datePattern = DateUtils.DEFAULT_DATE_PATTERN;
 	private TimeZone timeZone = TimeZone.getDefault();
 	private ZoneId zoneId = ZoneId.systemDefault();
@@ -79,12 +79,12 @@ public final class ConverterConfig {
 		this.dateTimeFormatter = dateTimeFormatter;
 	}
 
-	public Charset getCharset() {
-		return charset;
+	public Charset getStringCharset() {
+		return stringCharset;
 	}
 
-	public void setCharset(Charset charset) {
-		this.charset = charset;
+	public void setStringCharset(Charset stringCharset) {
+		this.stringCharset = stringCharset;
 	}
 
 	public String getDatePattern() {

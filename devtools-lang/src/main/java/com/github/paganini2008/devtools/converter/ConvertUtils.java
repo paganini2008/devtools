@@ -1,43 +1,49 @@
 package com.github.paganini2008.devtools.converter;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 /**
  * 
  * ConvertUtils
  * 
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
-public class ConvertUtils {
+public abstract class ConvertUtils {
 
-	static final TypeConverter INSTANCE = new StandardTypeConverter();
+	private static final TypeConverter INSTANCE = new StandardTypeConverter();
 
-	public static <T> void registerConverter(Class<T> requiredType, BasicConverter<T> converter) {
-		INSTANCE.register(requiredType, converter);
+	public static <T> void registerType(Class<T> javaType, BasicConverter<T> converter) {
+		INSTANCE.registerType(javaType, converter);
 	}
 
-	public static void removeConverter(Class<?> requiredType) {
-		INSTANCE.remove(requiredType);
+	public static void removeType(Class<?> javaType) {
+		INSTANCE.removeType(javaType);
 	}
 
-	public static void containsConverter(Class<?> requiredType) {
-		INSTANCE.contains(requiredType);
+	public static void hasType(Class<?> javaType) {
+		INSTANCE.hasType(javaType);
 	}
 
-	public static <T> BasicConverter<T> lookupConverter(Class<T> requiredType) {
-		return INSTANCE.lookup(requiredType);
+	public static <T> BasicConverter<T> lookupType(Class<T> javaType) {
+		return INSTANCE.lookupType(javaType);
 	}
 
-	public static <T> T convertValue(Object value, Class<T> requiredType) {
-		return convertValue(value, requiredType, null);
+	public static <T> T convertValue(Object value, Class<T> javaType) {
+		return convertValue(value, javaType, null);
 	}
 
-	public static <T> T convertValue(Object value, Class<T> requiredType, T defaultValue) {
-		return INSTANCE.convert(value, requiredType, defaultValue);
+	public static <T> T convertValue(Object value, Class<T> javaType, T defaultValue) {
+		return INSTANCE.convertValue(value, javaType, defaultValue);
 	}
-
-	private ConvertUtils() {
+	
+	public static void main(String[] args) throws MalformedURLException {
+		Object i = ConvertUtils.convertValue(new URL("https://new.qq.com/omn/20200220/20200220A06MDP00.html?pgv_ref=aio2015"),byte[].class);
+		System.out.println(i.getClass());
+		System.out.println(i);
 	}
 
 }

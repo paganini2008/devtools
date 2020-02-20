@@ -40,7 +40,7 @@ public class ColumnNameRowMapper<T> implements RowMapper<T> {
 
 	public T mapRow(int rowIndex, ResultSet rs) throws SQLException {
 		Object result = getColumnValue(rs, jdbcType);
-		Object converted = typeConverter != null ? typeConverter.convert(result, requiredType, null) : result;
+		Object converted = typeConverter != null ? typeConverter.convertValue(result, requiredType, null) : result;
 		return requiredType.cast(converted);
 	}
 

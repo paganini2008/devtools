@@ -4,10 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.sql.Blob;
 
-import com.github.paganini2008.devtools.CharsetUtils;
 import com.github.paganini2008.devtools.io.IOUtils;
 import com.github.paganini2008.devtools.net.UrlUtils;
 import com.github.paganini2008.devtools.primitives.Bytes;
@@ -21,7 +19,7 @@ import com.github.paganini2008.devtools.primitives.Bytes;
 public class ByteArrayConverter extends BasicConverter<byte[]> {
 
 	private final Converter<CharSequence, byte[]> charSequenceConverter = new Converter<CharSequence, byte[]>() {
-		public byte[] getValue(CharSequence source, byte[] defaultValue) {
+		public byte[] convertValue(CharSequence source, byte[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -29,8 +27,8 @@ public class ByteArrayConverter extends BasicConverter<byte[]> {
 		}
 	};
 
-	private final Converter<short[], byte[]> nativeShortArrayConverter = new Converter<short[], byte[]>() {
-		public byte[] getValue(short[] source, byte[] defaultValue) {
+	private final Converter<short[], byte[]> shortArrayConverter = new Converter<short[], byte[]>() {
+		public byte[] convertValue(short[] source, byte[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -38,8 +36,8 @@ public class ByteArrayConverter extends BasicConverter<byte[]> {
 		}
 	};
 
-	private final Converter<int[], byte[]> nativeIntArrayConverter = new Converter<int[], byte[]>() {
-		public byte[] getValue(int[] source, byte[] defaultValue) {
+	private final Converter<int[], byte[]> intArrayConverter = new Converter<int[], byte[]>() {
+		public byte[] convertValue(int[] source, byte[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -47,8 +45,8 @@ public class ByteArrayConverter extends BasicConverter<byte[]> {
 		}
 	};
 
-	private final Converter<long[], byte[]> nativeLongArrayConverter = new Converter<long[], byte[]>() {
-		public byte[] getValue(long[] source, byte[] defaultValue) {
+	private final Converter<long[], byte[]> longArrayConverter = new Converter<long[], byte[]>() {
+		public byte[] convertValue(long[] source, byte[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -56,8 +54,8 @@ public class ByteArrayConverter extends BasicConverter<byte[]> {
 		}
 	};
 
-	private final Converter<float[], byte[]> nativeFloatArrayConverter = new Converter<float[], byte[]>() {
-		public byte[] getValue(float[] source, byte[] defaultValue) {
+	private final Converter<float[], byte[]> floatArrayConverter = new Converter<float[], byte[]>() {
+		public byte[] convertValue(float[] source, byte[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -65,8 +63,8 @@ public class ByteArrayConverter extends BasicConverter<byte[]> {
 		}
 	};
 
-	private final Converter<double[], byte[]> nativeDoubleArrayConverter = new Converter<double[], byte[]>() {
-		public byte[] getValue(double[] source, byte[] defaultValue) {
+	private final Converter<double[], byte[]> doubleArrayConverter = new Converter<double[], byte[]>() {
+		public byte[] convertValue(double[] source, byte[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -74,8 +72,8 @@ public class ByteArrayConverter extends BasicConverter<byte[]> {
 		}
 	};
 
-	private final Converter<char[], byte[]> nativeCharArrayConverter = new Converter<char[], byte[]>() {
-		public byte[] getValue(char[] source, byte[] defaultValue) {
+	private final Converter<char[], byte[]> charArrayConverter = new Converter<char[], byte[]>() {
+		public byte[] convertValue(char[] source, byte[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -83,8 +81,8 @@ public class ByteArrayConverter extends BasicConverter<byte[]> {
 		}
 	};
 
-	private final Converter<boolean[], byte[]> nativeBooleanArrayConverter = new Converter<boolean[], byte[]>() {
-		public byte[] getValue(boolean[] source, byte[] defaultValue) {
+	private final Converter<boolean[], byte[]> booleanArrayConverter = new Converter<boolean[], byte[]>() {
+		public byte[] convertValue(boolean[] source, byte[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -93,7 +91,7 @@ public class ByteArrayConverter extends BasicConverter<byte[]> {
 	};
 
 	private final Converter<Number[], byte[]> numberArrayConverter = new Converter<Number[], byte[]>() {
-		public byte[] getValue(Number[] source, byte[] defaultValue) {
+		public byte[] convertValue(Number[] source, byte[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -102,42 +100,50 @@ public class ByteArrayConverter extends BasicConverter<byte[]> {
 	};
 
 	private final Converter<String[], byte[]> stringArrayConverter = new Converter<String[], byte[]>() {
-		public byte[] getValue(String[] source, byte[] defaultValue) {
+		public byte[] convertValue(String[] source, byte[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
-			return Bytes.parses(source);
+			return Bytes.parseMany(source);
 		}
 	};
 
 	private final Converter<URL, byte[]> urlConverter = new Converter<URL, byte[]>() {
-		public byte[] getValue(URL source, byte[] defaultValue) {
+		public byte[] convertValue(URL source, byte[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
+			InputStream in = null;
 			try {
-				return IOUtils.toByteArray(UrlUtils.openStream(source));
+				in = UrlUtils.openStream(source);
+				return IOUtils.toByteArray(in);
 			} catch (IOException e) {
 				return defaultValue;
+			} finally {
+				IOUtils.closeQuietly(in);
 			}
 		}
 	};
 
 	private final Converter<Blob, byte[]> blobConverter = new Converter<Blob, byte[]>() {
-		public byte[] getValue(Blob source, byte[] defaultValue) {
+		public byte[] convertValue(Blob source, byte[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
+			InputStream in = null;
 			try {
-				return IOUtils.toByteArray(source.getBinaryStream());
+				in = source.getBinaryStream();
+				return IOUtils.toByteArray(in);
 			} catch (Exception e) {
 				return defaultValue;
+			} finally {
+				IOUtils.closeQuietly(in);
 			}
 		}
 	};
 
 	private final Converter<InputStream, byte[]> inputStreamConverter = new Converter<InputStream, byte[]>() {
-		public byte[] getValue(InputStream source, byte[] defaultValue) {
+		public byte[] convertValue(InputStream source, byte[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -145,45 +151,42 @@ public class ByteArrayConverter extends BasicConverter<byte[]> {
 				return IOUtils.toByteArray(source);
 			} catch (IOException e) {
 				return defaultValue;
+			} finally {
+				IOUtils.closeQuietly(source);
 			}
 		}
 	};
 
 	private final Converter<Reader, byte[]> readerConverter = new Converter<Reader, byte[]>() {
-		public byte[] getValue(Reader source, byte[] defaultValue) {
+		public byte[] convertValue(Reader source, byte[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
 			try {
-				return IOUtils.toByteArray(source, charset);
+				return IOUtils.toByteArray(source, "UTF-8");
 			} catch (IOException e) {
 				return defaultValue;
+			} finally {
+				IOUtils.closeQuietly(source);
 			}
-
 		}
 	};
 
-	private Charset charset = CharsetUtils.UTF_8;
-
-	public void setCharset(Charset charset) {
-		this.charset = charset;
-	}
-
 	public ByteArrayConverter() {
-		put(CharSequence.class, charSequenceConverter);
-		put(Number[].class, numberArrayConverter);
-		put(String[].class, stringArrayConverter);
-		put(InputStream.class, inputStreamConverter);
-		put(Reader.class, readerConverter);
-		put(URL.class, urlConverter);
-		put(Blob.class, blobConverter);
-		put(char[].class, nativeCharArrayConverter);
-		put(boolean[].class, nativeBooleanArrayConverter);
-		put(short[].class, nativeShortArrayConverter);
-		put(int[].class, nativeIntArrayConverter);
-		put(long[].class, nativeLongArrayConverter);
-		put(float[].class, nativeFloatArrayConverter);
-		put(double[].class, nativeDoubleArrayConverter);
+		registerType(CharSequence.class, charSequenceConverter);
+		registerType(Number[].class, numberArrayConverter);
+		registerType(String[].class, stringArrayConverter);
+		registerType(InputStream.class, inputStreamConverter);
+		registerType(Reader.class, readerConverter);
+		registerType(URL.class, urlConverter);
+		registerType(Blob.class, blobConverter);
+		registerType(char[].class, charArrayConverter);
+		registerType(boolean[].class, booleanArrayConverter);
+		registerType(short[].class, shortArrayConverter);
+		registerType(int[].class, intArrayConverter);
+		registerType(long[].class, longArrayConverter);
+		registerType(float[].class, floatArrayConverter);
+		registerType(double[].class, doubleArrayConverter);
 	}
 
 }

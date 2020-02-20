@@ -9,7 +9,7 @@ package com.github.paganini2008.devtools.converter;
 public class CharArrayConverter extends BasicConverter<char[]> {
 
 	private final Converter<CharSequence, char[]> charSequenceConverter = new Converter<CharSequence, char[]>() {
-		public char[] getValue(CharSequence source, char[] defaultValue) {
+		public char[] convertValue(CharSequence source, char[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -18,7 +18,7 @@ public class CharArrayConverter extends BasicConverter<char[]> {
 	};
 
 	public CharArrayConverter() {
-		put(CharSequence.class, charSequenceConverter);
+		registerType(CharSequence.class, charSequenceConverter);
 	}
 
 }

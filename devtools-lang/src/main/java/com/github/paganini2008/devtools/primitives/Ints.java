@@ -467,13 +467,14 @@ public abstract class Ints {
 		return ensureCapacity(result, i);
 	}
 
-	public static int[] toArray(Collection<Integer> c) {
-		Assert.isNull(c, "Source collection must not be null.");
-		int[] array = new int[c.size()];
+	public static int[] toArray(Collection<?> collection, int defaultValue) {
+		Assert.isNull(collection, "Source collection must not be null.");
+		int[] array = new int[collection.size()];
 		int i = 0;
-		for (Integer a : c) {
-			if (a != null) {
-				array[i++] = a.intValue();
+		for (Object a : collection) {
+			try {
+				array[i++] = ((Number) a).intValue();
+			} catch (RuntimeException e) {
 			}
 		}
 		return ensureCapacity(array, i);
@@ -562,30 +563,30 @@ public abstract class Ints {
 		}
 	}
 
-	public static Integer[] valuesOf(String[] strs) {
-		return valuesOf(strs, null);
+	public static Integer[] valueOf(String[] strings) {
+		return valueOf(strings, null);
 	}
 
-	public static Integer[] valuesOf(String[] strs, Integer defaultValue) {
-		Assert.isNull(strs, "Source array must not be null.");
-		Integer[] result = new Integer[strs.length];
+	public static Integer[] valueOf(String[] strings, Integer defaultValue) {
+		Assert.isNull(strings, "Source array must not be null.");
+		Integer[] result = new Integer[strings.length];
 		int i = 0;
-		for (String str : strs) {
+		for (String str : strings) {
 			result[i++] = valueOf(str, defaultValue);
 		}
 		return result;
 	}
 
-	public static int[] parses(String[] strs) {
-		return parses(strs, true);
+	public static int[] parseMany(String[] strings) {
+		return parseMany(strings, true);
 	}
 
-	public static int[] parses(String[] strs, boolean thrown) {
-		Assert.isNull(strs, "Source array must not be null.");
-		int[] result = new int[strs.length];
+	public static int[] parseMany(String[] strings, boolean thrown) {
+		Assert.isNull(strings, "Source array must not be null.");
+		int[] result = new int[strings.length];
 		int i = 0;
 		int s;
-		for (String str : strs) {
+		for (String str : strings) {
 			try {
 				s = parse(str);
 				result[i++] = s;
@@ -839,11 +840,11 @@ public abstract class Ints {
 		}
 	}
 
-	public static Integer[] valuesOf(Number[] array) {
-		return valuesOf(array, null);
+	public static Integer[] valueOf(Number[] array) {
+		return valueOf(array, null);
 	}
 
-	public static Integer[] valuesOf(Number[] array, Integer defaultValue) {
+	public static Integer[] valueOf(Number[] array, Integer defaultValue) {
 		Integer[] result = new Integer[array.length];
 		int i = 0;
 		for (Number arg : array) {

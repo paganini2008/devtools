@@ -451,13 +451,14 @@ public abstract class Shorts {
 		return ensureCapacity(result, i);
 	}
 
-	public static short[] toArray(Collection<Short> c) {
-		Assert.isNull(c, "Source collection must not be null.");
-		short[] array = new short[c.size()];
+	public static short[] toArray(Collection<?> collection) {
+		Assert.isNull(collection, "Source collection must not be null.");
+		short[] array = new short[collection.size()];
 		int i = 0;
-		for (Short a : c) {
-			if (a != null) {
-				array[i++] = a.shortValue();
+		for (Object a : collection) {
+			try {
+				array[i++] = ((Number) a).shortValue();
+			} catch (RuntimeException e) {
 			}
 		}
 		return ensureCapacity(array, i);
@@ -546,15 +547,15 @@ public abstract class Shorts {
 		}
 	}
 
-	public static Short[] valuesOf(String[] strs) {
-		return valuesOf(strs, null);
+	public static Short[] valueOf(String[] strings) {
+		return valueOf(strings, null);
 	}
 
-	public static Short[] valuesOf(String[] strs, Short defaultValue) {
-		Assert.isNull(strs, "Source array must not be null.");
-		Short[] result = new Short[strs.length];
+	public static Short[] valueOf(String[] strings, Short defaultValue) {
+		Assert.isNull(strings, "Source array must not be null.");
+		Short[] result = new Short[strings.length];
 		int i = 0;
-		for (String str : strs) {
+		for (String str : strings) {
 			result[i++] = valueOf(str, defaultValue);
 		}
 		return result;
@@ -592,16 +593,16 @@ public abstract class Shorts {
 		return pooled.shortValue();
 	}
 
-	public static short[] parses(String[] strs) {
-		return parses(strs, true);
+	public static short[] parseMany(String[] strings) {
+		return parseMany(strings, true);
 	}
 
-	public static short[] parses(String[] strs, boolean thrown) {
-		Assert.isNull(strs, "Source array must not be null.");
-		short[] result = new short[strs.length];
+	public static short[] parseMany(String[] strings, boolean thrown) {
+		Assert.isNull(strings, "Source array must not be null.");
+		short[] result = new short[strings.length];
 		int i = 0;
 		short s;
-		for (String str : strs) {
+		for (String str : strings) {
 			try {
 				s = parse(str);
 				result[i++] = s;
@@ -816,11 +817,11 @@ public abstract class Shorts {
 		}
 	}
 
-	public static Short[] valuesOf(Number[] array) {
-		return valuesOf(array, null);
+	public static Short[] valueOf(Number[] array) {
+		return valueOf(array, null);
 	}
 
-	public static Short[] valuesOf(Number[] array, Short defaultValue) {
+	public static Short[] valueOf(Number[] array, Short defaultValue) {
 		Assert.isNull(array, "Source array must not be null.");
 		Short[] result = new Short[array.length];
 		int i = 0;

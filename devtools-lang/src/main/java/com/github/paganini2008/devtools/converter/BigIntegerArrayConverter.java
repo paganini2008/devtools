@@ -12,67 +12,67 @@ import com.github.paganini2008.devtools.math.BigIntegerUtils;
  */
 public class BigIntegerArrayConverter extends BasicConverter<BigInteger[]> {
 
-	private final Converter<byte[], BigInteger[]> nativeByteArrayConverter = new Converter<byte[], BigInteger[]>() {
-		public BigInteger[] getValue(byte[] source, BigInteger[] defaultValue) {
+	private final Converter<byte[], BigInteger[]> byteArrayConverter = new Converter<byte[], BigInteger[]>() {
+		public BigInteger[] convertValue(byte[] source, BigInteger[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
-			return BigIntegerUtils.valuesOf(source);
+			return BigIntegerUtils.valueOf(source);
 		}
 	};
 
-	private final Converter<short[], BigInteger[]> nativeShortArrayConverter = new Converter<short[], BigInteger[]>() {
-		public BigInteger[] getValue(short[] source, BigInteger[] defaultValue) {
+	private final Converter<short[], BigInteger[]> shortArrayConverter = new Converter<short[], BigInteger[]>() {
+		public BigInteger[] convertValue(short[] source, BigInteger[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
-			return BigIntegerUtils.valuesOf(source);
+			return BigIntegerUtils.valueOf(source);
 		}
 	};
 
-	private final Converter<int[], BigInteger[]> nativeIntArrayConverter = new Converter<int[], BigInteger[]>() {
-		public BigInteger[] getValue(int[] source, BigInteger[] defaultValue) {
+	private final Converter<int[], BigInteger[]> intArrayConverter = new Converter<int[], BigInteger[]>() {
+		public BigInteger[] convertValue(int[] source, BigInteger[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
-			return BigIntegerUtils.valuesOf(source);
+			return BigIntegerUtils.valueOf(source);
 		}
 	};
 
-	private final Converter<long[], BigInteger[]> nativeLongArrayConverter = new Converter<long[], BigInteger[]>() {
-		public BigInteger[] getValue(long[] source, BigInteger[] defaultValue) {
+	private final Converter<long[], BigInteger[]> longArrayConverter = new Converter<long[], BigInteger[]>() {
+		public BigInteger[] convertValue(long[] source, BigInteger[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
-			return BigIntegerUtils.valuesOf(source);
+			return BigIntegerUtils.valueOf(source);
 		}
 	};
 
 	private final Converter<Number[], BigInteger[]> numberArrayConverter = new Converter<Number[], BigInteger[]>() {
-		public BigInteger[] getValue(Number[] source, BigInteger[] defaultValue) {
+		public BigInteger[] convertValue(Number[] source, BigInteger[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
-			return BigIntegerUtils.valuesOf(source);
+			return BigIntegerUtils.valueOf(source);
 		}
 	};
 
 	private final Converter<String[], BigInteger[]> stringArrayConverter = new Converter<String[], BigInteger[]>() {
-		public BigInteger[] getValue(String[] source, BigInteger[] defaultValue) {
+		public BigInteger[] convertValue(String[] source, BigInteger[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
-			return BigIntegerUtils.valuesOf(source);
+			return BigIntegerUtils.valueOf(source);
 		}
 	};
 
 	public BigIntegerArrayConverter() {
-		put(byte[].class, nativeByteArrayConverter);
-		put(short[].class, nativeShortArrayConverter);
-		put(int[].class, nativeIntArrayConverter);
-		put(long[].class, nativeLongArrayConverter);
-		put(Number[].class, numberArrayConverter);
-		put(String[].class, stringArrayConverter);
+		registerType(byte[].class, byteArrayConverter);
+		registerType(short[].class, shortArrayConverter);
+		registerType(int[].class, intArrayConverter);
+		registerType(long[].class, longArrayConverter);
+		registerType(Number[].class, numberArrayConverter);
+		registerType(String[].class, stringArrayConverter);
 	}
 
 }

@@ -143,8 +143,7 @@ public abstract class NumberUtils {
 			return false;
 		}
 		for (; i < chars.length; i++) {
-			if ((chars[i] < '0' || chars[i] > '9') && (chars[i] < 'a' || chars[i] > 'f')
-					&& (chars[i] < 'A' || chars[i] > 'F')) {
+			if ((chars[i] < '0' || chars[i] > '9') && (chars[i] < 'a' || chars[i] > 'f') && (chars[i] < 'A' || chars[i] > 'F')) {
 				return false;
 			}
 		}
@@ -177,13 +176,37 @@ public abstract class NumberUtils {
 		}
 		int index = value.indexOf('.');
 		char lastChar = value.charAt(value.length() - 1);
-		if ((index < 0 && lastChar == 'L') || (index < 0 && lastChar == 'l') || lastChar == 'D' || lastChar == 'd'
-				|| lastChar == 'F' || lastChar == 'f') {
+		if ((index < 0 && lastChar == 'L') || (index < 0 && lastChar == 'l') || lastChar == 'D' || lastChar == 'd' || lastChar == 'F'
+				|| lastChar == 'f') {
 			value = value.substring(0, value.length() - 1);
 		}
 		return value;
 	}
-	
+
+	public static Byte toByte(String str) {
+		return toByte(str, null);
+	}
+
+	public static Byte toByte(String str, Byte defaultValue) {
+		try {
+			return Byte.valueOf(str);
+		} catch (RuntimeException e) {
+			return defaultValue;
+		}
+	}
+
+	public static Short toShort(String str) {
+		return toShort(str, null);
+	}
+
+	public static Short toShort(String str, Short defaultValue) {
+		try {
+			return Short.valueOf(str);
+		} catch (RuntimeException e) {
+			return defaultValue;
+		}
+	}
+
 	public static Integer toInteger(String str) {
 		return toInteger(str, null);
 	}
@@ -278,6 +301,10 @@ public abstract class NumberUtils {
 		return format(value, getDecimalFormat(pattern), defaultValue);
 	}
 
+	public static String format(Number value) {
+		return format(value, DEFAULT_FORMAT);
+	}
+
 	public static String format(Number value, DecimalFormat df) {
 		return format(value, df, "");
 	}
@@ -286,16 +313,17 @@ public abstract class NumberUtils {
 		if (value == null) {
 			return defaultValue;
 		}
+		Assert.isNull(df, "DecimalFormat can not be null.");
 		synchronized (NumberUtils.class) {
-			return df != null ? df.format(value) : DEFAULT_FORMAT.format(value);
+			return df.format(value);
 		}
 	}
 
-	public static String[] formats(Number[] values, DecimalFormat df) {
-		return formats(values, df, null);
+	public static String[] formatMany(Number[] values, DecimalFormat df) {
+		return formatMany(values, df, null);
 	}
 
-	public static String[] formats(Number[] values, DecimalFormat df, String defaultValue) {
+	public static String[] formatMany(Number[] values, DecimalFormat df, String defaultValue) {
 		int length = values.length;
 		String[] array = new String[length];
 		int i = 0;

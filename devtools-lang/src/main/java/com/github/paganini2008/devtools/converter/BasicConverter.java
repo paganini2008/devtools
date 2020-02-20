@@ -9,7 +9,7 @@ import java.util.Map;
  * @author Fred Feng
  * @version 1.0
  */
-public abstract class BasicConverter<T> implements Converter<Object, T>, ConverterManager<T> {
+public abstract class BasicConverter<T> implements Converter<Object, T> {
 
 	private final Map<Class<?>, Converter<?, T>> converterRegistry = new HashMap<Class<?>, Converter<?, T>>();
 	protected ConverterConfig config = new ConverterConfig();
@@ -22,31 +22,31 @@ public abstract class BasicConverter<T> implements Converter<Object, T>, Convert
 		return config;
 	}
 
-	public void put(Class<?> requiredType, Converter<?, T> converter) {
-		converterRegistry.put(requiredType, converter);
+	public void registerType(Class<?> javaType, Converter<?, T> converter) {
+		converterRegistry.put(javaType, converter);
 	}
 
-	public void remove(Class<?> requiredType) {
-		converterRegistry.remove(requiredType);
+	public void removeType(Class<?> javaType) {
+		converterRegistry.remove(javaType);
 	}
 
-	public Converter<?, T> lookup(Class<?> requiredType) {
-		return converterRegistry.get(requiredType);
+	public Converter<?, T> lookupType(Class<?> javaType) {
+		return converterRegistry.get(javaType);
 	}
 
-	public boolean contains(Class<?> requiredType) {
-		return converterRegistry.containsKey(requiredType);
+	public boolean hasType(Class<?> javaType) {
+		return converterRegistry.containsKey(javaType);
 	}
 
 	@SuppressWarnings("unchecked")
-	public T getValue(Object value, T defaultValue) {
+	public T convertValue(Object value, T defaultValue) {
 		if (value == null) {
 			return defaultValue;
 		}
 		final Class<?> match = getAssignableClass(value.getClass());
 		if (match != null) {
-			Converter<Object, T> converter = (Converter<Object, T>) lookup(match);
-			return converter.getValue(value, defaultValue);
+			Converter<Object, T> converter = (Converter<Object, T>) lookupType(match);
+			return converter.convertValue(value, defaultValue);
 		}
 		return defaultValue;
 	}

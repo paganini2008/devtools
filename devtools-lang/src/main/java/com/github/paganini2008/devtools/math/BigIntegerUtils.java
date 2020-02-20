@@ -54,7 +54,7 @@ public abstract class BigIntegerUtils {
 
 	public static final BigInteger[] EMPTY_ARRAY = new BigInteger[0];
 
-	private static final LruMap<String, BigInteger> cache = new LruMap<String, BigInteger>(512);
+	private static final LruMap<String, BigInteger> cache = new LruMap<String, BigInteger>(256);
 
 	public static void clearCache() {
 		cache.clear();
@@ -144,7 +144,7 @@ public abstract class BigIntegerUtils {
 		return !isEven(value);
 	}
 
-	public static BigInteger[] valuesOf(byte[] array) {
+	public static BigInteger[] valueOf(byte[] array) {
 		Assert.isNull(array, "Source array must not be null.");
 		BigInteger[] result = new BigInteger[array.length];
 		int i = 0;
@@ -154,7 +154,7 @@ public abstract class BigIntegerUtils {
 		return result;
 	}
 
-	public static BigInteger[] valuesOf(short[] array) {
+	public static BigInteger[] valueOf(short[] array) {
 		Assert.isNull(array, "Source array must not be null.");
 		BigInteger[] result = new BigInteger[array.length];
 		int i = 0;
@@ -164,7 +164,7 @@ public abstract class BigIntegerUtils {
 		return result;
 	}
 
-	public static BigInteger[] valuesOf(int[] array) {
+	public static BigInteger[] valueOf(int[] array) {
 		Assert.isNull(array, "Source array must not be null.");
 		BigInteger[] result = new BigInteger[array.length];
 		int i = 0;
@@ -174,7 +174,7 @@ public abstract class BigIntegerUtils {
 		return result;
 	}
 
-	public static BigInteger[] valuesOf(long[] array) {
+	public static BigInteger[] valueOf(long[] array) {
 		Assert.isNull(array, "Source array must not be null.");
 		BigInteger[] result = new BigInteger[array.length];
 		int i = 0;
@@ -184,7 +184,7 @@ public abstract class BigIntegerUtils {
 		return result;
 	}
 
-	public static BigInteger[] valuesOf(float[] array) {
+	public static BigInteger[] valueOf(float[] array) {
 		Assert.isNull(array, "Source array must not be null.");
 		BigInteger[] result = new BigInteger[array.length];
 		int i = 0;
@@ -194,7 +194,7 @@ public abstract class BigIntegerUtils {
 		return result;
 	}
 
-	public static BigInteger[] valuesOf(double[] array) {
+	public static BigInteger[] valueOf(double[] array) {
 		Assert.isNull(array, "Source array must not be null.");
 		BigInteger[] result = new BigInteger[array.length];
 		int i = 0;
@@ -204,11 +204,11 @@ public abstract class BigIntegerUtils {
 		return result;
 	}
 
-	public static BigInteger[] valuesOf(Number[] numbers) {
-		return valuesOf(numbers, null);
+	public static BigInteger[] valueOf(Number[] numbers) {
+		return valueOf(numbers, null);
 	}
 
-	public static BigInteger[] valuesOf(Number[] numbers, BigInteger defaultValue) {
+	public static BigInteger[] valueOf(Number[] numbers, BigInteger defaultValue) {
 		Assert.isNull(numbers, "Source array must not be null.");
 		BigInteger[] result = new BigInteger[numbers.length];
 		int i = 0;
@@ -337,11 +337,11 @@ public abstract class BigIntegerUtils {
 		}
 	}
 
-	public static BigInteger[] valuesOf(String[] strs) {
-		return valuesOf(strs, null);
+	public static BigInteger[] valueOf(String[] strs) {
+		return valueOf(strs, null);
 	}
 
-	public static BigInteger[] valuesOf(String[] strs, BigInteger defaultValue) {
+	public static BigInteger[] valueOf(String[] strs, BigInteger defaultValue) {
 		Assert.isNull(strs, "Source array must not be null.");
 		BigInteger[] result = new BigInteger[strs.length];
 		int i = 0;

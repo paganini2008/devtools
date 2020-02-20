@@ -23,8 +23,6 @@ import com.github.paganini2008.devtools.collection.LruMap;
  * Doubles
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public abstract class Doubles {
@@ -522,13 +520,14 @@ public abstract class Doubles {
 		return ensureCapacity(result, i);
 	}
 
-	public static double[] toArray(Collection<Double> c) {
-		Assert.isNull(c, "Source collection list must not be null.");
-		double[] array = new double[c.size()];
+	public static double[] toArray(Collection<?> collection) {
+		Assert.isNull(collection, "Source collection list must not be null.");
+		double[] array = new double[collection.size()];
 		int i = 0;
-		for (Double a : c) {
-			if (a != null) {
-				array[i++] = a.doubleValue();
+		for (Object a : collection) {
+			try {
+				array[i++] = ((Number) a).doubleValue();
+			} catch (RuntimeException e) {
 			}
 		}
 		return ensureCapacity(array, i);
@@ -617,30 +616,30 @@ public abstract class Doubles {
 		}
 	}
 
-	public static Double[] valuesOf(String[] strs) {
-		return valuesOf(strs, null);
+	public static Double[] valueOf(String[] strings) {
+		return valueOf(strings, null);
 	}
 
-	public static Double[] valuesOf(String[] strs, Double defaultValue) {
-		Assert.isNull(strs, "Source array must not be null.");
-		Double[] result = new Double[strs.length];
+	public static Double[] valueOf(String[] strings, Double defaultValue) {
+		Assert.isNull(strings, "Source array must not be null.");
+		Double[] result = new Double[strings.length];
 		int i = 0;
-		for (String str : strs) {
+		for (String str : strings) {
 			result[i++] = valueOf(str, defaultValue);
 		}
 		return result;
 	}
 
-	public static double[] parses(String[] strs) {
-		return parses(strs, true);
+	public static double[] parseMany(String[] strings) {
+		return parseMany(strings, true);
 	}
 
-	public static double[] parses(String[] strs, boolean thrown) {
-		Assert.isNull(strs, "Source array must not be null.");
-		double[] result = new double[strs.length];
+	public static double[] parseMany(String[] strings, boolean thrown) {
+		Assert.isNull(strings, "Source array must not be null.");
+		double[] result = new double[strings.length];
 		int i = 0;
 		double s;
-		for (String str : strs) {
+		for (String str : strings) {
 			try {
 				s = parse(str);
 				result[i++] = s;
@@ -851,11 +850,11 @@ public abstract class Doubles {
 		}
 	}
 
-	public static Double[] valuesOf(Number[] array) {
-		return valuesOf(array, null);
+	public static Double[] valueOf(Number[] array) {
+		return valueOf(array, null);
 	}
 
-	public static Double[] valuesOf(Number[] array, Double defaultValue) {
+	public static Double[] valueOf(Number[] array, Double defaultValue) {
 		Assert.isNull(array, "Source array must not be null.");
 		Double[] result = new Double[array.length];
 		int i = 0;

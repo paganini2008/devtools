@@ -16,34 +16,34 @@ import com.github.paganini2008.devtools.date.LocalDateUtils;
 public class LocalDateTimeConverter extends BasicConverter<LocalDateTime> {
 
 	private final Converter<Long, LocalDateTime> longConverter = new Converter<Long, LocalDateTime>() {
-		public LocalDateTime getValue(Long source, LocalDateTime defaultValue) {
+		public LocalDateTime convertValue(Long source, LocalDateTime defaultValue) {
 			return LocalDateUtils.toLocalDateTime(source, getConfig().getZoneId(), defaultValue);
 		}
 	};
 
 	private final Converter<String, LocalDateTime> stringConverter = new Converter<String, LocalDateTime>() {
-		public LocalDateTime getValue(String source, LocalDateTime defaultValue) {
+		public LocalDateTime convertValue(String source, LocalDateTime defaultValue) {
 			return LocalDateUtils.parseLocalDateTime(source, getConfig().getDateTimeFormatter(), defaultValue);
 		}
 	};
 
 	private final Converter<Date, LocalDateTime> dateConverter = new Converter<Date, LocalDateTime>() {
-		public LocalDateTime getValue(Date source, LocalDateTime defaultValue) {
+		public LocalDateTime convertValue(Date source, LocalDateTime defaultValue) {
 			return LocalDateUtils.toLocalDateTime(source, getConfig().getZoneId(), defaultValue);
 		}
 	};
 
 	private final Converter<Calendar, LocalDateTime> calendarConverter = new Converter<Calendar, LocalDateTime>() {
-		public LocalDateTime getValue(Calendar source, LocalDateTime defaultValue) {
+		public LocalDateTime convertValue(Calendar source, LocalDateTime defaultValue) {
 			return LocalDateUtils.toLocalDateTime(source, getConfig().getZoneId(), defaultValue);
 		}
 	};
 
 	public LocalDateTimeConverter() {
-		put(Long.class, longConverter);
-		put(String.class, stringConverter);
-		put(Date.class, dateConverter);
-		put(Calendar.class, calendarConverter);
+		registerType(Long.class, longConverter);
+		registerType(String.class, stringConverter);
+		registerType(Date.class, dateConverter);
+		registerType(Calendar.class, calendarConverter);
 	}
 
 }

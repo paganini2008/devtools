@@ -23,7 +23,7 @@ import com.github.paganini2008.devtools.date.DateUtils;
 public class StringArrayConverter extends BasicConverter<String[]> {
 
 	private final Converter<CharSequence, String[]> charSequenceConverter = new Converter<CharSequence, String[]>() {
-		public String[] getValue(CharSequence source, String[] defaultValue) {
+		public String[] convertValue(CharSequence source, String[] defaultValue) {
 			if (StringUtils.isBlank(source)) {
 				return defaultValue;
 			}
@@ -33,7 +33,7 @@ public class StringArrayConverter extends BasicConverter<String[]> {
 	};
 
 	private final Converter<Date[], String[]> dateArrayConverter = new Converter<Date[], String[]>() {
-		public String[] getValue(Date[] source, String[] defaultValue) {
+		public String[] convertValue(Date[] source, String[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -42,7 +42,7 @@ public class StringArrayConverter extends BasicConverter<String[]> {
 	};
 
 	private final Converter<Calendar[], String[]> calendarArrayConverter = new Converter<Calendar[], String[]>() {
-		public String[] getValue(Calendar[] source, String[] defaultValue) {
+		public String[] convertValue(Calendar[] source, String[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -51,16 +51,16 @@ public class StringArrayConverter extends BasicConverter<String[]> {
 	};
 
 	private final Converter<Number[], String[]> numberArrayConverter = new Converter<Number[], String[]>() {
-		public String[] getValue(Number[] source, String[] defaultValue) {
+		public String[] convertValue(Number[] source, String[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
-			return NumberUtils.formats(source, config.getDecimalFormatter());
+			return NumberUtils.formatMany(source, config.getDecimalFormatter());
 		}
 	};
 
 	private final Converter<Object[], String[]> arrayConverter = new Converter<Object[], String[]>() {
-		public String[] getValue(Object[] source, String[] defaultValue) {
+		public String[] convertValue(Object[] source, String[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -69,7 +69,7 @@ public class StringArrayConverter extends BasicConverter<String[]> {
 	};
 
 	private final Converter<Collection<?>, String[]> collectionConverter = new Converter<Collection<?>, String[]>() {
-		public String[] getValue(Collection<?> source, String[] defaultValue) {
+		public String[] convertValue(Collection<?> source, String[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -82,7 +82,7 @@ public class StringArrayConverter extends BasicConverter<String[]> {
 	};
 
 	private final Converter<Iterator<?>, String[]> iteratorConverter = new Converter<Iterator<?>, String[]>() {
-		public String[] getValue(Iterator<?> source, String[] defaultValue) {
+		public String[] convertValue(Iterator<?> source, String[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -95,7 +95,7 @@ public class StringArrayConverter extends BasicConverter<String[]> {
 	};
 
 	private final Converter<Enumeration<?>, String[]> enumerationConverter = new Converter<Enumeration<?>, String[]>() {
-		public String[] getValue(Enumeration<?> source, String[] defaultValue) {
+		public String[] convertValue(Enumeration<?> source, String[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -108,25 +108,25 @@ public class StringArrayConverter extends BasicConverter<String[]> {
 	};
 
 	public StringArrayConverter(StringConverter handler) {
-		put(CharSequence.class, charSequenceConverter);
+		registerType(CharSequence.class, charSequenceConverter);
 
-		put(boolean[].class, arrayConverter);
-		put(char[].class, arrayConverter);
-		put(byte[].class, arrayConverter);
-		put(short[].class, arrayConverter);
-		put(int[].class, arrayConverter);
-		put(float[].class, arrayConverter);
-		put(double[].class, arrayConverter);
-		put(long[].class, arrayConverter);
+		registerType(boolean[].class, arrayConverter);
+		registerType(char[].class, arrayConverter);
+		registerType(byte[].class, arrayConverter);
+		registerType(short[].class, arrayConverter);
+		registerType(int[].class, arrayConverter);
+		registerType(float[].class, arrayConverter);
+		registerType(double[].class, arrayConverter);
+		registerType(long[].class, arrayConverter);
 
-		put(Date[].class, dateArrayConverter);
-		put(Calendar[].class, calendarArrayConverter);
-		put(Number[].class, numberArrayConverter);
-		put(Object[].class, arrayConverter);
+		registerType(Date[].class, dateArrayConverter);
+		registerType(Calendar[].class, calendarArrayConverter);
+		registerType(Number[].class, numberArrayConverter);
+		registerType(Object[].class, arrayConverter);
 
-		put(Collection.class, collectionConverter);
-		put(Iterator.class, iteratorConverter);
-		put(Enumeration.class, enumerationConverter);
+		registerType(Collection.class, collectionConverter);
+		registerType(Iterator.class, iteratorConverter);
+		registerType(Enumeration.class, enumerationConverter);
 	}
 
 }

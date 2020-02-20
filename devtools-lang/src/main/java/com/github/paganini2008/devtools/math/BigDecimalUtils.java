@@ -66,7 +66,7 @@ public abstract class BigDecimalUtils {
 		numberPlainStringCache.clear();
 	}
 
-	public static BigDecimal[] valuesOf(byte[] array) {
+	public static BigDecimal[] valueOf(byte[] array) {
 		Assert.isNull(array, "Source array must not be null.");
 		BigDecimal[] result = new BigDecimal[array.length];
 		int i = 0;
@@ -76,7 +76,7 @@ public abstract class BigDecimalUtils {
 		return result;
 	}
 
-	public static BigDecimal[] valuesOf(short[] array) {
+	public static BigDecimal[] valueOf(short[] array) {
 		Assert.isNull(array, "Source array must not be null.");
 		BigDecimal[] result = new BigDecimal[array.length];
 		int i = 0;
@@ -86,7 +86,7 @@ public abstract class BigDecimalUtils {
 		return result;
 	}
 
-	public static BigDecimal[] valuesOf(int[] array) {
+	public static BigDecimal[] valueOf(int[] array) {
 		Assert.isNull(array, "Source array must not be null.");
 		BigDecimal[] result = new BigDecimal[array.length];
 		int i = 0;
@@ -96,7 +96,7 @@ public abstract class BigDecimalUtils {
 		return result;
 	}
 
-	public static BigDecimal[] valuesOf(long[] array) {
+	public static BigDecimal[] valueOf(long[] array) {
 		Assert.isNull(array, "Source array must not be null.");
 		BigDecimal[] result = new BigDecimal[array.length];
 		int i = 0;
@@ -106,7 +106,7 @@ public abstract class BigDecimalUtils {
 		return result;
 	}
 
-	public static BigDecimal[] valuesOf(float[] array) {
+	public static BigDecimal[] valueOf(float[] array) {
 		Assert.isNull(array, "Source array must not be null.");
 		BigDecimal[] result = new BigDecimal[array.length];
 		int i = 0;
@@ -116,7 +116,7 @@ public abstract class BigDecimalUtils {
 		return result;
 	}
 
-	public static BigDecimal[] valuesOf(double[] array) {
+	public static BigDecimal[] valueOf(double[] array) {
 		Assert.isNull(array, "Source array must not be null.");
 		BigDecimal[] result = new BigDecimal[array.length];
 		int i = 0;
@@ -126,11 +126,11 @@ public abstract class BigDecimalUtils {
 		return result;
 	}
 
-	public static BigDecimal[] valuesOf(Number[] numbers) {
-		return valuesOf(numbers, null);
+	public static BigDecimal[] valueOf(Number[] numbers) {
+		return valueOf(numbers, null);
 	}
 
-	public static BigDecimal[] valuesOf(Number[] numbers, BigDecimal defaultValue) {
+	public static BigDecimal[] valueOf(Number[] numbers, BigDecimal defaultValue) {
 		Assert.isNull(numbers, "Source array must not be null.");
 		BigDecimal[] result = new BigDecimal[numbers.length];
 		int i = 0;
@@ -228,11 +228,11 @@ public abstract class BigDecimalUtils {
 		}
 	}
 
-	public static BigDecimal[] valuesOf(String[] strs) {
-		return valuesOf(strs, null);
+	public static BigDecimal[] valueOf(String[] strs) {
+		return valueOf(strs, null);
 	}
 
-	public static BigDecimal[] valuesOf(String[] strs, BigDecimal defaultValue) {
+	public static BigDecimal[] valueOf(String[] strs, BigDecimal defaultValue) {
 		Assert.isNull(strs, "Source array must not be null.");
 		BigDecimal[] result = new BigDecimal[strs.length];
 		int i = 0;

@@ -15,8 +15,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.github.paganini2008.devtools.ClassUtils;
-
 /**
  * TypeConverter
  * 
@@ -114,36 +112,33 @@ public class StandardTypeConverter implements TypeConverter {
 		return config;
 	}
 
-	public <T> void register(Class<T> javaType, BasicConverter<T> converter) {
+	public <T> void registerType(Class<T> javaType, BasicConverter<T> converter) {
 		converters.put(javaType, converter);
 	}
 
-	public void remove(Class<?> javaType) {
+	public void removeType(Class<?> javaType) {
 		converters.remove(javaType);
 	}
 
-	public boolean contains(Class<?> javaType) {
+	public boolean hasType(Class<?> javaType) {
 		return converters.containsKey(javaType);
 	}
 
-	public <T> BasicConverter<T> lookup(Class<T> javaType) {
+	public <T> BasicConverter<T> lookupType(Class<T> javaType) {
 		return (BasicConverter<T>) converters.get(javaType);
 	}
 
-	public <T> T convert(Object value, Class<T> requiredType, T defaultValue) {
+	public <T> T convertValue(Object value, Class<T> requiredType, T defaultValue) {
 		if (value == null) {
 			return defaultValue;
 		}
-		if (requiredType.isPrimitive()) {
-			requiredType = (Class<T>) ClassUtils.toWrapper(requiredType);
-		}
 		try {
 			return requiredType.cast(value);
-		} catch (RuntimeException e) {
+		} catch (ClassCastException e) {
 		}
-		BasicConverter<T> converter = (BasicConverter<T>) lookup(requiredType);
+		BasicConverter<T> converter = (BasicConverter<T>) lookupType(requiredType);
 		if (converter != null) {
-			return converter.getValue(value, defaultValue);
+			return converter.convertValue(value, defaultValue);
 		}
 		return defaultValue;
 	}

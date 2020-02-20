@@ -36,7 +36,7 @@ public abstract class Floats {
 	private static final LruMap<String, Float> cache = new LruMap<String, Float>(128);
 
 	public static final int BYTES = Float.SIZE / Byte.SIZE;
-	
+
 	public static void clearCache() {
 		cache.clear();
 	}
@@ -502,13 +502,14 @@ public abstract class Floats {
 		return ensureCapacity(result, i);
 	}
 
-	public static float[] toArray(Collection<Float> c) {
-		Assert.isNull(c, "Source collection must not be null.");
-		float[] array = new float[c.size()];
+	public static float[] toArray(Collection<?> collection) {
+		Assert.isNull(collection, "Source collection must not be null.");
+		float[] array = new float[collection.size()];
 		int i = 0;
-		for (Float a : c) {
-			if (a != null) {
-				array[i++] = a.floatValue();
+		for (Object a : collection) {
+			try {
+				array[i++] = ((Number) a).floatValue();
+			} catch (RuntimeException e) {
 			}
 		}
 		return ensureCapacity(array, i);
@@ -597,29 +598,29 @@ public abstract class Floats {
 		}
 	}
 
-	public static Float[] valuesOf(String[] strs) {
-		return valuesOf(strs, null);
+	public static Float[] valueOf(String[] strings) {
+		return valueOf(strings, null);
 	}
 
-	public static Float[] valuesOf(String[] strs, Float defaultValue) {
-		Assert.isNull(strs, "Source array must not be null.");
-		Float[] result = new Float[strs.length];
+	public static Float[] valueOf(String[] strings, Float defaultValue) {
+		Assert.isNull(strings, "Source array must not be null.");
+		Float[] result = new Float[strings.length];
 		int i = 0;
-		for (String str : strs) {
+		for (String str : strings) {
 			result[i++] = valueOf(str, defaultValue);
 		}
 		return result;
 	}
 
-	public static float[] parses(String[] strs) {
-		return parses(strs, true);
+	public static float[] parseMany(String[] strings) {
+		return parseMany(strings, true);
 	}
 
-	public static float[] parses(String[] strs, boolean thrown) {
-		Assert.isNull(strs, "Source array must not be null.");
-		float[] result = new float[strs.length];
+	public static float[] parseMany(String[] strings, boolean thrown) {
+		Assert.isNull(strings, "Source array must not be null.");
+		float[] result = new float[strings.length];
 		int i = 0;
-		for (String str : strs) {
+		for (String str : strings) {
 			try {
 				result[i++] = parse(str);
 			} catch (IllegalArgumentException e) {
@@ -740,11 +741,11 @@ public abstract class Floats {
 		}
 	}
 
-	public static Float[] valuesOf(Number[] array) {
-		return valuesOf(array, null);
+	public static Float[] valueOf(Number[] array) {
+		return valueOf(array, null);
 	}
 
-	public static Float[] valuesOf(Number[] array, Float defaultValue) {
+	public static Float[] valueOf(Number[] array, Float defaultValue) {
 		Assert.isNull(array, "Source array must not be null.");
 		Float[] result = new Float[array.length];
 		int i = 0;

@@ -394,11 +394,11 @@ public abstract class Booleans {
 		throw new BooleanFormatException(arg);
 	}
 
-	public static boolean[] parses(char[] args) {
-		return parses(args, true);
+	public static boolean[] parseMany(char[] args) {
+		return parseMany(args, true);
 	}
 
-	public static boolean[] parses(char[] args, boolean thrown) {
+	public static boolean[] parseMany(char[] args, boolean thrown) {
 		boolean[] result = new boolean[args.length];
 		int i = 0;
 		for (char arg : args) {
@@ -422,11 +422,11 @@ public abstract class Booleans {
 		throw new BooleanFormatException(arg);
 	}
 
-	public static boolean[] parses(String[] args) {
-		return parses(args, true);
+	public static boolean[] parseMany(String[] args) {
+		return parseMany(args, true);
 	}
 
-	public static boolean[] parses(String[] args, boolean thrown) {
+	public static boolean[] parseMany(String[] args, boolean thrown) {
 		boolean[] result = new boolean[args.length];
 		int i = 0;
 		for (String arg : args) {

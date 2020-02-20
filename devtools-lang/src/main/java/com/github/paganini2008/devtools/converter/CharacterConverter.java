@@ -11,27 +11,27 @@ import com.github.paganini2008.devtools.primitives.Chars;
 public class CharacterConverter extends BasicConverter<Character> {
 
 	private final Converter<String, Character> stringConverter = new Converter<String, Character>() {
-		public Character getValue(String source, Character defaultValue) {
+		public Character convertValue(String source, Character defaultValue) {
 			return Chars.valueOf(source, defaultValue);
 		}
 	};
 
 	private final Converter<Integer, Character> integerConverter = new Converter<Integer, Character>() {
-		public Character getValue(Integer source, Character defaultValue) {
+		public Character convertValue(Integer source, Character defaultValue) {
 			return Chars.valueOf(source, defaultValue);
 		}
 	};
 
 	private final Converter<Boolean, Character> booleanConverter = new Converter<Boolean, Character>() {
-		public Character getValue(Boolean source, Character defaultValue) {
+		public Character convertValue(Boolean source, Character defaultValue) {
 			return Chars.valueOf(source, defaultValue);
 		}
 	};
 
 	public CharacterConverter() {
-		put(String.class, stringConverter);
-		put(Integer.class, integerConverter);
-		put(Boolean.class, booleanConverter);
+		registerType(String.class, stringConverter);
+		registerType(Integer.class, integerConverter);
+		registerType(Boolean.class, booleanConverter);
 	}
 
 }

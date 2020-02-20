@@ -1,23 +1,22 @@
 package com.github.paganini2008.devtools.converter;
 
 /**
- * TypeConverter. A dataType convert to ananother dataType.
  * 
+ * TypeConverter 
+ *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public interface TypeConverter {
 
-	<T> void register(Class<T> javaType, BasicConverter<T> converter);
+	<T> void registerType(Class<T> javaType, BasicConverter<T> converter);
 
-	void remove(Class<?> javaType);
+	void removeType(Class<?> javaType);
 
-	boolean contains(Class<?> javaType);
+	boolean hasType(Class<?> javaType);
 
-	<T> BasicConverter<T> lookup(Class<T> javaType);
+	<T> BasicConverter<T> lookupType(Class<T> javaType);
 
-	<T> T convert(Object value, Class<T> requiredType, T defaultValue);
+	<T> T convertValue(Object value, Class<T> requiredType, T defaultValue);
 
 }

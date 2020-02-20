@@ -13,34 +13,34 @@ import com.github.paganini2008.devtools.math.BigIntegerUtils;
 public class BigIntegerConverter extends BasicConverter<BigInteger> {
 
 	private final Converter<Number, BigInteger> numberConverter = new Converter<Number, BigInteger>() {
-		public BigInteger getValue(Number source, BigInteger defaultValue) {
+		public BigInteger convertValue(Number source, BigInteger defaultValue) {
 			return BigIntegerUtils.valueOf(source, defaultValue);
 		}
 	};
 
 	private final Converter<Boolean, BigInteger> booleanConverter = new Converter<Boolean, BigInteger>() {
-		public BigInteger getValue(Boolean source, BigInteger defaultValue) {
+		public BigInteger convertValue(Boolean source, BigInteger defaultValue) {
 			return BigIntegerUtils.valueOf(source, defaultValue);
 		}
 	};
 
 	private final Converter<Character, BigInteger> characterConverter = new Converter<Character, BigInteger>() {
-		public BigInteger getValue(Character source, BigInteger defaultValue) {
+		public BigInteger convertValue(Character source, BigInteger defaultValue) {
 			return BigIntegerUtils.valueOf(source, defaultValue);
 		}
 	};
 
 	private final Converter<String, BigInteger> stringConverter = new Converter<String, BigInteger>() {
-		public BigInteger getValue(String source, BigInteger defaultValue) {
+		public BigInteger convertValue(String source, BigInteger defaultValue) {
 			return BigIntegerUtils.valueOf(source, defaultValue);
 		}
 	};
 
 	public BigIntegerConverter() {
-		put(Number.class, numberConverter);
-		put(String.class, stringConverter);
-		put(Boolean.class, booleanConverter);
-		put(Character.class, characterConverter);
+		registerType(Number.class, numberConverter);
+		registerType(String.class, stringConverter);
+		registerType(Boolean.class, booleanConverter);
+		registerType(Character.class, characterConverter);
 	}
 
 }

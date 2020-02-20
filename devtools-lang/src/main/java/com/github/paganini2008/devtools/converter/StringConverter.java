@@ -40,13 +40,13 @@ import com.github.paganini2008.devtools.primitives.Shorts;
 public class StringConverter extends BasicConverter<String> {
 
 	private final Converter<UUID, String> uuidConverter = new Converter<UUID, String>() {
-		public String getValue(UUID source, String defaultValue) {
+		public String convertValue(UUID source, String defaultValue) {
 			return source != null ? source.toString() : defaultValue;
 		}
 	};
 
 	private final Converter<Boolean, String> booleanConverter = new Converter<Boolean, String>() {
-		public String getValue(Boolean source, String defaultValue) {
+		public String convertValue(Boolean source, String defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -55,7 +55,7 @@ public class StringConverter extends BasicConverter<String> {
 	};
 
 	private final Converter<Character, String> characterConverter = new Converter<Character, String>() {
-		public String getValue(Character source, String defaultValue) {
+		public String convertValue(Character source, String defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -64,64 +64,74 @@ public class StringConverter extends BasicConverter<String> {
 	};
 
 	private final Converter<Number, String> numberConverter = new Converter<Number, String>() {
-		public String getValue(Number source, String defaultValue) {
+		public String convertValue(Number source, String defaultValue) {
 			return NumberUtils.format(source, config.getDecimalFormatter(), defaultValue);
 		}
 	};
 
 	private final Converter<Date, String> dateConverter = new Converter<Date, String>() {
-		public String getValue(Date source, String defaultValue) {
+		public String convertValue(Date source, String defaultValue) {
 			return DateUtils.format(source, config.getDateFormat(), defaultValue);
 		}
 	};
 
 	private final Converter<Calendar, String> calendarConverter = new Converter<Calendar, String>() {
-		public String getValue(Calendar source, String defaultValue) {
+		public String convertValue(Calendar source, String defaultValue) {
 			return CalendarUtils.format(source, config.getDateFormat(), defaultValue);
 		}
 	};
 
 	private final Converter<URL, String> urlConverter = new Converter<URL, String>() {
-		public String getValue(URL source, String defaultValue) {
+		public String convertValue(URL source, String defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
+			InputStream in = null;
 			try {
-				return UrlUtils.toString(source, config.getCharset());
+				in = UrlUtils.openStream(source);
+				return IOUtils.toString(in, config.getStringCharset());
 			} catch (IOException e) {
 				return defaultValue;
+			} finally {
+				IOUtils.closeQuietly(in);
 			}
 		}
 	};
 
 	private final Converter<Clob, String> clobConverter = new Converter<Clob, String>() {
-		public String getValue(Clob source, String defaultValue) {
+		public String convertValue(Clob source, String defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
+			Reader reader = null;
 			try {
-				return IOUtils.toString(source.getCharacterStream());
+				reader = source.getCharacterStream();
+				return IOUtils.toString(reader);
 			} catch (Exception e) {
 				return defaultValue;
+			} finally {
+				IOUtils.closeQuietly(reader);
 			}
 		}
 	};
 
 	private final Converter<InputStream, String> inputStreamConverter = new Converter<InputStream, String>() {
-		public String getValue(InputStream source, String defaultValue) {
+		public String convertValue(InputStream source, String defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
 			try {
-				return IOUtils.toString(source, config.getCharset());
+				return IOUtils.toString(source, config.getStringCharset());
 			} catch (IOException e) {
 				return defaultValue;
+			} finally {
+				IOUtils.closeQuietly(source);
 			}
 		}
 	};
 
 	private final Converter<Reader, String> readerConverter = new Converter<Reader, String>() {
-		public String getValue(Reader source, String defaultValue) {
+		public String convertValue(Reader source, String defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -129,12 +139,14 @@ public class StringConverter extends BasicConverter<String> {
 				return IOUtils.toString(source);
 			} catch (IOException e) {
 				return defaultValue;
+			} finally {
+				IOUtils.closeQuietly(source);
 			}
 		}
 	};
 
 	private final Converter<CharSequence, String> charSequenceConverter = new Converter<CharSequence, String>() {
-		public String getValue(CharSequence source, String defaultValue) {
+		public String convertValue(CharSequence source, String defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -143,16 +155,16 @@ public class StringConverter extends BasicConverter<String> {
 	};
 
 	private final Converter<byte[], String> byteArrayConverter = new Converter<byte[], String>() {
-		public String getValue(byte[] source, String defaultValue) {
+		public String convertValue(byte[] source, String defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
-			return new String(source, config.getCharset());
+			return new String(source, config.getStringCharset());
 		}
 	};
 
 	private final Converter<char[], String> charArrayConverter = new Converter<char[], String>() {
-		public String getValue(char[] source, String defaultValue) {
+		public String convertValue(char[] source, String defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -161,7 +173,7 @@ public class StringConverter extends BasicConverter<String> {
 	};
 
 	private final Converter<short[], String> shortArrayConverter = new Converter<short[], String>() {
-		public String getValue(short[] source, String defaultValue) {
+		public String convertValue(short[] source, String defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -170,7 +182,7 @@ public class StringConverter extends BasicConverter<String> {
 	};
 
 	private final Converter<int[], String> intArrayConverter = new Converter<int[], String>() {
-		public String getValue(int[] source, String defaultValue) {
+		public String convertValue(int[] source, String defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -179,7 +191,7 @@ public class StringConverter extends BasicConverter<String> {
 	};
 
 	private final Converter<long[], String> longArrayConverter = new Converter<long[], String>() {
-		public String getValue(long[] source, String defaultValue) {
+		public String convertValue(long[] source, String defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -188,7 +200,7 @@ public class StringConverter extends BasicConverter<String> {
 	};
 
 	private final Converter<float[], String> floatArrayConverter = new Converter<float[], String>() {
-		public String getValue(float[] source, String defaultValue) {
+		public String convertValue(float[] source, String defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -197,16 +209,16 @@ public class StringConverter extends BasicConverter<String> {
 	};
 
 	private final Converter<double[], String> doubleArrayConverter = new Converter<double[], String>() {
-		public String getValue(double[] source, String defaultValue) {
+		public String convertValue(double[] source, String defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
-			return Doubles.join(source);
+			return Doubles.join(source, config.getDelimiter());
 		}
 	};
 
 	private final Converter<boolean[], String> booleanArrayConverter = new Converter<boolean[], String>() {
-		public String getValue(boolean[] source, String defaultValue) {
+		public String convertValue(boolean[] source, String defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -215,7 +227,7 @@ public class StringConverter extends BasicConverter<String> {
 	};
 
 	private final Converter<Object[], String> objectArrayConverter = new Converter<Object[], String>() {
-		public String getValue(Object[] source, String defaultValue) {
+		public String convertValue(Object[] source, String defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -224,7 +236,7 @@ public class StringConverter extends BasicConverter<String> {
 	};
 
 	private final Converter<Collection<?>, String> collectionConverter = new Converter<Collection<?>, String>() {
-		public String getValue(Collection<?> source, String defaultValue) {
+		public String convertValue(Collection<?> source, String defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -233,7 +245,7 @@ public class StringConverter extends BasicConverter<String> {
 	};
 
 	private final Converter<Iterator<?>, String> iteratorConverter = new Converter<Iterator<?>, String>() {
-		public String getValue(Iterator<?> source, String defaultValue) {
+		public String convertValue(Iterator<?> source, String defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -242,7 +254,7 @@ public class StringConverter extends BasicConverter<String> {
 	};
 
 	private final Converter<Enumeration<?>, String> enumerationConverter = new Converter<Enumeration<?>, String>() {
-		public String getValue(Enumeration<?> source, String defaultValue) {
+		public String convertValue(Enumeration<?> source, String defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -251,7 +263,7 @@ public class StringConverter extends BasicConverter<String> {
 	};
 
 	private final Converter<Map, String> mapConverter = new Converter<Map, String>() {
-		public String getValue(Map source, String defaultValue) {
+		public String convertValue(Map source, String defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -260,7 +272,7 @@ public class StringConverter extends BasicConverter<String> {
 	};
 
 	private final Converter<Charset, String> charsetConverter = new Converter<Charset, String>() {
-		public String getValue(Charset source, String defaultValue) {
+		public String convertValue(Charset source, String defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -269,7 +281,7 @@ public class StringConverter extends BasicConverter<String> {
 	};
 
 	private final Converter<Locale, String> localeConverter = new Converter<Locale, String>() {
-		public String getValue(Locale source, String defaultValue) {
+		public String convertValue(Locale source, String defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -279,36 +291,36 @@ public class StringConverter extends BasicConverter<String> {
 
 	public StringConverter() {
 
-		put(Boolean.class, booleanConverter);
-		put(Character.class, characterConverter);
-		put(Number.class, numberConverter);
-		put(CharSequence.class, charSequenceConverter);
+		registerType(Boolean.class, booleanConverter);
+		registerType(Character.class, characterConverter);
+		registerType(Number.class, numberConverter);
+		registerType(CharSequence.class, charSequenceConverter);
 
-		put(Date.class, dateConverter);
-		put(Calendar.class, calendarConverter);
+		registerType(Date.class, dateConverter);
+		registerType(Calendar.class, calendarConverter);
 
-		put(boolean[].class, booleanArrayConverter);
-		put(char[].class, charArrayConverter);
-		put(byte[].class, byteArrayConverter);
-		put(short[].class, shortArrayConverter);
-		put(int[].class, intArrayConverter);
-		put(float[].class, floatArrayConverter);
-		put(double[].class, doubleArrayConverter);
-		put(long[].class, longArrayConverter);
-		put(Object[].class, objectArrayConverter);
+		registerType(boolean[].class, booleanArrayConverter);
+		registerType(char[].class, charArrayConverter);
+		registerType(byte[].class, byteArrayConverter);
+		registerType(short[].class, shortArrayConverter);
+		registerType(int[].class, intArrayConverter);
+		registerType(float[].class, floatArrayConverter);
+		registerType(double[].class, doubleArrayConverter);
+		registerType(long[].class, longArrayConverter);
+		registerType(Object[].class, objectArrayConverter);
 
-		put(Collection.class, collectionConverter);
-		put(Iterator.class, iteratorConverter);
-		put(Enumeration.class, enumerationConverter);
-		put(Map.class, mapConverter);
+		registerType(Collection.class, collectionConverter);
+		registerType(Iterator.class, iteratorConverter);
+		registerType(Enumeration.class, enumerationConverter);
+		registerType(Map.class, mapConverter);
 
-		put(URL.class, urlConverter);
-		put(Clob.class, clobConverter);
-		put(Reader.class, readerConverter);
-		put(InputStream.class, inputStreamConverter);
+		registerType(URL.class, urlConverter);
+		registerType(Clob.class, clobConverter);
+		registerType(Reader.class, readerConverter);
+		registerType(InputStream.class, inputStreamConverter);
 
-		put(Charset.class, charsetConverter);
-		put(Locale.class, localeConverter);
+		registerType(Charset.class, charsetConverter);
+		registerType(Locale.class, localeConverter);
 	}
 
 }

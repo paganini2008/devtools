@@ -458,13 +458,14 @@ public abstract class Bytes {
 		return ensureCapacity(result, i);
 	}
 
-	public static byte[] toArray(Collection<Byte> c) {
-		Assert.isNull(c, "Source collection must not be null.");
-		byte[] array = new byte[c.size()];
+	public static byte[] toArray(Collection<?> collection) {
+		Assert.isNull(collection, "Source collection must not be null.");
+		byte[] array = new byte[collection.size()];
 		int i = 0;
-		for (Byte a : c) {
-			if (a != null) {
-				array[i++] = a.byteValue();
+		for (Object a : collection) {
+			try {
+				array[i++] = ((Number) a).byteValue();
+			} catch (RuntimeException e) {
 			}
 		}
 		return ensureCapacity(array, i);
@@ -557,30 +558,30 @@ public abstract class Bytes {
 		}
 	}
 
-	public static Byte[] valuesOf(String[] strs) {
-		return valuesOf(strs, null);
+	public static Byte[] valueOf(String[] strings) {
+		return valueOf(strings, null);
 	}
 
-	public static Byte[] valuesOf(String[] strs, Byte defaultValue) {
-		Assert.isNull(strs, "Source array must not be null.");
-		Byte[] result = new Byte[strs.length];
+	public static Byte[] valueOf(String[] strings, Byte defaultValue) {
+		Assert.isNull(strings, "Source array must not be null.");
+		Byte[] result = new Byte[strings.length];
 		int i = 0;
-		for (String str : strs) {
+		for (String str : strings) {
 			result[i++] = valueOf(str, defaultValue);
 		}
 		return result;
 	}
 
-	public static byte[] parses(String[] strs) {
-		return parses(strs, true);
+	public static byte[] parseMany(String[] strings) {
+		return parseMany(strings, true);
 	}
 
-	public static byte[] parses(String[] strs, boolean thrown) {
-		Assert.isNull(strs, "Source array must not be null.");
-		byte[] result = new byte[strs.length];
+	public static byte[] parseMany(String[] strings, boolean thrown) {
+		Assert.isNull(strings, "Source array must not be null.");
+		byte[] result = new byte[strings.length];
 		int i = 0;
 		byte s;
-		for (String str : strs) {
+		for (String str : strings) {
 			try {
 				s = parse(str);
 				result[i++] = s;
@@ -759,10 +760,6 @@ public abstract class Bytes {
 		return ensureCapacity(result, i);
 	}
 
-	public static void main(String[] args) {
-		System.out.println(cast('我'));
-	}
-
 	public static byte cast(char c) {
 		byte b = (byte) c;
 		if (b != c) {
@@ -838,11 +835,11 @@ public abstract class Bytes {
 		}
 	}
 
-	public static Byte[] valuesOf(Number[] array) {
-		return valuesOf(array, null);
+	public static Byte[] valueOf(Number[] array) {
+		return valueOf(array, null);
 	}
 
-	public static Byte[] valuesOf(Number[] array, Byte defaultValue) {
+	public static Byte[] valueOf(Number[] array, Byte defaultValue) {
 		Assert.isNull(array, "Source array must not be null.");
 		Byte[] result = new Byte[array.length];
 		int i = 0;

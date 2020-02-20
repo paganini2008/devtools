@@ -11,27 +11,27 @@ import com.github.paganini2008.devtools.primitives.Doubles;
 public class DoubleConverter extends BasicConverter<Double> {
 
 	private final Converter<Number, Double> numberConverter = new Converter<Number, Double>() {
-		public Double getValue(Number source, Double defaultValue) {
+		public Double convertValue(Number source, Double defaultValue) {
 			return Doubles.valueOf(source, defaultValue);
 		}
 	};
 
 	private final Converter<String, Double> stringConverter = new Converter<String, Double>() {
-		public Double getValue(String source, Double defaultValue) {
+		public Double convertValue(String source, Double defaultValue) {
 			return Doubles.valueOf(source, defaultValue);
 		}
 	};
 
 	private final Converter<Character, Double> characterConverter = new Converter<Character, Double>() {
-		public Double getValue(Character source, Double defaultValue) {
+		public Double convertValue(Character source, Double defaultValue) {
 			return Doubles.valueOf(source, defaultValue);
 		}
 	};
 
 	public DoubleConverter() {
-		put(Number.class, numberConverter);
-		put(String.class, stringConverter);
-		put(Character.class, characterConverter);
+		registerType(Number.class, numberConverter);
+		registerType(String.class, stringConverter);
+		registerType(Character.class, characterConverter);
 	}
 
 }

@@ -13,7 +13,7 @@ import com.github.paganini2008.devtools.LocaleUtils;
 public class LocaleConverter extends BasicConverter<Locale> {
 
 	private final Converter<String, Locale> stringConverter = new Converter<String, Locale>() {
-		public Locale getValue(String source, Locale defaultValue) {
+		public Locale convertValue(String source, Locale defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
@@ -22,7 +22,7 @@ public class LocaleConverter extends BasicConverter<Locale> {
 	};
 
 	public LocaleConverter() {
-		put(String.class, stringConverter);
+		registerType(String.class, stringConverter);
 	}
 
 }

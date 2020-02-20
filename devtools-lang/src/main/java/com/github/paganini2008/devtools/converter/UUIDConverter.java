@@ -13,7 +13,7 @@ import com.github.paganini2008.devtools.StringUtils;
 public class UUIDConverter extends BasicConverter<UUID> {
 
 	private final Converter<String, UUID> stringConverter = new Converter<String, UUID>() {
-		public UUID getValue(String source, UUID defaultValue) {
+		public UUID convertValue(String source, UUID defaultValue) {
 			if (StringUtils.isBlank(source)) {
 				return defaultValue;
 			}
@@ -22,7 +22,7 @@ public class UUIDConverter extends BasicConverter<UUID> {
 	};
 
 	public UUIDConverter() {
-		put(String.class, stringConverter);
+		registerType(String.class, stringConverter);
 	}
 
 }
