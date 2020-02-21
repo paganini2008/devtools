@@ -18,15 +18,13 @@ import com.github.paganini2008.devtools.StringUtils;
  * Chars
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public abstract class Chars {
 
-	public static final char LF = '\n';
-
 	public static final char CR = '\r';
+	
+	public static final char LF = '\n';
 
 	private static final int MERGE_SORT_THRESHOLD = 10;
 

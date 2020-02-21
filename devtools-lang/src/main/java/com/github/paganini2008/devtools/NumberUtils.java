@@ -17,7 +17,7 @@ public abstract class NumberUtils {
 
 	private final static LruMap<String, DecimalFormat> formatCache = new LruMap<String, DecimalFormat>(128);
 
-	public static final DecimalFormat DEFAULT_FORMAT = getDecimalFormat("0.00");
+	public static final DecimalFormat DEFAULT_NUMBER_FORMATTER = getDecimalFormat("0.00");
 
 	public static String toPlainString(Number n) {
 		return toPlainString(n, "");
@@ -267,6 +267,16 @@ public abstract class NumberUtils {
 		}
 	}
 
+	public static String[] toStringArray(Number[] numbers, DecimalFormat df) {
+		Assert.isNull(numbers, "Number array can not be null.");
+		String[] results = new String[numbers.length];
+		int i = 0;
+		for (Number number : numbers) {
+			results[i++] = df != null ? df.format(number) : toPlainString(number, null);
+		}
+		return results;
+	}
+
 	private static String getDecimalPattern(String s, int scale) {
 		if (scale > 0) {
 			s += "." + StringUtils.repeat("#", scale);
@@ -302,7 +312,7 @@ public abstract class NumberUtils {
 	}
 
 	public static String format(Number value) {
-		return format(value, DEFAULT_FORMAT);
+		return format(value, DEFAULT_NUMBER_FORMATTER);
 	}
 
 	public static String format(Number value, DecimalFormat df) {
@@ -319,6 +329,10 @@ public abstract class NumberUtils {
 		}
 	}
 
+	public static String[] formatMany(Number[] values) {
+		return formatMany(values, DEFAULT_NUMBER_FORMATTER);
+	}
+
 	public static String[] formatMany(Number[] values, DecimalFormat df) {
 		return formatMany(values, df, null);
 	}
@@ -331,6 +345,14 @@ public abstract class NumberUtils {
 			array[i++] = format(value, df, defaultValue);
 		}
 		return array;
+	}
+
+	public static String[] formatMany(Number[] values, String pattern) {
+		return formatMany(values, pattern, "");
+	}
+
+	public static String[] formatMany(Number[] values, String pattern, String defaultValue) {
+		return formatMany(values, getDecimalFormat(pattern), defaultValue);
 	}
 
 }

@@ -6,6 +6,7 @@ import static java.lang.Double.NEGATIVE_INFINITY;
 import static java.lang.Double.POSITIVE_INFINITY;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -881,11 +882,11 @@ public abstract class Doubles {
 		return BigDecimal.valueOf(value).toPlainString();
 	}
 
-	public static String[] toStringArray(double[] args) {
+	public static String[] toStringArray(double[] args, DecimalFormat df) {
 		int l = args.length;
 		String[] array = new String[l];
 		for (int i = 0; i < l; i++) {
-			array[i] = toPlainString(args[i]);
+			array[i] = df != null ? df.format(args[i]) : toPlainString(args[i]);
 		}
 		return array;
 	}
@@ -901,10 +902,10 @@ public abstract class Doubles {
 	}
 
 	public static boolean same(double[] array) {
-		return isSequentially(array, 0);
+		return isSerial(array, 0);
 	}
 
-	public static boolean isSequentially(double[] array, double n) {
+	public static boolean isSerial(double[] array, double n) {
 		if (isEmpty(array)) {
 			return false;
 		}

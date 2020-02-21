@@ -363,22 +363,8 @@ public abstract class DateUtils {
 	}
 
 	public static Date valueOf(long time, int hour, int minute, int second) {
-		Calendar c = getCalendar(time, hour, minute, second);
+		Calendar c = CalendarUtils.valueOf(time, hour, minute, second);
 		return c.getTime();
-	}
-
-	public static Calendar getCalendar(long time, int hour, int minute, int second) {
-		Calendar c = getCalendar(time);
-		c.set(Calendar.HOUR_OF_DAY, hour);
-		c.set(Calendar.MINUTE, minute);
-		c.set(Calendar.SECOND, second);
-		return c;
-	}
-
-	public static Calendar getCalendar(long time) {
-		Calendar c = Calendar.getInstance();
-		c.setTimeInMillis(time);
-		return c;
 	}
 
 	public static Date setTime(int hour, int minute, int second) {

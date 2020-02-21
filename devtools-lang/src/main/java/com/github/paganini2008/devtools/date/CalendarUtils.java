@@ -210,6 +210,14 @@ public abstract class CalendarUtils {
 		return values;
 	}
 
+	public static Calendar valueOf(long time, int hour, int minute, int second) {
+		Calendar c = toCalendar(time, TimeZone.getDefault());
+		c.set(Calendar.HOUR_OF_DAY, hour);
+		c.set(Calendar.MINUTE, minute);
+		c.set(Calendar.SECOND, second);
+		return c;
+	}
+
 	public static Calendar valueOf(int year, int month, int date) {
 		return valueOf(year, month, date, 0, 0, 0);
 	}

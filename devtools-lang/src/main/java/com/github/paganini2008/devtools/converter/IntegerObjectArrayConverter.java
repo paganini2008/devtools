@@ -18,7 +18,7 @@ public class IntegerObjectArrayConverter extends BasicConverter<Integer[]> {
 			if (StringUtils.isBlank(source)) {
 				return defaultValue;
 			}
-			List<String> result = StringUtils.split(source, config.getDelimiter());
+			List<String> result = StringUtils.split(source, delimiter);
 			return result != null ? Ints.valueOf(result.toArray(new String[result.size()])) : defaultValue;
 		}
 	};
@@ -85,6 +85,12 @@ public class IntegerObjectArrayConverter extends BasicConverter<Integer[]> {
 		registerType(char[].class, shortArrayConverter);
 		registerType(short[].class, charArrayConverter);
 		registerType(int[].class, intArrayConverter);
+	}
+	
+	private String delimiter = ",";
+
+	public void setDelimiter(String delimiter) {
+		this.delimiter = delimiter;
 	}
 
 }

@@ -2,6 +2,7 @@ package com.github.paganini2008.devtools.converter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -23,7 +24,7 @@ public class DateConverter extends BasicConverter<Date> {
 
 	private final Converter<String, Date> stringConverter = new Converter<String, Date>() {
 		public Date convertValue(String source, Date defaultValue) {
-			return DateUtils.parse(source, config.getDatePattern(), defaultValue);
+			return DateUtils.parse(source, datePattern, defaultValue);
 		}
 	};
 
@@ -33,7 +34,7 @@ public class DateConverter extends BasicConverter<Date> {
 		}
 	};
 
-	private final Converter<int[], Date> arrayConverter = new Converter<int[], Date>() {
+	private final Converter<int[], Date> intArrayConverter = new Converter<int[], Date>() {
 		public Date convertValue(int[] source, Date defaultValue) {
 			if (source == null) {
 				return defaultValue;
@@ -43,19 +44,19 @@ public class DateConverter extends BasicConverter<Date> {
 			} else if (source.length == 6) {
 				return DateUtils.valueOf(source[0], source[1], source[2], source[3], source[4], source[5]);
 			}
-			throw new IllegalArgumentException("Please define the array's length to 3 or 6.");
+			throw new IllegalArgumentException("Int array's length need to be 3 or 6.");
 		}
 	};
 
 	private final Converter<LocalDate, Date> localDateConverter = new Converter<LocalDate, Date>() {
 		public Date convertValue(LocalDate source, Date defaultValue) {
-			return DateUtils.toDate(source, getConfig().getZoneId(), defaultValue);
+			return DateUtils.toDate(source, zoneId, defaultValue);
 		}
 	};
 
 	private final Converter<LocalDateTime, Date> localDateTimeConverter = new Converter<LocalDateTime, Date>() {
 		public Date convertValue(LocalDateTime source, Date defaultValue) {
-			return DateUtils.toDate(source, getConfig().getZoneId(), defaultValue);
+			return DateUtils.toDate(source, zoneId, defaultValue);
 		}
 	};
 
@@ -63,9 +64,20 @@ public class DateConverter extends BasicConverter<Date> {
 		registerType(Long.class, longConverter);
 		registerType(String.class, stringConverter);
 		registerType(Calendar.class, calendarConverter);
-		registerType(int[].class, arrayConverter);
+		registerType(int[].class, intArrayConverter);
 		registerType(LocalDate.class, localDateConverter);
 		registerType(LocalDateTime.class, localDateTimeConverter);
+	}
+
+	private ZoneId zoneId = ZoneId.systemDefault();
+	private String datePattern = DateUtils.DEFAULT_DATE_PATTERN;
+
+	public void setZoneId(ZoneId zoneId) {
+		this.zoneId = zoneId;
+	}
+
+	public void setDatePattern(String datePattern) {
+		this.datePattern = datePattern;
 	}
 
 }

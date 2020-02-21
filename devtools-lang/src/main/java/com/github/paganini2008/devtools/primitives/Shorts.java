@@ -5,6 +5,7 @@ import static com.github.paganini2008.devtools.ArrayUtils.MERGE_SORT_THRESHOLD;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -24,8 +25,6 @@ import com.github.paganini2008.devtools.collection.LruMap;
  * Shorts
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public abstract class Shorts {
@@ -34,7 +33,7 @@ public abstract class Shorts {
 
 	public static final Short[] EMPTY_SHORT_OBJECT_ARRAY = new Short[0];
 
-	private static final LruMap<String, Short> cache = new LruMap<String, Short>(128);
+	private static final LruMap<String, Short> cache = new LruMap<String, Short>(1024);
 
 	public static final int BYTES = Short.SIZE / Byte.SIZE;
 
@@ -840,11 +839,11 @@ public abstract class Shorts {
 		return hash;
 	}
 
-	public static String[] toStringArray(short[] args) {
+	public static String[] toStringArray(short[] args, DecimalFormat df) {
 		int l = args.length;
 		String[] array = new String[l];
 		for (int i = 0; i < l; i++) {
-			array[i] = String.valueOf(args[i]);
+			array[i] = df != null ? df.format(args[i]) : String.valueOf(args[i]);
 		}
 		return array;
 	}
@@ -886,14 +885,14 @@ public abstract class Shorts {
 	}
 
 	public static boolean same(short[] array) {
-		return isSequentially(array, 0);
+		return isSerial(array, 0);
 	}
 
-	public static boolean isSequentially(short[] array) {
-		return isSequentially(array, 1);
+	public static boolean isSerial(short[] array) {
+		return isSerial(array, 1);
 	}
 
-	public static boolean isSequentially(short[] array, int n) {
+	public static boolean isSerial(short[] array, int n) {
 		if (isEmpty(array)) {
 			return false;
 		}

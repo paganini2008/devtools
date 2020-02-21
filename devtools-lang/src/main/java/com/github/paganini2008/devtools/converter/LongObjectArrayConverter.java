@@ -22,7 +22,7 @@ public class LongObjectArrayConverter extends BasicConverter<Long[]> {
 			if (StringUtils.isBlank(source)) {
 				return defaultValue;
 			}
-			List<String> result = StringUtils.split(source, config.getDelimiter());
+			List<String> result = StringUtils.split(source, delimiter);
 			return Longs.valueOf(result.toArray(new String[result.size()]));
 		}
 	};
@@ -108,7 +108,7 @@ public class LongObjectArrayConverter extends BasicConverter<Long[]> {
 		}
 	};
 
-	private final Converter<String[], Long[]> stringConverter = new Converter<String[], Long[]>() {
+	private final Converter<String[], Long[]> stringArrayConverter = new Converter<String[], Long[]>() {
 		public Long[] convertValue(String[] source, Long[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
@@ -117,7 +117,7 @@ public class LongObjectArrayConverter extends BasicConverter<Long[]> {
 		}
 	};
 
-	private final Converter<Date[], Long[]> dateConverter = new Converter<Date[], Long[]>() {
+	private final Converter<Date[], Long[]> dateArrayConverter = new Converter<Date[], Long[]>() {
 		public Long[] convertValue(Date[] source, Long[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
@@ -126,7 +126,7 @@ public class LongObjectArrayConverter extends BasicConverter<Long[]> {
 		}
 	};
 
-	private final Converter<Calendar[], Long[]> calendarConverter = new Converter<Calendar[], Long[]>() {
+	private final Converter<Calendar[], Long[]> calendarArrayConverter = new Converter<Calendar[], Long[]>() {
 		public Long[] convertValue(Calendar[] source, Long[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
@@ -140,15 +140,21 @@ public class LongObjectArrayConverter extends BasicConverter<Long[]> {
 		registerType(Boolean[].class, booleanObjectArrayConverter);
 		registerType(Character[].class, characterObjectArrayConverter);
 		registerType(Number[].class, numberArrayConverter);
-		registerType(String[].class, stringConverter);
-		registerType(Date.class, dateConverter);
-		registerType(Calendar.class, calendarConverter);
+		registerType(String[].class, stringArrayConverter);
+		registerType(Date.class, dateArrayConverter);
+		registerType(Calendar.class, calendarArrayConverter);
 		registerType(char[].class, charArrayConverter);
 		registerType(boolean[].class, booleanArrayConverter);
 		registerType(byte[].class, byteArrayConverter);
 		registerType(short[].class, shortArrayConverter);
 		registerType(int[].class, intArrayConverter);
 		registerType(long[].class, longArrayConverter);
+	}
+	
+	private String delimiter = ",";
+
+	public void setDelimiter(String delimiter) {
+		this.delimiter = delimiter;
 	}
 
 }

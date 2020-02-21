@@ -6,6 +6,7 @@ import static com.github.paganini2008.devtools.ArrayUtils.MERGE_SORT_THRESHOLD;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -25,8 +26,6 @@ import com.github.paganini2008.devtools.collection.LruMap;
  * Bytes
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public abstract class Bytes {
@@ -858,11 +857,11 @@ public abstract class Bytes {
 		return hash;
 	}
 
-	public static String[] toStringArray(byte[] args) {
+	public static String[] toStringArray(byte[] args, DecimalFormat df) {
 		int l = args.length;
 		String[] array = new String[l];
 		for (int i = 0; i < l; i++) {
-			array[i] = String.valueOf(args[i]);
+			array[i] = df != null ? df.format(args[i]) : String.valueOf(args[i]);
 		}
 		return array;
 	}
@@ -904,14 +903,14 @@ public abstract class Bytes {
 	}
 
 	public static boolean same(byte[] array) {
-		return isSequentially(array, 0);
+		return isSerial(array, 0);
 	}
 
-	public static boolean isSequentially(byte[] array) {
-		return isSequentially(array, 1);
+	public static boolean isSerial(byte[] array) {
+		return isSerial(array, 1);
 	}
 
-	public static boolean isSequentially(byte[] array, int n) {
+	public static boolean isSerial(byte[] array, int n) {
 		if (isEmpty(array)) {
 			return false;
 		}
@@ -1099,11 +1098,15 @@ public abstract class Bytes {
 	public static double toDouble(byte[] b) {
 		return Double.longBitsToDouble(toLong(b));
 	}
+	
+	public static byte[] toByteArray(ByteBuffer bb) {
+		return toByteArray(bb, null);
+	}
 
-	public static byte[] toBytes(ByteBuffer bb) {
-		int length = bb.limit();
+	public static byte[] toByteArray(ByteBuffer bb, byte[] defaultValue) {
+		int length = bb.limit() - bb.position();
 		byte[] result = new byte[length];
-		System.arraycopy(bb.array(), bb.arrayOffset(), result, 0, length);
+		bb.get(result);
 		return result;
 	}
 

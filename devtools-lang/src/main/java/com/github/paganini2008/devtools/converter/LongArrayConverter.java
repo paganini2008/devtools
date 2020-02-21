@@ -18,7 +18,7 @@ public class LongArrayConverter extends BasicConverter<long[]> {
 			if (StringUtils.isBlank(source)) {
 				return defaultValue;
 			}
-			List<String> result = StringUtils.split(source, config.getDelimiter());
+			List<String> result = StringUtils.split(source, delimiter);
 			return result != null ? Longs.parseMany(result.toArray(new String[result.size()])) : defaultValue;
 		}
 	};
@@ -105,6 +105,12 @@ public class LongArrayConverter extends BasicConverter<long[]> {
 		registerType(int[].class, shortArrayConverter);
 		registerType(float[].class, floatArrayConverter);
 		registerType(double[].class, doubleArrayConverter);
+	}
+	
+	private String delimiter = ",";
+
+	public void setDelimiter(String delimiter) {
+		this.delimiter = delimiter;
 	}
 
 }

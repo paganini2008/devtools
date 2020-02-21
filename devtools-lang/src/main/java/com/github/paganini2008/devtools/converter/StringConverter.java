@@ -6,6 +6,8 @@ import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.sql.Clob;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -16,6 +18,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.github.paganini2008.devtools.ArrayUtils;
+import com.github.paganini2008.devtools.CharsetUtils;
 import com.github.paganini2008.devtools.NumberUtils;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.MapUtils;
@@ -47,10 +50,7 @@ public class StringConverter extends BasicConverter<String> {
 
 	private final Converter<Boolean, String> booleanConverter = new Converter<Boolean, String>() {
 		public String convertValue(Boolean source, String defaultValue) {
-			if (source == null) {
-				return defaultValue;
-			}
-			return Booleans.toString(source);
+			return Booleans.toString(source, defaultValue);
 		}
 	};
 
@@ -65,19 +65,19 @@ public class StringConverter extends BasicConverter<String> {
 
 	private final Converter<Number, String> numberConverter = new Converter<Number, String>() {
 		public String convertValue(Number source, String defaultValue) {
-			return NumberUtils.format(source, config.getDecimalFormatter(), defaultValue);
+			return NumberUtils.format(source, decimalFormat, defaultValue);
 		}
 	};
 
 	private final Converter<Date, String> dateConverter = new Converter<Date, String>() {
 		public String convertValue(Date source, String defaultValue) {
-			return DateUtils.format(source, config.getDateFormat(), defaultValue);
+			return DateUtils.format(source, dateFormat, defaultValue);
 		}
 	};
 
 	private final Converter<Calendar, String> calendarConverter = new Converter<Calendar, String>() {
 		public String convertValue(Calendar source, String defaultValue) {
-			return CalendarUtils.format(source, config.getDateFormat(), defaultValue);
+			return CalendarUtils.format(source, dateFormat, defaultValue);
 		}
 	};
 
@@ -89,7 +89,7 @@ public class StringConverter extends BasicConverter<String> {
 			InputStream in = null;
 			try {
 				in = UrlUtils.openStream(source);
-				return IOUtils.toString(in, config.getStringCharset());
+				return IOUtils.toString(in, charset);
 			} catch (IOException e) {
 				return defaultValue;
 			} finally {
@@ -121,7 +121,7 @@ public class StringConverter extends BasicConverter<String> {
 				return defaultValue;
 			}
 			try {
-				return IOUtils.toString(source, config.getStringCharset());
+				return IOUtils.toString(source, charset);
 			} catch (IOException e) {
 				return defaultValue;
 			} finally {
@@ -159,7 +159,7 @@ public class StringConverter extends BasicConverter<String> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return new String(source, config.getStringCharset());
+			return new String(source, charset);
 		}
 	};
 
@@ -177,7 +177,7 @@ public class StringConverter extends BasicConverter<String> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return Shorts.join(source, config.getDelimiter());
+			return Shorts.join(source, delimiter);
 		}
 	};
 
@@ -186,7 +186,7 @@ public class StringConverter extends BasicConverter<String> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return Ints.join(source, config.getDelimiter());
+			return Ints.join(source, delimiter);
 		}
 	};
 
@@ -195,7 +195,7 @@ public class StringConverter extends BasicConverter<String> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return Longs.join(source, config.getDelimiter());
+			return Longs.join(source, delimiter);
 		}
 	};
 
@@ -204,7 +204,7 @@ public class StringConverter extends BasicConverter<String> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return Floats.join(source, config.getDelimiter());
+			return Floats.join(source, delimiter);
 		}
 	};
 
@@ -213,7 +213,7 @@ public class StringConverter extends BasicConverter<String> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return Doubles.join(source, config.getDelimiter());
+			return Doubles.join(source, delimiter);
 		}
 	};
 
@@ -222,7 +222,7 @@ public class StringConverter extends BasicConverter<String> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return Booleans.join(source, config.getDelimiter());
+			return Booleans.join(source, delimiter);
 		}
 	};
 
@@ -231,7 +231,7 @@ public class StringConverter extends BasicConverter<String> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return ArrayUtils.join(source, config.getDelimiter());
+			return ArrayUtils.join(source, delimiter);
 		}
 	};
 
@@ -240,7 +240,7 @@ public class StringConverter extends BasicConverter<String> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return CollectionUtils.join(source, config.getDelimiter());
+			return CollectionUtils.join(source, delimiter);
 		}
 	};
 
@@ -249,7 +249,7 @@ public class StringConverter extends BasicConverter<String> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return CollectionUtils.join(source, config.getDelimiter());
+			return CollectionUtils.join(source, delimiter);
 		}
 	};
 
@@ -258,7 +258,7 @@ public class StringConverter extends BasicConverter<String> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return CollectionUtils.join(source, config.getDelimiter());
+			return CollectionUtils.join(source, delimiter);
 		}
 	};
 
@@ -267,7 +267,7 @@ public class StringConverter extends BasicConverter<String> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return MapUtils.join(source, config.getDelimiter());
+			return MapUtils.join(source, delimiter);
 		}
 	};
 
@@ -321,6 +321,27 @@ public class StringConverter extends BasicConverter<String> {
 
 		registerType(Charset.class, charsetConverter);
 		registerType(Locale.class, localeConverter);
+	}
+
+	private String delimiter = ",";
+	private Charset charset = CharsetUtils.DEFAULT;
+	private DecimalFormat decimalFormat = new DecimalFormat("0.##");
+	private DateFormat dateFormat = DateUtils.DEFAULT_DATE_FORMATTER;
+
+	public void setDelimiter(String delimiter) {
+		this.delimiter = delimiter;
+	}
+
+	public void setCharset(Charset charset) {
+		this.charset = charset;
+	}
+
+	public void setDecimalFormat(DecimalFormat decimalFormat) {
+		this.decimalFormat = decimalFormat;
+	}
+
+	public void setDateFormat(DateFormat dateFormat) {
+		this.dateFormat = dateFormat;
 	}
 
 }

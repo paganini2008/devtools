@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings("unchecked")
 public class StandardTypeConverter implements TypeConverter {
 
-	private static final Map<Type, BasicConverter<?>> preparedConverters = new HashMap<Type, BasicConverter<?>>() {
+	private static final Map<Type, BasicConverter<?>> preparedSettings = new HashMap<Type, BasicConverter<?>>() {
 
 		private static final long serialVersionUID = 1L;
 
@@ -84,14 +84,13 @@ public class StandardTypeConverter implements TypeConverter {
 			put(Date.class, new DateConverter());
 			put(Calendar.class, new CalendarConverter());
 
-			StringConverter stringHandler = new StringConverter();
-			put(String.class, stringHandler);
-			put(String[].class, new StringArrayConverter(stringHandler));
+			put(String.class, new StringConverter());
+			put(String[].class, new StringArrayConverter());
 
 			put(Charset.class, new CharsetConverter());
 			put(UUID.class, new UUIDConverter());
 			put(Locale.class, new LocaleConverter());
-			
+
 			put(LocalDate.class, new LocalDateConverter());
 			put(LocalTime.class, new LocalTimeConverter());
 			put(LocalDateTime.class, new LocalDateTimeConverter());
@@ -99,17 +98,9 @@ public class StandardTypeConverter implements TypeConverter {
 	};
 
 	private final Map<Type, BasicConverter<?>> converters;
-	private final ConverterConfig config = new ConverterConfig();
 
 	public StandardTypeConverter() {
-		this.converters = new ConcurrentHashMap<Type, BasicConverter<?>>(preparedConverters);
-		for (BasicConverter<?> baseConverter : converters.values()) {
-			baseConverter.setConfig(config);
-		}
-	}
-
-	public ConverterConfig getConfig() {
-		return config;
+		this.converters = new ConcurrentHashMap<Type, BasicConverter<?>>(preparedSettings);
 	}
 
 	public <T> void registerType(Class<T> javaType, BasicConverter<T> converter) {

@@ -18,7 +18,7 @@ public class FloatArrayConverter extends BasicConverter<float[]> {
 			if (StringUtils.isBlank(source)) {
 				return defaultValue;
 			}
-			List<String> result = StringUtils.split(source, config.getDelimiter());
+			List<String> result = StringUtils.split(source, delimiter);
 			return result != null ? Floats.parseMany(result.toArray(new String[result.size()])) : defaultValue;
 		}
 	};
@@ -105,6 +105,12 @@ public class FloatArrayConverter extends BasicConverter<float[]> {
 		registerType(int[].class, intArrayConverter);
 		registerType(long[].class, longArrayConverter);
 		registerType(double[].class, doubleArrayConverter);
+	}
+
+	private String delimiter = ",";
+
+	public void setDelimiter(String delimiter) {
+		this.delimiter = delimiter;
 	}
 
 }

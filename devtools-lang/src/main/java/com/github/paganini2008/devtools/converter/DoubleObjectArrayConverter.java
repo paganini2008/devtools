@@ -18,12 +18,12 @@ public class DoubleObjectArrayConverter extends BasicConverter<Double[]> {
 			if (StringUtils.isBlank(source)) {
 				return defaultValue;
 			}
-			List<String> result = StringUtils.split(source, config.getDelimiter());
+			List<String> result = StringUtils.split(source, delimiter);
 			return result != null ? Doubles.valueOf(result.toArray(new String[result.size()])) : defaultValue;
 		}
 	};
 
-	private final Converter<Number[], Double[]> numberConverter = new Converter<Number[], Double[]>() {
+	private final Converter<Number[], Double[]> numberArrayConverter = new Converter<Number[], Double[]>() {
 		public Double[] convertValue(Number[] source, Double[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
@@ -32,7 +32,7 @@ public class DoubleObjectArrayConverter extends BasicConverter<Double[]> {
 		}
 	};
 
-	private final Converter<String[], Double[]> stringConverter = new Converter<String[], Double[]>() {
+	private final Converter<String[], Double[]> stringArrayConverter = new Converter<String[], Double[]>() {
 		public Double[] convertValue(String[] source, Double[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
@@ -41,7 +41,7 @@ public class DoubleObjectArrayConverter extends BasicConverter<Double[]> {
 		}
 	};
 
-	private final Converter<byte[], Double[]> nativeByteArrayConverter = new Converter<byte[], Double[]>() {
+	private final Converter<byte[], Double[]> byteArrayConverter = new Converter<byte[], Double[]>() {
 		public Double[] convertValue(byte[] source, Double[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
@@ -50,7 +50,7 @@ public class DoubleObjectArrayConverter extends BasicConverter<Double[]> {
 		}
 	};
 
-	private final Converter<short[], Double[]> nativeShortArrayConverter = new Converter<short[], Double[]>() {
+	private final Converter<short[], Double[]> shortArrayConverter = new Converter<short[], Double[]>() {
 		public Double[] convertValue(short[] source, Double[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
@@ -59,7 +59,7 @@ public class DoubleObjectArrayConverter extends BasicConverter<Double[]> {
 		}
 	};
 
-	private final Converter<char[], Double[]> nativeCharArrayConverter = new Converter<char[], Double[]>() {
+	private final Converter<char[], Double[]> charArrayConverter = new Converter<char[], Double[]>() {
 		public Double[] convertValue(char[] source, Double[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
@@ -68,7 +68,7 @@ public class DoubleObjectArrayConverter extends BasicConverter<Double[]> {
 		}
 	};
 
-	private final Converter<int[], Double[]> nativeIntArrayConverter = new Converter<int[], Double[]>() {
+	private final Converter<int[], Double[]> intArrayConverter = new Converter<int[], Double[]>() {
 		public Double[] convertValue(int[] source, Double[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
@@ -77,7 +77,7 @@ public class DoubleObjectArrayConverter extends BasicConverter<Double[]> {
 		}
 	};
 
-	private final Converter<long[], Double[]> nativeLongArrayConverter = new Converter<long[], Double[]>() {
+	private final Converter<long[], Double[]> longArrayConverter = new Converter<long[], Double[]>() {
 		public Double[] convertValue(long[] source, Double[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
@@ -86,7 +86,7 @@ public class DoubleObjectArrayConverter extends BasicConverter<Double[]> {
 		}
 	};
 
-	private final Converter<float[], Double[]> nativeFloatArrayConverter = new Converter<float[], Double[]>() {
+	private final Converter<float[], Double[]> floatArrayConverter = new Converter<float[], Double[]>() {
 		public Double[] convertValue(float[] source, Double[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
@@ -95,7 +95,7 @@ public class DoubleObjectArrayConverter extends BasicConverter<Double[]> {
 		}
 	};
 
-	private final Converter<double[], Double[]> nativeDoubleArrayConverter = new Converter<double[], Double[]>() {
+	private final Converter<double[], Double[]> doubleArrayConverter = new Converter<double[], Double[]>() {
 		public Double[] convertValue(double[] source, Double[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
@@ -106,15 +106,21 @@ public class DoubleObjectArrayConverter extends BasicConverter<Double[]> {
 
 	public DoubleObjectArrayConverter() {
 		registerType(CharSequence.class, charSequenceConverter);
-		registerType(Number[].class, numberConverter);
-		registerType(String[].class, stringConverter);
-		registerType(byte[].class, nativeByteArrayConverter);
-		registerType(char[].class, nativeCharArrayConverter);
-		registerType(short[].class, nativeShortArrayConverter);
-		registerType(int[].class, nativeIntArrayConverter);
-		registerType(long[].class, nativeLongArrayConverter);
-		registerType(float[].class, nativeFloatArrayConverter);
-		registerType(double[].class, nativeDoubleArrayConverter);
+		registerType(Number[].class, numberArrayConverter);
+		registerType(String[].class, stringArrayConverter);
+		registerType(byte[].class, byteArrayConverter);
+		registerType(char[].class, charArrayConverter);
+		registerType(short[].class, shortArrayConverter);
+		registerType(int[].class, intArrayConverter);
+		registerType(long[].class, longArrayConverter);
+		registerType(float[].class, floatArrayConverter);
+		registerType(double[].class, doubleArrayConverter);
+	}
+
+	private String delimiter = ",";
+
+	public void setDelimiter(String delimiter) {
+		this.delimiter = delimiter;
 	}
 
 }

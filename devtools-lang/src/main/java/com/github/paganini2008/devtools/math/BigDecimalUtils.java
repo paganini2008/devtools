@@ -54,7 +54,7 @@ public abstract class BigDecimalUtils {
 
 	public static final BigDecimal[] EMPTY_ARRAY = new BigDecimal[0];
 
-	private static final LruMap<String, BigDecimal> parserCache = new LruMap<String, BigDecimal>(512);
+	private static final LruMap<String, BigDecimal> parserCache = new LruMap<String, BigDecimal>(1024);
 
 	private static final LruMap<String, String> stringPlainStringCache = new LruMap<String, String>(32);
 
@@ -171,15 +171,15 @@ public abstract class BigDecimalUtils {
 		return pooled;
 	}
 
-	public static BigDecimal[] parses(String[] strs) {
-		return parses(strs, true);
+	public static BigDecimal[] parseMany(String[] strings) {
+		return parseMany(strings, true);
 	}
 
-	public static BigDecimal[] parses(String[] strs, boolean thrown) {
-		Assert.isNull(strs, "Source array must not be null.");
-		BigDecimal[] result = new BigDecimal[strs.length];
+	public static BigDecimal[] parseMany(String[] strings, boolean thrown) {
+		Assert.isNull(strings, "Source array must not be null.");
+		BigDecimal[] result = new BigDecimal[strings.length];
 		int i = 0;
-		for (String str : strs) {
+		for (String str : strings) {
 			try {
 				result[i++] = parse(str);
 			} catch (IllegalArgumentException e) {
@@ -228,15 +228,15 @@ public abstract class BigDecimalUtils {
 		}
 	}
 
-	public static BigDecimal[] valueOf(String[] strs) {
-		return valueOf(strs, null);
+	public static BigDecimal[] valueOf(String[] strings) {
+		return valueOf(strings, null);
 	}
 
-	public static BigDecimal[] valueOf(String[] strs, BigDecimal defaultValue) {
-		Assert.isNull(strs, "Source array must not be null.");
-		BigDecimal[] result = new BigDecimal[strs.length];
+	public static BigDecimal[] valueOf(String[] strings, BigDecimal defaultValue) {
+		Assert.isNull(strings, "Source array must not be null.");
+		BigDecimal[] result = new BigDecimal[strings.length];
 		int i = 0;
-		for (String str : strs) {
+		for (String str : strings) {
 			result[i++] = valueOf(str, defaultValue);
 		}
 		return result;
@@ -772,7 +772,6 @@ public abstract class BigDecimalUtils {
 	public static BigDecimal roundEven(String value, int scale) {
 		return setScale(value, scale, RoundingMode.HALF_EVEN);
 	}
-
 
 	public static BigInteger roundEven(String value) {
 		return setScale(value, RoundingMode.HALF_EVEN);

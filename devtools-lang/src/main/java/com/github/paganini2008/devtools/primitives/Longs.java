@@ -5,6 +5,7 @@ import static com.github.paganini2008.devtools.ArrayUtils.MERGE_SORT_THRESHOLD;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -24,8 +25,6 @@ import com.github.paganini2008.devtools.collection.LruMap;
  * Longs
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public abstract class Longs {
@@ -38,7 +37,7 @@ public abstract class Longs {
 
 	public static final long MAX_POWER_OF_TWO = 1L << (Long.SIZE - 2);
 
-	private static final LruMap<String, Long> cache = new LruMap<String, Long>(128);
+	private static final LruMap<String, Long> cache = new LruMap<String, Long>(1024);
 
 	public static void clearCache() {
 		cache.clear();
@@ -933,11 +932,11 @@ public abstract class Longs {
 		return !isEven(value);
 	}
 
-	public static String[] toStringArray(long[] args) {
+	public static String[] toStringArray(long[] args, DecimalFormat df) {
 		int l = args.length;
 		String[] array = new String[l];
 		for (int i = 0; i < l; i++) {
-			array[i] = String.valueOf(args[i]);
+			array[i] = df != null ? df.format(args[i]) : String.valueOf(args[i]);
 		}
 		return array;
 	}
@@ -952,11 +951,11 @@ public abstract class Longs {
 		}
 	}
 
-	public static boolean isSequentially(long[] array) {
-		return isSequentially(array, 1);
+	public static boolean isSerial(long[] array) {
+		return isSerial(array, 1);
 	}
 
-	public static boolean isSequentially(long[] array, int n) {
+	public static boolean isSerial(long[] array, int n) {
 		if (isEmpty(array)) {
 			return false;
 		}
@@ -1005,7 +1004,7 @@ public abstract class Longs {
 	}
 
 	public static boolean same(long[] array) {
-		return isSequentially(array, 0);
+		return isSerial(array, 0);
 	}
 
 	public static void leftScroll(long[] src, int n) {

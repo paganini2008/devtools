@@ -1,10 +1,5 @@
 package com.github.paganini2008.devtools.converter;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 /**
  * 
  * ConvertUtils
@@ -40,10 +35,8 @@ public abstract class ConvertUtils {
 		return INSTANCE.convertValue(value, javaType, defaultValue);
 	}
 	
-	public static void main(String[] args) throws MalformedURLException {
-		Object i = ConvertUtils.convertValue(new URL("https://new.qq.com/omn/20200220/20200220A06MDP00.html?pgv_ref=aio2015"),byte[].class);
-		System.out.println(i.getClass());
-		System.out.println(i);
+	public static void main(String[] args) {
+		System.out.println(ConvertUtils.convertValue(38901.34554678f, String.class)) ;
 	}
 
 }

@@ -1,5 +1,7 @@
 package com.github.paganini2008.devtools.converter;
 
+import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -13,6 +15,14 @@ import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.ListUtils;
 import com.github.paganini2008.devtools.date.CalendarUtils;
 import com.github.paganini2008.devtools.date.DateUtils;
+import com.github.paganini2008.devtools.primitives.Booleans;
+import com.github.paganini2008.devtools.primitives.Bytes;
+import com.github.paganini2008.devtools.primitives.Chars;
+import com.github.paganini2008.devtools.primitives.Doubles;
+import com.github.paganini2008.devtools.primitives.Floats;
+import com.github.paganini2008.devtools.primitives.Ints;
+import com.github.paganini2008.devtools.primitives.Longs;
+import com.github.paganini2008.devtools.primitives.Shorts;
 
 /**
  * StringArrayConverter
@@ -27,7 +37,7 @@ public class StringArrayConverter extends BasicConverter<String[]> {
 			if (StringUtils.isBlank(source)) {
 				return defaultValue;
 			}
-			List<String> results = StringUtils.split(source, config.getDelimiter());
+			List<String> results = StringUtils.split(source, delimiter);
 			return results.toArray(new String[results.size()]);
 		}
 	};
@@ -37,7 +47,7 @@ public class StringArrayConverter extends BasicConverter<String[]> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return DateUtils.formatMany(source, config.getDateFormat());
+			return DateUtils.formatMany(source, dateFormat);
 		}
 	};
 
@@ -46,7 +56,7 @@ public class StringArrayConverter extends BasicConverter<String[]> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return CalendarUtils.formatMany(source, config.getDateFormat());
+			return CalendarUtils.formatMany(source, dateFormat);
 		}
 	};
 
@@ -55,16 +65,88 @@ public class StringArrayConverter extends BasicConverter<String[]> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return NumberUtils.formatMany(source, config.getDecimalFormatter());
+			return NumberUtils.toStringArray(source, decimalFormat);
 		}
 	};
 
-	private final Converter<Object[], String[]> arrayConverter = new Converter<Object[], String[]>() {
+	private final Converter<Object[], String[]> objectArrayConverter = new Converter<Object[], String[]>() {
 		public String[] convertValue(Object[] source, String[] defaultValue) {
 			if (source == null) {
 				return defaultValue;
 			}
 			return ArrayUtils.toStringArray(source);
+		}
+	};
+
+	private final Converter<double[], String[]> doubleArrayConverter = new Converter<double[], String[]>() {
+		public String[] convertValue(double[] source, String[] defaultValue) {
+			if (source == null) {
+				return defaultValue;
+			}
+			return Doubles.toStringArray(source, decimalFormat);
+		}
+	};
+
+	private final Converter<float[], String[]> floatArrayConverter = new Converter<float[], String[]>() {
+		public String[] convertValue(float[] source, String[] defaultValue) {
+			if (source == null) {
+				return defaultValue;
+			}
+			return Floats.toStringArray(source, decimalFormat);
+		}
+	};
+
+	private final Converter<long[], String[]> longArrayConverter = new Converter<long[], String[]>() {
+		public String[] convertValue(long[] source, String[] defaultValue) {
+			if (source == null) {
+				return defaultValue;
+			}
+			return Longs.toStringArray(source, decimalFormat);
+		}
+	};
+
+	private final Converter<int[], String[]> intArrayConverter = new Converter<int[], String[]>() {
+		public String[] convertValue(int[] source, String[] defaultValue) {
+			if (source == null) {
+				return defaultValue;
+			}
+			return Ints.toStringArray(source, decimalFormat);
+		}
+	};
+
+	private final Converter<short[], String[]> shortArrayConverter = new Converter<short[], String[]>() {
+		public String[] convertValue(short[] source, String[] defaultValue) {
+			if (source == null) {
+				return defaultValue;
+			}
+			return Shorts.toStringArray(source, decimalFormat);
+		}
+	};
+
+	private final Converter<byte[], String[]> byteArrayConverter = new Converter<byte[], String[]>() {
+		public String[] convertValue(byte[] source, String[] defaultValue) {
+			if (source == null) {
+				return defaultValue;
+			}
+			return Bytes.toStringArray(source, decimalFormat);
+		}
+	};
+
+	private final Converter<char[], String[]> charArrayConverter = new Converter<char[], String[]>() {
+		public String[] convertValue(char[] source, String[] defaultValue) {
+			if (source == null) {
+				return defaultValue;
+			}
+			return Chars.toStringArray(source);
+		}
+	};
+
+	private final Converter<boolean[], String[]> booleanArrayConverter = new Converter<boolean[], String[]>() {
+		public String[] convertValue(boolean[] source, String[] defaultValue) {
+			if (source == null) {
+				return defaultValue;
+			}
+			return Booleans.toStringArray(source);
 		}
 	};
 
@@ -107,26 +189,42 @@ public class StringArrayConverter extends BasicConverter<String[]> {
 		}
 	};
 
-	public StringArrayConverter(StringConverter handler) {
+	public StringArrayConverter() {
 		registerType(CharSequence.class, charSequenceConverter);
 
-		registerType(boolean[].class, arrayConverter);
-		registerType(char[].class, arrayConverter);
-		registerType(byte[].class, arrayConverter);
-		registerType(short[].class, arrayConverter);
-		registerType(int[].class, arrayConverter);
-		registerType(float[].class, arrayConverter);
-		registerType(double[].class, arrayConverter);
-		registerType(long[].class, arrayConverter);
+		registerType(boolean[].class, booleanArrayConverter);
+		registerType(char[].class, charArrayConverter);
+		registerType(byte[].class, byteArrayConverter);
+		registerType(short[].class, shortArrayConverter);
+		registerType(int[].class, intArrayConverter);
+		registerType(float[].class, floatArrayConverter);
+		registerType(double[].class, doubleArrayConverter);
+		registerType(long[].class, longArrayConverter);
 
 		registerType(Date[].class, dateArrayConverter);
 		registerType(Calendar[].class, calendarArrayConverter);
 		registerType(Number[].class, numberArrayConverter);
-		registerType(Object[].class, arrayConverter);
+		registerType(Object[].class, objectArrayConverter);
 
 		registerType(Collection.class, collectionConverter);
 		registerType(Iterator.class, iteratorConverter);
 		registerType(Enumeration.class, enumerationConverter);
+	}
+
+	private DecimalFormat decimalFormat = new DecimalFormat("0.##");
+	private DateFormat dateFormat = DateUtils.DEFAULT_DATE_FORMATTER;
+	private String delimiter = ",";
+
+	public void setDecimalFormat(DecimalFormat decimalFormat) {
+		this.decimalFormat = decimalFormat;
+	}
+
+	public void setDateFormat(DateFormat dateFormat) {
+		this.dateFormat = dateFormat;
+	}
+
+	public void setDelimiter(String delimiter) {
+		this.delimiter = delimiter;
 	}
 
 }

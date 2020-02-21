@@ -1,7 +1,8 @@
 package com.github.paganini2008.devtools.converter;
 
-import java.util.List;
+import java.nio.charset.Charset;
 
+import com.github.paganini2008.devtools.CharsetUtils;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.primitives.Bytes;
 
@@ -18,8 +19,8 @@ public class ByteObjectArrayConverter extends BasicConverter<Byte[]> {
 			if (StringUtils.isBlank(source)) {
 				return defaultValue;
 			}
-			List<String> result = StringUtils.split(source, config.getDelimiter());
-			return result != null ? Bytes.valueOf(result.toArray(new String[result.size()])) : defaultValue;
+			byte[] bytes = source.toString().getBytes(charset);
+			return Bytes.toWrappers(bytes);
 		}
 	};
 
@@ -75,6 +76,12 @@ public class ByteObjectArrayConverter extends BasicConverter<Byte[]> {
 		registerType(boolean[].class, booleanArrayConverter);
 		registerType(char[].class, charArrayConverter);
 		registerType(byte[].class, byteArrayConverter);
+	}
+
+	private Charset charset = CharsetUtils.DEFAULT;
+
+	public void setCharset(Charset charset) {
+		this.charset = charset;
 	}
 
 }

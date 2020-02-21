@@ -1,7 +1,7 @@
 package com.github.paganini2008.devtools.converter;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * BasicConverter
@@ -11,16 +11,7 @@ import java.util.Map;
  */
 public abstract class BasicConverter<T> implements Converter<Object, T> {
 
-	private final Map<Class<?>, Converter<?, T>> converterRegistry = new HashMap<Class<?>, Converter<?, T>>();
-	protected ConverterConfig config = new ConverterConfig();
-
-	public void setConfig(ConverterConfig config) {
-		this.config = config;
-	}
-
-	public ConverterConfig getConfig() {
-		return config;
-	}
+	private final Map<Class<?>, Converter<?, T>> converterRegistry = new ConcurrentHashMap<Class<?>, Converter<?, T>>();
 
 	public void registerType(Class<?> javaType, Converter<?, T> converter) {
 		converterRegistry.put(javaType, converter);
@@ -43,9 +34,9 @@ public abstract class BasicConverter<T> implements Converter<Object, T> {
 		if (value == null) {
 			return defaultValue;
 		}
-		final Class<?> match = getAssignableClass(value.getClass());
-		if (match != null) {
-			Converter<Object, T> converter = (Converter<Object, T>) lookupType(match);
+		final Class<?> matches = getAssignableClass(value.getClass());
+		if (matches != null) {
+			Converter<Object, T> converter = (Converter<Object, T>) lookupType(matches);
 			return converter.convertValue(value, defaultValue);
 		}
 		return defaultValue;

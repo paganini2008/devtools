@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.sql.Blob;
 
+import com.github.paganini2008.devtools.CharsetUtils;
 import com.github.paganini2008.devtools.io.IOUtils;
 import com.github.paganini2008.devtools.net.UrlUtils;
 import com.github.paganini2008.devtools.primitives.Bytes;
@@ -108,6 +111,11 @@ public class ByteArrayConverter extends BasicConverter<byte[]> {
 		}
 	};
 
+	private final Converter<ByteBuffer, byte[]> byteBufferConverter = new Converter<ByteBuffer, byte[]>() {
+		public byte[] convertValue(ByteBuffer source, byte[] defaultValue) {
+			return Bytes.toByteArray(source);
+		}
+	};
 	private final Converter<URL, byte[]> urlConverter = new Converter<URL, byte[]>() {
 		public byte[] convertValue(URL source, byte[] defaultValue) {
 			if (source == null) {
@@ -163,7 +171,7 @@ public class ByteArrayConverter extends BasicConverter<byte[]> {
 				return defaultValue;
 			}
 			try {
-				return IOUtils.toByteArray(source, "UTF-8");
+				return IOUtils.toByteArray(source, charset);
 			} catch (IOException e) {
 				return defaultValue;
 			} finally {
@@ -187,6 +195,13 @@ public class ByteArrayConverter extends BasicConverter<byte[]> {
 		registerType(long[].class, longArrayConverter);
 		registerType(float[].class, floatArrayConverter);
 		registerType(double[].class, doubleArrayConverter);
+		registerType(ByteBuffer.class, byteBufferConverter);
+	}
+
+	private Charset charset = CharsetUtils.DEFAULT;
+
+	public void setCharset(Charset charset) {
+		this.charset = charset;
 	}
 
 }

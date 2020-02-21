@@ -18,7 +18,7 @@ public class DoubleArrayConverter extends BasicConverter<double[]> {
 			if (StringUtils.isBlank(source)) {
 				return defaultValue;
 			}
-			List<String> result = StringUtils.split(source, config.getDelimiter());
+			List<String> result = StringUtils.split(source, delimiter);
 			return result != null ? Doubles.parseMany(result.toArray(new String[result.size()])) : defaultValue;
 		}
 	};
@@ -105,6 +105,12 @@ public class DoubleArrayConverter extends BasicConverter<double[]> {
 		registerType(int[].class, intArrayConverter);
 		registerType(long[].class, longArrayConverter);
 		registerType(float[].class, floatArrayConverter);
+	}
+
+	private String delimiter = ",";
+
+	public void setDelimiter(String delimiter) {
+		this.delimiter = delimiter;
 	}
 
 }

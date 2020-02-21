@@ -5,6 +5,7 @@ import static com.github.paganini2008.devtools.ArrayUtils.MERGE_SORT_THRESHOLD;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,8 +26,6 @@ import com.github.paganini2008.devtools.collection.LruMap;
  * Ints
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public abstract class Ints {
@@ -39,7 +38,7 @@ public abstract class Ints {
 
 	public static final int MAX_POWER_OF_TWO = 1 << (Integer.SIZE - 2);
 
-	private static final LruMap<String, Integer> cache = new LruMap<String, Integer>(128);
+	private static final LruMap<String, Integer> cache = new LruMap<String, Integer>(1024);
 
 	public static void clearCache() {
 		cache.clear();
@@ -887,11 +886,11 @@ public abstract class Ints {
 		return true;
 	}
 
-	public static String[] toStringArray(int[] args) {
+	public static String[] toStringArray(int[] args, DecimalFormat df) {
 		int l = args.length;
 		String[] array = new String[l];
 		for (int i = 0; i < l; i++) {
-			array[i] = String.valueOf(args[i]);
+			array[i] = df != null ? df.format(args[i]) : String.valueOf(args[i]);
 		}
 		return array;
 	}
@@ -907,14 +906,14 @@ public abstract class Ints {
 	}
 
 	public static boolean same(int[] array) {
-		return isSequentially(array, 0);
+		return isSerial(array, 0);
 	}
 
-	public static boolean isSequentially(int[] array) {
-		return isSequentially(array, 1);
+	public static boolean isSerial(int[] array) {
+		return isSerial(array, 1);
 	}
 
-	public static boolean isSequentially(int[] array, int n) {
+	public static boolean isSerial(int[] array, int n) {
 		if (isEmpty(array)) {
 			return false;
 		}

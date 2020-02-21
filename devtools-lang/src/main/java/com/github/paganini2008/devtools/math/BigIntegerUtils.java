@@ -54,7 +54,7 @@ public abstract class BigIntegerUtils {
 
 	public static final BigInteger[] EMPTY_ARRAY = new BigInteger[0];
 
-	private static final LruMap<String, BigInteger> cache = new LruMap<String, BigInteger>(256);
+	private static final LruMap<String, BigInteger> cache = new LruMap<String, BigInteger>(1024);
 
 	public static void clearCache() {
 		cache.clear();
@@ -280,15 +280,15 @@ public abstract class BigIntegerUtils {
 		return pooled;
 	}
 
-	public static BigInteger[] parses(String[] strs) {
-		return parses(strs, true);
+	public static BigInteger[] parseMany(String[] strings) {
+		return parseMany(strings, true);
 	}
 
-	public static BigInteger[] parses(String[] strs, boolean thrown) {
-		Assert.isNull(strs, "Source array must not be null.");
-		BigInteger[] result = new BigInteger[strs.length];
+	public static BigInteger[] parseMany(String[] strings, boolean thrown) {
+		Assert.isNull(strings, "Source array must not be null.");
+		BigInteger[] result = new BigInteger[strings.length];
 		int i = 0;
-		for (String str : strs) {
+		for (String str : strings) {
 			try {
 				result[i++] = parse(str);
 			} catch (IllegalArgumentException e) {
@@ -337,15 +337,15 @@ public abstract class BigIntegerUtils {
 		}
 	}
 
-	public static BigInteger[] valueOf(String[] strs) {
-		return valueOf(strs, null);
+	public static BigInteger[] valueOf(String[] strings) {
+		return valueOf(strings, null);
 	}
 
-	public static BigInteger[] valueOf(String[] strs, BigInteger defaultValue) {
-		Assert.isNull(strs, "Source array must not be null.");
-		BigInteger[] result = new BigInteger[strs.length];
+	public static BigInteger[] valueOf(String[] strings, BigInteger defaultValue) {
+		Assert.isNull(strings, "Source array must not be null.");
+		BigInteger[] result = new BigInteger[strings.length];
 		int i = 0;
-		for (String str : strs) {
+		for (String str : strings) {
 			result[i++] = valueOf(str, defaultValue);
 		}
 		return result;
