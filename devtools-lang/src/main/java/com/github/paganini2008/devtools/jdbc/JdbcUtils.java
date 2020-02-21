@@ -9,12 +9,13 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 import javax.sql.DataSource;
 
+import com.github.paganini2008.devtools.ArrayUtils;
 import com.github.paganini2008.devtools.CaseFormats;
 import com.github.paganini2008.devtools.Observable;
 import com.github.paganini2008.devtools.Observer;
@@ -179,7 +180,9 @@ public abstract class JdbcUtils {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement(sql);
-			callback.setValues(ps);
+			if (callback != null) {
+				callback.setValues(ps);
+			}
 			return ps.executeBatch();
 		} finally {
 			closeQuietly(ps);
@@ -194,7 +197,9 @@ public abstract class JdbcUtils {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement(sql);
-			callback.setValues(ps);
+			if (callback != null) {
+				callback.setValues(ps);
+			}
 			return ps.executeUpdate();
 		} finally {
 			closeQuietly(ps);
@@ -202,62 +207,65 @@ public abstract class JdbcUtils {
 	}
 
 	public static Object executeOneResultQuery(Connection connection, String sql) throws SQLException {
-		Iterator<Tuple> iterator = executeQuery(connection, sql);
-		Tuple first = CollectionUtils.getFirst(iterator);
-		return first != null && !first.isEmpty() ? first.valueArray()[0] : null;
+		Cursor<Tuple> cursor = executeQuery(connection, sql);
+		Object[] array = cursor.first().valueArray();
+		return ArrayUtils.isNotEmpty(array) ? array[0] : null;
 	}
 
-	public static Iterator<Tuple> executeQuery(Connection connection, String sql) throws SQLException {
+	public static Cursor<Tuple> executeQuery(Connection connection, String sql) throws SQLException {
 		Statement sm = null;
 		ResultSet rs = null;
 		Observable observable = Observable.unrepeatable();
 		try {
 			sm = connection.createStatement();
 			rs = sm.executeQuery(sql);
-			return toIterator(rs, observable);
+			return new CursorImpl(rs, observable);
 		} finally {
-			closeLazily(observable, rs, sm);
+			closeLazily(observable, rs, sm, connection);
 		}
 	}
 
 	public static Object executeOneResultQuery(Connection connection, String sql, Object[] args) throws SQLException {
-		Iterator<Tuple> iterator = executeQuery(connection, sql, args);
-		Tuple first = CollectionUtils.getFirst(iterator);
-		return first != null && !first.isEmpty() ? first.valueArray()[0] : null;
+		Cursor<Tuple> cursor = executeQuery(connection, sql, args);
+		Object[] array = cursor.first().valueArray();
+		return ArrayUtils.isNotEmpty(array) ? array[0] : null;
 	}
 
-	public static Iterator<Tuple> executeQuery(ConnectionFactory connectionFactory, String sql, Object[] args) throws SQLException {
+	public static Cursor<Tuple> executeQuery(ConnectionFactory connectionFactory, String sql, Object[] args) throws SQLException {
 		return executeQuery(connectionFactory.getConnection(), sql, args);
 	}
 
-	public static Iterator<Tuple> executeQuery(Connection connection, String sql, Object[] args) throws SQLException {
+	public static Cursor<Tuple> executeQuery(Connection connection, String sql, Object[] args) throws SQLException {
 		return executeQuery(connection, sql, setParameters(args));
 	}
 
-	public static Iterator<Tuple> executeQuery(ConnectionFactory connectionFactory, String sql, PreparedStatementCallback callback)
+	public static Cursor<Tuple> executeQuery(ConnectionFactory connectionFactory, String sql, PreparedStatementCallback callback)
 			throws SQLException {
 		return executeQuery(connectionFactory.getConnection(), sql, callback);
 	}
 
-	public static Iterator<Tuple> executeQuery(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
+	public static Cursor<Tuple> executeQuery(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		Observable observable = Observable.unrepeatable();
+		final Observable observable = Observable.unrepeatable();
 		try {
 			ps = connection.prepareStatement(sql);
-			callback.setValues(ps);
+			if (callback != null) {
+				callback.setValues(ps);
+			}
 			rs = ps.executeQuery();
-			return toIterator(rs, observable);
+			return new CursorImpl(rs, observable);
 		} finally {
-			closeLazily(observable, rs, ps);
+			closeLazily(observable, rs, ps, connection);
 		}
 	}
 
-	private static void closeLazily(Observable observable, final ResultSet rs, final Statement ps) {
+	private static void closeLazily(Observable observable, final ResultSet rs, final Statement sm, final Connection connection) {
 		observable.addObserver(new Observer() {
 			public void update(Observable ob, Object arg) {
 				closeQuietly(rs);
-				closeQuietly(ps);
+				closeQuietly(sm);
+				closeQuietly(connection);
 			}
 		});
 	}
@@ -274,38 +282,57 @@ public abstract class JdbcUtils {
 		return tuple;
 	}
 
-	private static Iterator<Tuple> toIterator(final ResultSet rs, final Observable observable) throws SQLException {
+	/**
+	 * 
+	 * CursorImpl
+	 *
+	 * @author Fred Feng
+	 * @version 1.0
+	 */
+	private static class CursorImpl implements Cursor<Tuple> {
 
-		return new Iterator<Tuple>() {
+		private final ResultSet rs;
+		private final Observable observable;
+		private final AtomicBoolean opened;
 
-			public boolean hasNext() {
-				boolean state = true;
-				try {
-					return (state = rs.next());
-				} catch (SQLException e) {
-					state = false;
-					throw new IllegalStateException(e);
-				} finally {
-					if (!state) {
-						observable.notifyObservers();
-					}
-				}
+		CursorImpl(ResultSet rs, Observable observable) {
+			this.rs = rs;
+			this.observable = observable;
+			this.opened = new AtomicBoolean(true);
+		}
+
+		public boolean hasNext() {
+			try {
+				opened.set(rs.next());
+				return opened.get();
+			} catch (SQLException e) {
+				opened.set(false);
+				throw new DetachedSqlException(e.getMessage(), e);
+			} finally {
+				close();
 			}
+		}
 
-			public Tuple next() {
-				boolean state = true;
-				try {
-					return toTuple(rs);
-				} catch (SQLException e) {
-					state = false;
-					throw new IllegalStateException(e.getMessage(), e);
-				} finally {
-					if (!state) {
-						observable.notifyObservers();
-					}
-				}
+		public Tuple next() {
+			try {
+				return toTuple(rs);
+			} catch (SQLException e) {
+				opened.set(false);
+				throw new DetachedSqlException(e.getMessage(), e);
+			} finally {
+				close();
 			}
-		};
+		}
+
+		public boolean isOpened() {
+			return opened.get();
+		}
+
+		public void close() {
+			if (!isOpened()) {
+				observable.notifyObservers();
+			}
+		}
 	}
 
 	public static void scan(ConnectionFactory connectionFactory, String sql, PreparedStatementCallback callback, Consumer<Tuple> consumer)
@@ -324,57 +351,57 @@ public abstract class JdbcUtils {
 
 	public static void scan(Connection connection, String sql, PreparedStatementCallback callback, Consumer<Tuple> consumer)
 			throws SQLException {
-		Iterator<Tuple> iterator = executeQuery(connection, sql, callback);
-		CollectionUtils.forEach(iterator).forEach(consumer);
+		Cursor<Tuple> cursor = executeQuery(connection, sql, callback);
+		CollectionUtils.forEach(cursor).forEach(consumer);
 	}
 
-	public static void scrollingScan(ConnectionFactory connectionFactory, PageableSql pageableSql, Object[] args, int pageSize,
+	public static void scan(ConnectionFactory connectionFactory, PageableSql pageableSql, Object[] args, int page, int pageSize,
 			Consumer<List<Tuple>> consumer) throws SQLException {
-		scrollingScan(connectionFactory, pageableSql, setParameters(args), pageSize, consumer);
+		scan(connectionFactory, pageableSql, setParameters(args), page, pageSize, consumer);
 	}
 
-	public static void scrollingScan(ConnectionFactory connectionFactory, String sql, PreparedStatementCallback callback, int pageSize,
+	public static void scan(ConnectionFactory connectionFactory, String sql, PreparedStatementCallback callback, int page, int pageSize,
 			Consumer<List<Tuple>> consumer) throws SQLException {
-		scrollingScan(connectionFactory, new DefaultPageableSql(sql), callback, pageSize, consumer);
+		scan(connectionFactory, new DefaultPageableSql(sql), callback, page, pageSize, consumer);
 	}
 
-	public static void scrollingScan(ConnectionFactory connectionFactory, PageableSql pageableSql, PreparedStatementCallback callback,
+	public static void scan(ConnectionFactory connectionFactory, PageableSql pageableSql, PreparedStatementCallback callback, int page,
 			int pageSize, Consumer<List<Tuple>> consumer) throws SQLException {
-		PageableQuery<Tuple> query = pagableQuery(connectionFactory, pageableSql, callback);
-		for (PageResponse<Tuple> pageResponse : query.forEachPage(1, pageSize)) {
+		PageableQuery<Tuple> query = pageableQuery(connectionFactory, pageableSql, callback);
+		for (PageResponse<Tuple> pageResponse : query.forEachPage(page, pageSize)) {
 			consumer.accept(pageResponse.getContent());
 		}
 	}
 
-	public static PageableQuery<Tuple> pagableQuery(DataSource dataSource, String sql, Object[] args) {
-		return pagableQuery(dataSource, sql, setParameters(args));
+	public static PageableQuery<Tuple> pageableQuery(DataSource dataSource, String sql, Object[] args) {
+		return pageableQuery(dataSource, sql, setParameters(args));
 	}
 
-	public static PageableQuery<Tuple> pagableQuery(DataSource dataSource, String sql, PreparedStatementCallback callback) {
-		return pagableQuery(dataSource, new DefaultPageableSql(sql), callback);
+	public static PageableQuery<Tuple> pageableQuery(DataSource dataSource, String sql, PreparedStatementCallback callback) {
+		return pageableQuery(dataSource, new DefaultPageableSql(sql), callback);
 	}
 
-	public static PageableQuery<Tuple> pagableQuery(DataSource dataSource, PageableSql pageableSql, Object[] args) {
+	public static PageableQuery<Tuple> pageableQuery(DataSource dataSource, PageableSql pageableSql, Object[] args) {
 		return new PageableQueryImpl(new PooledConnectionFactory(dataSource), pageableSql, setParameters(args));
 	}
 
-	public static PageableQuery<Tuple> pagableQuery(DataSource dataSource, PageableSql pageableSql, PreparedStatementCallback callback) {
+	public static PageableQuery<Tuple> pageableQuery(DataSource dataSource, PageableSql pageableSql, PreparedStatementCallback callback) {
 		return new PageableQueryImpl(new PooledConnectionFactory(dataSource), pageableSql, callback);
 	}
 
-	public static PageableQuery<Tuple> pagableQuery(ConnectionFactory connectionFactory, String sql, Object[] args) {
-		return pagableQuery(connectionFactory, sql, setParameters(args));
+	public static PageableQuery<Tuple> pageableQuery(ConnectionFactory connectionFactory, String sql, Object[] args) {
+		return pageableQuery(connectionFactory, sql, setParameters(args));
 	}
 
-	public static PageableQuery<Tuple> pagableQuery(ConnectionFactory connectionFactory, String sql, PreparedStatementCallback callback) {
-		return pagableQuery(connectionFactory, new DefaultPageableSql(sql), callback);
+	public static PageableQuery<Tuple> pageableQuery(ConnectionFactory connectionFactory, String sql, PreparedStatementCallback callback) {
+		return pageableQuery(connectionFactory, new DefaultPageableSql(sql), callback);
 	}
 
-	public static PageableQuery<Tuple> pagableQuery(ConnectionFactory connectionFactory, PageableSql pageableSql, Object[] args) {
-		return pagableQuery(connectionFactory, pageableSql, setParameters(args));
+	public static PageableQuery<Tuple> pageableQuery(ConnectionFactory connectionFactory, PageableSql pageableSql, Object[] args) {
+		return pageableQuery(connectionFactory, pageableSql, setParameters(args));
 	}
 
-	public static PageableQuery<Tuple> pagableQuery(ConnectionFactory connectionFactory, PageableSql pageableSql,
+	public static PageableQuery<Tuple> pageableQuery(ConnectionFactory connectionFactory, PageableSql pageableSql,
 			PreparedStatementCallback callback) {
 		return new PageableQueryImpl(connectionFactory, pageableSql, callback);
 	}

@@ -51,8 +51,6 @@ public class Jdk14ObjectPool implements ObjectPool {
 	 * PooledObject
 	 * 
 	 * @author Fred Feng
-	 * 
-	 * 
 	 * @version 1.0
 	 */
 	static class PooledObject implements ObjectDetail {
@@ -63,6 +61,7 @@ public class Jdk14ObjectPool implements ObjectPool {
 		private long lastReturned;
 		private long lastTested;
 		private int usage;
+		private int returns;
 
 		PooledObject(Object object) {
 			this.created = System.currentTimeMillis();
@@ -107,6 +106,14 @@ public class Jdk14ObjectPool implements ObjectPool {
 
 		public void setUsage(int usage) {
 			this.usage = usage;
+		}
+
+		public int getReturns() {
+			return returns;
+		}
+
+		public void setReturns(int returns) {
+			this.returns = returns;
 		}
 
 		public static PooledObject of(Object object) {
@@ -252,7 +259,7 @@ public class Jdk14ObjectPool implements ObjectPool {
 				}
 			}
 		}
-		throw new IllegalStateException("Can not borrow any object now.");
+		throw new PooledObjectException("Can not borrow any object now.");
 	}
 
 	private Object testWhileIdle(Object object) {
@@ -269,7 +276,7 @@ public class Jdk14ObjectPool implements ObjectPool {
 				cause = e;
 			}
 		} while (i++ < maxTestTimes);
-		throw new IllegalStateException("Can not borrow any object now.", cause);
+		throw new PooledObjectException("Can not borrow any object now.", cause);
 	}
 
 	private Object testWhileBorrow(Object object) {
@@ -291,7 +298,7 @@ public class Jdk14ObjectPool implements ObjectPool {
 				cause = e;
 			}
 		} while (i++ < maxTestTimes);
-		throw new IllegalStateException("Can not borrow any object now.", cause);
+		throw new PooledObjectException("Can not borrow any object now.", cause);
 	}
 
 	@Override
@@ -333,7 +340,7 @@ public class Jdk14ObjectPool implements ObjectPool {
 				}
 			}
 		}
-		throw new IllegalStateException("Can not borrow any object now.");
+		throw new PooledObjectException("Can not borrow any object now.");
 	}
 
 	@Override
@@ -344,16 +351,21 @@ public class Jdk14ObjectPool implements ObjectPool {
 				if (log.isDebugEnabled()) {
 					log.debug("Giveback object: " + object);
 				}
+				if (pooledObject.getReturns() + 1 != pooledObject.getUsage()) {
+					throw new PooledObjectException("Do not giveback pooled object '" + object.getClass().getName() + "' repeatedly!");
+				}
+				object = pooledObject.getObject();
 				if (pooledObject.getUsage() == maxUsage) {
-					discardObject(pooledObject.getObject());
+					discardObject(object);
 				} else {
-					busyQueue.remove(pooledObject.getObject());
-					idleQueue.add(pooledObject.getObject());
+					busyQueue.remove(object);
+					idleQueue.add(object);
+					pooledObject.setReturns(pooledObject.getReturns() + 1);
 					pooledObject.setLastReturned(System.currentTimeMillis());
 					lock.notifyAll();
 				}
 			} else {
-				throw new IllegalStateException("Unpooled object!");
+				throw new PooledObjectException("Unpooled object!");
 			}
 		}
 	}
@@ -366,9 +378,13 @@ public class Jdk14ObjectPool implements ObjectPool {
 				if (log.isDebugEnabled()) {
 					log.debug("Destroy object: " + object);
 				}
-				busyQueue.remove(pooledObject.getObject());
+
+				object = pooledObject.getObject();
+				busyQueue.remove(object);
+				idleQueue.remove(object);
+
 				try {
-					objectFactory.destroyObject(pooledObject.getObject());
+					objectFactory.destroyObject(object);
 				} finally {
 					poolSize--;
 					lock.notifyAll();
@@ -397,7 +413,8 @@ public class Jdk14ObjectPool implements ObjectPool {
 				Object idleObject = idleQueue.pollLast();
 				try {
 					objectFactory.destroyObject(idleObject);
-				} catch (Exception ignored) {
+				} catch (Exception e) {
+					log.debug(e.getMessage(), e);
 				}
 				pooledObjects.remove(idleObject);
 				poolSize--;

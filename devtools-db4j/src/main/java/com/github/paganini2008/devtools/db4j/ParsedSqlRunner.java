@@ -3,13 +3,13 @@ package com.github.paganini2008.devtools.db4j;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.github.paganini2008.devtools.collection.Tuple;
 import com.github.paganini2008.devtools.db4j.mapper.ColumnIndexRowMapper;
 import com.github.paganini2008.devtools.db4j.mapper.RowMapper;
 import com.github.paganini2008.devtools.db4j.mapper.TupleRowMapper;
+import com.github.paganini2008.devtools.jdbc.Cursor;
 import com.github.paganini2008.devtools.jdbc.DefaultPageableSql;
 import com.github.paganini2008.devtools.jdbc.PageableException;
 import com.github.paganini2008.devtools.jdbc.PageableQuery;
@@ -40,7 +40,7 @@ public class ParsedSqlRunner extends SqlRunner {
 		return queryForList(connection, rawSql, parameters, jdbcTypes);
 	}
 
-	public <T> Iterator<Tuple> iterator(Connection connection, String sql, SqlParameter sqlParameter) throws SQLException {
+	public <T> Cursor<Tuple> iterator(Connection connection, String sql, SqlParameter sqlParameter) throws SQLException {
 		ParsedSql parsedSql = getParsedSql(sql);
 		String rawSql = parsedSql.toString();
 		Object[] parameters = sqlParameter != null ? getParameters(parsedSql, sqlParameter) : null;
@@ -57,7 +57,7 @@ public class ParsedSqlRunner extends SqlRunner {
 		return queryForList(connection, rawSql, parameters, jdbcTypes, rowMapper);
 	}
 
-	public <T> Iterator<T> iterator(Connection connection, String sql, SqlParameter sqlParameter, RowMapper<T> rowMapper)
+	public <T> Cursor<T> iterator(Connection connection, String sql, SqlParameter sqlParameter, RowMapper<T> rowMapper)
 			throws SQLException {
 		ParsedSql parsedSql = getParsedSql(sql);
 		String rawSql = parsedSql.toString();
@@ -66,7 +66,7 @@ public class ParsedSqlRunner extends SqlRunner {
 		return iterator(connection, rawSql, parameters, jdbcTypes, rowMapper);
 	}
 
-	public <T> Iterator<T> cachedIterator(Connection connection, String sql, SqlParameter sqlParameter, RowMapper<T> rowMapper)
+	public <T> Cursor<T> cachedIterator(Connection connection, String sql, SqlParameter sqlParameter, RowMapper<T> rowMapper)
 			throws SQLException {
 		ParsedSql parsedSql = getParsedSql(sql);
 		String rawSql = parsedSql.toString();
@@ -206,7 +206,7 @@ public class ParsedSqlRunner extends SqlRunner {
 		}
 
 		@Override
-		public Iterator<T> iterator(int maxResults, int firstResult) {
+		public Cursor<T> iterator(int maxResults, int firstResult) {
 			String sql = pageableSql.countableSql();
 			try {
 				if (useCachedRowSet) {

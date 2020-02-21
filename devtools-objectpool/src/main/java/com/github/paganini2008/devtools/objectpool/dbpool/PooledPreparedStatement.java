@@ -20,7 +20,7 @@ public class PooledPreparedStatement implements InvocationHandler {
 
 	private static final Log logger = LogFactory.getLog(PooledPreparedStatement.class);
 
-	private static final String CLOSE = "close";
+	private static final String CLOSE_METHOD = "close";
 	private static final Class<?>[] IFACES = new Class<?>[] { PreparedStatement.class };
 
 	public PooledPreparedStatement(String sql, PreparedStatementCache statementCache, PreparedStatement ps) {
@@ -69,7 +69,7 @@ public class PooledPreparedStatement implements InvocationHandler {
 			return System.identityHashCode(realStatement);
 		} else if (methodName.equals("toString")) {
 			return realStatement.toString();
-		} else if (CLOSE.equals(methodName)) {
+		} else if (CLOSE_METHOD.equals(methodName)) {
 			statementCache.giveback(sql, this);
 			return null;
 		} else if (methodName.startsWith("set") && args[0] instanceof Integer) {

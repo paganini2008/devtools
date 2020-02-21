@@ -2,7 +2,6 @@ package com.github.paganini2008.devtools.jdbc;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Iterator;
 
 import com.github.paganini2008.devtools.collection.Tuple;
 
@@ -37,7 +36,7 @@ public class PageableQueryImpl implements PageableQuery<Tuple> {
 		}
 	}
 
-	public Iterator<Tuple> iterator(int maxResults, int firstResult) {
+	public Cursor<Tuple> iterator(int maxResults, int firstResult) {
 		final String execution = pageableSql.pageableSql(maxResults, firstResult);
 		Connection connection = null;
 		try {

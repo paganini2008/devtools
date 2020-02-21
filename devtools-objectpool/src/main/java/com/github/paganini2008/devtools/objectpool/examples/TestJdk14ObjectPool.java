@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.github.paganini2008.devtools.Sequence;
 import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
+import com.github.paganini2008.devtools.objectpool.GenericObjectPool;
 import com.github.paganini2008.devtools.objectpool.Jdk14ObjectPool;
 import com.github.paganini2008.devtools.objectpool.ObjectFactory;
 
@@ -54,13 +55,13 @@ public class TestJdk14ObjectPool {
 	}
 
 	public static void main(String[] args) throws Exception {
-		Jdk14ObjectPool objectPool = new Jdk14ObjectPool(new ResourceFactory());
+		GenericObjectPool objectPool = new GenericObjectPool(new ResourceFactory());
 		objectPool.setMaxPoolSize(10);
 		objectPool.setMaxIdleSize(3);
 		Executor executor = Executors.newFixedThreadPool(10);
 		AtomicInteger score = new AtomicInteger();
 		List<Throwable> errors = new ArrayList<>();
-		for (final int i : Sequence.forEach(0, 1000000)) {
+		for (final int i : Sequence.forEach(0, 10000)) {
 			executor.execute(() -> {
 				score.incrementAndGet();
 				Resource resource = null;
@@ -75,6 +76,10 @@ public class TestJdk14ObjectPool {
 				} finally {
 					try {
 						objectPool.givebackObject(resource);
+						objectPool.givebackObject(resource);
+						//objectPool.givebackObject(resource);
+						//objectPool.givebackObject(resource);
+						//objectPool.givebackObject(resource);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

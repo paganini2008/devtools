@@ -20,7 +20,7 @@ public class PooledConnection implements InvocationHandler {
 
 	private static final Log logger = LogFactory.getLog(PooledConnection.class);
 
-	private static final String CLOSE = "close";
+	private static final String CLOSE_METHOD = "close";
 	private static final Class<?>[] IFACES = new Class<?>[] { Connection.class };
 
 	private final ConnectionPool connectionPool;
@@ -85,7 +85,7 @@ public class PooledConnection implements InvocationHandler {
 					}
 					PooledPreparedStatement pps = statementCache.take(sql, realConnection, method, args);
 					return pps.getProxyStatement();
-				} else if (CLOSE.equals(methodName)) {
+				} else if (CLOSE_METHOD.equals(methodName)) {
 					try {
 						connectionPool.giveback(this);
 					} catch (SQLException e) {

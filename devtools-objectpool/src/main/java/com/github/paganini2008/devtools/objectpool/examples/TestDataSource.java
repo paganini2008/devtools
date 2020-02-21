@@ -2,15 +2,14 @@ package com.github.paganini2008.devtools.objectpool.examples;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import com.github.paganini2008.devtools.RandomUtils;
 import com.github.paganini2008.devtools.Sequence;
-import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.Tuple;
+import com.github.paganini2008.devtools.jdbc.Cursor;
 import com.github.paganini2008.devtools.jdbc.JdbcUtils;
 import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
 import com.github.paganini2008.devtools.objectpool.dbpool.GenericDataSource;
@@ -41,20 +40,21 @@ public class TestDataSource {
 		for (final int i : Sequence.forEach(0, 10000)) {
 			executor.execute(() -> {
 				Connection connection = null;
+				Cursor<Tuple> cursor = null;
 				try {
 					connection = ds.getConnection();
-					Iterator<Tuple> iterator = JdbcUtils.executeQuery(connection, "select * from mec_area where level=? limit 1",
+					cursor = JdbcUtils.executeQuery(connection, "select * from mec_area where level=? limit 1",
 							new Object[] { RandomUtils.randomInt(1, 4) });
-					System.out.println(CollectionUtils.getFirst(iterator));
+					System.out.println(cursor.first());
 				} catch (SQLException e) {
 					e.printStackTrace();
 				} finally {
-					JdbcUtils.closeQuietly(connection);
+					//JdbcUtils.closeQuietly(connection);
 				}
 			});
 		}
 		System.in.read();
-		Map<String, QuerySpan> results = ds.getStatisticsResult("19/02/2020");
+		Map<String, QuerySpan> results = ds.getStatisticsResult("21/02/2020");
 		System.out.println(results);
 		ds.close();
 		ExecutorUtils.gracefulShutdown(executor, 60000);

@@ -7,7 +7,7 @@ package com.github.paganini2008.devtools.jdbc;
  * @author Fred Feng
  * @version 1.0
  */
-public class PageableException extends RuntimeException {
+public class PageableException extends DetachedSqlException {
 
 	private static final long serialVersionUID = -2514330548661823215L;
 

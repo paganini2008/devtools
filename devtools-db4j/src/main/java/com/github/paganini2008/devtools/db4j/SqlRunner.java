@@ -4,9 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.github.paganini2008.devtools.Observable;
 import com.github.paganini2008.devtools.Observer;
@@ -15,6 +15,7 @@ import com.github.paganini2008.devtools.db4j.mapper.BeanPropertyRowMapper;
 import com.github.paganini2008.devtools.db4j.mapper.ColumnIndexRowMapper;
 import com.github.paganini2008.devtools.db4j.mapper.RowMapper;
 import com.github.paganini2008.devtools.db4j.mapper.TupleRowMapper;
+import com.github.paganini2008.devtools.jdbc.Cursor;
 import com.github.paganini2008.devtools.jdbc.DefaultPageableSql;
 import com.github.paganini2008.devtools.jdbc.JdbcUtils;
 import com.github.paganini2008.devtools.jdbc.PageableException;
@@ -195,145 +196,167 @@ public class SqlRunner {
 		return queryForList(connection, statementCreator, callback, new BeanPropertyRowMapper<T>(typeHandlerRegistry, objectClass));
 	}
 
-	// ---------------------- iterator ------------------------
+	// ---------------------- Cursor ------------------------
 
-	public Iterator<Tuple> iterator(Connection connection, String sql, Object[] parameters) throws SQLException {
+	public Cursor<Tuple> iterator(Connection connection, String sql, Object[] parameters) throws SQLException {
 		return iterator(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, typeHandlerRegistry));
 	}
 
-	public Iterator<Tuple> iterator(Connection connection, String sql, Object[] parameters, JdbcType[] jdbcTypes) throws SQLException {
+	public Cursor<Tuple> iterator(Connection connection, String sql, Object[] parameters, JdbcType[] jdbcTypes) throws SQLException {
 		return iterator(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry));
 	}
 
-	public Iterator<Tuple> iterator(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
+	public Cursor<Tuple> iterator(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
 		return iterator(connection, PreparedStatementCreatorUtils.forQuery(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY),
 				callback, new TupleRowMapper(typeHandlerRegistry));
 	}
 
-	public <T> Iterator<T> iterator(Connection connection, String sql, Object[] parameters, Class<T> objectClass) throws SQLException {
+	public <T> Cursor<T> iterator(Connection connection, String sql, Object[] parameters, Class<T> objectClass) throws SQLException {
 		return iterator(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, typeHandlerRegistry),
 				new BeanPropertyRowMapper<T>(typeHandlerRegistry, objectClass));
 	}
 
-	public <T> Iterator<T> iterator(Connection connection, String sql, Object[] parameters, JdbcType[] jdbcTypes, Class<T> objectClass)
+	public <T> Cursor<T> iterator(Connection connection, String sql, Object[] parameters, JdbcType[] jdbcTypes, Class<T> objectClass)
 			throws SQLException {
 		return iterator(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry),
 				new BeanPropertyRowMapper<T>(typeHandlerRegistry, objectClass));
 	}
 
-	public <T> Iterator<T> iterator(Connection connection, String sql, PreparedStatementCallback callback, Class<T> objectClass)
+	public <T> Cursor<T> iterator(Connection connection, String sql, PreparedStatementCallback callback, Class<T> objectClass)
 			throws SQLException {
 		return iterator(connection, sql, callback, new BeanPropertyRowMapper<T>(typeHandlerRegistry, objectClass));
 	}
 
-	public <T> Iterator<T> iterator(Connection connection, String sql, Object[] parameters, RowMapper<T> rowMapper) throws SQLException {
+	public <T> Cursor<T> iterator(Connection connection, String sql, Object[] parameters, RowMapper<T> rowMapper) throws SQLException {
 		return iterator(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, typeHandlerRegistry), rowMapper);
 	}
 
-	public <T> Iterator<T> iterator(Connection connection, String sql, Object[] parameters, JdbcType[] jdbcTypes, RowMapper<T> rowMapper)
+	public <T> Cursor<T> iterator(Connection connection, String sql, Object[] parameters, JdbcType[] jdbcTypes, RowMapper<T> rowMapper)
 			throws SQLException {
 		return iterator(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry), rowMapper);
 	}
 
-	public <T> Iterator<T> iterator(Connection connection, String sql, PreparedStatementCallback callback, RowMapper<T> rowMapper)
+	public <T> Cursor<T> iterator(Connection connection, String sql, PreparedStatementCallback callback, RowMapper<T> rowMapper)
 			throws SQLException {
 		return iterator(connection, PreparedStatementCreatorUtils.forQuery(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY),
 				callback, rowMapper);
 	}
 
-	public <T> Iterator<T> iterator(Connection connection, PreparedStatementCreator statementCreator,
+	public <T> Cursor<T> iterator(Connection connection, PreparedStatementCreator statementCreator,
 			final PreparedStatementCallback callback, final RowMapper<T> rowMapper) throws SQLException {
 		final Observable closeable = Observable.unrepeatable();
-		return execute(connection, statementCreator, new PreparedStatementExecutor<Iterator<T>>() {
+		final AtomicBoolean success = new AtomicBoolean(true);
+		try {
+			return execute(connection, statementCreator, new PreparedStatementExecutor<Cursor<T>>() {
 
-			public Iterator<T> execute(PreparedStatement ps) throws SQLException {
-				if (callback != null) {
-					callback.setValues(ps);
+				public Cursor<T> execute(PreparedStatement ps) throws SQLException {
+					if (callback != null) {
+						callback.setValues(ps);
+					}
+					ResultSet rs = null;
+					try {
+						rs = ps.executeQuery();
+						ResultSetExtractor<Cursor<T>> extractor = new CursorResultSetExtractor<T>(rowMapper, closeable);
+						return extractor.extractData(rs);
+					} catch (SQLException e) {
+						success.set(false);
+						throw e;
+					} finally {
+						if (success.get()) {
+							final ResultSet ref = rs;
+							closeable.addObserver(new Observer() {
+								public void update(Observable o, Object arg) {
+									JdbcUtils.closeQuietly(ref);
+								}
+							});
+						} else {
+							JdbcUtils.closeQuietly(rs);
+						}
+					}
 				}
-				ResultSet rs = null;
-				try {
-					rs = ps.executeQuery();
-					ResultSetExtractor<Iterator<T>> extractor = new IteratorResultSetExtractor<T>(rowMapper, closeable);
-					Iterator<T> result = extractor.extractData(rs);
-					if (result != null) {
-						final ResultSet delegate = rs;
+
+				public void close(final PreparedStatement ps) {
+					if (success.get()) {
 						closeable.addObserver(new Observer() {
 							public void update(Observable o, Object arg) {
-								JdbcUtils.closeQuietly(delegate);
+								JdbcUtils.closeQuietly(ps);
 							}
 						});
-					}
-					return result;
-				} catch (SQLException e) {
-					closeable.notifyObservers();
-					throw e;
-				}
-			}
-
-			public void close(final PreparedStatement ps) {
-				closeable.addObserver(new Observer() {
-					public void update(Observable o, Object arg) {
+					} else {
 						JdbcUtils.closeQuietly(ps);
 					}
-				});
-			}
+				}
 
-		});
+			});
+		} finally {
+			if (success.get()) {
+				closeable.addObserver(new Observer() {
+					public void update(Observable o, Object arg) {
+						JdbcUtils.closeQuietly(connection);
+					}
+				});
+			} else {
+				JdbcUtils.closeQuietly(connection);
+			}
+		}
 	}
 
-	public Iterator<Tuple> cachedIterator(Connection connection, String sql, Object[] parameters) throws SQLException {
+	public Cursor<Tuple> cachedIterator(Connection connection, String sql, Object[] parameters) throws SQLException {
 		return cachedIterator(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, typeHandlerRegistry));
 	}
 
-	public Iterator<Tuple> cachedIterator(Connection connection, String sql, Object[] parameters, JdbcType[] jdbcTypes)
-			throws SQLException {
+	public Cursor<Tuple> cachedIterator(Connection connection, String sql, Object[] parameters, JdbcType[] jdbcTypes) throws SQLException {
 		return cachedIterator(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry));
 	}
 
-	public Iterator<Tuple> cachedIterator(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
+	public Cursor<Tuple> cachedIterator(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
 		return cachedIterator(connection, sql, callback, new TupleRowMapper(typeHandlerRegistry));
 	}
 
-	public <T> Iterator<T> cachedIterator(Connection connection, String sql, Object[] parameters, RowMapper<T> rowMapper)
+	public <T> Cursor<T> cachedIterator(Connection connection, String sql, Object[] parameters, RowMapper<T> rowMapper)
 			throws SQLException {
 		return cachedIterator(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, typeHandlerRegistry), rowMapper);
 	}
 
-	public <T> Iterator<T> cachedIterator(Connection connection, String sql, Object[] parameters, JdbcType[] jdbcTypes,
+	public <T> Cursor<T> cachedIterator(Connection connection, String sql, Object[] parameters, JdbcType[] jdbcTypes,
 			RowMapper<T> rowMapper) throws SQLException {
 		return cachedIterator(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry),
 				rowMapper);
 	}
 
-	public <T> Iterator<T> cachedIterator(Connection connection, String sql, final PreparedStatementCallback callback,
+	public <T> Cursor<T> cachedIterator(Connection connection, String sql, final PreparedStatementCallback callback,
 			final RowMapper<T> rowMapper) throws SQLException {
 		return cachedIterator(connection,
 				PreparedStatementCreatorUtils.forQuery(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY), callback, rowMapper);
 	}
 
-	public <T> Iterator<T> cachedIterator(Connection connection, PreparedStatementCreator statementCreator,
+	public <T> Cursor<T> cachedIterator(Connection connection, PreparedStatementCreator statementCreator,
 			final PreparedStatementCallback callback, final RowMapper<T> rowMapper) throws SQLException {
-		return execute(connection, statementCreator, new PreparedStatementExecutor<Iterator<T>>() {
+		try {
+			return execute(connection, statementCreator, new PreparedStatementExecutor<Cursor<T>>() {
 
-			public Iterator<T> execute(PreparedStatement ps) throws SQLException {
-				if (callback != null) {
-					callback.setValues(ps);
+				public Cursor<T> execute(PreparedStatement ps) throws SQLException {
+					if (callback != null) {
+						callback.setValues(ps);
+					}
+					ResultSet rs = null;
+					try {
+						rs = ps.executeQuery();
+						ResultSetExtractor<Cursor<T>> extractor = new CachedCursorResultSetExtractor<T>(rowMapper);
+						return extractor.extractData(rs);
+					} finally {
+						JdbcUtils.closeQuietly(rs);
+					}
 				}
-				ResultSet rs = null;
-				try {
-					rs = ps.executeQuery();
-					ResultSetExtractor<Iterator<T>> extractor = new CachedIteratorResultSetExtractor<T>(rowMapper);
-					return extractor.extractData(rs);
-				} finally {
-					JdbcUtils.closeQuietly(rs);
+
+				public void close(PreparedStatement ps) {
+					JdbcUtils.closeQuietly(ps);
 				}
-			}
 
-			public void close(PreparedStatement ps) {
-				JdbcUtils.closeQuietly(ps);
-			}
-
-		});
+			});
+		} finally {
+			JdbcUtils.closeQuietly(connection);
+		}
 	}
 
 	// ------------------------- Pageable Query -------------------
@@ -492,16 +515,16 @@ public class SqlRunner {
 			statementExecutor.close(ps);
 		}
 	}
-	
+
 	protected static boolean useCachedRowSet = true;
 
 	public static void setUseCachedRowSet(boolean useCachedRowSet) {
 		SqlRunner.useCachedRowSet = useCachedRowSet;
 	}
-	
+
 	/**
 	 * 
-	 * PageableQueryImpl 
+	 * PageableQueryImpl
 	 *
 	 * @author Fred Feng
 	 * @version 1.0
@@ -514,8 +537,8 @@ public class SqlRunner {
 		private final RowMapper<T> rowMapper;
 		private final SqlRunner sqlRunner;
 
-		private PageableQueryImpl(Connection connection, PageableSql pageableSql, PreparedStatementCallback callback, RowMapper<T> rowMapper,
-				SqlRunner sqlRunner) {
+		private PageableQueryImpl(Connection connection, PageableSql pageableSql, PreparedStatementCallback callback,
+				RowMapper<T> rowMapper, SqlRunner sqlRunner) {
 			this.connection = connection;
 			this.pageableSql = pageableSql;
 			this.callback = callback;
@@ -534,7 +557,7 @@ public class SqlRunner {
 		}
 
 		@Override
-		public Iterator<T> iterator(int maxResults, int firstResult) {
+		public Cursor<T> iterator(int maxResults, int firstResult) {
 			final String sql = pageableSql.pageableSql(maxResults, firstResult);
 			try {
 				if (useCachedRowSet) {

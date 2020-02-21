@@ -74,6 +74,7 @@ public class GenericObjectPool implements ObjectPool {
 		private long lastReturned;
 		private long lastTested;
 		private int usage;
+		private int returns;
 
 		PooledObject(Object object) {
 			this.created = System.currentTimeMillis();
@@ -118,6 +119,14 @@ public class GenericObjectPool implements ObjectPool {
 
 		public void setUsage(int usage) {
 			this.usage = usage;
+		}
+
+		public int getReturns() {
+			return returns;
+		}
+
+		public void setReturns(int returns) {
+			this.returns = returns;
 		}
 
 		public static PooledObject of(Object object) {
@@ -276,7 +285,7 @@ public class GenericObjectPool implements ObjectPool {
 				lock.unlock();
 			}
 		}
-		throw new IllegalStateException("Can not borrow any object now.");
+		throw new PooledObjectException("Can not borrow any object now.");
 	}
 
 	public Object borrowObject(long timeout, TimeUnit timeUnit) throws Exception {
@@ -323,7 +332,7 @@ public class GenericObjectPool implements ObjectPool {
 				lock.unlock();
 			}
 		}
-		throw new IllegalStateException("Can not borrow any object now.");
+		throw new PooledObjectException("Can not borrow any object now.");
 	}
 
 	private Object testWhileIdle(Object object) {
@@ -340,7 +349,7 @@ public class GenericObjectPool implements ObjectPool {
 				cause = e;
 			}
 		} while (i++ < maxTestTimes);
-		throw new IllegalStateException("Can not borrow any object now.", cause);
+		throw new PooledObjectException("Can not borrow any object now.", cause);
 	}
 
 	private Object testWhileBorrow(Object object) {
@@ -362,7 +371,7 @@ public class GenericObjectPool implements ObjectPool {
 				cause = e;
 			}
 		} while (i++ < maxTestTimes);
-		throw new IllegalStateException("Can not borrow any object now.", cause);
+		throw new PooledObjectException("Can not borrow any object now.", cause);
 	}
 
 	@Override
@@ -374,16 +383,21 @@ public class GenericObjectPool implements ObjectPool {
 				if (log.isDebugEnabled()) {
 					log.debug("Giveback object: " + object);
 				}
+				if (pooledObject.getReturns() + 1 != pooledObject.getUsage()) {
+					throw new PooledObjectException("Do not giveback pooled object '" + object.getClass().getName() + "' repeatedly!");
+				}
+				object = pooledObject.getObject();
 				if (pooledObject.getUsage() == maxUsage) {
-					discardObject(pooledObject.getObject());
+					discardObject(object);
 				} else {
-					busyQueue.remove(pooledObject.getObject());
-					idleQueue.add(pooledObject.getObject());
+					busyQueue.remove(object);
+					idleQueue.add(object);
+					pooledObject.setReturns(pooledObject.getReturns() + 1);
 					pooledObject.setLastReturned(System.currentTimeMillis());
 					condition.signalAll();
 				}
 			} else {
-				throw new IllegalStateException("Unpooled object!");
+				throw new PooledObjectException("Unpooled object!");
 			}
 		} finally {
 			lock.unlock();
@@ -426,7 +440,8 @@ public class GenericObjectPool implements ObjectPool {
 				Object idleObject = idleQueue.pollLast();
 				try {
 					objectFactory.destroyObject(idleObject);
-				} catch (Exception ignored) {
+				} catch (Exception e) {
+					log.error(e.getMessage(), e);
 				}
 				pooledObjects.remove(idleObject);
 				poolSize--;
