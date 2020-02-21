@@ -10,7 +10,7 @@ import com.github.paganini2008.devtools.StringUtils;
  */
 public enum Duration {
 
-	DAY("#D:#H:#m:#s:#ms") {
+	DAY("#d:#h:#m:#s:#ms") {
 		public Number[] toArray(long ms) {
 			long day = ms / d;
 			long hour = (ms - day * d) / H;
@@ -21,7 +21,7 @@ public enum Duration {
 		}
 	},
 
-	HOUR("#H:#m:#s:#ms") {
+	HOUR("#h:#m:#s:#ms") {
 		public Number[] toArray(long ms) {
 			long hour = ms / H;
 			long minute = (ms - hour * H) / m;
@@ -59,7 +59,7 @@ public enum Duration {
 	}
 
 	public abstract Number[] toArray(long ms);
-	
+
 	public String format(long ms) {
 		return format(ms, null);
 	}
@@ -67,7 +67,7 @@ public enum Duration {
 	@SuppressWarnings("all")
 	public String format(long ms, String pattern) {
 		Number[] array = toArray(ms);
-		return StringUtils.format(StringUtils.isNotBlank(pattern)? pattern: getPattern(), "#", array);
+		return StringUtils.format(StringUtils.isNotBlank(pattern) ? pattern : getPattern(), "#", array);
 	}
 
 }
