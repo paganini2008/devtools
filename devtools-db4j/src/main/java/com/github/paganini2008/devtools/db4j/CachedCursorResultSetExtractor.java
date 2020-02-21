@@ -49,7 +49,9 @@ public class CachedCursorResultSetExtractor<T> implements ResultSetExtractor<Cur
 					opened.set(false);
 					throw new DetachedSqlException(e.getMessage(), e);
 				} finally {
-					close();
+					if (!isOpened()) {
+						close();
+					}
 				}
 			}
 
@@ -61,7 +63,9 @@ public class CachedCursorResultSetExtractor<T> implements ResultSetExtractor<Cur
 					opened.set(false);
 					throw new DetachedSqlException(e.getMessage(), e);
 				} finally {
-					close();
+					if (!isOpened()) {
+						close();
+					}
 				}
 			}
 
@@ -72,9 +76,7 @@ public class CachedCursorResultSetExtractor<T> implements ResultSetExtractor<Cur
 
 			@Override
 			public void close() {
-				if (!isOpened()) {
-					JdbcUtils.closeQuietly(delegate);
-				}
+				JdbcUtils.closeQuietly(delegate);
 			}
 
 		};

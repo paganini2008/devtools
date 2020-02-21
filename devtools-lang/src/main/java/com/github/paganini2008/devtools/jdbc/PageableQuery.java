@@ -1,6 +1,9 @@
 package com.github.paganini2008.devtools.jdbc;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import com.github.paganini2008.devtools.collection.CollectionUtils;
 
 /**
  * 
@@ -12,7 +15,12 @@ import java.util.List;
 public interface PageableQuery<T> extends ResultSetSlice<T> {
 
 	default List<T> list(int maxResults, int firstResult) {
-		return iterator(maxResults, firstResult).list();
+		List<T> results = new ArrayList<T>();
+		Cursor<T> cursor = iterator(maxResults, firstResult);
+		for (T t : CollectionUtils.forEach(cursor)) {
+			results.add(t);
+		}
+		return results;
 	}
 
 	Cursor<T> iterator(int maxResults, int firstResult);

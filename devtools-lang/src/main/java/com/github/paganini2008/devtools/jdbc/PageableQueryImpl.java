@@ -41,7 +41,7 @@ public class PageableQueryImpl implements PageableQuery<Tuple> {
 		Connection connection = null;
 		try {
 			connection = connectionFactory.getConnection();
-			return JdbcUtils.executeQuery(connection, execution, callback);
+			return JdbcUtils.executeDetachedQuery(connection, execution, callback);
 		} catch (SQLException e) {
 			throw new PageableException(e.getMessage(), e);
 		}

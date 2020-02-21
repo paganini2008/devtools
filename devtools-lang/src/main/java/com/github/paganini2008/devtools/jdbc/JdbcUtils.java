@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -207,12 +208,32 @@ public abstract class JdbcUtils {
 	}
 
 	public static Object executeOneResultQuery(Connection connection, String sql) throws SQLException {
-		Cursor<Tuple> cursor = executeQuery(connection, sql);
-		Object[] array = cursor.first().valueArray();
+		List<Tuple> list = executeQuery(connection, sql);
+		Tuple first = CollectionUtils.getFirst(list);
+		Object[] array = first.toValues();
 		return ArrayUtils.isNotEmpty(array) ? array[0] : null;
 	}
 
-	public static Cursor<Tuple> executeQuery(Connection connection, String sql) throws SQLException {
+	public static List<Tuple> executeQuery(Connection connection, String sql) throws SQLException {
+		List<Tuple> list = new ArrayList<Tuple>();
+		Statement ps = null;
+		ResultSet rs = null;
+		try {
+			ps = connection.createStatement();
+			rs = ps.executeQuery(sql);
+			if (rs != null) {
+				while (rs.next()) {
+					list.add(toTuple(rs));
+				}
+			}
+			return list;
+		} finally {
+			closeQuietly(rs);
+			closeQuietly(ps);
+		}
+	}
+
+	public static Cursor<Tuple> executeDetachedQuery(Connection connection, String sql) throws SQLException {
 		Statement sm = null;
 		ResultSet rs = null;
 		Observable observable = Observable.unrepeatable();
@@ -226,25 +247,44 @@ public abstract class JdbcUtils {
 	}
 
 	public static Object executeOneResultQuery(Connection connection, String sql, Object[] args) throws SQLException {
-		Cursor<Tuple> cursor = executeQuery(connection, sql, args);
-		Object[] array = cursor.first().valueArray();
+		List<Tuple> list = executeQuery(connection, sql, args);
+		Tuple first = CollectionUtils.getFirst(list);
+		Object[] array = first.toValues();
 		return ArrayUtils.isNotEmpty(array) ? array[0] : null;
 	}
 
-	public static Cursor<Tuple> executeQuery(ConnectionFactory connectionFactory, String sql, Object[] args) throws SQLException {
-		return executeQuery(connectionFactory.getConnection(), sql, args);
-	}
-
-	public static Cursor<Tuple> executeQuery(Connection connection, String sql, Object[] args) throws SQLException {
+	public static List<Tuple> executeQuery(Connection connection, String sql, Object[] args) throws SQLException {
 		return executeQuery(connection, sql, setParameters(args));
 	}
 
-	public static Cursor<Tuple> executeQuery(ConnectionFactory connectionFactory, String sql, PreparedStatementCallback callback)
-			throws SQLException {
-		return executeQuery(connectionFactory.getConnection(), sql, callback);
+	public static List<Tuple> executeQuery(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
+		List<Tuple> list = new ArrayList<Tuple>();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			ps = connection.prepareStatement(sql);
+			if (callback != null) {
+				callback.setValues(ps);
+			}
+			rs = ps.executeQuery();
+			if (rs != null) {
+				while (rs.next()) {
+					list.add(toTuple(rs));
+				}
+			}
+			return list;
+		} finally {
+			closeQuietly(rs);
+			closeQuietly(ps);
+		}
 	}
 
-	public static Cursor<Tuple> executeQuery(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
+	public static Cursor<Tuple> executeDetachedQuery(Connection connection, String sql, Object[] args) throws SQLException {
+		return executeDetachedQuery(connection, sql, setParameters(args));
+	}
+
+	public static Cursor<Tuple> executeDetachedQuery(Connection connection, String sql, PreparedStatementCallback callback)
+			throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		final Observable observable = Observable.unrepeatable();
@@ -309,7 +349,9 @@ public abstract class JdbcUtils {
 				opened.set(false);
 				throw new DetachedSqlException(e.getMessage(), e);
 			} finally {
-				close();
+				if (!isOpened()) {
+					close();
+				}
 			}
 		}
 
@@ -320,7 +362,9 @@ public abstract class JdbcUtils {
 				opened.set(false);
 				throw new DetachedSqlException(e.getMessage(), e);
 			} finally {
-				close();
+				if (!isOpened()) {
+					close();
+				}
 			}
 		}
 
@@ -329,20 +373,8 @@ public abstract class JdbcUtils {
 		}
 
 		public void close() {
-			if (!isOpened()) {
-				observable.notifyObservers();
-			}
+			observable.notifyObservers();
 		}
-	}
-
-	public static void scan(ConnectionFactory connectionFactory, String sql, PreparedStatementCallback callback, Consumer<Tuple> consumer)
-			throws SQLException {
-		scan(connectionFactory.getConnection(), sql, callback, consumer);
-	}
-
-	public static void scan(ConnectionFactory connectionFactory, String sql, Object[] args, PreparedStatementCallback callback,
-			Consumer<Tuple> consumer) throws SQLException {
-		scan(connectionFactory.getConnection(), sql, args, consumer);
 	}
 
 	public static void scan(Connection connection, String sql, Object[] args, Consumer<Tuple> consumer) throws SQLException {
@@ -351,7 +383,7 @@ public abstract class JdbcUtils {
 
 	public static void scan(Connection connection, String sql, PreparedStatementCallback callback, Consumer<Tuple> consumer)
 			throws SQLException {
-		Cursor<Tuple> cursor = executeQuery(connection, sql, callback);
+		Cursor<Tuple> cursor = executeDetachedQuery(connection, sql, callback);
 		CollectionUtils.forEach(cursor).forEach(consumer);
 	}
 

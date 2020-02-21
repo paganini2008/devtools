@@ -9,8 +9,10 @@ import com.github.paganini2008.devtools.collection.Tuple;
 import com.github.paganini2008.devtools.db4j.mapper.ColumnIndexRowMapper;
 import com.github.paganini2008.devtools.db4j.mapper.RowMapper;
 import com.github.paganini2008.devtools.db4j.mapper.TupleRowMapper;
+import com.github.paganini2008.devtools.jdbc.ConnectionFactory;
 import com.github.paganini2008.devtools.jdbc.Cursor;
 import com.github.paganini2008.devtools.jdbc.DefaultPageableSql;
+import com.github.paganini2008.devtools.jdbc.JdbcUtils;
 import com.github.paganini2008.devtools.jdbc.PageableException;
 import com.github.paganini2008.devtools.jdbc.PageableQuery;
 import com.github.paganini2008.devtools.jdbc.PageableSql;
@@ -75,21 +77,22 @@ public class ParsedSqlRunner extends SqlRunner {
 		return cachedIterator(connection, rawSql, parameters, jdbcTypes, rowMapper);
 	}
 
-	public <T> PageableQuery<T> queryForPage(Connection connection, String sql, SqlParameter sqlParameter, RowMapper<T> rowMapper) {
-		return new PageableQueryImpl<T>(connection, new DefaultPageableSql(sql), sqlParameter, rowMapper, this);
-	}
-
-	public <T> PageableQuery<T> queryForPage(Connection connection, PageableSql pageableSql, SqlParameter sqlParameter,
+	public <T> PageableQuery<T> queryForPage(ConnectionFactory connectionFactory, String sql, SqlParameter sqlParameter,
 			RowMapper<T> rowMapper) {
-		return new PageableQueryImpl<T>(connection, pageableSql, sqlParameter, rowMapper, this);
-	}
-	
-	public PageableQuery<Tuple> queryForPage(Connection connection, String sql, SqlParameter sqlParameter) {
-		return queryForPage(connection, new DefaultPageableSql(sql), sqlParameter);
+		return new PageableQueryImpl<T>(connectionFactory, new DefaultPageableSql(sql), sqlParameter, rowMapper, this);
 	}
 
-	public PageableQuery<Tuple> queryForPage(Connection connection, PageableSql pageableSql, SqlParameter sqlParameter) {
-		return queryForPage(connection, pageableSql, sqlParameter, new TupleRowMapper(getTypeHandlerRegistry()));
+	public <T> PageableQuery<T> queryForPage(ConnectionFactory connectionFactory, PageableSql pageableSql, SqlParameter sqlParameter,
+			RowMapper<T> rowMapper) {
+		return new PageableQueryImpl<T>(connectionFactory, pageableSql, sqlParameter, rowMapper, this);
+	}
+
+	public PageableQuery<Tuple> queryForPage(ConnectionFactory connectionFactory, String sql, SqlParameter sqlParameter) {
+		return queryForPage(connectionFactory, new DefaultPageableSql(sql), sqlParameter);
+	}
+
+	public PageableQuery<Tuple> queryForPage(ConnectionFactory connectionFactory, PageableSql pageableSql, SqlParameter sqlParameter) {
+		return queryForPage(connectionFactory, pageableSql, sqlParameter, new TupleRowMapper(getTypeHandlerRegistry()));
 	}
 
 	public <T> T queryForObject(Connection connection, String sql, SqlParameter sqlParameter, Class<T> requiredType) throws SQLException {
@@ -180,15 +183,15 @@ public class ParsedSqlRunner extends SqlRunner {
 	 */
 	private static class PageableQueryImpl<T> implements PageableQuery<T> {
 
-		private final Connection connection;
+		private final ConnectionFactory connectionFactory;
 		private final PageableSql pageableSql;
 		private final SqlParameter sqlParameter;
 		private final RowMapper<T> rowMapper;
 		private final ParsedSqlRunner sqlRunner;
 
-		private PageableQueryImpl(Connection connection, PageableSql pageableSql, SqlParameter sqlParameter, RowMapper<T> rowMapper,
-				ParsedSqlRunner sqlRunner) {
-			this.connection = connection;
+		private PageableQueryImpl(ConnectionFactory connectionFactory, PageableSql pageableSql, SqlParameter sqlParameter,
+				RowMapper<T> rowMapper, ParsedSqlRunner sqlRunner) {
+			this.connectionFactory = connectionFactory;
 			this.pageableSql = pageableSql;
 			this.sqlParameter = sqlParameter;
 			this.rowMapper = rowMapper;
@@ -197,18 +200,24 @@ public class ParsedSqlRunner extends SqlRunner {
 
 		@Override
 		public int totalCount() {
-			String sql = pageableSql.countableSql();
+			final String sql = pageableSql.countableSql();
+			Connection connection = null;
 			try {
+				connection = connectionFactory.getConnection();
 				return sqlRunner.queryForObject(connection, sql, sqlParameter, Integer.class);
 			} catch (SQLException e) {
 				throw new PageableException(e.getMessage(), e);
+			} finally {
+				JdbcUtils.closeQuietly(connection);
 			}
 		}
 
 		@Override
 		public Cursor<T> iterator(int maxResults, int firstResult) {
-			String sql = pageableSql.countableSql();
+			final String sql = pageableSql.countableSql();
+			Connection connection = null;
 			try {
+				connection = connectionFactory.getConnection();
 				if (useCachedRowSet) {
 					return sqlRunner.cachedIterator(connection, sql, sqlParameter, rowMapper);
 				}

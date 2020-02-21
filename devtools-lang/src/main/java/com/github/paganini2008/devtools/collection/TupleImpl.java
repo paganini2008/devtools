@@ -39,7 +39,7 @@ public class TupleImpl extends KeyConversionMap<String, String, Object> implemen
 		return str;
 	}
 
-	public Object[] valueArray() {
+	public Object[] toValues() {
 		return values().toArray();
 	}
 

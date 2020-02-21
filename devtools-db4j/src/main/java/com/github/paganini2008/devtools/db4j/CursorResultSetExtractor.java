@@ -44,7 +44,9 @@ public class CursorResultSetExtractor<T> implements ResultSetExtractor<Cursor<T>
 					opened.set(false);
 					throw new DetachedSqlException(e.getMessage(), e);
 				} finally {
-					close();
+					if (!isOpened()) {
+						close();
+					}
 				}
 			}
 
@@ -55,7 +57,9 @@ public class CursorResultSetExtractor<T> implements ResultSetExtractor<Cursor<T>
 					opened.set(false);
 					throw new DetachedSqlException(e.getMessage(), e);
 				} finally {
-					close();
+					if (!isOpened()) {
+						close();
+					}
 				}
 			}
 
@@ -66,9 +70,7 @@ public class CursorResultSetExtractor<T> implements ResultSetExtractor<Cursor<T>
 
 			@Override
 			public void close() {
-				if (!isOpened()) {
-					closeable.notifyObservers();
-				}
+				closeable.notifyObservers();
 			}
 		};
 	}

@@ -2,12 +2,14 @@ package com.github.paganini2008.devtools.objectpool.examples;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import com.github.paganini2008.devtools.RandomUtils;
 import com.github.paganini2008.devtools.Sequence;
+import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.Tuple;
 import com.github.paganini2008.devtools.jdbc.Cursor;
 import com.github.paganini2008.devtools.jdbc.JdbcUtils;
@@ -40,16 +42,16 @@ public class TestDataSource {
 		for (final int i : Sequence.forEach(0, 10000)) {
 			executor.execute(() -> {
 				Connection connection = null;
-				Cursor<Tuple> cursor = null;
+				List<Tuple> list = null;
 				try {
 					connection = ds.getConnection();
-					cursor = JdbcUtils.executeQuery(connection, "select * from mec_area where level=? limit 1",
+					list = JdbcUtils.executeQuery(connection, "select * from mec_area where level=? limit 1",
 							new Object[] { RandomUtils.randomInt(1, 4) });
-					System.out.println(cursor.first());
+					System.out.println(CollectionUtils.getFirst(list));
 				} catch (SQLException e) {
 					e.printStackTrace();
 				} finally {
-					//JdbcUtils.closeQuietly(connection);
+					JdbcUtils.closeQuietly(connection);
 				}
 			});
 		}

@@ -27,7 +27,7 @@ public interface Tuple {
 
 	String[] keys();
 
-	Object[] valueArray();
+	Object[] toValues();
 
 	String getProperty(String key);
 
