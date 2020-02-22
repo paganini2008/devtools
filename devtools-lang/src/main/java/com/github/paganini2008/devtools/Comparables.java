@@ -2,12 +2,12 @@ package com.github.paganini2008.devtools;
 
 /**
  * 
- * CompareUtils
+ * Comparables
  *
  * @author Fred Feng
  * @version 1.0
  */
-public abstract class CompareUtils {
+public abstract class Comparables {
 	
 	public static <T> T nullOrMax(T leftValue, T rightValue) {
 		return leftValue == null ? rightValue : leftValue;

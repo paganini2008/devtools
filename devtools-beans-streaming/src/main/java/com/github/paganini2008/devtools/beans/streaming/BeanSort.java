@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
-import com.github.paganini2008.devtools.CompareUtils;
+import com.github.paganini2008.devtools.Comparables;
 import com.github.paganini2008.devtools.comparator.AbstractComparator;
 import com.github.paganini2008.devtools.comparator.ReverseComparator;
 
@@ -14,8 +14,6 @@ import com.github.paganini2008.devtools.comparator.ReverseComparator;
  * BeanSort
  * 
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 @SuppressWarnings("all")
@@ -40,7 +38,7 @@ public class BeanSort<E> extends AbstractComparator<E> implements Sort<E> {
 		public int compare(E a, E b) {
 			T left = function.apply(a);
 			T right = function.apply(b);
-			return CompareUtils.compareTo(left, right);
+			return Comparables.compareTo(left, right);
 		}
 
 		public Comparator reverse() {

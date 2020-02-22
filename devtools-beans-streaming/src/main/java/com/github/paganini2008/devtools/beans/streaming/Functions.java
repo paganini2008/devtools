@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
-import com.github.paganini2008.devtools.CompareUtils;
+import com.github.paganini2008.devtools.Comparables;
 import com.github.paganini2008.devtools.beans.BeanUtils;
 
 /**
@@ -48,7 +48,7 @@ public abstract class Functions {
 			return elements.stream().map(e -> {
 				return BeanUtils.getProperty(e, attributeName, requiredType);
 			}).reduce(identity, (left, right) -> {
-				return CompareUtils.min(left, right);
+				return Comparables.min(left, right);
 			});
 		}
 	}
@@ -67,7 +67,7 @@ public abstract class Functions {
 			return elements.stream().map(e -> {
 				return BeanUtils.getProperty(e, attributeName, requiredType);
 			}).reduce(null, (left, right) -> {
-				return CompareUtils.max(left, right);
+				return Comparables.max(left, right);
 			});
 		}
 	}

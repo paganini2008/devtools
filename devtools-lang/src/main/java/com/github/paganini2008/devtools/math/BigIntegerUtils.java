@@ -7,7 +7,7 @@ import java.math.BigInteger;
 
 import com.github.paganini2008.devtools.ArrayUtils;
 import com.github.paganini2008.devtools.Assert;
-import com.github.paganini2008.devtools.CompareUtils;
+import com.github.paganini2008.devtools.Comparables;
 import com.github.paganini2008.devtools.NumberUtils;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.LruMap;
@@ -84,7 +84,7 @@ public abstract class BigIntegerUtils {
 		BigInteger m = valueOf(a);
 		BigInteger n = valueOf(b);
 		if (m == null || n == null) {
-			return CompareUtils.nullOrMax(m, n);
+			return Comparables.nullOrMax(m, n);
 		}
 		return m.add(n);
 	}
@@ -93,7 +93,7 @@ public abstract class BigIntegerUtils {
 		BigInteger m = parse(a);
 		BigInteger n = parse(b);
 		if (m == null || n == null) {
-			return CompareUtils.nullOrMax(m, n);
+			return Comparables.nullOrMax(m, n);
 		}
 		return m.add(n);
 	}
@@ -112,7 +112,7 @@ public abstract class BigIntegerUtils {
 		BigInteger m = valueOf(a);
 		BigInteger n = valueOf(b);
 		if (m == null || n == null) {
-			return CompareUtils.nullOrMax(m, n);
+			return Comparables.nullOrMax(m, n);
 		}
 		return m.multiply(n);
 	}
@@ -121,7 +121,7 @@ public abstract class BigIntegerUtils {
 		BigInteger m = parse(a);
 		BigInteger n = parse(b);
 		if (m == null || n == null) {
-			return CompareUtils.nullOrMax(m, n);
+			return Comparables.nullOrMax(m, n);
 		}
 		return m.multiply(n);
 	}

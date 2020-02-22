@@ -7,6 +7,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import com.github.paganini2008.devtools.collection.ListUtils;
 import com.github.paganini2008.devtools.jdbc.ResultSetSlice;
 
 /**
@@ -14,8 +15,6 @@ import com.github.paganini2008.devtools.jdbc.ResultSetSlice;
  * Select
  * 
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public class Select<E> implements Selectable<E> {
@@ -50,7 +49,7 @@ public class Select<E> implements Selectable<E> {
 	}
 
 	public List<E> list(int maxResults, int firstResult) {
-		return maxResults > firstResult ? content.subList(firstResult, maxResults) : content;
+		return ListUtils.slice(content, maxResults, firstResult);
 	}
 
 	public int totalCount() {

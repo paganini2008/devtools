@@ -3,6 +3,7 @@ package com.github.paganini2008.devtools.beans.streaming;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.paganini2008.devtools.collection.ListUtils;
 import com.github.paganini2008.devtools.jdbc.ResultSetSlice;
 
 /**
@@ -25,7 +26,7 @@ public class MemoryResultSetSlice<E, T> implements ResultSetSlice<T> {
 
 	public List<T> list(int maxResults, int firstResult) {
 		List<T> results = new ArrayList<T>();
-		List<E> subList = maxResults > firstResult ? content.subList(firstResult, maxResults) : content;
+		List<E> subList = ListUtils.slice(content, maxResults, firstResult);
 		for (E element : subList) {
 			T data = transformer.transfer(element);
 			results.add(data);

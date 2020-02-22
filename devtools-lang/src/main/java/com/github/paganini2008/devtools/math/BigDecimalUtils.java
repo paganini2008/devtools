@@ -11,7 +11,7 @@ import java.util.Map;
 
 import com.github.paganini2008.devtools.ArrayUtils;
 import com.github.paganini2008.devtools.Assert;
-import com.github.paganini2008.devtools.CompareUtils;
+import com.github.paganini2008.devtools.Comparables;
 import com.github.paganini2008.devtools.NumberUtils;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.LruMap;
@@ -285,13 +285,13 @@ public abstract class BigDecimalUtils {
 	public static int compareTo(String a, String b) {
 		BigDecimal m = parse(a);
 		BigDecimal n = parse(b);
-		return CompareUtils.compareTo(m, n);
+		return Comparables.compareTo(m, n);
 	}
 
 	public static int compareTo(Number a, Number b) {
 		BigDecimal m = valueOf(a);
 		BigDecimal n = valueOf(b);
-		return CompareUtils.compareTo(m, n);
+		return Comparables.compareTo(m, n);
 	}
 
 	public static BigDecimal min(Number[] array) {
@@ -371,7 +371,7 @@ public abstract class BigDecimalUtils {
 		BigDecimal m = valueOf(a);
 		BigDecimal n = valueOf(b);
 		if (m == null || n == null) {
-			return CompareUtils.nullOrMax(m, n);
+			return Comparables.nullOrMax(m, n);
 		}
 		return m.max(n);
 	}
@@ -380,7 +380,7 @@ public abstract class BigDecimalUtils {
 		BigDecimal m = parse(a);
 		BigDecimal n = parse(b);
 		if (m == null || n == null) {
-			return CompareUtils.nullOrMax(m, n);
+			return Comparables.nullOrMax(m, n);
 		}
 		return m.max(n);
 	}
@@ -389,7 +389,7 @@ public abstract class BigDecimalUtils {
 		BigDecimal m = valueOf(a);
 		BigDecimal n = valueOf(b);
 		if (m == null || n == null) {
-			return CompareUtils.nullOrMin(m, n);
+			return Comparables.nullOrMin(m, n);
 		}
 		return m.min(n);
 	}
@@ -398,7 +398,7 @@ public abstract class BigDecimalUtils {
 		BigDecimal m = parse(a);
 		BigDecimal n = parse(b);
 		if (m == null || n == null) {
-			return CompareUtils.nullOrMin(m, n);
+			return Comparables.nullOrMin(m, n);
 		}
 		return m.min(n);
 	}
@@ -437,7 +437,7 @@ public abstract class BigDecimalUtils {
 		BigDecimal m = valueOf(a);
 		BigDecimal n = valueOf(b);
 		if (m == null || n == null) {
-			return CompareUtils.nullOrMax(m, n);
+			return Comparables.nullOrMax(m, n);
 		}
 		return m.add(n);
 	}
@@ -446,7 +446,7 @@ public abstract class BigDecimalUtils {
 		BigDecimal m = valueOf(a);
 		BigDecimal n = valueOf(b);
 		if (m == null || n == null) {
-			return CompareUtils.nullOrMax(m, n);
+			return Comparables.nullOrMax(m, n);
 		}
 		return m.add(n, mc);
 	}
@@ -455,7 +455,7 @@ public abstract class BigDecimalUtils {
 		BigDecimal m = parse(a);
 		BigDecimal n = parse(b);
 		if (m == null || n == null) {
-			return CompareUtils.nullOrMax(m, n);
+			return Comparables.nullOrMax(m, n);
 		}
 		return m.add(n);
 	}
@@ -464,7 +464,7 @@ public abstract class BigDecimalUtils {
 		BigDecimal m = parse(a);
 		BigDecimal n = parse(b);
 		if (m == null || n == null) {
-			return CompareUtils.nullOrMax(m, n);
+			return Comparables.nullOrMax(m, n);
 		}
 		return m.add(n, mc);
 	}
@@ -493,7 +493,7 @@ public abstract class BigDecimalUtils {
 		BigDecimal m = valueOf(a);
 		BigDecimal n = valueOf(b);
 		if (m == null || n == null) {
-			return CompareUtils.nullOrMax(m, n);
+			return Comparables.nullOrMax(m, n);
 		}
 		return m.subtract(n);
 	}
@@ -502,7 +502,7 @@ public abstract class BigDecimalUtils {
 		BigDecimal m = parse(a);
 		BigDecimal n = parse(b);
 		if (m == null || n == null) {
-			return CompareUtils.nullOrMax(m, n);
+			return Comparables.nullOrMax(m, n);
 		}
 		return m.subtract(n);
 	}
@@ -511,7 +511,7 @@ public abstract class BigDecimalUtils {
 		BigDecimal m = valueOf(a);
 		BigDecimal n = valueOf(b);
 		if (m == null || n == null) {
-			return CompareUtils.nullOrMax(m, n);
+			return Comparables.nullOrMax(m, n);
 		}
 		return m.subtract(n, mc);
 	}
@@ -520,7 +520,7 @@ public abstract class BigDecimalUtils {
 		BigDecimal m = parse(a);
 		BigDecimal n = parse(b);
 		if (m == null || n == null) {
-			return CompareUtils.nullOrMax(m, n);
+			return Comparables.nullOrMax(m, n);
 		}
 		return m.subtract(n, mc);
 	}
@@ -549,7 +549,7 @@ public abstract class BigDecimalUtils {
 		BigDecimal m = valueOf(a);
 		BigDecimal n = valueOf(b);
 		if (m == null || n == null) {
-			return CompareUtils.nullOrMax(m, n);
+			return Comparables.nullOrMax(m, n);
 		}
 		return m.multiply(n);
 	}
@@ -558,7 +558,7 @@ public abstract class BigDecimalUtils {
 		BigDecimal m = parse(a);
 		BigDecimal n = parse(b);
 		if (m == null || n == null) {
-			return CompareUtils.nullOrMax(m, n);
+			return Comparables.nullOrMax(m, n);
 		}
 		return m.multiply(n);
 	}
@@ -567,7 +567,7 @@ public abstract class BigDecimalUtils {
 		BigDecimal m = valueOf(a);
 		BigDecimal n = valueOf(b);
 		if (m == null || n == null) {
-			return CompareUtils.nullOrMax(m, n);
+			return Comparables.nullOrMax(m, n);
 		}
 		return m.multiply(n, mc);
 	}
@@ -576,7 +576,7 @@ public abstract class BigDecimalUtils {
 		BigDecimal m = parse(a);
 		BigDecimal n = parse(b);
 		if (m == null || n == null) {
-			return CompareUtils.nullOrMax(m, n);
+			return Comparables.nullOrMax(m, n);
 		}
 		return m.multiply(n, mc);
 	}
@@ -605,7 +605,7 @@ public abstract class BigDecimalUtils {
 		BigDecimal m = valueOf(a);
 		BigDecimal n = valueOf(b);
 		if (m == null || n == null) {
-			return CompareUtils.nullOrMax(m, n);
+			return Comparables.nullOrMax(m, n);
 		}
 		try {
 			return m.divide(n, mc);
@@ -618,7 +618,7 @@ public abstract class BigDecimalUtils {
 		BigDecimal m = parse(a);
 		BigDecimal n = parse(b);
 		if (m == null || n == null) {
-			return CompareUtils.nullOrMax(m, n);
+			return Comparables.nullOrMax(m, n);
 		}
 		try {
 			return m.divide(n, mc);
@@ -631,7 +631,7 @@ public abstract class BigDecimalUtils {
 		BigDecimal m = valueOf(a);
 		BigDecimal n = valueOf(b);
 		if (m == null || n == null) {
-			return CompareUtils.nullOrMax(m, n);
+			return Comparables.nullOrMax(m, n);
 		}
 		try {
 			return m.divide(n, scale, roundingMode);
@@ -644,7 +644,7 @@ public abstract class BigDecimalUtils {
 		BigDecimal m = parse(a);
 		BigDecimal n = parse(b);
 		if (m == null || n == null) {
-			return CompareUtils.nullOrMax(m, n);
+			return Comparables.nullOrMax(m, n);
 		}
 		try {
 			return m.divide(n, scale, roundingMode);

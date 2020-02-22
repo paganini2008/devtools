@@ -1,10 +1,10 @@
-package com.github.paganini2008.devtools.beans.streaming;
+package com.github.paganini2008.devtools.beans.streaming.examples;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
-import com.github.paganini2008.devtools.date.DateUtils;
+import com.github.paganini2008.devtools.beans.ToStringBuilder;
 
 /**
  * 
@@ -26,13 +26,18 @@ public class Product {
 	private boolean export;
 	private Long number;
 	private BigDecimal freight;
-	private Sort sort;
-	private Admin admin = new Admin();
+	private Style style;
+	private Admin admin;
 
 	public static class Admin {
 
 		private String username;
 		private String password;
+
+		public Admin(String username, String password) {
+			this.username = username;
+			this.password = password;
+		}
 
 		public String getUsername() {
 			return username;
@@ -48,6 +53,11 @@ public class Product {
 
 		public void setPassword(String password) {
 			this.password = password;
+		}
+
+		@Override
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this);
 		}
 
 	}
@@ -140,15 +150,15 @@ public class Product {
 		this.freight = freight;
 	}
 
-	public Sort getSort() {
-		return sort;
+	public Style getStyle() {
+		return style;
 	}
 
-	public void setSort(Sort sort) {
-		this.sort = sort;
+	public void setStyle(Style style) {
+		this.style = style;
 	}
 
-	public static enum Sort {
+	public static enum Style {
 
 		HARD, SOFT;
 
@@ -156,9 +166,7 @@ public class Product {
 
 	@Override
 	public String toString() {
-		return "Product [id=" + id + ", name=" + name + ", location=" + location + ", created=" + DateUtils.format(created) + ", expired="
-				+ DateUtils.format(expired) + ", price=" + price + ", sales=" + sales + ", export=" + export + ", number=" + number
-				+ ", freight=" + freight + ", sort=" + sort + "]";
+		return ToStringBuilder.reflectionToString(this);
 	}
 
 }
