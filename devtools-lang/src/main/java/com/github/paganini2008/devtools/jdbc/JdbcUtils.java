@@ -16,12 +16,12 @@ import java.util.function.Consumer;
 
 import javax.sql.DataSource;
 
-import com.github.paganini2008.devtools.ArrayUtils;
 import com.github.paganini2008.devtools.CaseFormats;
 import com.github.paganini2008.devtools.Observable;
 import com.github.paganini2008.devtools.Observer;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.Tuple;
+import com.github.paganini2008.devtools.converter.ConvertUtils;
 
 /**
  * JdbcUtils
@@ -163,7 +163,7 @@ public abstract class JdbcUtils {
 		return DriverManager.getConnection(url, user, password);
 	}
 
-	public static int executeUpdate(Connection connection, String sql) throws SQLException {
+	public static int update(Connection connection, String sql) throws SQLException {
 		Statement stm = null;
 		try {
 			stm = connection.createStatement();
@@ -173,11 +173,11 @@ public abstract class JdbcUtils {
 		}
 	}
 
-	public static int[] executeBatch(Connection connection, String sql, List<Object[]> argsList) throws SQLException {
-		return executeBatch(connection, sql, setParameters(argsList));
+	public static int[] batchUpdate(Connection connection, String sql, List<Object[]> argsList) throws SQLException {
+		return batchUpdate(connection, sql, setValues(argsList));
 	}
 
-	public static int[] executeBatch(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
+	public static int[] batchUpdate(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement(sql);
@@ -190,11 +190,11 @@ public abstract class JdbcUtils {
 		}
 	}
 
-	public static int executeUpdate(Connection connection, String sql, Object[] args) throws SQLException {
-		return executeUpdate(connection, sql, setParameters(args));
+	public static int update(Connection connection, String sql, Object[] args) throws SQLException {
+		return update(connection, sql, setValues(args));
 	}
 
-	public static int executeUpdate(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
+	public static int update(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement(sql);
@@ -207,14 +207,31 @@ public abstract class JdbcUtils {
 		}
 	}
 
-	public static Object executeOneResultQuery(Connection connection, String sql) throws SQLException {
-		List<Tuple> list = executeQuery(connection, sql);
-		Tuple first = CollectionUtils.getFirst(list);
-		Object[] array = first.toValues();
-		return ArrayUtils.isNotEmpty(array) ? array[0] : null;
+	public static <T> T fetchOne(Connection connection, String sql, Class<T> requiredType) throws SQLException {
+		Tuple tuple = fetchOne(connection, sql);
+		if (tuple.isEmpty()) {
+			return null;
+		}
+		return ConvertUtils.convertValue(tuple.toValues()[0], requiredType);
 	}
 
-	public static List<Tuple> executeQuery(Connection connection, String sql) throws SQLException {
+	public static Tuple fetchOne(Connection connection, String sql) throws SQLException {
+		Statement ps = null;
+		ResultSet rs = null;
+		try {
+			ps = connection.createStatement();
+			rs = ps.executeQuery(sql);
+			if (rs != null && rs.next()) {
+				return toTuple(rs);
+			}
+			return null;
+		} finally {
+			closeQuietly(rs);
+			closeQuietly(ps);
+		}
+	}
+
+	public static List<Tuple> fetchAll(Connection connection, String sql) throws SQLException {
 		List<Tuple> list = new ArrayList<Tuple>();
 		Statement ps = null;
 		ResultSet rs = null;
@@ -233,7 +250,7 @@ public abstract class JdbcUtils {
 		}
 	}
 
-	public static Cursor<Tuple> executeDetachedQuery(Connection connection, String sql) throws SQLException {
+	public static Cursor<Tuple> cursor(Connection connection, String sql) throws SQLException {
 		Statement sm = null;
 		ResultSet rs = null;
 		Observable observable = Observable.unrepeatable();
@@ -246,18 +263,47 @@ public abstract class JdbcUtils {
 		}
 	}
 
-	public static Object executeOneResultQuery(Connection connection, String sql, Object[] args) throws SQLException {
-		List<Tuple> list = executeQuery(connection, sql, args);
-		Tuple first = CollectionUtils.getFirst(list);
-		Object[] array = first.toValues();
-		return ArrayUtils.isNotEmpty(array) ? array[0] : null;
+	public static <T> T fetchOne(Connection connection, String sql, Object[] args, Class<T> requiredType) throws SQLException {
+		return fetchOne(connection, sql, setValues(args), requiredType);
 	}
 
-	public static List<Tuple> executeQuery(Connection connection, String sql, Object[] args) throws SQLException {
-		return executeQuery(connection, sql, setParameters(args));
+	public static <T> T fetchOne(Connection connection, String sql, PreparedStatementCallback callback, Class<T> requiredType)
+			throws SQLException {
+		Tuple tuple = fetchOne(connection, sql, callback);
+		if (tuple.isEmpty()) {
+			return null;
+		}
+		return ConvertUtils.convertValue(tuple.toValues()[0], requiredType);
 	}
 
-	public static List<Tuple> executeQuery(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
+	public static Tuple fetchOne(Connection connection, String sql, Object[] args) throws SQLException {
+		return fetchOne(connection, sql, setValues(args));
+	}
+
+	public static Tuple fetchOne(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			ps = connection.prepareStatement(sql);
+			if (callback != null) {
+				callback.setValues(ps);
+			}
+			rs = ps.executeQuery();
+			if (rs != null && rs.next()) {
+				return toTuple(rs);
+			}
+			return null;
+		} finally {
+			closeQuietly(rs);
+			closeQuietly(ps);
+		}
+	}
+
+	public static List<Tuple> fetchAll(Connection connection, String sql, Object[] args) throws SQLException {
+		return fetchAll(connection, sql, setValues(args));
+	}
+
+	public static List<Tuple> fetchAll(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
 		List<Tuple> list = new ArrayList<Tuple>();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -279,12 +325,11 @@ public abstract class JdbcUtils {
 		}
 	}
 
-	public static Cursor<Tuple> executeDetachedQuery(Connection connection, String sql, Object[] args) throws SQLException {
-		return executeDetachedQuery(connection, sql, setParameters(args));
+	public static Cursor<Tuple> cursor(Connection connection, String sql, Object[] args) throws SQLException {
+		return cursor(connection, sql, setValues(args));
 	}
 
-	public static Cursor<Tuple> executeDetachedQuery(Connection connection, String sql, PreparedStatementCallback callback)
-			throws SQLException {
+	public static Cursor<Tuple> cursor(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		final Observable observable = Observable.unrepeatable();
@@ -378,18 +423,18 @@ public abstract class JdbcUtils {
 	}
 
 	public static void scan(Connection connection, String sql, Object[] args, Consumer<Tuple> consumer) throws SQLException {
-		scan(connection, sql, setParameters(args), consumer);
+		scan(connection, sql, setValues(args), consumer);
 	}
 
 	public static void scan(Connection connection, String sql, PreparedStatementCallback callback, Consumer<Tuple> consumer)
 			throws SQLException {
-		Cursor<Tuple> cursor = executeDetachedQuery(connection, sql, callback);
+		Cursor<Tuple> cursor = cursor(connection, sql, callback);
 		CollectionUtils.forEach(cursor).forEach(consumer);
 	}
 
 	public static void scan(ConnectionFactory connectionFactory, PageableSql pageableSql, Object[] args, int page, int pageSize,
 			Consumer<List<Tuple>> consumer) throws SQLException {
-		scan(connectionFactory, pageableSql, setParameters(args), page, pageSize, consumer);
+		scan(connectionFactory, pageableSql, setValues(args), page, pageSize, consumer);
 	}
 
 	public static void scan(ConnectionFactory connectionFactory, String sql, PreparedStatementCallback callback, int page, int pageSize,
@@ -400,13 +445,13 @@ public abstract class JdbcUtils {
 	public static void scan(ConnectionFactory connectionFactory, PageableSql pageableSql, PreparedStatementCallback callback, int page,
 			int pageSize, Consumer<List<Tuple>> consumer) throws SQLException {
 		PageableQuery<Tuple> query = pageableQuery(connectionFactory, pageableSql, callback);
-		for (PageResponse<Tuple> pageResponse : query.forEachPage(page, pageSize)) {
+		for (PageResponse<Tuple> pageResponse : query.forEach(page, pageSize)) {
 			consumer.accept(pageResponse.getContent());
 		}
 	}
 
 	public static PageableQuery<Tuple> pageableQuery(DataSource dataSource, String sql, Object[] args) {
-		return pageableQuery(dataSource, sql, setParameters(args));
+		return pageableQuery(dataSource, sql, setValues(args));
 	}
 
 	public static PageableQuery<Tuple> pageableQuery(DataSource dataSource, String sql, PreparedStatementCallback callback) {
@@ -414,7 +459,7 @@ public abstract class JdbcUtils {
 	}
 
 	public static PageableQuery<Tuple> pageableQuery(DataSource dataSource, PageableSql pageableSql, Object[] args) {
-		return new PageableQueryImpl(new PooledConnectionFactory(dataSource), pageableSql, setParameters(args));
+		return new PageableQueryImpl(new PooledConnectionFactory(dataSource), pageableSql, setValues(args));
 	}
 
 	public static PageableQuery<Tuple> pageableQuery(DataSource dataSource, PageableSql pageableSql, PreparedStatementCallback callback) {
@@ -422,7 +467,7 @@ public abstract class JdbcUtils {
 	}
 
 	public static PageableQuery<Tuple> pageableQuery(ConnectionFactory connectionFactory, String sql, Object[] args) {
-		return pageableQuery(connectionFactory, sql, setParameters(args));
+		return pageableQuery(connectionFactory, sql, setValues(args));
 	}
 
 	public static PageableQuery<Tuple> pageableQuery(ConnectionFactory connectionFactory, String sql, PreparedStatementCallback callback) {
@@ -430,7 +475,7 @@ public abstract class JdbcUtils {
 	}
 
 	public static PageableQuery<Tuple> pageableQuery(ConnectionFactory connectionFactory, PageableSql pageableSql, Object[] args) {
-		return pageableQuery(connectionFactory, pageableSql, setParameters(args));
+		return pageableQuery(connectionFactory, pageableSql, setValues(args));
 	}
 
 	public static PageableQuery<Tuple> pageableQuery(ConnectionFactory connectionFactory, PageableSql pageableSql,
@@ -438,7 +483,7 @@ public abstract class JdbcUtils {
 		return new PageableQueryImpl(connectionFactory, pageableSql, callback);
 	}
 
-	public static void setParameters(PreparedStatement ps, Object[] args) throws SQLException {
+	public static void setValues(PreparedStatement ps, Object[] args) throws SQLException {
 		if (args != null && args.length > 0) {
 			int parameterIndex = 1;
 			for (Object arg : args) {
@@ -447,20 +492,20 @@ public abstract class JdbcUtils {
 		}
 	}
 
-	private static PreparedStatementCallback setParameters(List<Object[]> argsList) {
+	private static PreparedStatementCallback setValues(List<Object[]> argsList) {
 		return ps -> {
 			for (Object[] args : argsList) {
 				if (args != null && args.length > 0) {
-					setParameters(ps, args);
+					setValues(ps, args);
 					ps.addBatch();
 				}
 			}
 		};
 	}
 
-	private static PreparedStatementCallback setParameters(Object[] args) {
+	private static PreparedStatementCallback setValues(Object[] args) {
 		return ps -> {
-			setParameters(ps, args);
+			setValues(ps, args);
 		};
 	}
 

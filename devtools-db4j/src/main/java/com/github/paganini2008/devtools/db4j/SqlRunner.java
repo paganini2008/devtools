@@ -199,51 +199,54 @@ public class SqlRunner {
 
 	// ---------------------- Cursor ------------------------
 
-	public Cursor<Tuple> iterator(Connection connection, String sql, Object[] parameters) throws SQLException {
-		return iterator(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, typeHandlerRegistry));
+	public Cursor<Tuple> queryForCursor(Connection connection, String sql, Object[] parameters) throws SQLException {
+		return queryForCursor(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, typeHandlerRegistry));
 	}
 
-	public Cursor<Tuple> iterator(Connection connection, String sql, Object[] parameters, JdbcType[] jdbcTypes) throws SQLException {
-		return iterator(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry));
+	public Cursor<Tuple> queryForCursor(Connection connection, String sql, Object[] parameters, JdbcType[] jdbcTypes) throws SQLException {
+		return queryForCursor(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry));
 	}
 
-	public Cursor<Tuple> iterator(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
-		return iterator(connection, PreparedStatementCreatorUtils.forQuery(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY),
-				callback, new TupleRowMapper(typeHandlerRegistry));
+	public Cursor<Tuple> queryForCursor(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
+		return queryForCursor(connection,
+				PreparedStatementCreatorUtils.forQuery(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY), callback,
+				new TupleRowMapper(typeHandlerRegistry));
 	}
 
-	public <T> Cursor<T> iterator(Connection connection, String sql, Object[] parameters, Class<T> objectClass) throws SQLException {
-		return iterator(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, typeHandlerRegistry),
+	public <T> Cursor<T> queryForCursor(Connection connection, String sql, Object[] parameters, Class<T> objectClass) throws SQLException {
+		return queryForCursor(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, typeHandlerRegistry),
 				new BeanPropertyRowMapper<T>(typeHandlerRegistry, objectClass));
 	}
 
-	public <T> Cursor<T> iterator(Connection connection, String sql, Object[] parameters, JdbcType[] jdbcTypes, Class<T> objectClass)
+	public <T> Cursor<T> queryForCursor(Connection connection, String sql, Object[] parameters, JdbcType[] jdbcTypes, Class<T> objectClass)
 			throws SQLException {
-		return iterator(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry),
+		return queryForCursor(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry),
 				new BeanPropertyRowMapper<T>(typeHandlerRegistry, objectClass));
 	}
 
-	public <T> Cursor<T> iterator(Connection connection, String sql, PreparedStatementCallback callback, Class<T> objectClass)
+	public <T> Cursor<T> queryForCursor(Connection connection, String sql, PreparedStatementCallback callback, Class<T> objectClass)
 			throws SQLException {
-		return iterator(connection, sql, callback, new BeanPropertyRowMapper<T>(typeHandlerRegistry, objectClass));
+		return queryForCursor(connection, sql, callback, new BeanPropertyRowMapper<T>(typeHandlerRegistry, objectClass));
 	}
 
-	public <T> Cursor<T> iterator(Connection connection, String sql, Object[] parameters, RowMapper<T> rowMapper) throws SQLException {
-		return iterator(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, typeHandlerRegistry), rowMapper);
-	}
-
-	public <T> Cursor<T> iterator(Connection connection, String sql, Object[] parameters, JdbcType[] jdbcTypes, RowMapper<T> rowMapper)
+	public <T> Cursor<T> queryForCursor(Connection connection, String sql, Object[] parameters, RowMapper<T> rowMapper)
 			throws SQLException {
-		return iterator(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry), rowMapper);
+		return queryForCursor(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, typeHandlerRegistry), rowMapper);
 	}
 
-	public <T> Cursor<T> iterator(Connection connection, String sql, PreparedStatementCallback callback, RowMapper<T> rowMapper)
+	public <T> Cursor<T> queryForCursor(Connection connection, String sql, Object[] parameters, JdbcType[] jdbcTypes,
+			RowMapper<T> rowMapper) throws SQLException {
+		return queryForCursor(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry),
+				rowMapper);
+	}
+
+	public <T> Cursor<T> queryForCursor(Connection connection, String sql, PreparedStatementCallback callback, RowMapper<T> rowMapper)
 			throws SQLException {
-		return iterator(connection, PreparedStatementCreatorUtils.forQuery(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY),
-				callback, rowMapper);
+		return queryForCursor(connection,
+				PreparedStatementCreatorUtils.forQuery(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY), callback, rowMapper);
 	}
 
-	public <T> Cursor<T> iterator(Connection connection, PreparedStatementCreator statementCreator,
+	public <T> Cursor<T> queryForCursor(Connection connection, PreparedStatementCreator statementCreator,
 			final PreparedStatementCallback callback, final RowMapper<T> rowMapper) throws SQLException {
 		final Observable closeable = Observable.unrepeatable();
 		final AtomicBoolean success = new AtomicBoolean(true);
@@ -302,36 +305,37 @@ public class SqlRunner {
 		}
 	}
 
-	public Cursor<Tuple> cachedIterator(Connection connection, String sql, Object[] parameters) throws SQLException {
-		return cachedIterator(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, typeHandlerRegistry));
+	public Cursor<Tuple> queryForCachedCursor(Connection connection, String sql, Object[] parameters) throws SQLException {
+		return queryForCachedCursor(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, typeHandlerRegistry));
 	}
 
-	public Cursor<Tuple> cachedIterator(Connection connection, String sql, Object[] parameters, JdbcType[] jdbcTypes) throws SQLException {
-		return cachedIterator(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry));
-	}
-
-	public Cursor<Tuple> cachedIterator(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
-		return cachedIterator(connection, sql, callback, new TupleRowMapper(typeHandlerRegistry));
-	}
-
-	public <T> Cursor<T> cachedIterator(Connection connection, String sql, Object[] parameters, RowMapper<T> rowMapper)
+	public Cursor<Tuple> queryForCachedCursor(Connection connection, String sql, Object[] parameters, JdbcType[] jdbcTypes)
 			throws SQLException {
-		return cachedIterator(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, typeHandlerRegistry), rowMapper);
+		return queryForCachedCursor(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry));
 	}
 
-	public <T> Cursor<T> cachedIterator(Connection connection, String sql, Object[] parameters, JdbcType[] jdbcTypes,
+	public Cursor<Tuple> queryForCachedCursor(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
+		return queryForCachedCursor(connection, sql, callback, new TupleRowMapper(typeHandlerRegistry));
+	}
+
+	public <T> Cursor<T> queryForCachedCursor(Connection connection, String sql, Object[] parameters, RowMapper<T> rowMapper)
+			throws SQLException {
+		return queryForCachedCursor(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, typeHandlerRegistry), rowMapper);
+	}
+
+	public <T> Cursor<T> queryForCachedCursor(Connection connection, String sql, Object[] parameters, JdbcType[] jdbcTypes,
 			RowMapper<T> rowMapper) throws SQLException {
-		return cachedIterator(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry),
+		return queryForCachedCursor(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry),
 				rowMapper);
 	}
 
-	public <T> Cursor<T> cachedIterator(Connection connection, String sql, final PreparedStatementCallback callback,
+	public <T> Cursor<T> queryForCachedCursor(Connection connection, String sql, final PreparedStatementCallback callback,
 			final RowMapper<T> rowMapper) throws SQLException {
-		return cachedIterator(connection,
+		return queryForCachedCursor(connection,
 				PreparedStatementCreatorUtils.forQuery(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY), callback, rowMapper);
 	}
 
-	public <T> Cursor<T> cachedIterator(Connection connection, PreparedStatementCreator statementCreator,
+	public <T> Cursor<T> queryForCachedCursor(Connection connection, PreparedStatementCreator statementCreator,
 			final PreparedStatementCallback callback, final RowMapper<T> rowMapper) throws SQLException {
 		try {
 			return execute(connection, statementCreator, new PreparedStatementExecutor<Cursor<T>>() {
@@ -479,19 +483,19 @@ public class SqlRunner {
 
 	// ---------------------- Batch Update------------------------------
 
-	public int[] batch(Connection connection, String sql, List<Object[]> parameters, JdbcType[] jdbcTypes) throws SQLException {
-		return batch(connection, sql, PreparedStatementCallbackUtils.batchPrepare(parameters, jdbcTypes, typeHandlerRegistry));
+	public int[] batchUpdate(Connection connection, String sql, List<Object[]> parameters, JdbcType[] jdbcTypes) throws SQLException {
+		return batchUpdate(connection, sql, PreparedStatementCallbackUtils.batchPrepare(parameters, jdbcTypes, typeHandlerRegistry));
 	}
 
-	public int[] batch(Connection connection, String sql, List<Object[]> parameters) throws SQLException {
-		return batch(connection, sql, PreparedStatementCallbackUtils.batchPrepare(parameters, typeHandlerRegistry));
+	public int[] batchUpdate(Connection connection, String sql, List<Object[]> parameters) throws SQLException {
+		return batchUpdate(connection, sql, PreparedStatementCallbackUtils.batchPrepare(parameters, typeHandlerRegistry));
 	}
 
-	public int[] batch(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
-		return batch(connection, PreparedStatementCreatorUtils.forDefault(sql), callback);
+	public int[] batchUpdate(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
+		return batchUpdate(connection, PreparedStatementCreatorUtils.forDefault(sql), callback);
 	}
 
-	public int[] batch(Connection connection, PreparedStatementCreator statementCreator, final PreparedStatementCallback callback)
+	public int[] batchUpdate(Connection connection, PreparedStatementCreator statementCreator, final PreparedStatementCallback callback)
 			throws SQLException {
 		return execute(connection, statementCreator, new PreparedStatementExecutor<int[]>() {
 			public int[] execute(PreparedStatement ps) throws SQLException {
@@ -518,7 +522,7 @@ public class SqlRunner {
 		}
 	}
 
-	protected static boolean useCachedRowSet = true;
+	static boolean useCachedRowSet = true;
 
 	public static void setUseCachedRowSet(boolean useCachedRowSet) {
 		SqlRunner.useCachedRowSet = useCachedRowSet;
@@ -563,15 +567,15 @@ public class SqlRunner {
 		}
 
 		@Override
-		public Cursor<T> iterator(int maxResults, int firstResult) {
+		public Cursor<T> cursor(int maxResults, int firstResult) {
 			final String sql = pageableSql.pageableSql(maxResults, firstResult);
 			Connection connection = null;
 			try {
 				connection = connectionFactory.getConnection();
 				if (useCachedRowSet) {
-					return sqlRunner.cachedIterator(connection, sql, callback, rowMapper);
+					return sqlRunner.queryForCachedCursor(connection, sql, callback, rowMapper);
 				}
-				return sqlRunner.iterator(connection, sql, callback, rowMapper);
+				return sqlRunner.queryForCursor(connection, sql, callback, rowMapper);
 			} catch (SQLException e) {
 				throw new PageableException(e.getMessage(), e);
 			}

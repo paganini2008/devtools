@@ -29,19 +29,20 @@ public class PageableQueryImpl implements PageableQuery<Tuple> {
 		Connection connection = null;
 		try {
 			connection = connectionFactory.getConnection();
-			Object result = JdbcUtils.executeOneResultQuery(connection, sql);
-			return result instanceof Number ? ((Number) result).intValue() : 0;
+			return JdbcUtils.fetchOne(connection, sql, Integer.class);
 		} catch (SQLException e) {
 			throw new PageableException(e.getMessage(), e);
+		} finally {
+			JdbcUtils.closeQuietly(connection);
 		}
 	}
 
-	public Cursor<Tuple> iterator(int maxResults, int firstResult) {
+	public Cursor<Tuple> cursor(int maxResults, int firstResult) {
 		final String execution = pageableSql.pageableSql(maxResults, firstResult);
 		Connection connection = null;
 		try {
 			connection = connectionFactory.getConnection();
-			return JdbcUtils.executeDetachedQuery(connection, execution, callback);
+			return JdbcUtils.cursor(connection, execution, callback);
 		} catch (SQLException e) {
 			throw new PageableException(e.getMessage(), e);
 		}

@@ -14,16 +14,16 @@ public class ArraySqlParameter extends AbstractSqlParameter implements SqlParame
 		this.arguments = arguments;
 	}
 
-	public boolean hasValue(String paramName) {
+	public boolean hasValue(String name) {
 		try {
-			return Integer.parseInt(paramName) < arguments.length;
+			return Integer.parseInt(name) < arguments.length;
 		} catch (RuntimeException e) {
 			return false;
 		}
 	}
 
-	public Object getValue(String paramName) {
-		return arguments[Integer.parseInt(paramName)];
+	public Object getValue(String name) {
+		return arguments[Integer.parseInt(name)];
 	}
 
 }

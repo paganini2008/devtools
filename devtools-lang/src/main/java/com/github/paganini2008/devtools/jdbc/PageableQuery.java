@@ -16,16 +16,16 @@ public interface PageableQuery<T> extends ResultSetSlice<T> {
 
 	default List<T> list(int maxResults, int firstResult) {
 		List<T> results = new ArrayList<T>();
-		Cursor<T> cursor = iterator(maxResults, firstResult);
+		Cursor<T> cursor = cursor(maxResults, firstResult);
 		for (T t : CollectionUtils.forEach(cursor)) {
 			results.add(t);
 		}
 		return results;
 	}
 
-	Cursor<T> iterator(int maxResults, int firstResult);
+	Cursor<T> cursor(int maxResults, int firstResult);
 
-	default Iterable<PageResponse<T>> forEachPage(int page, int size) {
+	default Iterable<PageResponse<T>> forEach(int page, int size) {
 		return list(PageRequest.of(page, size));
 	}
 

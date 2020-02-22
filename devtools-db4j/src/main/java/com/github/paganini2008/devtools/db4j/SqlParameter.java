@@ -9,35 +9,35 @@ package com.github.paganini2008.devtools.db4j;
 public interface SqlParameter {
 
 	/**
-	 * Contains value by paramName
+	 * Contains value by name
 	 * 
-	 * @param paramName
+	 * @param name
 	 * @return
 	 */
-	boolean hasValue(String paramName);
+	boolean hasValue(String name);
 
 	/**
-	 * Get value by paramName
+	 * Get value by name
 	 * 
-	 * @param paramName
+	 * @param name
 	 * @return
 	 */
-	Object getValue(String paramName);
+	Object getValue(String name);
 
 	/**
-	 * Get jdbcType by paramName
+	 * Get jdbcType by name
 	 * 
-	 * @param paramName
+	 * @param name
 	 * @return
 	 */
-	JdbcType getJdbcType(String paramName);
+	JdbcType getJdbcType(String name);
 
 	/**
-	 * Add paramName and jdbcType
+	 * Add name and jdbcType
 	 * 
-	 * @param paramName
+	 * @param name
 	 * @param jdbcType
 	 */
-	void addJdbcType(String paramName, JdbcType jdbcType);
+	void addJdbcType(String name, JdbcType jdbcType);
 
 }
