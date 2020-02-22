@@ -207,6 +207,10 @@ public class SqlRunner {
 		return queryForCursor(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry));
 	}
 
+	public Cursor<Tuple> queryForCursor(Connection connection, String sql) throws SQLException {
+		return queryForCursor(connection, sql, (PreparedStatementCallback) null);
+	}
+
 	public Cursor<Tuple> queryForCursor(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
 		return queryForCursor(connection,
 				PreparedStatementCreatorUtils.forQuery(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY), callback,
