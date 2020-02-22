@@ -5,12 +5,11 @@
 	<parent>
 		<artifactId>devtools</artifactId>
 		<groupId>com.github.paganini2008</groupId>
-		<version>1.0</version>
+		<version>1.0-RC2</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>devtools-db4j</artifactId>
-	<version>1.0-RC1</version>
 	<packaging>jar</packaging>
 
 	<name>devtools-db4j</name>
@@ -21,7 +20,7 @@
 		<dependency>
 			<groupId>com.github.paganini2008</groupId>
 			<artifactId>devtools-lang</artifactId>
-			<version>1.0-RC1</version>
+			<version>1.0-RC2</version>
 		</dependency>
 	</dependencies>
 

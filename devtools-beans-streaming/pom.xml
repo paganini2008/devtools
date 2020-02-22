@@ -4,13 +4,12 @@
 	<parent>
 		<artifactId>devtools</artifactId>
 		<groupId>com.github.paganini2008</groupId>
-		<version>1.0</version>
+		<version>1.0-RC2</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>devtools-beans-streaming</artifactId>
 	<packaging>jar</packaging>
  
-    <version>1.0-RC1</version>
 	<name>devtools-beans-streaming</name>
 	<url>https://github.com/paganini2008/devtools</url>
 	<description>a useful java tools based on java collection stream framework</description>
@@ -19,7 +18,7 @@
 		<dependency>
 			<groupId>com.github.paganini2008</groupId>
 			<artifactId>devtools-lang</artifactId>
-			<version>1.0-RC1</version>
+			<version>1.0-RC2</version>
 		</dependency>
 	</dependencies>
 	

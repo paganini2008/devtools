@@ -5,11 +5,10 @@
 	<parent>
 		<artifactId>devtools</artifactId>
 		<groupId>com.github.paganini2008</groupId>
-		<version>1.0</version>
+		<version>1.0-RC2</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<version>1.0-RC1</version>
 	<artifactId>devtools-lang</artifactId>
 	<packaging>jar</packaging>
 
