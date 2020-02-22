@@ -68,6 +68,15 @@ public class CachedCursorResultSetExtractor<T> implements ResultSetExtractor<Cur
 					}
 				}
 			}
+			
+			@Override
+			public int getRownum() {
+				try {
+					return delegate.getRow();
+				} catch (SQLException e) {
+					throw new DetachedSqlException(e.getMessage(), e);
+				}
+			}
 
 			@Override
 			public void mark(int rownum) {

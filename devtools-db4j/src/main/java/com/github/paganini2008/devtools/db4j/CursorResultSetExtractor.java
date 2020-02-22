@@ -36,6 +36,7 @@ public class CursorResultSetExtractor<T> implements ResultSetExtractor<Cursor<T>
 			private final AtomicInteger index = new AtomicInteger(0);
 			private final AtomicBoolean opened = new AtomicBoolean(true);
 
+			@Override
 			public boolean hasNext() {
 				try {
 					opened.set(delegate.next());
@@ -50,6 +51,7 @@ public class CursorResultSetExtractor<T> implements ResultSetExtractor<Cursor<T>
 				}
 			}
 
+			@Override
 			public T next() {
 				try {
 					return rowMapper.mapRow(index.incrementAndGet(), delegate);
@@ -60,6 +62,15 @@ public class CursorResultSetExtractor<T> implements ResultSetExtractor<Cursor<T>
 					if (!isOpened()) {
 						close();
 					}
+				}
+			}
+
+			@Override
+			public int getRownum() {
+				try {
+					return delegate.getRow();
+				} catch (SQLException e) {
+					throw new DetachedSqlException(e.getMessage(), e);
 				}
 			}
 

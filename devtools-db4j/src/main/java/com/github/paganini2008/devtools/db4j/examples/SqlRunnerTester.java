@@ -45,7 +45,7 @@ public class SqlRunnerTester {
 		Cursor<Tuple> cursor = sqlRunner.queryForCursor(connection, "select * from crawler_resources limit 1000");
 		while (cursor.hasNext()) {
 			Tuple tuple = cursor.next();
-			System.out.println(tuple.get("title") + "\t" + tuple.get("url"));
+			System.out.println(cursor.getRownum() + ": " + tuple.get("title") + "\t" + tuple.get("url"));
 		}
 		cursor.close();
 		JdbcUtils.closeQuietly(connection);

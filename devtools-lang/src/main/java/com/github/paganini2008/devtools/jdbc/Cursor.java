@@ -23,6 +23,8 @@ public interface Cursor<T> extends Iterator<T> {
 		return results;
 	}
 	
+	int getRownum();
+	
 	void mark(int rownum);
 
 	boolean isOpened();

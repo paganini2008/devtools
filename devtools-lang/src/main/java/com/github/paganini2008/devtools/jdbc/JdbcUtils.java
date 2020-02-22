@@ -413,6 +413,14 @@ public abstract class JdbcUtils {
 			}
 		}
 
+		public int getRownum() {
+			try {
+				return rs.getRow();
+			} catch (SQLException e) {
+				throw new DetachedSqlException(e.getMessage(), e);
+			}
+		}
+
 		public void mark(int rownum) {
 			try {
 				rs.absolute(rownum);
