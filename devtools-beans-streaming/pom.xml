@@ -7,12 +7,13 @@
 		<version>1.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<artifactId>devtools-bean-streaming</artifactId>
+	<artifactId>devtools-beans-streaming</artifactId>
 	<packaging>jar</packaging>
  
     <version>1.0-RC1</version>
-	<name>devtools-bean-streaming</name>
+	<name>devtools-beans-streaming</name>
 	<url>https://github.com/paganini2008/devtools</url>
+	<description>a useful java tools based on java collection stream framework</description>
 
 	<dependencies>
 		<dependency>

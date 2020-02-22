@@ -15,6 +15,7 @@
 
 	<name>devtools-db4j</name>
 	<url>https://github.com/paganini2008/devtools</url>
+	<description>a concise jdbc tools for quick developing</description>
 
 	<dependencies>
 		<dependency>

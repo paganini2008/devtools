@@ -15,18 +15,13 @@
 
 	<name>devtools-objectpool</name>
 	<url>https://github.com/paganini2008/devtools</url>
+	<description>Object Pool and Jdbc DataSource</description>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.github.paganini2008</groupId>
 			<artifactId>devtools-lang</artifactId>
 			<version>1.0-RC1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>8.0.18</version>
 		</dependency>
 	</dependencies>
 

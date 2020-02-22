@@ -15,6 +15,7 @@
 
 	<name>devtools-scheduler</name>
 	<url>https://github.com/paganini2008/devtools</url>
+	<description>A light task scheduling tools</description>
 
 	<dependencies>
 		<dependency>
