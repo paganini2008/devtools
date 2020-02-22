@@ -20,7 +20,7 @@ import com.github.paganini2008.devtools.jdbc.JdbcUtils;
 public class SqlRunnerTester {
 
 	private static Connection getConnection() throws SQLException {
-		String jdbcUrl = "jdbc:mysql://localhost:3306/db_mec_hlsh_v2?userUnicode=true&characterEncoding=UTF8&useSSL=false&serverTimezone=UTC&autoReconnect=true&zeroDateTimeBehavior=convertToNull";
+		String jdbcUrl = "jdbc:mysql://localhost:3306/test?userUnicode=true&characterEncoding=UTF8&useSSL=false&serverTimezone=UTC&autoReconnect=true&zeroDateTimeBehavior=convertToNull";
 		String user = "fengy";
 		String password = "123456";
 		return DriverManager.getConnection(jdbcUrl, user, password);
@@ -29,7 +29,7 @@ public class SqlRunnerTester {
 	public static void main(String[] args) throws SQLException {
 		ParsedSqlRunner sqlRunner = new ParsedSqlRunner();
 		Connection connection = getConnection();
-		List<Tuple> list = sqlRunner.queryForList(connection, "select * from mec_area where level={0}",
+		List<Tuple> list = sqlRunner.queryForList(connection, "select * from ccms_param limit 100",
 				new Object[] { RandomUtils.randomInt(1, 4) });
 		for (Tuple tuple : list) {
 			System.out.println(tuple);

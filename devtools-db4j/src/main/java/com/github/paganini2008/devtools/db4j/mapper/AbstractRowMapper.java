@@ -23,8 +23,6 @@ import com.github.paganini2008.devtools.db4j.type.TypeHandler;
  * AbstractRowMapper
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public abstract class AbstractRowMapper<T> implements RowMapper<T> {
@@ -57,6 +55,8 @@ public abstract class AbstractRowMapper<T> implements RowMapper<T> {
 		classNamesAndTypes.put(Date.class.getName(), Date.class);
 		classNamesAndTypes.put(Time.class.getName(), Time.class);
 		classNamesAndTypes.put(Timestamp.class.getName(), Timestamp.class);
+
+		classNamesAndTypes.put(byte[].class.getName(), byte[].class);
 	}
 
 	public static void registerNameAndType(String className, Type javaType) {
