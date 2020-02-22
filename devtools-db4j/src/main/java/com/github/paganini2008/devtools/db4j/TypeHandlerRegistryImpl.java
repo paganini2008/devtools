@@ -110,17 +110,17 @@ public class TypeHandlerRegistryImpl implements TypeHandlerRegistry {
 		register(String.class, JdbcType.VARCHAR, typeHandler);
 		register(String.class, JdbcType.NVARCHAR, typeHandler);
 		register(String.class, JdbcType.NCHAR, typeHandler);
+		register(String.class, JdbcType.LONGVARCHAR, typeHandler);
 		register(JdbcType.CHAR, typeHandler);
 		register(JdbcType.VARCHAR, typeHandler);
 		register(JdbcType.NVARCHAR, typeHandler);
 		register(JdbcType.NCHAR, typeHandler);
+		register(JdbcType.LONGVARCHAR, typeHandler);
 
 		typeHandler = new ClobTypeHandler();
 		register(String.class, JdbcType.CLOB, typeHandler);
-		register(String.class, JdbcType.LONGVARCHAR, typeHandler);
 		register(String.class, JdbcType.NCLOB, typeHandler);
 		register(JdbcType.CLOB, typeHandler);
-		register(JdbcType.LONGVARCHAR, typeHandler);
 		register(JdbcType.NCLOB, typeHandler);
 
 		typeHandler = new BlobTypeHandler();

@@ -255,7 +255,7 @@ public abstract class JdbcUtils {
 		ResultSet rs = null;
 		Observable observable = Observable.unrepeatable();
 		try {
-			sm = connection.createStatement();
+			sm = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			rs = sm.executeQuery(sql);
 			return new CursorImpl(rs, observable);
 		} finally {
@@ -334,7 +334,7 @@ public abstract class JdbcUtils {
 		ResultSet rs = null;
 		final Observable observable = Observable.unrepeatable();
 		try {
-			ps = connection.prepareStatement(sql);
+			ps = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			if (callback != null) {
 				callback.setValues(ps);
 			}
@@ -410,6 +410,14 @@ public abstract class JdbcUtils {
 				if (!isOpened()) {
 					close();
 				}
+			}
+		}
+
+		public void mark(int rownum) {
+			try {
+				rs.absolute(rownum);
+			} catch (SQLException e) {
+				throw new DetachedSqlException(e.getMessage(), e);
 			}
 		}
 

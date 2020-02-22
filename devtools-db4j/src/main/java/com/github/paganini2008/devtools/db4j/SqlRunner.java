@@ -247,7 +247,8 @@ public class SqlRunner {
 	public <T> Cursor<T> queryForCursor(Connection connection, String sql, PreparedStatementCallback callback, RowMapper<T> rowMapper)
 			throws SQLException {
 		return queryForCursor(connection,
-				PreparedStatementCreatorUtils.forQuery(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY), callback, rowMapper);
+				PreparedStatementCreatorUtils.forQuery(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY), callback,
+				rowMapper);
 	}
 
 	public <T> Cursor<T> queryForCursor(Connection connection, PreparedStatementCreator statementCreator,
@@ -318,6 +319,10 @@ public class SqlRunner {
 		return queryForCachedCursor(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry));
 	}
 
+	public Cursor<Tuple> queryForCachedCursor(Connection connection, String sql) throws SQLException {
+		return queryForCachedCursor(connection, sql, (PreparedStatementCallback) null);
+	}
+
 	public Cursor<Tuple> queryForCachedCursor(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
 		return queryForCachedCursor(connection, sql, callback, new TupleRowMapper(typeHandlerRegistry));
 	}
@@ -336,7 +341,8 @@ public class SqlRunner {
 	public <T> Cursor<T> queryForCachedCursor(Connection connection, String sql, final PreparedStatementCallback callback,
 			final RowMapper<T> rowMapper) throws SQLException {
 		return queryForCachedCursor(connection,
-				PreparedStatementCreatorUtils.forQuery(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY), callback, rowMapper);
+				PreparedStatementCreatorUtils.forQuery(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY), callback,
+				rowMapper);
 	}
 
 	public <T> Cursor<T> queryForCachedCursor(Connection connection, PreparedStatementCreator statementCreator,

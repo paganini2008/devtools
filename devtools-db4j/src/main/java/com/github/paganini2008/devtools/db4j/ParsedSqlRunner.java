@@ -68,6 +68,12 @@ public class ParsedSqlRunner {
 		return sqlRunner.queryForCursor(connection, rawSql, parameters, jdbcTypes);
 	}
 
+	public Cursor<Tuple> queryForCursor(Connection connection, String sql) throws SQLException {
+		ParsedSql parsedSql = getParsedSql(sql);
+		String rawSql = parsedSql.toString();
+		return sqlRunner.queryForCursor(connection, rawSql);
+	}
+
 	public <T> List<T> queryForList(Connection connection, String sql, SqlParameter sqlParameter, RowMapper<T> rowMapper)
 			throws SQLException {
 		ParsedSql parsedSql = getParsedSql(sql);
@@ -86,6 +92,11 @@ public class ParsedSqlRunner {
 		return sqlRunner.queryForCursor(connection, rawSql, parameters, jdbcTypes, rowMapper);
 	}
 
+	public <T> Cursor<T> queryForCachedCursor(Connection connection, String sql, Object[] args, RowMapper<T> rowMapper)
+			throws SQLException {
+		return queryForCachedCursor(connection, sql, new ArraySqlParameter(args), rowMapper);
+	}
+
 	public <T> Cursor<T> queryForCachedCursor(Connection connection, String sql, SqlParameter sqlParameter, RowMapper<T> rowMapper)
 			throws SQLException {
 		ParsedSql parsedSql = getParsedSql(sql);
@@ -93,6 +104,24 @@ public class ParsedSqlRunner {
 		Object[] parameters = sqlParameter != null ? getParameters(parsedSql, sqlParameter) : null;
 		JdbcType[] jdbcTypes = sqlParameter != null ? getJdbcTypes(parsedSql, sqlParameter) : null;
 		return sqlRunner.queryForCachedCursor(connection, rawSql, parameters, jdbcTypes, rowMapper);
+	}
+
+	public Cursor<Tuple> queryForCachedCursor(Connection connection, String sql, Object[] args) throws SQLException {
+		return queryForCachedCursor(connection, sql, new ArraySqlParameter(args));
+	}
+
+	public Cursor<Tuple> queryForCachedCursor(Connection connection, String sql, SqlParameter sqlParameter) throws SQLException {
+		ParsedSql parsedSql = getParsedSql(sql);
+		String rawSql = parsedSql.toString();
+		Object[] parameters = sqlParameter != null ? getParameters(parsedSql, sqlParameter) : null;
+		JdbcType[] jdbcTypes = sqlParameter != null ? getJdbcTypes(parsedSql, sqlParameter) : null;
+		return sqlRunner.queryForCachedCursor(connection, rawSql, parameters, jdbcTypes);
+	}
+
+	public Cursor<Tuple> queryForCachedCursor(Connection connection, String sql) throws SQLException {
+		ParsedSql parsedSql = getParsedSql(sql);
+		String rawSql = parsedSql.toString();
+		return sqlRunner.queryForCachedCursor(connection, rawSql);
 	}
 
 	public <T> PageableQuery<T> queryForPage(ConnectionFactory connectionFactory, String sql, SqlParameter sqlParameter,

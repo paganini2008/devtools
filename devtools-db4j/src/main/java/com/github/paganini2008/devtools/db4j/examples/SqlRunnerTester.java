@@ -38,13 +38,26 @@ public class SqlRunnerTester {
 		System.out.println("Total rows: " + list.size());
 		JdbcUtils.closeQuietly(connection);
 	}
-	
+
 	public static void test2() throws SQLException {
 		ParsedSqlRunner sqlRunner = new ParsedSqlRunner();
 		Connection connection = getConnection();
-		Cursor<Tuple> cursor = sqlRunner.queryForCursor(connection, "select * from ccms_param limit 100",(Object[])null);
-		while(cursor.hasNext()) {
-			System.out.println(cursor.next());
+		Cursor<Tuple> cursor = sqlRunner.queryForCursor(connection, "select * from crawler_resources limit 1000");
+		while (cursor.hasNext()) {
+			Tuple tuple = cursor.next();
+			System.out.println(tuple.get("title") + "\t" + tuple.get("url"));
+		}
+		cursor.close();
+		JdbcUtils.closeQuietly(connection);
+	}
+
+	public static void test3() throws SQLException {
+		ParsedSqlRunner sqlRunner = new ParsedSqlRunner();
+		Connection connection = getConnection();
+		Cursor<Tuple> cursor = sqlRunner.queryForCachedCursor(connection, "select * from crawler_resources limit 100");
+		while (cursor.hasNext()) {
+			Tuple tuple = cursor.next();
+			System.out.println(tuple.get("title") + "\t" + tuple.get("url"));
 		}
 		cursor.close();
 		JdbcUtils.closeQuietly(connection);
