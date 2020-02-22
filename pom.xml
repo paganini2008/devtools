@@ -15,7 +15,7 @@
     <packaging>pom</packaging>
 
     <name>devtools</name>
-    <description>Java Developer Tools</description>
+    <description>A series of useful tools for quick developing</description>
 	<url>https://github.com/paganini2008</url>
 	
 	<licenses>
