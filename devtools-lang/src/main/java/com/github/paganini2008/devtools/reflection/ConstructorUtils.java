@@ -13,14 +13,9 @@ import com.github.paganini2008.devtools.ClassUtils;
  * ConstructorUtils
  * 
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
-public class ConstructorUtils {
-
-	private ConstructorUtils() {
-	}
+public abstract class ConstructorUtils {
 
 	public static <T> T invokeConstructor(Class<T> cl, Object... arugments) {
 		if (arugments == null) {

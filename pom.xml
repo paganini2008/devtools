@@ -16,7 +16,7 @@
 
     <name>devtools</name>
     <description>A series of useful tools for quick developing</description>
-	<url>https://github.com/paganini2008</url>
+	<url>https://github.com/paganini2008/devtools</url>
 	
 	<licenses>
         <license>
@@ -76,7 +76,7 @@
                             <charset>UTF-8</charset>
 							<encoding>UTF-8</encoding>
 							<docencoding>UTF-8</docencoding>
-							<additionalparam>-Xdoclint:none</additionalparam>  <!-- TODO 临时解决不规范的javadoc生成报错,后面要规范化后把这行去掉 -->
+							<additionalparam>-Xdoclint:none</additionalparam>
 						</configuration>
                         <executions>
                             <execution>

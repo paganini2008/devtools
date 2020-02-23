@@ -5,21 +5,25 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import com.github.paganini2008.devtools.jdbc.JdbcUtils;
 import com.github.paganini2008.devtools.logging.Log;
 import com.github.paganini2008.devtools.logging.LogFactory;
 
 /**
- * Pooled Sql Connection
  * 
+ * PooledConnection
+ *
  * @author Fred Feng
  * @version 1.0
  */
 public class PooledConnection implements InvocationHandler {
 
 	private static final Log logger = LogFactory.getLog(PooledConnection.class);
-
 	private static final String CLOSE_METHOD = "close";
 	private static final Class<?>[] IFACES = new Class<?>[] { Connection.class };
 
@@ -28,9 +32,11 @@ public class PooledConnection implements InvocationHandler {
 	private final Connection proxyConnection;
 	private volatile boolean valid;
 	private final PreparedStatementCache statementCache;
+	private final ExecutorService executor;
 
-	PooledConnection(Connection connection, int statementCacheSize, ConnectionPool connectionPool) {
+	PooledConnection(Connection connection, int statementCacheSize, ExecutorService executor, ConnectionPool connectionPool) {
 		this.realConnection = connection;
+		this.executor = executor;
 		this.connectionPool = connectionPool;
 		this.proxyConnection = (Connection) Proxy.newProxyInstance(Connection.class.getClassLoader(), IFACES, this);
 		this.statementCache = new PreparedStatementCache(statementCacheSize, connectionPool.getQueryStatistics());
@@ -81,30 +87,55 @@ public class PooledConnection implements InvocationHandler {
 				if (methodName.equals("prepareStatement")) {
 					String sql = (String) args[0];
 					if (logger.isDebugEnabled()) {
-						logger.debug("[{}]Execute sql: {}", statementCache.size(), sql);
+						logger.debug("[{}] Execute sql: {}", statementCache.size(), sql);
 					}
 					PooledPreparedStatement pps = statementCache.take(sql, realConnection, method, args);
 					return pps.getProxyStatement();
 				} else if (CLOSE_METHOD.equals(methodName)) {
+					valid = false;
 					try {
 						connectionPool.giveback(this);
 					} catch (SQLException e) {
 						logger.error(e.getMessage(), e);
 					}
-					valid = false;
 					return null;
 				} else {
 					if (!valid) {
-						throw new SQLException("Connection is closed or unavailable now.");
+						throw new SQLException("Connection is closed or unaccessable now.");
 					}
 					try {
+						if (executor != null) {
+							return executeAsynchronously(method, args);
+						}
 						return method.invoke(realConnection, args);
-					} catch (Throwable t) {
-						throw ExceptionUtils.unwrapThrowable(t);
+					} catch (Exception e) {
+						logger.error(e.getMessage(), e);
+						if (!(e instanceof SQLException)) {
+							throw new SQLException(e);
+						}
+						throw e;
 					}
 				}
 			} finally {
 			}
+		}
+	}
+
+	private Object executeAsynchronously(Method method, Object[] args) throws Throwable {
+		Future<Object> future = executor.submit(() -> {
+			return method.invoke(realConnection, args);
+		});
+		try {
+			return future.get(connectionPool.getConnectionTimeout(), TimeUnit.MILLISECONDS);
+		} catch (Exception e) {
+			if (e instanceof TimeoutException) {
+				getProxyConnection().close();
+				throw new SQLException("Connection timeout!", e);
+			}
+			if (!(e instanceof SQLException)) {
+				throw new SQLException(e);
+			}
+			throw e;
 		}
 	}
 }

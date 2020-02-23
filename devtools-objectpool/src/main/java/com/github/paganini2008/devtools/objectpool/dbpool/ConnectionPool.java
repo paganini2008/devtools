@@ -3,9 +3,11 @@ package com.github.paganini2008.devtools.objectpool.dbpool;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 import com.github.paganini2008.devtools.logging.Log;
 import com.github.paganini2008.devtools.logging.LogFactory;
+import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 import com.github.paganini2008.devtools.objectpool.GenericObjectPool;
 
@@ -29,6 +31,7 @@ public class ConnectionPool {
 
 	private DailyQueryStatistics queryStatistics = new DailyQueryStatistics();
 	private long maxWaitTime = 60L * 1000;
+	private long connectionTimeout = 60L * 1000;
 
 	public void setUser(String username) {
 		this.connectionFactory.setUser(username);
@@ -42,8 +45,8 @@ public class ConnectionPool {
 		this.connectionFactory.setDriverClassName(driverClassName);
 	}
 
-	public void setUrl(String url) {
-		this.connectionFactory.setUrl(url);
+	public void setJdbcUrl(String url) {
+		this.connectionFactory.setJdbcUrl(url);
 	}
 
 	public void setTestSql(String testSql) {
@@ -96,6 +99,18 @@ public class ConnectionPool {
 
 	public void setMaxWaitTimeForExpiration(long maxWaitTimeForExpiration) {
 		this.objectPool.setMaxWaitTimeForExpiration(maxWaitTimeForExpiration);
+	}
+
+	public void setConnectionTimeout(long connectionTimeout) {
+		this.connectionTimeout = connectionTimeout;
+	}
+
+	public long getConnectionTimeout() {
+		return connectionTimeout;
+	}
+
+	public void setExecutor(ExecutorService executor) {
+		this.connectionFactory.setExecutor(executor);
 	}
 
 	public Map<String, QuerySpan> getStatisticsResult(String daily) {
@@ -154,6 +169,9 @@ public class ConnectionPool {
 	 * @throws SQLException
 	 */
 	public void close() throws SQLException {
+		if (connectionFactory.getExecutor() != null) {
+			ExecutorUtils.gracefulShutdown(connectionFactory.getExecutor(), 60000L);
+		}
 		try {
 			objectPool.close();
 		} catch (Exception e) {

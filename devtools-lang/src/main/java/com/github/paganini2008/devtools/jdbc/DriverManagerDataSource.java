@@ -31,7 +31,7 @@ public interface DriverManagerDataSource extends DataSource {
 	 * 
 	 * @param url
 	 */
-	void setUrl(String url);
+	void setJdbcUrl(String jdbcUrl);
 
 	/**
 	 * Set DriverClass Name

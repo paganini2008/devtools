@@ -30,7 +30,7 @@ public class TestDataSource {
 	public static void main(String[] args) throws Exception {
 		GenericDataSource ds = new GenericDataSource();
 		ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
-		ds.setUrl(
+		ds.setJdbcUrl(
 				"jdbc:mysql://localhost:3306/db_mec_hlsh_v2?userUnicode=true&characterEncoding=UTF8&useSSL=false&serverTimezone=UTC&autoReconnect=true&zeroDateTimeBehavior=convertToNull");
 		ds.setUser("fengy");
 		ds.setPassword("123456");
@@ -53,7 +53,7 @@ public class TestDataSource {
 			});
 		}
 		System.in.read();
-		Map<String, QuerySpan> results = ds.getStatisticsResult("22/02/2020");
+		Map<String, QuerySpan> results = ds.getStatisticsResult("24/02/2020");
 		System.out.println(results);
 		ds.close();
 		ExecutorUtils.gracefulShutdown(executor, 60000);

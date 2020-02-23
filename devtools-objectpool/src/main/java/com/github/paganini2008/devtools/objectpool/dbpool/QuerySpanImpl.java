@@ -7,10 +7,11 @@ import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.github.paganini2008.devtools.collection.LruSet;
+import com.github.paganini2008.devtools.primitives.Floats;
 
 /**
  * 
- * QuerySpanImpl 
+ * QuerySpanImpl
  *
  * @author Fred Feng
  * @version 1.0
@@ -30,7 +31,7 @@ public class QuerySpanImpl implements QuerySpan, Serializable {
 	private final AtomicLong executionTotalCount = new AtomicLong(0);
 	private final AtomicLong executionTotalTime = new AtomicLong(0);
 	private final AtomicLong executionMaxTime = new AtomicLong(0);
-	private final AtomicLong executionMinTime = new AtomicLong(Long.MAX_VALUE);
+	private final AtomicLong executionMinTime = new AtomicLong(0);
 
 	public void record(QueryTrace queryTrace) {
 		final long time = (queryTrace.getEndTime() - queryTrace.getStartTime());
@@ -39,7 +40,7 @@ public class QuerySpanImpl implements QuerySpan, Serializable {
 		executionTotalTime.addAndGet(time);
 
 		long minTime = executionMinTime.get();
-		executionMinTime.getAndSet(Math.min(minTime, time));
+		executionMinTime.getAndSet(minTime == 0 ? minTime : Math.min(minTime, time));
 		long maxTime = executionMaxTime.get();
 		executionMaxTime.getAndSet(Math.max(maxTime, time));
 
@@ -56,8 +57,8 @@ public class QuerySpanImpl implements QuerySpan, Serializable {
 		return executionTotalCount.get();
 	}
 
-	public long getExecutionAvgTime() {
-		return executionTotalTime.get() / getExecutionCount();
+	public float getExecutionAvgTime() {
+		return Floats.toFixed((float) executionTotalTime.get() / getExecutionCount(), 1);
 	}
 
 	public long getExecutionMaxTime() {
@@ -69,8 +70,8 @@ public class QuerySpanImpl implements QuerySpan, Serializable {
 	}
 
 	public String toString() {
-		return "QuerySpan [executionCount=" + getExecutionCount() + ", executionAvgTime=" + getExecutionAvgTime() + ", executionMaxTime="
-				+ getExecutionMaxTime() + ", executionMinTime=" + getExecutionMinTime() + ", slowQueries: " + slowQueries.size() + "]";
+		return "QuerySpan [executionCount=" + getExecutionCount() + ", executionAvgTime=" + getExecutionAvgTime() + "(ms), executionMaxTime="
+				+ getExecutionMaxTime() + "(ms), executionMinTime=" + getExecutionMinTime() + "(ms), slowQueries: " + slowQueries.size() + "]";
 	}
 
 }

@@ -36,7 +36,7 @@ public interface QuerySpan {
 	 * 
 	 * @return
 	 */
-	long getExecutionAvgTime();
+	float getExecutionAvgTime();
 
 	/**
 	 * Get max elapsed time.

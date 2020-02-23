@@ -1,8 +1,6 @@
 package com.github.paganini2008.devtools.objectpool.dbpool;
 
-import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -19,7 +17,7 @@ public class GenericDataSource extends AbstractDataSource {
 
 	public GenericDataSource(String driverClassName, String url, String username, String password) throws SQLException {
 		this.setDriverClassName(driverClassName);
-		this.setUrl(url);
+		this.setJdbcUrl(url);
 		this.setUser(username);
 		this.setPassword(password);
 	}
@@ -41,8 +39,8 @@ public class GenericDataSource extends AbstractDataSource {
 		this.connectionPool.setDriverClassName(driverClassName);
 	}
 
-	public void setUrl(String url) {
-		this.connectionPool.setUrl(url);
+	public void setJdbcUrl(String jdbcUrl) {
+		this.connectionPool.setJdbcUrl(jdbcUrl);
 	}
 
 	public void setTestSql(String testSql) {
@@ -99,30 +97,6 @@ public class GenericDataSource extends AbstractDataSource {
 
 	public Map<String, QuerySpan> getStatisticsResult(String daily) {
 		return connectionPool.getStatisticsResult(daily);
-	}
-
-	public PrintWriter getLogWriter() throws SQLException {
-		return DriverManager.getLogWriter();
-	}
-
-	public void setLogWriter(PrintWriter logWriter) throws SQLException {
-		DriverManager.setLogWriter(logWriter);
-	}
-
-	public void setLoginTimeout(int seconds) throws SQLException {
-		DriverManager.setLoginTimeout(seconds);
-	}
-
-	public int getLoginTimeout() throws SQLException {
-		return DriverManager.getLoginTimeout();
-	}
-
-	public <T> T unwrap(Class<T> iface) throws SQLException {
-		throw new SQLException(getClass().getName() + " is not a wrapper.");
-	}
-
-	public boolean isWrapperFor(Class<?> iface) throws SQLException {
-		return false;
 	}
 
 	public Connection getConnection() throws SQLException {

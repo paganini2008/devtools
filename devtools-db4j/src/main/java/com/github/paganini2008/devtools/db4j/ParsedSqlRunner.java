@@ -154,11 +154,11 @@ public class ParsedSqlRunner {
 		return sqlRunner.queryForObject(connection, rawSql, parameters, jdbcTypes, rowMapper);
 	}
 
-	public int[] batchUpdate(Connection connection, String sql, SqlParameters sqlParameterSet) throws SQLException {
+	public int[] batchUpdate(Connection connection, String sql, SqlParameters sqlParameters) throws SQLException {
 		ParsedSql parsedSql = getParsedSql(sql);
 		String rawSql = parsedSql.toString();
-		List<Object[]> parameterList = sqlParameterSet != null ? getParameterList(parsedSql, sqlParameterSet) : null;
-		JdbcType[] jdbcTypes = sqlParameterSet != null ? getJdbcTypes(parsedSql, sqlParameterSet) : null;
+		List<Object[]> parameterList = sqlParameters != null ? getParameterList(parsedSql, sqlParameters) : null;
+		JdbcType[] jdbcTypes = sqlParameters != null ? getJdbcTypes(parsedSql, sqlParameters) : null;
 		return sqlRunner.batchUpdate(connection, rawSql, parameterList, jdbcTypes);
 	}
 
@@ -178,12 +178,12 @@ public class ParsedSqlRunner {
 		return sqlRunner.update(connection, rawSql, parameters, jdbcTypes, generatedKey);
 	}
 
-	private List<Object[]> getParameterList(ParsedSql parsedSql, SqlParameters sqlParameterSet) {
+	private List<Object[]> getParameterList(ParsedSql parsedSql, SqlParameters sqlParameters) {
 		List<Object[]> results = new ArrayList<Object[]>();
-		for (int index = 0; index < sqlParameterSet.getSize(); index++) {
+		for (int index = 0; index < sqlParameters.getSize(); index++) {
 			List<Object> list = new ArrayList<Object>();
 			for (String paramName : parsedSql.getParameterNames()) {
-				list.add(sqlParameterSet.hasValue(index, paramName) ? sqlParameterSet.getValue(index, paramName) : null);
+				list.add(sqlParameters.hasValue(index, paramName) ? sqlParameters.getValue(index, paramName) : null);
 			}
 			results.add(list.toArray());
 		}
@@ -208,11 +208,11 @@ public class ParsedSqlRunner {
 		return results;
 	}
 
-	private JdbcType[] getJdbcTypes(ParsedSql parsedSql, SqlParameters sqlParameterSet) {
+	private JdbcType[] getJdbcTypes(ParsedSql parsedSql, SqlParameters sqlParameters) {
 		JdbcType[] results = new JdbcType[parsedSql.getParameterNames().size()];
 		int i = 0;
 		for (String paramName : parsedSql.getParameterNames()) {
-			results[i++] = sqlParameterSet.getJdbcType(paramName);
+			results[i++] = sqlParameters.getJdbcType(paramName);
 		}
 		return results;
 	}

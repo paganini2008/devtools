@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.jdbc.JdbcUtils;
@@ -17,14 +19,15 @@ import com.github.paganini2008.devtools.objectpool.ObjectFactory;
  */
 public class ConnectionObjectFactory implements ObjectFactory {
 
-	private String username;
+	private String user;
 	private String password;
 	private String driverClassName;
-	private String url;
+	private String jdbcUrl;
 	private String testSql;
 	private Boolean autoCommit;
 	private Integer defaultTransactionIsolationLevel;
 	private Integer statementCacheSize = 32;
+	private ExecutorService executor = Executors.newFixedThreadPool(8);
 
 	private final ConnectionPool connectionPool;
 
@@ -49,11 +52,6 @@ public class ConnectionObjectFactory implements ObjectFactory {
 		return autoCommit;
 	}
 
-	/**
-	 * Set Connection object's attribute 'autoCommit'
-	 * 
-	 * @param autoCommit
-	 */
 	public void setAutoCommit(Boolean autoCommit) {
 		this.autoCommit = autoCommit;
 	}
@@ -63,7 +61,7 @@ public class ConnectionObjectFactory implements ObjectFactory {
 	}
 
 	/**
-	 * Set Connection object's default transaction level.
+	 * Set default transaction level.
 	 * 
 	 * @param defaultTransactionIsolationLevel
 	 */
@@ -76,8 +74,8 @@ public class ConnectionObjectFactory implements ObjectFactory {
 	}
 
 	/**
-	 * Set a test sql like 'SELECT 1 FROM DUAL' when the borrowed object make sure
-	 * its effectiveness.
+	 * Set a test sql like 'SELECT 1' to testify its availability when borrow a
+	 * connection object.
 	 * 
 	 * @param testSql
 	 */
@@ -86,27 +84,21 @@ public class ConnectionObjectFactory implements ObjectFactory {
 	}
 
 	public String getUser() {
-		return username;
+		return user;
 	}
 
-	/**
-	 * Set schema username
-	 * 
-	 * @param username
-	 */
-	public void setUser(String username) {
-		this.username = username;
+	public void setUser(String user) {
+		this.user = user;
+	}
+
+	public ExecutorService getExecutor() {
+		return executor;
 	}
 
 	public String getPassword() {
 		return password;
 	}
 
-	/**
-	 * Set schema password
-	 * 
-	 * @param password
-	 */
 	public void setPassword(String password) {
 		this.password = password;
 	}
@@ -130,17 +122,16 @@ public class ConnectionObjectFactory implements ObjectFactory {
 		this.driverClassName = driverClassName;
 	}
 
-	public String getUrl() {
-		return url;
+	public String getJdbcUrl() {
+		return jdbcUrl;
 	}
 
-	/**
-	 * Set jdbc url
-	 * 
-	 * @param url
-	 */
-	public void setUrl(String url) {
-		this.url = url;
+	public void setJdbcUrl(String jdbcUrl) {
+		this.jdbcUrl = jdbcUrl;
+	}
+
+	public void setExecutor(ExecutorService executor) {
+		this.executor = executor;
 	}
 
 	protected void configureConnection(Connection connection) throws SQLException {
@@ -170,9 +161,9 @@ public class ConnectionObjectFactory implements ObjectFactory {
 	}
 
 	public PooledConnection createObject() throws SQLException {
-		Connection connection = DriverManager.getConnection(url, username, password);
+		Connection connection = DriverManager.getConnection(jdbcUrl, user, password);
 		configureConnection(connection);
-		return new PooledConnection(connection, statementCacheSize, connectionPool);
+		return new PooledConnection(connection, statementCacheSize, executor, connectionPool);
 	}
 
 	public boolean validateObject(Object connection) throws SQLException {
