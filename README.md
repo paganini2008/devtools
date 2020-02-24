@@ -1,4 +1,3 @@
-# devtools
 <dependency>
     <groupId>com.github.paganini2008</groupId>
     <artifactId>devtools</artifactId>
