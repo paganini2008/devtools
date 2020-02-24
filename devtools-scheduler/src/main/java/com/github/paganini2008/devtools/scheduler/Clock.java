@@ -98,8 +98,17 @@ public final class Clock implements Executable {
 		});
 	}
 
+	private ClockEvent clockEvent;
+
 	public boolean execute() {
-		eventBus.publish(new ClockEvent(this, DateUtils.format(System.currentTimeMillis(), DEFAULT_DATE_FORMAT)));
+		String now = DateUtils.format(System.currentTimeMillis(), DEFAULT_DATE_FORMAT);
+		if (clockEvent == null) {
+			clockEvent = new ClockEvent(this, now);
+		} else {
+			clockEvent = clockEvent.clone();
+			clockEvent.setArgument(now);
+		}
+		eventBus.publish(clockEvent);
 		return running.get();
 	}
 
