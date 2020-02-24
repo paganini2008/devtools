@@ -24,7 +24,7 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
  */
 public final class Clock implements Executable {
 
-	private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	private static final String DEFAULT_DATE_FORMAT = "yyyyMMddHHmmss";
 	private final AtomicBoolean running = new AtomicBoolean();
 	private final ConcurrentMap<String, ClockTask> tasks = new ConcurrentHashMap<String, ClockTask>();
 	private final EventBus<ClockEvent, String> eventBus;
