@@ -40,11 +40,11 @@ public class TestMain {
 	}
 
 	public static void main(String[] args) throws Exception {
-		EventBus<TestEvent, String> eventBus = new EventBus<TestEvent, String>(10, true);
-		for (int i = 0; i < 2; i++) {
+		EventBus<TestEvent, String> eventBus = new EventBus<TestEvent, String>(10, false);
+		for (int i = 0; i < 5; i++) {
 			eventBus.subscribe(new TestSubcriber("Name_" + i));
 		}
-		for (int i = 0; i < 100000; i++)
+		for (int i = 0; i < 1000; i++)
 			// int i = 1;
 			eventBus.publish(new TestEvent(eventBus, String.valueOf(i)));
 		System.in.read();

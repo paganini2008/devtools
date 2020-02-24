@@ -21,8 +21,6 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
  * EventBus
  * 
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public class EventBus<E extends Event<T>, T> implements EventPubSub<E, T> {

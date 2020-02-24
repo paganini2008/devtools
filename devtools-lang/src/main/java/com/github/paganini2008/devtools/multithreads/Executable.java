@@ -11,12 +11,12 @@ public interface Executable {
 
 	boolean execute();
 
-	default boolean onError(Throwable error) {
-		error.printStackTrace();
+	default boolean onError(Throwable cause) {
+		cause.printStackTrace();
 		return false;
 	}
 
-	default void onCancellation(Throwable error) {
+	default void onCancellation(Throwable cause) {
 	}
 
 }
