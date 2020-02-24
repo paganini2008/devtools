@@ -33,5 +33,7 @@ public interface JdbcOperations {
 	<T> Cursor<T> queryForCursor(String sql, SqlParameter sqlParameter, RowMapper<T> rowMapper) throws SQLException;
 
 	<T> Cursor<T> queryForCachedCursor(String sql, SqlParameter sqlParameter, RowMapper<T> rowMapper) throws SQLException;
+	
+	<T> T customize(Customizable<T> customizable) throws SQLException;
 
 }

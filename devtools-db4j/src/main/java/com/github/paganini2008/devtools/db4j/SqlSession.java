@@ -136,6 +136,15 @@ public class SqlSession implements JdbcOperations {
 		}
 	}
 
+	public <T> T customize(Customizable<T> customizable) throws SQLException {
+		Connection connection = getConnection();
+		try {
+			return customizable.customize(connection, sqlRunner);
+		} finally {
+			JdbcUtils.closeQuietly(connection);
+		}
+	}
+
 	protected Connection getConnection() throws SQLException {
 		return connectionFactory.getConnection();
 	}

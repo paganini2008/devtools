@@ -71,6 +71,10 @@ public class TransactionImpl implements Transaction {
 		return sqlRunner.queryForCachedCursor(connection, sql, sqlParameter, rowMapper);
 	}
 
+	public <T> T customize(Customizable<T> customizable) throws SQLException {
+		return customizable.customize(connection, sqlRunner);
+	}
+
 	@Override
 	public void rollback() {
 		JdbcUtils.rollbackQuietly(connection);
@@ -78,7 +82,7 @@ public class TransactionImpl implements Transaction {
 
 	@Override
 	public void commit() {
-		JdbcUtils.commitQuietly(connection);
+		JdbcUtils.commitAndCloseQuietly(connection);
 	}
 
 }

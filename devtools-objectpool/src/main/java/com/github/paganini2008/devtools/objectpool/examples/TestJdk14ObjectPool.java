@@ -76,7 +76,7 @@ public class TestJdk14ObjectPool {
 				} finally {
 					try {
 						objectPool.givebackObject(resource);
-						objectPool.givebackObject(resource);
+						//objectPool.givebackObject(resource);
 						//objectPool.givebackObject(resource);
 						//objectPool.givebackObject(resource);
 						//objectPool.givebackObject(resource);
