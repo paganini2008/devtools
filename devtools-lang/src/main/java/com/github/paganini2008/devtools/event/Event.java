@@ -21,10 +21,14 @@ public abstract class Event<T> extends EventObject {
 	}
 
 	private final long timestamp;
-	private final T argument;
+	private T argument;
 
 	public T getArgument() {
 		return argument;
+	}
+
+	public void setArgument(T argument) {
+		this.argument = argument;
 	}
 
 	public long getTimestamp() {

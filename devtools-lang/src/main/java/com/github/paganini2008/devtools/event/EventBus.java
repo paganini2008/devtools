@@ -8,13 +8,12 @@ import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executor;
 import java.util.concurrent.PriorityBlockingQueue;
 
 import com.github.paganini2008.devtools.ClassUtils;
 import com.github.paganini2008.devtools.multithreads.Producer;
 import com.github.paganini2008.devtools.multithreads.Producer.Consumer;
-import com.github.paganini2008.devtools.multithreads.ThreadPool;
-import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 
 /**
  * 
@@ -25,12 +24,8 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
  */
 public class EventBus<E extends Event<T>, T> implements EventPubSub<E, T> {
 
-	public EventBus(int nThreads, boolean multicast) {
-		this(ThreadUtils.commonPool(nThreads), multicast);
-	}
-
-	public EventBus(ThreadPool threadPool, boolean multicast) {
-		this.delegate = new EventHandler<E, T>(threadPool, multicast);
+	public EventBus(Executor executor, boolean multicast) {
+		this.delegate = new EventHandler<E, T>(executor, multicast);
 	}
 
 	private EventHandler<E, T> delegate;
@@ -66,8 +61,8 @@ public class EventBus<E extends Event<T>, T> implements EventPubSub<E, T> {
 		final boolean multicast;
 		final ConcurrentMap<Class<?>, EventGroup> eventGroups = new ConcurrentHashMap<Class<?>, EventGroup>();
 
-		EventHandler(ThreadPool threadPool, boolean multicast) {
-			this.producer = new Producer<Runnable, Object>(threadPool, this);
+		EventHandler(Executor executor, boolean multicast) {
+			this.producer = new Producer<Runnable, Object>(executor, this);
 			this.multicast = multicast;
 		}
 

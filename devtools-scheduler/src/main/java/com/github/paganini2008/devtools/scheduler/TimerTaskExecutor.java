@@ -36,9 +36,9 @@ public class TimerTaskExecutor implements TaskExecutor {
 			return System.currentTimeMillis() + delay;
 		});
 		taskDetail.nextExecuted = System.currentTimeMillis() + delay;
-		final SimpleTask wrapped = new SimpleTask(task, taskDetail);
-		timer.schedule(wrapped, delay);
-		taskFutures.put(task, new TaskFutureImpl(taskDetail, wrapped));
+		final SimpleTask wrappedTask = new SimpleTask(task, taskDetail);
+		timer.schedule(wrappedTask, delay);
+		taskFutures.put(task, new TaskFutureImpl(taskDetail, wrappedTask));
 		return taskFutures.get(task);
 	}
 
@@ -47,9 +47,9 @@ public class TimerTaskExecutor implements TaskExecutor {
 			return System.currentTimeMillis() + delay;
 		});
 		taskDetail.nextExecuted = System.currentTimeMillis() + delay;
-		final SimpleTask wrapped = new SimpleTask(task, taskDetail);
-		timer.scheduleAtFixedRate(wrapped, delay, period);
-		taskFutures.put(task, new TaskFutureImpl(taskDetail, wrapped));
+		final SimpleTask wrappedTask = new SimpleTask(task, taskDetail);
+		timer.scheduleAtFixedRate(wrappedTask, delay, period);
+		taskFutures.put(task, new TaskFutureImpl(taskDetail, wrappedTask));
 		return taskFutures.get(task);
 	}
 
@@ -58,9 +58,9 @@ public class TimerTaskExecutor implements TaskExecutor {
 			return System.currentTimeMillis() + delay;
 		});
 		taskDetail.nextExecuted = System.currentTimeMillis() + delay;
-		final SimpleTask wrapped = new SimpleTask(task, taskDetail);
-		timer.schedule(wrapped, delay, period);
-		taskFutures.put(task, new TaskFutureImpl(taskDetail, wrapped));
+		final SimpleTask wrappedTask = new SimpleTask(task, taskDetail);
+		timer.schedule(wrappedTask, delay, period);
+		taskFutures.put(task, new TaskFutureImpl(taskDetail, wrappedTask));
 		return taskFutures.get(task);
 	}
 
@@ -81,9 +81,9 @@ public class TimerTaskExecutor implements TaskExecutor {
 			return iterator.hasNext() ? ((CronExpression) iterator.next()).getTimeInMillis() : -1;
 		});
 		taskDetail.nextExecuted = executed;
-		final CronTask wrapped = new CronTask(task, taskDetail);
-		timer.schedule(wrapped, executed - System.currentTimeMillis());
-		taskFutures.put(task, new TaskFutureImpl(taskDetail, wrapped));
+		final CronTask wrappedTask = new CronTask(task, taskDetail);
+		timer.schedule(wrappedTask, executed - System.currentTimeMillis());
+		taskFutures.put(task, new TaskFutureImpl(taskDetail, wrappedTask));
 		return taskFutures.get(task);
 	}
 

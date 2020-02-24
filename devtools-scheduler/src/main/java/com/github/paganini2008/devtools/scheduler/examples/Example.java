@@ -5,6 +5,7 @@ import com.github.paganini2008.devtools.date.DateUtils;
 import com.github.paganini2008.devtools.scheduler.Cancellable;
 import com.github.paganini2008.devtools.scheduler.Cancellables;
 import com.github.paganini2008.devtools.scheduler.CancellationException;
+import com.github.paganini2008.devtools.scheduler.ClockTaskExecutor;
 import com.github.paganini2008.devtools.scheduler.Task;
 import com.github.paganini2008.devtools.scheduler.ThreadPoolTaskExecutor;
 import com.github.paganini2008.devtools.scheduler.TimerTaskExecutor;
@@ -186,9 +187,36 @@ public abstract class Example {
 		System.in.read();
 		executor.close();
 	}
+	
+	public static void test5() throws Exception {
+		CronExpression expression = CronBuilder.everySecond();
+		ClockTaskExecutor executor = new ClockTaskExecutor();
+		executor.schedule(new Task() {
+
+			@Override
+			public boolean execute() {
+				System.out.println("Run at: " + DateUtils.format(System.currentTimeMillis()));
+				return true;
+			}
+
+			@Override
+			public Cancellable cancellable() {
+				return Cancellables.cancelIfRuns(10);
+			}
+
+			@Override
+			public void onCancellation(Throwable e) {
+				System.out.println("Cancelled.");
+			}
+
+		}, expression);
+
+		System.in.read();
+		executor.close();
+	}
 
 	public static void main(String[] args) throws Exception {
-		test1();
+		test5();
 	}
 
 }

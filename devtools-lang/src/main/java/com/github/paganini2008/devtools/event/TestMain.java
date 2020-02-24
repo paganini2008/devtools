@@ -1,10 +1,12 @@
 package com.github.paganini2008.devtools.event;
 
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 
  * TestMain
+ * 
  * @author Fred Feng
  * 
  * 
@@ -40,13 +42,13 @@ public class TestMain {
 	}
 
 	public static void main(String[] args) throws Exception {
-		EventBus<TestEvent, String> eventBus = new EventBus<TestEvent, String>(10, false);
+		EventBus<TestEvent, String> eventBus = new EventBus<TestEvent, String>(Executors.newCachedThreadPool(), false);
 		for (int i = 0; i < 5; i++) {
 			eventBus.subscribe(new TestSubcriber("Name_" + i));
 		}
-		for (int i = 0; i < 1000; i++)
-			// int i = 1;
+		for (int i = 0; i < 1000; i++) {
 			eventBus.publish(new TestEvent(eventBus, String.valueOf(i)));
+		}
 		System.in.read();
 		eventBus.close();
 		System.out.println("TestMain.main(): " + counter);

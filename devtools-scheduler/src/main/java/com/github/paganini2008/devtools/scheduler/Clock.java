@@ -3,6 +3,8 @@ package com.github.paganini2008.devtools.scheduler;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -28,11 +30,11 @@ public final class Clock implements Executable {
 	private final EventBus<ClockEvent, String> eventBus;
 
 	public Clock() {
-		this(Runtime.getRuntime().availableProcessors() * 2);
+		this(Executors.newCachedThreadPool());
 	}
 
-	public Clock(int nThreads) {
-		eventBus = new EventBus<ClockEvent, String>(nThreads, true);
+	public Clock(Executor executor) {
+		eventBus = new EventBus<ClockEvent, String>(executor, true);
 		running.set(true);
 		ThreadUtils.scheduleAtFixedRate(this, 1, TimeUnit.SECONDS);
 	}
@@ -108,6 +110,7 @@ public final class Clock implements Executable {
 	public void stop() {
 		running.set(false);
 		tasks.clear();
+		eventBus.close();
 	}
 
 	public static abstract class ClockTask implements Runnable {
@@ -123,8 +126,9 @@ public final class Clock implements Executable {
 			return cancelled;
 		}
 
-		public void cancel() {
+		public boolean cancel() {
 			this.cancelled = true;
+			return true;
 		}
 
 		public String getTaskId() {
@@ -141,7 +145,7 @@ public final class Clock implements Executable {
 
 	}
 
-	public static class ClockEvent extends Event<String> {
+	public static class ClockEvent extends Event<String> implements Cloneable {
 
 		ClockEvent(Object source, String datetime) {
 			super(source, datetime);
@@ -149,6 +153,14 @@ public final class Clock implements Executable {
 
 		public Clock getSource() {
 			return (Clock) super.getSource();
+		}
+
+		public ClockEvent clone() {
+			try {
+				return (ClockEvent) super.clone();
+			} catch (CloneNotSupportedException e) {
+				throw new IllegalStateException(e);
+			}
 		}
 
 		private static final long serialVersionUID = 1L;
