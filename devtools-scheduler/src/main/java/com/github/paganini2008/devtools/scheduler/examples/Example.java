@@ -163,7 +163,7 @@ public abstract class Example {
 
 	public static void test4() throws Exception {
 		CronExpression expression = CronBuilder.everySecond();
-		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor(8, null);
+		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 		executor.schedule(new Task() {
 
 			@Override
@@ -216,7 +216,7 @@ public abstract class Example {
 	}
 
 	public static void main(String[] args) throws Exception {
-		test5();
+		test4();
 	}
 
 }

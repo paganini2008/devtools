@@ -9,7 +9,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
-import com.github.paganini2008.devtools.multithreads.PooledThreadFactory;
 import com.github.paganini2008.devtools.scheduler.cron.CronExpression;
 
 /**
@@ -26,8 +25,8 @@ public class ThreadPoolTaskExecutor implements TaskExecutor {
 	private TaskInterceptorHandler interceptorHandler = new TaskInterceptorHandler() {
 	};
 
-	public ThreadPoolTaskExecutor(int nThreads, String threadNamePrefix) {
-		executor = Executors.newScheduledThreadPool(nThreads, new PooledThreadFactory(threadNamePrefix));
+	public ThreadPoolTaskExecutor() {
+		this(Executors.newSingleThreadScheduledExecutor());
 	}
 
 	public ThreadPoolTaskExecutor(ScheduledExecutorService executor) {
