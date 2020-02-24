@@ -74,6 +74,9 @@ public final class Clock implements Executable {
 	}
 
 	void doRepeat(final ClockTask task, final long delay, final TimeUnit timeUnit) {
+		if (!isRunning()) {
+			return;
+		}
 		long future = System.currentTimeMillis() + DateUtils.convertToMillis(delay, timeUnit);
 		String datetime = DateUtils.format(future, DEFAULT_DATE_FORMAT);
 		tasks.put(datetime + ":" + task.getTaskId(), task);
@@ -104,6 +107,7 @@ public final class Clock implements Executable {
 
 	public void stop() {
 		running.set(false);
+		tasks.clear();
 	}
 
 	public static abstract class ClockTask implements Runnable {
