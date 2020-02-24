@@ -64,10 +64,10 @@ public final class Clock implements Executable {
 				final ClockTask target = tasks.remove(event.getArgument() + ":" + task.getTaskId());
 				if (target != null) {
 					target.run();
-					if (!target.isCancelled()) {
-						doRepeat(target, period, timeUnit);
-					} else {
+					if (target.isCancelled()) {
 						eventBus.unsubscribe(this);
+					} else {
+						doRepeat(target, period, timeUnit);
 					}
 				}
 
@@ -88,10 +88,10 @@ public final class Clock implements Executable {
 				final ClockTask target = tasks.remove(event.getArgument() + ":" + task.getTaskId());
 				if (target != null) {
 					target.run();
-					if (!target.isCancelled()) {
-						doRepeat(target, delay, timeUnit);
-					} else {
+					if (target.isCancelled()) {
 						eventBus.unsubscribe(this);
+					} else {
+						doRepeat(target, delay, timeUnit);
 					}
 				}
 			}

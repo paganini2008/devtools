@@ -20,7 +20,7 @@ import com.github.paganini2008.devtools.Sequence;
  */
 public final class Producer<X, R> {
 
-	private final Executor threadPool;
+	private final Executor executor;
 	private final Caller caller;
 
 	public Producer(Executor executor, Consumer<X, R> consumer) {
@@ -28,13 +28,13 @@ public final class Producer<X, R> {
 	}
 
 	public Producer(Executor executor, Queue<X> workQueue, Consumer<X, R> consumer) {
-		this.threadPool = executor;
+		this.executor = executor;
 		this.caller = new Caller(workQueue, consumer);
 	}
 
 	public void produce(X action) {
 		caller.workQueue.offer(action);
-		threadPool.execute(caller);
+		executor.execute(caller);
 	}
 
 	class Caller implements Runnable {
@@ -83,10 +83,10 @@ public final class Producer<X, R> {
 	}
 
 	public void join() {
-		if (threadPool instanceof ThreadPool) {
-			((ThreadPool) threadPool).shutdown();
+		if (executor instanceof ThreadPool) {
+			((ThreadPool) executor).shutdown();
 		}
-		ExecutorUtils.gracefulShutdown(threadPool, 60000L);
+		ExecutorUtils.gracefulShutdown(executor, 60000L);
 	}
 
 	/**
