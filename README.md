@@ -2,6 +2,7 @@
 ## How to write Java code more simply and efficiently?
 ### You need have a set of tools are really suitable for you.
 
+### Latest Version: 2.0-RC1
 ### 1. devtools-lang
 ***For writing less code.***
 ```xml
