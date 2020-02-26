@@ -247,7 +247,7 @@
 ```
 
 ### 5. devtools-db4j
-***To use JDBC more easily.***
+***As a lazy man, to use JDBC more easily.***
 #### Java Code
 ```java
 	   /**
