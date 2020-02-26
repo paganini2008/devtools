@@ -14,7 +14,7 @@
 ```
 
 ### 2. devtools-objectpool
-***It's just a DataSource, no extra functions.***
+***Contains object pool and jdbc connection pool. No extra functions, just a DataSource.***
 ```xml
     <dependency>
         <groupId>com.github.paganini2008</groupId>
