@@ -8,8 +8,6 @@ import java.util.function.Function;
  * Sort
  * 
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public interface Sort<E> extends Comparator<E> {

@@ -7,8 +7,6 @@ import com.github.paganini2008.devtools.collection.Tuple;
  * View
  * 
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public abstract class View<E> implements Transformer<Group<E>, Tuple> {

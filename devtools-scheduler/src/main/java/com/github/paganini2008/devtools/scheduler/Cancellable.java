@@ -4,7 +4,7 @@ import com.github.paganini2008.devtools.scheduler.TaskExecutor.TaskDetail;
 
 /**
  * 
- * Cancellable
+ * Condition for cancelling current task
  *
  * @author Fred Feng
  * @version 1.0

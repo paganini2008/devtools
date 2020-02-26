@@ -24,6 +24,11 @@ public interface CronExpression {
 
 	long getTimeInMillis();
 
+	/**
+	 * copy this
+	 * 
+	 * @return
+	 */
 	default CronExpression copy() {
 		return SerializationUtils.copy(this);
 	}
@@ -38,6 +43,12 @@ public interface CronExpression {
 		}
 	}
 
+	/**
+	 * Just for testing
+	 * 
+	 * @param task
+	 * @return
+	 */
 	default TaskFuture test(Task task) {
 		return new ThreadPoolTaskExecutor(Executors.newSingleThreadScheduledExecutor()).schedule(task, copy());
 	}

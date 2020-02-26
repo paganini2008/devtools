@@ -10,7 +10,8 @@ import com.github.paganini2008.devtools.beans.PropertyUtils;
 
 /**
  * 
- * Restrictions
+ * Restrictions</br>
+ * A filter tools for where clause
  * 
  * @author Fred Feng
  * 
