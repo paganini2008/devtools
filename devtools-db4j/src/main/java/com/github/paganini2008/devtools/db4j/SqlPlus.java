@@ -13,29 +13,34 @@ import com.github.paganini2008.devtools.jdbc.Cursor;
 import com.github.paganini2008.devtools.jdbc.JdbcUtils;
 import com.github.paganini2008.devtools.jdbc.PooledConnectionFactory;
 import com.github.paganini2008.devtools.jdbc.TransactionIsolationLevel;
+import com.github.paganini2008.devtools.jdbc.UnpooledConnectionFactory;
 import com.github.paganini2008.devtools.jdbc.UnpooledDataSource;
 
 /**
  * 
- * SqlSessionImpl
+ * SqlPlus
  *
  * @author Fred Feng
  * @version 1.0
  */
-public class SqlSession implements JdbcOperations {
+public class SqlPlus implements JdbcOperations {
 
 	private final ConnectionFactory connectionFactory;
 	private final ParsedSqlRunner sqlRunner;
 
-	public SqlSession(String driverClassName, String jdbcUrl, String user, String password, int poolSize) {
+	public SqlPlus(String driverClassName, String jdbcUrl, String user, String password, int poolSize) {
 		this(new UnpooledDataSource(driverClassName, jdbcUrl, user, password, poolSize));
 	}
 
-	public SqlSession(DataSource dataSource) {
+	public SqlPlus(String driverClassName, String jdbcUrl, String user, String password) {
+		this(new UnpooledConnectionFactory(driverClassName, jdbcUrl, user, password));
+	}
+
+	public SqlPlus(DataSource dataSource) {
 		this(new PooledConnectionFactory(dataSource));
 	}
 
-	public SqlSession(ConnectionFactory connectionFactory) {
+	public SqlPlus(ConnectionFactory connectionFactory) {
 		this.connectionFactory = connectionFactory;
 		this.sqlRunner = new ParsedSqlRunner();
 	}

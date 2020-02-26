@@ -27,24 +27,24 @@ public class Product {
 	private Long number;
 	private BigDecimal freight;
 	private Style style;
-	private Admin admin;
+	private Salesman salesman;
 
-	public static class Admin {
+	public static class Salesman {
 
-		private String username;
+		private String name;
 		private String password;
 
-		public Admin(String username, String password) {
-			this.username = username;
+		public Salesman(String name, String password) {
+			this.name = name;
 			this.password = password;
 		}
 
-		public String getUsername() {
-			return username;
+		public String getName() {
+			return name;
 		}
 
-		public void setUsername(String username) {
-			this.username = username;
+		public void setName(String name) {
+			this.name = name;
 		}
 
 		public String getPassword() {
@@ -62,12 +62,12 @@ public class Product {
 
 	}
 
-	public Admin getAdmin() {
-		return admin;
+	public Salesman getSalesman() {
+		return salesman;
 	}
 
-	public void setAdmin(Admin admin) {
-		this.admin = admin;
+	public void setSalesman(Salesman salesman) {
+		this.salesman = salesman;
 	}
 
 	public int getId() {

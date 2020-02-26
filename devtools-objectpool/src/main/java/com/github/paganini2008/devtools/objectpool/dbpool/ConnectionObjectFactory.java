@@ -108,7 +108,7 @@ public class ConnectionObjectFactory implements ObjectFactory {
 	}
 
 	/**
-	 * Set the DriverClassName if its class existed.
+	 * Set the DriverClassName if the class exists.
 	 * 
 	 * @param driverClassName
 	 * @throws SQLException
@@ -117,7 +117,7 @@ public class ConnectionObjectFactory implements ObjectFactory {
 		try {
 			Class.forName(driverClassName);
 		} catch (ClassNotFoundException e) {
-			throw new IllegalArgumentException("Invalid jdbc driver class: " + driverClassName, e);
+			throw new IllegalArgumentException("Invalid DriverClassName: " + driverClassName, e);
 		}
 		this.driverClassName = driverClassName;
 	}

@@ -13,11 +13,22 @@ import java.sql.SQLException;
 public class UnpooledConnectionFactory implements ConnectionFactory {
 
 	private String driverClassName;
-	private String url;
+	private String jdbcUrl;
 	private String user;
 	private String password;
 	private Boolean autoCommit;
 	private TransactionIsolationLevel transactionIsolationLevel;
+
+	public UnpooledConnectionFactory() {
+	}
+
+	public UnpooledConnectionFactory(String driverClassName, String jdbcUrl, String user, String password) {
+		super();
+		this.driverClassName = driverClassName;
+		this.jdbcUrl = jdbcUrl;
+		this.user = user;
+		this.password = password;
+	}
 
 	public String getDriverClassName() {
 		return driverClassName;
@@ -32,12 +43,12 @@ public class UnpooledConnectionFactory implements ConnectionFactory {
 		this.driverClassName = driverClassName;
 	}
 
-	public String getUrl() {
-		return url;
+	public String getJdbcUrl() {
+		return jdbcUrl;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
+	public void setJdbcUrl(String jdbcUrl) {
+		this.jdbcUrl = jdbcUrl;
 	}
 
 	public String getUser() {
@@ -73,7 +84,7 @@ public class UnpooledConnectionFactory implements ConnectionFactory {
 	}
 
 	public Connection getConnection() throws SQLException {
-		Connection connection = JdbcUtils.getConnection(url, user, password);
+		Connection connection = JdbcUtils.getConnection(jdbcUrl, user, password);
 		if (autoCommit != null) {
 			connection.setAutoCommit(autoCommit);
 		}

@@ -11,6 +11,6 @@ import java.sql.SQLException;
  */
 public interface RowMapper<T> {
 
-	T mapRow(int rowIndex, ResultSet rs) throws SQLException;
+	T mapRow(int rownum, ResultSet rs) throws SQLException;
 	
 }

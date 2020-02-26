@@ -46,19 +46,19 @@ public class TestBeanStreaming {
 			product.setPrice(RandomUtils.randomFloat(10, 1000, 2));
 			product.setSales(BigInteger.valueOf(RandomUtils.randomLong(10000, 100000)));
 			product.setStyle(Style.values()[RandomUtils.randomInt(0, 2)]);
-			product.setAdmin(new Product.Admin(RandomUtils.randomChoice(users), "123456"));
+			product.setSalesman(new Product.Salesman(RandomUtils.randomChoice(users), "123456"));
 			products.add(product);
 		}
 	}
 
 	/**
 	 * <pre>
-	 * 	 select * from Product where created<= now() and admin.username='Petter'
+	 * 	 select * from Product where created<= now() and salesman.name='Petter'
 	 * </pre>
 	 */
 	public static void test1() {
 		Predicate<Product> predicate = Restrictions.lte("created", new Date());
-		predicate = predicate.and(Restrictions.eq("admin.username", "Petter"));
+		predicate = predicate.and(Restrictions.eq("salesman.name", "Petter"));
 		Select.from(products).filter(predicate).list().forEach(product -> {
 			System.out.println(product);
 		});

@@ -28,20 +28,19 @@ public class TestDataSource {
 	}
 
 	public static void main(String[] args) throws Exception {
-		GenericDataSource ds = new GenericDataSource();
-		ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
-		ds.setJdbcUrl(
+		GenericDataSource dataSource = new GenericDataSource();
+		dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+		dataSource.setJdbcUrl(
 				"jdbc:mysql://localhost:3306/db_mec_hlsh_v2?userUnicode=true&characterEncoding=UTF8&useSSL=false&serverTimezone=UTC&autoReconnect=true&zeroDateTimeBehavior=convertToNull");
-		ds.setUser("fengy");
-		ds.setPassword("123456");
-		ds.setAcceptableExecutionTime(100);
+		dataSource.setUser("fengy");
+		dataSource.setPassword("123456");
 		Executor executor = Executors.newFixedThreadPool(10);
 		for (final int i : Sequence.forEach(0, 10000)) {
 			executor.execute(() -> {
 				Connection connection = null;
 				Tuple tuple = null;
 				try {
-					connection = ds.getConnection();
+					connection = dataSource.getConnection();
 					tuple = JdbcUtils.fetchOne(connection, "select * from mec_area where level=? limit 1",
 							new Object[] { RandomUtils.randomInt(1, 4) });
 					System.out.println(tuple);
@@ -53,9 +52,10 @@ public class TestDataSource {
 			});
 		}
 		System.in.read();
-		Map<String, QuerySpan> results = ds.getStatisticsResult("24/02/2020");
+		// Sql Query Summary
+		Map<String, QuerySpan> results = dataSource.getStatisticsResult("dd/MM/yyyy");
 		System.out.println(results);
-		ds.close();
+		dataSource.close();
 		ExecutorUtils.gracefulShutdown(executor, 60000);
 		System.out.println("TestDataSource.main()");
 	}

@@ -10,12 +10,12 @@ public interface SqlParameters {
 
 	int getSize();
 
-	boolean hasValue(int index, String paramName);
+	boolean hasValue(int index, String name);
 
-	Object getValue(int index, String paramName);
+	Object getValue(int index, String name);
 
-	JdbcType getJdbcType(String paramName);
+	JdbcType getJdbcType(String name);
 
-	void addJdbcType(String paramName, JdbcType jdbcType);
+	void addJdbcType(String name, JdbcType jdbcType);
 
 }
