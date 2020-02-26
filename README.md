@@ -5,6 +5,7 @@
 #### Latest Version: 2.0-RC1
 ### 1. devtools-lang
 ***For writing less code.***
+#### Maven
 ```xml
     <dependency>
         <groupId>com.github.paganini2008</groupId>
@@ -15,6 +16,110 @@
 
 ### 2. devtools-objectpool
 ***Contains object pool and jdbc connection pool. No extra functions, just a DataSource.***
+#### Java Code
+##### 1. Object Pool
+```java
+    public static class Resource {
+
+            private final int id;
+
+            public Resource(int id) {
+                this.id = id;
+            }
+
+            public String doSomething(int i) {
+                return ThreadUtils.currentThreadName() + " do something: " + i;
+            }
+
+            public String toString() {
+                return "ID: " + id;
+            }
+
+        }
+
+        public static class ResourceFactory implements ObjectFactory {
+
+            private static final AtomicInteger seq = new AtomicInteger(0);
+
+            public Object createObject() throws Exception {
+                return new Resource(seq.incrementAndGet());
+            }
+
+            public void destroyObject(Object o) throws Exception {
+                System.out.println("Destory: " + o);
+            }
+
+        }
+
+        public static void main(String[] args) throws Exception {
+            GenericObjectPool objectPool = new GenericObjectPool(new ResourceFactory());
+            objectPool.setMaxPoolSize(10);
+            objectPool.setMaxIdleSize(3);
+            Executor executor = Executors.newFixedThreadPool(10);
+            AtomicInteger counter = new AtomicInteger();
+            for (final int i : Sequence.forEach(0, 10000)) {
+                executor.execute(() -> {
+                    counter.incrementAndGet();
+                    Resource resource = null;
+                    try {
+                        resource = (Resource) objectPool.borrowObject();
+                        ThreadUtils.randomSleep(1000L);
+                        System.out.println(resource.doSomething(i) + " :: busySize: " + objectPool.getBusySize() + ", idleSize: "
+                                + objectPool.getIdleSize());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        try {
+                            objectPool.givebackObject(resource);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+            System.in.read();
+            System.out.println(counter);
+            objectPool.close();
+            ExecutorUtils.gracefulShutdown(executor, 60000);
+            System.out.println("Done.");
+        }   
+```
+##### 2. DataSource
+```java
+        public static void main(String[] args) throws Exception {
+            GenericDataSource dataSource = new GenericDataSource();
+            dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+            dataSource.setJdbcUrl(
+                    "jdbc:mysql://localhost:3306/test?userUnicode=true&characterEncoding=UTF8&useSSL=false&serverTimezone=UTC&autoReconnect=true&zeroDateTimeBehavior=convertToNull");
+            dataSource.setUser("your name");
+            dataSource.setPassword("your password");
+            Executor executor = Executors.newFixedThreadPool(10);
+            for (final int i : Sequence.forEach(0, 10000)) {
+                executor.execute(() -> {
+                    Connection connection = null;
+                    Tuple tuple = null;
+                    try {
+                        connection = dataSource.getConnection();
+                        tuple = JdbcUtils.fetchOne(connection, "select * from mec_area where level=? limit 1",
+                                new Object[] { RandomUtils.randomInt(1, 4) });
+                        System.out.println(tuple);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    } finally {
+                        JdbcUtils.closeQuietly(connection);
+                    }
+                });
+            }
+            System.in.read();
+            // Sql Query Summary
+		    Map<String, QuerySpan> results = dataSource.getStatisticsResult("dd/MM/yyyy");
+            System.out.println(results);
+            dataSource.close();
+            ExecutorUtils.gracefulShutdown(executor, 60000);
+            System.out.println("TestDataSource.main()");
+        }
+```
+#### Maven
 ```xml
     <dependency>
         <groupId>com.github.paganini2008</groupId>
