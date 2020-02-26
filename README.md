@@ -4,7 +4,7 @@
 
 #### Latest Version: 2.0-RC1
 ### 1. devtools-lang
-***For writing less code. There are many useful codes waiting for you to explore***
+***For writing less code. There are many useful codes waiting for you to explore.***
 #### Maven
 ```xml
     <dependency>
@@ -343,7 +343,7 @@
     </dependency>
 ```
 
-## Well, you can also use all:
+## At last, you can also use all in your application:
 ```xml
     <dependency>
       <groupId>com.github.paganini2008</groupId>
