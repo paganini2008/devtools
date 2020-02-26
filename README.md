@@ -129,7 +129,7 @@
 ```
 
 ### 3. devtools-beans-streaming
-***To operate Java Collection Framework like use sql. That's LINQ in Java!***
+***To operate Java Collection Framework like using sql query. Is it cool? That's LINQ in Java!***
 #### Java Code
 ```java
         /**
