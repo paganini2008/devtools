@@ -350,4 +350,4 @@
       <version>${devtools.version}</version>
     </dependency>
 ```
-#### Latest Version: 2.0-RC1
+#### Latest Version: 2.0-RC2
