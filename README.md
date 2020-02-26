@@ -3,7 +3,7 @@
 ### You need have a set of tools are really suitable for you.
 
 ### 1. devtools-lang
-***For writing less code. There are many useful codes waiting for you to explore.***
+***For writing less code, there are many useful codes waiting for you to explore.***
 #### Maven
 ```xml
     <dependency>
