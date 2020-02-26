@@ -15,7 +15,7 @@
 ```
 
 ### 2. devtools-objectpool
-***Contains object pool and jdbc connection pool. No extra functions, just a DataSource.***
+***Contains object pool and jdbc connection pool. No extra functions.***
 #### Java Code
 ##### 1. Object Pool
 ```java
