@@ -23,7 +23,7 @@ public class UnpooledDataSource extends AbstractDataSource {
 	private final Semaphore semaphore;
 	private Boolean autoCommit;
 	private TransactionIsolationLevel transactionIsolationLevel;
-	private int timeout;
+	private int timeout = 60;
 
 	public UnpooledDataSource(String driverClassName, String jdbcUrl, String user, String password, int maxSize) {
 		try {
@@ -88,6 +88,15 @@ public class UnpooledDataSource extends AbstractDataSource {
 
 	public TransactionIsolationLevel getTransactionIsolationLevel() {
 		return transactionIsolationLevel;
+	}
+
+	/**
+	 * Timeout in seconds
+	 * 
+	 * @param timeout
+	 */
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
 	}
 
 	public Connection getConnection() throws SQLException {

@@ -23,5 +23,9 @@ public class PooledConnectionFactory implements ConnectionFactory {
 	public Connection getConnection() throws SQLException {
 		return dataSource.getConnection();
 	}
+	
+	public String toString() {
+		return dataSource.toString();
+	}
 
 }

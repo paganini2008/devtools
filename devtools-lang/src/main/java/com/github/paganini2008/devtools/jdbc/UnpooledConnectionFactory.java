@@ -3,6 +3,8 @@ package com.github.paganini2008.devtools.jdbc;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import com.github.paganini2008.devtools.beans.ToStringBuilder;
+
 /**
  * 
  * UnpooledConnectionFactory
@@ -24,10 +26,10 @@ public class UnpooledConnectionFactory implements ConnectionFactory {
 
 	public UnpooledConnectionFactory(String driverClassName, String jdbcUrl, String user, String password) {
 		super();
-		this.driverClassName = driverClassName;
-		this.jdbcUrl = jdbcUrl;
-		this.user = user;
-		this.password = password;
+		setDriverClassName(driverClassName);
+		setJdbcUrl(jdbcUrl);
+		setUser(user);
+		setPassword(password);
 	}
 
 	public String getDriverClassName() {
@@ -92,6 +94,10 @@ public class UnpooledConnectionFactory implements ConnectionFactory {
 			connection.setTransactionIsolation(transactionIsolationLevel.getLevel());
 		}
 		return connection;
+	}
+
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, new String[] { "connection" });
 	}
 
 }
