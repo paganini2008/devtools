@@ -348,6 +348,7 @@
       <groupId>com.github.paganini2008</groupId>
       <artifactId>devtools</artifactId>
       <version>${devtools.version}</version>
+      <type>pom</type>
     </dependency>
 ```
 #### Latest Version: 2.0-RC2
