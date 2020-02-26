@@ -1,4 +1,4 @@
-# Good Java Programmer need Good Toolkit
+# Good Programmers need Good Toolkits
 ## How to write Java code more simply and efficiently?
 ### You need have a set of tools are really suitable for you.
 
