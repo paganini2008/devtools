@@ -1,10 +1,9 @@
-# Good Java Programmer need Good Toolkit
+# Good Programmers need Good Toolkits
 ## How to write Java code more simply and efficiently?
 ### You need have a set of tools are really suitable for you.
 
-#### Latest Version: 2.0-RC1
 ### 1. devtools-lang
-***For writing less code.***
+***For writing less code, there are many useful codes waiting for you to explore.***
 #### Maven
 ```xml
     <dependency>
@@ -129,7 +128,7 @@
 ```
 
 ### 3. devtools-beans-streaming
-***To operate Java Collection Framework like use sql. That's LINQ in Java!***
+***To operate Java Collection Framework like using sql query. Is it cool? That's LINQ in Java!***
 #### Java Code
 ```java
         /**
@@ -247,7 +246,94 @@
 ```
 
 ### 5. devtools-db4j
-***To use JDBC more easily.***
+***As a lazy man, to use JDBC more easily.***
+#### Java Code
+```java
+	   /**
+		 * Insert, Update, Delete in a transaction
+		 * 
+		 * @throws SQLException
+		 */
+		public static void testUpdateInTransaction() throws SQLException {
+			String driverClassName = "com.mysql.cj.jdbc.Driver";
+			String jdbcUrl = "jdbc:mysql://localhost:3306/test?userUnicode=true&characterEncoding=UTF8&useSSL=false&serverTimezone=UTC&autoReconnect=true&zeroDateTimeBehavior=convertToNull";
+			String user = "your_user";
+			String password = "your_password";
+			SqlPlus sqlPlus = new SqlPlus(driverClassName, jdbcUrl, user, password);
+			Transaction transaction = null;
+			try {
+				transaction = sqlPlus.beginTransaction(); // Open transaction
+				GeneratedKey generatedKey = GeneratedKey.forNames("id");
+
+				Point point = new Point();// Pojo
+				point.setUsername("tester-12");
+				point.setPoints(100);
+				point.setTag(5);
+				point.setDate(new Date());
+				int effectedRows = transaction.update(
+						"insert into tb_point (username,points,tag,last_modified) values ({username},{points},{tag},{date})",
+						new BeanPropertySqlParameter(point), generatedKey); // bean mapping
+				System.out.println("EffectedRows: " + effectedRows);
+				System.out.println("Added id: " + generatedKey.getKey());
+
+				Map<String, Object> parameterMap = new HashMap<String, Object>();
+				parameterMap.put("points", 10);
+				parameterMap.put("username", "tester-12");
+				effectedRows = transaction.update("update tb_point set points=points+{points} where username={username}",
+						new MapSqlParameter(parameterMap)); // Map mapping
+				System.out.println("EffectedRows: " + effectedRows);
+
+				effectedRows = transaction.update("delete from tb_point where username!={0}", new ArraySqlParameter("tester-12")); // Array
+																																	// mapping
+				System.out.println("EffectedRows: " + effectedRows);
+				transaction.commit();
+			} catch (SQLException e) {
+				transaction.rollback();
+				throw e;
+			} finally {
+				transaction.close(); // Transaction end
+			}
+		}
+
+		/**
+		 * Query for List
+		 * 
+		 * @throws SQLException
+		 */
+		public static void testQuery() throws SQLException {
+			String driverClassName = "com.mysql.cj.jdbc.Driver";
+			String jdbcUrl = "jdbc:mysql://localhost:3306/test?userUnicode=true&characterEncoding=UTF8&useSSL=false&serverTimezone=UTC&autoReconnect=true&zeroDateTimeBehavior=convertToNull";
+			String user = "your_user";
+			String password = "your_password";
+			SqlPlus sqlPlus = new SqlPlus(driverClassName, jdbcUrl, user, password);
+			List<Tuple> dataList = sqlPlus.queryForList("select * from tb_point", new Object[0]);
+			dataList.forEach(tuple -> {
+				System.out.println(tuple);
+			});
+
+		}
+
+		/**
+		 * Pageable Query
+		 * 
+		 * @throws SQLException
+		 */
+		public static void testPageableQuery() throws SQLException {
+			String driverClassName = "com.mysql.cj.jdbc.Driver";
+			String jdbcUrl = "jdbc:mysql://localhost:3306/test?userUnicode=true&characterEncoding=UTF8&useSSL=false&serverTimezone=UTC&autoReconnect=true&zeroDateTimeBehavior=convertToNull";
+			String user = "your_user";
+			String password = "your_password";
+			SqlPlus sqlPlus = new SqlPlus(driverClassName, jdbcUrl, user, password);
+			PageableQuery<Tuple> pageableQuery = sqlPlus.queryForPage("select * from tb_point where points>{0}", new Object[] { 10 });
+			for (PageResponse<Tuple> pageResponse : pageableQuery.forEach(1, 10)) {// Page start from 1
+				System.out.println("Page: " + pageResponse.getPageNumber());
+				pageResponse.getContent().forEach(tuple -> {
+					System.out.println(tuple); // Iterator each record
+				});
+			}
+		}
+```
+#### Maven
 ```xml
     <dependency>
       <groupId>com.github.paganini2008</groupId>
@@ -255,3 +341,15 @@
       <version>${devtools.version}</version>
     </dependency>
 ```
+
+## At last, you can also use all in your application:
+```xml
+    <dependency>
+      <groupId>com.github.paganini2008</groupId>
+      <artifactId>devtools</artifactId>
+      <version>${devtools.version}</version>
+      <type>pom</type>
+    </dependency>
+```
+#### Latest Version: 2.0-RC2
+##### All jars can be found from https://mvnrepository.com/ or https://search.maven.org
