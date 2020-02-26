@@ -4,7 +4,7 @@
 
 #### Latest Version: 2.0-RC1
 ### 1. devtools-lang
-***For writing less code.***
+***For writing less code. There are many useful codes waiting for you to explore***
 #### Maven
 ```xml
     <dependency>
@@ -334,10 +334,20 @@
 			}
 		}
 ```
+#### Maven
 ```xml
     <dependency>
       <groupId>com.github.paganini2008</groupId>
       <artifactId>devtools-db4j</artifactId>
+      <version>${devtools.version}</version>
+    </dependency>
+```
+
+## Well, you can also use all:
+```xml
+    <dependency>
+      <groupId>com.github.paganini2008</groupId>
+      <artifactId>devtools</artifactId>
       <version>${devtools.version}</version>
     </dependency>
 ```
