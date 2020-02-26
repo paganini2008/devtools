@@ -26,9 +26,9 @@ public class RowMapperResultSetExtractor<T> implements ResultSetExtractor<List<T
 
 	public List<T> extractData(ResultSet rs) throws SQLException {
 		List<T> results = new ArrayList<T>();
-		int rowIndex = 1;
+		int rownum = 1;
 		while (rs.next()) {
-			results.add(this.rowMapper.mapRow(rowIndex++, rs));
+			results.add(this.rowMapper.mapRow(rownum++, rs));
 		}
 		return results;
 	}

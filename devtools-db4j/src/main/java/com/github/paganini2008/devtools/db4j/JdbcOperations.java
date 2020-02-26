@@ -6,6 +6,9 @@ import java.util.List;
 import com.github.paganini2008.devtools.collection.Tuple;
 import com.github.paganini2008.devtools.db4j.mapper.RowMapper;
 import com.github.paganini2008.devtools.jdbc.Cursor;
+import com.github.paganini2008.devtools.jdbc.DefaultPageableSql;
+import com.github.paganini2008.devtools.jdbc.PageableQuery;
+import com.github.paganini2008.devtools.jdbc.PageableSql;
 
 /**
  * 
@@ -69,6 +72,34 @@ public interface JdbcOperations {
 	}
 
 	<T> Cursor<T> queryForCachedCursor(String sql, SqlParameter sqlParameter, RowMapper<T> rowMapper) throws SQLException;
+
+	default PageableQuery<Tuple> queryForPage(String sql, Object[] args) throws SQLException {
+		return queryForPage(new DefaultPageableSql(sql), new ArraySqlParameter(args));
+	}
+
+	default PageableQuery<Tuple> queryForPage(String sql, SqlParameter sqlParameter) throws SQLException {
+		return queryForPage(new DefaultPageableSql(sql), sqlParameter);
+	}
+
+	default PageableQuery<Tuple> queryForPage(PageableSql pageableSql, Object[] args) throws SQLException {
+		return queryForPage(pageableSql, new ArraySqlParameter(args));
+	}
+
+	PageableQuery<Tuple> queryForPage(PageableSql pageableSql, SqlParameter sqlParameter) throws SQLException;
+
+	default <T> PageableQuery<T> queryForPage(String sql, Object[] args, RowMapper<T> rowMapper) throws SQLException {
+		return queryForPage(new DefaultPageableSql(sql), new ArraySqlParameter(args), rowMapper);
+	}
+
+	default <T> PageableQuery<T> queryForPage(PageableSql pageableSql, Object[] args, RowMapper<T> rowMapper) throws SQLException {
+		return queryForPage(pageableSql, new ArraySqlParameter(args), rowMapper);
+	}
+
+	default <T> PageableQuery<T> queryForPage(String sql, SqlParameter sqlParameter, RowMapper<T> rowMapper) throws SQLException {
+		return queryForPage(new DefaultPageableSql(sql), sqlParameter, rowMapper);
+	}
+
+	<T> PageableQuery<T> queryForPage(PageableSql pageableSql, SqlParameter sqlParameter, RowMapper<T> rowMapper) throws SQLException;
 
 	<T> T customize(Customizable<T> customizable) throws SQLException;
 

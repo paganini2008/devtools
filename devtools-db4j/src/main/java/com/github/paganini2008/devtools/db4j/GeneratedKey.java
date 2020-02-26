@@ -16,7 +16,7 @@ public interface GeneratedKey {
 
 	Object getKey(String keyName);
 
-	void setValues(Map<String, Object> map);
+	void setKeys(Map<String, Object> map);
 
 	static GeneratedKey forNames(String... columnNames) {
 		return new GeneratedKeyImpl(columnNames);

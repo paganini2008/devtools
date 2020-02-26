@@ -8,6 +8,8 @@ import com.github.paganini2008.devtools.collection.Tuple;
 import com.github.paganini2008.devtools.db4j.mapper.RowMapper;
 import com.github.paganini2008.devtools.jdbc.Cursor;
 import com.github.paganini2008.devtools.jdbc.JdbcUtils;
+import com.github.paganini2008.devtools.jdbc.PageableQuery;
+import com.github.paganini2008.devtools.jdbc.PageableSql;
 
 /**
  * 
@@ -71,6 +73,17 @@ public class TransactionImpl implements Transaction {
 		return sqlRunner.queryForCachedCursor(connection, sql, sqlParameter, rowMapper);
 	}
 
+	@Override
+	public PageableQuery<Tuple> queryForPage(PageableSql pageableSql, SqlParameter sqlParameter) throws SQLException {
+		return sqlRunner.queryForPage(() -> connection, pageableSql, sqlParameter);
+	}
+
+	@Override
+	public <T> PageableQuery<T> queryForPage(PageableSql pageableSql, SqlParameter sqlParameter, RowMapper<T> rowMapper)
+			throws SQLException {
+		return sqlRunner.queryForPage(() -> connection, pageableSql, sqlParameter, rowMapper);
+	}
+
 	public <T> T customize(Customizable<T> customizable) throws SQLException {
 		return customizable.customize(connection, sqlRunner);
 	}
@@ -82,7 +95,12 @@ public class TransactionImpl implements Transaction {
 
 	@Override
 	public void commit() {
-		JdbcUtils.commitAndCloseQuietly(connection);
+		JdbcUtils.commitQuietly(connection);
+	}
+
+	@Override
+	public void close() {
+		JdbcUtils.closeQuietly(connection);
 	}
 
 }

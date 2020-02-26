@@ -21,6 +21,7 @@ import com.github.paganini2008.devtools.jdbc.DefaultPageableSql;
 import com.github.paganini2008.devtools.jdbc.JdbcUtils;
 import com.github.paganini2008.devtools.jdbc.PageableException;
 import com.github.paganini2008.devtools.jdbc.PageableQuery;
+import com.github.paganini2008.devtools.jdbc.PageableSlice;
 import com.github.paganini2008.devtools.jdbc.PageableSql;
 import com.github.paganini2008.devtools.jdbc.PreparedStatementCallback;
 
@@ -447,7 +448,7 @@ public class SqlRunner {
 									new TupleRowMapper(typeHandlerRegistry));
 							Tuple keys = extractor.extractData(rs);
 							if (keys != null) {
-								generatedKey.setValues((Map<String, Object>) keys);
+								generatedKey.setKeys((Map<String, Object>) keys);
 							}
 						} finally {
 							JdbcUtils.closeQuietly(rs);
@@ -545,7 +546,7 @@ public class SqlRunner {
 	 * @author Fred Feng
 	 * @version 1.0
 	 */
-	private static class PageableQueryImpl<T> implements PageableQuery<T> {
+	private static class PageableQueryImpl<T> extends PageableSlice<T> implements PageableQuery<T> {
 
 		private final ConnectionFactory connectionFactory;
 		private final PageableSql pageableSql;

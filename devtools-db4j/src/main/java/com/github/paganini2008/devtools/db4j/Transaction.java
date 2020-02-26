@@ -13,4 +13,6 @@ public interface Transaction extends JdbcOperations {
 	
 	void commit();
 	
+	void close();
+	
 }

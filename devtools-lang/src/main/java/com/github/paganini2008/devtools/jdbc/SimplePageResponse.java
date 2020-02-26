@@ -7,10 +7,9 @@ import java.util.List;
 /**
  * 
  * SimplePageResponse
- * 
+ *
  * @author Fred Feng
- * 
- * 
+ * @version 1.0
  */
 public class SimplePageResponse<T> implements PageResponse<T>, Serializable {
 
@@ -88,6 +87,10 @@ public class SimplePageResponse<T> implements PageResponse<T>, Serializable {
 
 	public int getPageSize() {
 		return pageRequest.getPageSize();
+	}
+
+	public int getPageNumber() {
+		return pageNumber;
 	}
 
 	public PageResponse<T> setPage(int pageNumber) {

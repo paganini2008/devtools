@@ -11,6 +11,8 @@ import com.github.paganini2008.devtools.db4j.mapper.RowMapper;
 import com.github.paganini2008.devtools.jdbc.ConnectionFactory;
 import com.github.paganini2008.devtools.jdbc.Cursor;
 import com.github.paganini2008.devtools.jdbc.JdbcUtils;
+import com.github.paganini2008.devtools.jdbc.PageableQuery;
+import com.github.paganini2008.devtools.jdbc.PageableSql;
 import com.github.paganini2008.devtools.jdbc.PooledConnectionFactory;
 import com.github.paganini2008.devtools.jdbc.TransactionIsolationLevel;
 import com.github.paganini2008.devtools.jdbc.UnpooledConnectionFactory;
@@ -139,6 +141,17 @@ public class SqlPlus implements JdbcOperations {
 		} finally {
 			JdbcUtils.closeQuietly(connection);
 		}
+	}
+
+	@Override
+	public PageableQuery<Tuple> queryForPage(PageableSql pageableSql, SqlParameter sqlParameter) throws SQLException {
+		return sqlRunner.queryForPage(connectionFactory, pageableSql, sqlParameter);
+	}
+
+	@Override
+	public <T> PageableQuery<T> queryForPage(PageableSql pageableSql, SqlParameter sqlParameter, RowMapper<T> rowMapper)
+			throws SQLException {
+		return sqlRunner.queryForPage(connectionFactory, pageableSql, sqlParameter, rowMapper);
 	}
 
 	public <T> T customize(Customizable<T> customizable) throws SQLException {

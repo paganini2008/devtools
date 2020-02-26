@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.github.paganini2008.devtools.collection.MapUtils;
+
 /**
  * GeneratedKeyImpl
  * 
@@ -40,9 +42,15 @@ public class GeneratedKeyImpl implements GeneratedKey {
 		return keys.keySet().toArray(new String[keys.size()]);
 	}
 
-	public void setValues(Map<String, Object> map) {
-		if (map != null) {
-			keys.putAll(map);
+	public void setKeys(Map<String, Object> map) {
+		if (MapUtils.isNotEmpty(map)) {
+			Object[] values = map.values().toArray();
+			if (values.length == keys.size()) {
+				int i = 0;
+				for (Map.Entry<String, Object> entry : keys.entrySet()) {
+					entry.setValue(values[i++]);
+				}
+			}
 		}
 	}
 

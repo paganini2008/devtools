@@ -10,7 +10,7 @@ public class ArraySqlParameter extends AbstractSqlParameter implements SqlParame
 
 	private final Object[] arguments;
 
-	public ArraySqlParameter(Object[] arguments) {
+	public ArraySqlParameter(Object... arguments) {
 		this.arguments = arguments;
 	}
 

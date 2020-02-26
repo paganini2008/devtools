@@ -29,6 +29,8 @@ public interface PageResponse<T> extends Iterable<PageResponse<T>> {
 	int getOffset();
 
 	int getPageSize();
+	
+	int getPageNumber();
 
 	List<T> getContent();
 
