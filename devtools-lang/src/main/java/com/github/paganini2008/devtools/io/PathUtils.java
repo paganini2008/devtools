@@ -10,14 +10,9 @@ import com.github.paganini2008.devtools.StringUtils;
  * PathUtils
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
-public class PathUtils {
-
-	private PathUtils() {
-	}
+public abstract class PathUtils {
 
 	public static final char EXTENSION_SEPARATOR_CHAR = '.';
 

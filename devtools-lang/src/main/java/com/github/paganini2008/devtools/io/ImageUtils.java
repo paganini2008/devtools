@@ -21,16 +21,15 @@ import com.github.paganini2008.devtools.net.UrlUtils;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
-public class ImageUtils {
-
-	private ImageUtils() {
-
-	}
-
-	public static void main(String[] args) throws Throwable {
-		URL url = new URL("https://car2.autoimg.cn/cardfs/product/g12/M0F/E1/52/t_autohomecar__wKjBy1oM8pKAIKqgAAX2RcQYALo899.jpg");
-		System.out.println(encode(url, "jpg"));
-	}
+/**
+ * 
+ * ImageUtils 
+ *
+ * @author Fred Feng
+ * @version 1.0
+ */
+@SuppressWarnings("all")
+public abstract class ImageUtils {
 
 	public static void fade(File file, String format, File output) throws IOException {
 		Assert.isNull(file, "Undefined image source.");

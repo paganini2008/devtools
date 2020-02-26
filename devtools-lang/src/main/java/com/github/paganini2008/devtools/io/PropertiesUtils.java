@@ -12,10 +12,7 @@ import com.github.paganini2008.devtools.collection.LruMap;
  * @author Fred Feng
  * @version 1.0
  */
-public class PropertiesUtils {
-
-	private PropertiesUtils() {
-	}
+public abstract class PropertiesUtils {
 
 	private final static LruMap<String, Properties> cache = new LruMap<String, Properties>(128);
 	private static String charset = "UTF-8";

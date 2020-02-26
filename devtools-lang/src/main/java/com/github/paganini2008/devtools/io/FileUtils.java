@@ -37,10 +37,7 @@ import com.github.paganini2008.devtools.math.BigDecimalUtils;
  * @author Fred Feng
  * @version 1.0
  */
-public class FileUtils {
-
-	private FileUtils() {
-	}
+public abstract class FileUtils {
 
 	public static final File[] EMPTY_ARRAY = new File[0];
 

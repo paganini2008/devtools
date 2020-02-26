@@ -44,7 +44,7 @@ import com.github.paganini2008.devtools.StringUtils;
  * @author Fred Feng
  * @version 1.0
  */
-public class IOUtils {
+public abstract class IOUtils {
 
 	public static final int DEFAULT_BYTE_BUFFER_SIZE = 4 * 1024;
 
@@ -53,9 +53,6 @@ public class IOUtils {
 	public static final int EOF = -1;
 
 	public static final String NEWLINE = System.getProperty("line.separator");
-
-	private IOUtils() {
-	}
 
 	public static void write(byte[] content, OutputStream output) throws IOException {
 		Assert.isNull(output, "OutputStream must not be null.");

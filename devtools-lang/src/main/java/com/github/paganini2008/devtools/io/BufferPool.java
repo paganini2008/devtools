@@ -12,8 +12,6 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
  * BufferPool
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public class BufferPool {
