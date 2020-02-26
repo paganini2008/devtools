@@ -92,19 +92,19 @@ public abstract class Example {
 	}
 
 	public static void test1() throws Exception {
-		getCron14().forEach(cron -> {
-			System.out.println(DateUtils.format(cron.getTime()));
+		getCron14().forEach(date -> {
+			System.out.println(DateUtils.format(date));
 		});
 
 		System.out.println(StringUtils.repeat("-", 32));
 
-		getCron13().forEach(cron -> {
-			System.out.println(DateUtils.format(cron.getTime()));
+		getCron13().forEach(date -> {
+			System.out.println(DateUtils.format(date));
 		});
 
 		System.out.println(StringUtils.repeat("-", 32));
-		getCron12().forEach(cron -> {
-			System.out.println(DateUtils.format(cron.getTime()));
+		getCron12().forEach(date -> {
+			System.out.println(DateUtils.format(date));
 		});
 	}
 
@@ -216,7 +216,7 @@ public abstract class Example {
 	}
 
 	public static void main(String[] args) throws Exception {
-		test4();
+		test1();
 	}
 
 }
