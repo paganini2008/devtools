@@ -25,6 +25,71 @@
 
 ### 3. devtools-beans-streaming
 ***To operate Java Collection Framework like use sql. That's LINQ in Java!***
+#### Java Code
+```java
+        /**
+         * <pre>
+         * 	 select * from Product where created<= now() and salesman.name='Petter'
+         * </pre>
+         */
+        public static void test1() {
+            Predicate<Product> predicate = Restrictions.lte("created", new Date());
+            predicate = predicate.and(Restrictions.eq("salesman.name", "Petter"));
+            Select.from(products).filter(predicate).list().forEach(product -> {
+                System.out.println(product);
+            });
+        }
+
+        /**
+         * <pre>
+         * 	  select location,max(price) as maxPrice, min(price) as minPrice,avg(freight) as avgFreight,sum(sales) as sumSales from Product group by location
+         * </pre>
+         */
+        public static void test2() {
+            Select.from(products).groupBy("location", String.class).setTransformer(new View<Product>() {
+                protected void setAttributes(Tuple tuple, Group<Product> group) {
+                    tuple.set("maxPrice", group.max("price", Float.class));
+                    tuple.set("minPrice", group.min("price", Float.class));
+                    tuple.set("avgFreight", group.avg("freight"));
+                    tuple.set("sumSales", group.sum("sales"));
+                }
+            }).list().forEach(tuple -> {
+                System.out.println(tuple);
+            });
+        }
+
+        /**
+         * <pre>
+         * 	 select location,style,max(price) as maxPrice, min(price) as minPrice,avg(freight) as avgFreight,sum(sales) as sumSales from Product group by location,style having avg(freight) > 55
+         * </pre>
+         */
+        public static void test3() {
+            Select.from(products).groupBy("location", String.class).groupBy("style", Product.Style.class).having(group -> {
+                return group.avg("freight").compareTo(BigDecimal.valueOf(55)) > 0;
+            }).setTransformer(new View<Product>() {
+                protected void setAttributes(Tuple tuple, Group<Product> group) {
+                    tuple.set("maxPrice", group.max("price", Float.class));
+                    tuple.set("minPrice", group.min("price", Float.class));
+                    tuple.set("avgFreight", group.avg("freight"));
+                    tuple.set("sumSales", group.sum("sales"));
+                }
+            }).list().forEach(tuple -> {
+                System.out.println(tuple);
+            });
+        }
+
+        /**
+         * <pre>
+         * 	 select name,price from Product order by price desc limit 100
+         * </pre>
+         */
+        public static void test4() {
+            Select.from(products).orderBy(Orders.descending("price", Float.class)).list(100).forEach(product -> {
+                System.out.println("Name: " + product.getName() + ", Price: " + product.getPrice());
+            });
+        }
+```
+#### Maven
 ```xml
    <dependency>
       <groupId>com.github.paganini2008</groupId>
@@ -67,6 +132,7 @@
             return CronBuilder.year(2020).toYear(2025).Mar().andApr().lastWeek().Thur().hour(12).minute(10).andMinute(20).andMinute(30);
         }
 ```
+#### Maven
 ```xml
     <dependency>
         <groupId>com.github.paganini2008</groupId>
