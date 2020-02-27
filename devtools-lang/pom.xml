@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>devtools</artifactId>
 		<groupId>com.github.paganini2008</groupId>
-		<version>2.0-RC1</version>
+		<version>2.0-RC2</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
