@@ -16,7 +16,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.NumberOverflowException;
-import com.github.paganini2008.devtools.NumberRange;
+import com.github.paganini2008.devtools.NumberRangeAssert;
 import com.github.paganini2008.devtools.NumberUtils;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.LruMap;
@@ -719,7 +719,7 @@ public abstract class Ints {
 	public static int cast(long value) {
 		int converted = (int) value;
 		if (value != converted) {
-			throw new NumberOverflowException("int");
+			throw new NumberOverflowException(value);
 		}
 		return converted;
 	}
@@ -729,8 +729,8 @@ public abstract class Ints {
 	}
 
 	public static int cast(BigInteger value) {
-		if (NumberRange.checkInteger(value)) {
-			throw new NumberOverflowException("int");
+		if (NumberRangeAssert.checkInteger(value)) {
+			throw new NumberOverflowException(value);
 		}
 		return value.intValue();
 	}

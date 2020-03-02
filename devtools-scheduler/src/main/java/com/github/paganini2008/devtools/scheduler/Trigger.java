@@ -9,6 +9,6 @@ package com.github.paganini2008.devtools.scheduler;
  */
 public interface Trigger {
 
-	long getNextFireTime();
+	long getNextFiredTime();
 
 }

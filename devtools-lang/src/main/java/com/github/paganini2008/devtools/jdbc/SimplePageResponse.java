@@ -18,14 +18,14 @@ public class SimplePageResponse<T> implements PageResponse<T>, Serializable {
 	private final int totalPages;
 	private final int totalRecords;
 	private final PageRequest pageRequest;
-	private final transient ResultSetSlice<T> resultSlice;
+	private final transient ResultSetSlice<T> resultSetSlice;
 
-	public SimplePageResponse(PageRequest pageRequest, ResultSetSlice<T> resultSlice) {
+	public SimplePageResponse(PageRequest pageRequest, ResultSetSlice<T> resultSetSlice) {
 		this.pageNumber = pageRequest.getPageNumber();
-		this.totalRecords = resultSlice.totalCount();
+		this.totalRecords = resultSetSlice.totalCount();
 		this.totalPages = (totalRecords + pageRequest.getPageSize() - 1) / pageRequest.getPageSize();
 		this.pageRequest = pageRequest;
-		this.resultSlice = resultSlice;
+		this.resultSetSlice = resultSetSlice;
 	}
 
 	public boolean isEmpty() {
@@ -94,7 +94,7 @@ public class SimplePageResponse<T> implements PageResponse<T>, Serializable {
 	}
 
 	public PageResponse<T> setPage(int pageNumber) {
-		return new SimplePageResponse<T>(pageRequest.set(pageNumber), resultSlice);
+		return new SimplePageResponse<T>(pageRequest.set(pageNumber), resultSetSlice);
 	}
 
 	public PageResponse<T> lastPage() {
@@ -103,19 +103,19 @@ public class SimplePageResponse<T> implements PageResponse<T>, Serializable {
 	}
 
 	public PageResponse<T> firstPage() {
-		return isFirstPage() ? this : new SimplePageResponse<T>(pageRequest.first(), resultSlice);
+		return isFirstPage() ? this : new SimplePageResponse<T>(pageRequest.first(), resultSetSlice);
 	}
 
 	public PageResponse<T> nextPage() {
-		return hasNextPage() ? new SimplePageResponse<T>(pageRequest.next(), resultSlice) : this;
+		return hasNextPage() ? new SimplePageResponse<T>(pageRequest.next(), resultSetSlice) : this;
 	}
 
 	public PageResponse<T> previousPage() {
-		return hasPreviousPage() ? new SimplePageResponse<T>(pageRequest.previous(), resultSlice) : this;
+		return hasPreviousPage() ? new SimplePageResponse<T>(pageRequest.previous(), resultSetSlice) : this;
 	}
 
 	public List<T> getContent() {
-		return resultSlice.list(pageRequest.getPageSize(), pageRequest.getOffset());
+		return resultSetSlice.list(pageRequest.getPageSize(), pageRequest.getOffset());
 	}
 
 }

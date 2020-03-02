@@ -15,7 +15,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.NumberOverflowException;
-import com.github.paganini2008.devtools.NumberRange;
+import com.github.paganini2008.devtools.NumberRangeAssert;
 import com.github.paganini2008.devtools.NumberUtils;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.LruMap;
@@ -631,7 +631,7 @@ public abstract class Shorts {
 	public static short cast(char value) {
 		short s = (short) value;
 		if (s != value) {
-			throw new NumberOverflowException("short");
+			throw new NumberOverflowException();
 		}
 		return s;
 	}
@@ -698,7 +698,7 @@ public abstract class Shorts {
 	public static short cast(long value) {
 		short converted = (short) value;
 		if (value != converted) {
-			throw new NumberOverflowException("short");
+			throw new NumberOverflowException(value);
 		}
 		return converted;
 	}
@@ -708,8 +708,8 @@ public abstract class Shorts {
 	}
 
 	public static short cast(BigInteger value) {
-		if (NumberRange.checkShort(value)) {
-			throw new NumberOverflowException("short");
+		if (NumberRangeAssert.checkShort(value)) {
+			throw new NumberOverflowException(value);
 		}
 		return value.shortValue();
 	}

@@ -16,7 +16,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.NumberOverflowException;
-import com.github.paganini2008.devtools.NumberRange;
+import com.github.paganini2008.devtools.NumberRangeAssert;
 import com.github.paganini2008.devtools.NumberUtils;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.LruMap;
@@ -762,7 +762,7 @@ public abstract class Bytes {
 	public static byte cast(char c) {
 		byte b = (byte) c;
 		if (b != c) {
-			throw new NumberOverflowException("byte");
+			throw new NumberOverflowException();
 		}
 		return b;
 	}
@@ -780,7 +780,7 @@ public abstract class Bytes {
 	public static byte cast(long value) {
 		byte converted = (byte) value;
 		if (value != converted) {
-			throw new NumberOverflowException("byte");
+			throw new NumberOverflowException(value);
 		}
 		return converted;
 	}
@@ -790,8 +790,8 @@ public abstract class Bytes {
 	}
 
 	public static byte cast(BigInteger value) {
-		if (NumberRange.checkByte(value)) {
-			throw new NumberOverflowException("byte");
+		if (NumberRangeAssert.checkByte(value)) {
+			throw new NumberOverflowException(value);
 		}
 		return value.byteValue();
 	}
@@ -1098,7 +1098,7 @@ public abstract class Bytes {
 	public static double toDouble(byte[] b) {
 		return Double.longBitsToDouble(toLong(b));
 	}
-	
+
 	public static byte[] toByteArray(ByteBuffer bb) {
 		return toByteArray(bb, null);
 	}

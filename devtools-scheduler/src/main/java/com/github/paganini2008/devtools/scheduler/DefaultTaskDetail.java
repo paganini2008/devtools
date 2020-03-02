@@ -66,7 +66,7 @@ public class DefaultTaskDetail implements TaskDetail {
 
 	public String toString() {
 		StringBuilder str = new StringBuilder();
-		str.append("[TaskExecutor] Task: ").append(task.getClass().getName());
+		str.append("[TaskDetail] Task: ").append(task.getClass().getName());
 		str.append(", Running: ").append(isRunning());
 		str.append(", CompletedCount: ").append(completedCount());
 		str.append(", FailedCount: ").append(failedCount());

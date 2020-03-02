@@ -15,7 +15,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.NumberOverflowException;
-import com.github.paganini2008.devtools.NumberRange;
+import com.github.paganini2008.devtools.NumberRangeAssert;
 import com.github.paganini2008.devtools.NumberUtils;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.LruMap;
@@ -827,8 +827,8 @@ public abstract class Longs {
 	}
 
 	public static long cast(BigInteger value) {
-		if (NumberRange.checkLong(value)) {
-			throw new NumberOverflowException("long");
+		if (NumberRangeAssert.checkLong(value)) {
+			throw new NumberOverflowException(value);
 		}
 		return value.longValue();
 	}

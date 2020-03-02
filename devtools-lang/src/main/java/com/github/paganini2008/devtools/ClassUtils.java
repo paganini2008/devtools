@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import com.github.paganini2008.devtools.collection.MapUtils;
 
@@ -377,10 +376,6 @@ public abstract class ClassUtils {
 		} catch (ClassNotFoundException e) {
 			throw new IllegalArgumentException(e.getMessage(), e);
 		}
-	}
-
-	public static void main(String[] args) {
-		System.out.println(getAllSuperClassesAndInterfaces(ThreadPoolExecutor.class));
 	}
 
 }

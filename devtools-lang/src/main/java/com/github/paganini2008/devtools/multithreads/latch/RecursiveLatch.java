@@ -7,27 +7,22 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.github.paganini2008.devtools.Sequence;
+import com.github.paganini2008.devtools.multithreads.ThreadLocalInteger;
 import com.github.paganini2008.devtools.multithreads.ThreadPool;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 
 /**
  * 
- * RecursiveLatch
- * 
+ * RecursiveLatch 
+ *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public class RecursiveLatch implements Latch {
 
 	private final Latch delegate;
 	private final Lock lock = new ReentrantLock();
-	private final ThreadLocal<AtomicInteger> counter = new ThreadLocal<AtomicInteger>() {
-		protected AtomicInteger initialValue() {
-			return new AtomicInteger(0);
-		}
-	};
+	private final ThreadLocalInteger threads = new ThreadLocalInteger(0);
 
 	public RecursiveLatch() {
 		this(1);
@@ -48,7 +43,6 @@ public class RecursiveLatch implements Latch {
 	public boolean acquire() {
 		lock.lock();
 		try {
-			AtomicInteger threads = counter.get();
 			boolean acquired = true;
 			if (threads.get() == 0) {
 				acquired = delegate.acquire();
@@ -67,7 +61,6 @@ public class RecursiveLatch implements Latch {
 	public boolean tryAcquire() {
 		lock.lock();
 		try {
-			AtomicInteger threads = counter.get();
 			boolean acquired = true;
 			if (threads.get() == 0) {
 				acquired = delegate.tryAcquire();
@@ -86,7 +79,6 @@ public class RecursiveLatch implements Latch {
 	public boolean acquire(long timeout, TimeUnit timeUnit) {
 		lock.lock();
 		try {
-			AtomicInteger threads = counter.get();
 			boolean acquired = true;
 			if (threads.get() == 0) {
 				acquired = delegate.acquire(timeout, timeUnit);
@@ -105,12 +97,10 @@ public class RecursiveLatch implements Latch {
 	public void release() {
 		lock.lock();
 		try {
-			AtomicInteger threads = counter.get();
 			if (threads.get() > 0) {
 				threads.decrementAndGet();
 			}
 			if (threads.get() == 0) {
-				counter.remove();
 				delegate.release();
 			}
 		} finally {
@@ -127,7 +117,7 @@ public class RecursiveLatch implements Latch {
 	}
 
 	public static void main(String[] args) throws IOException {
-		RecursiveLatch latch = new RecursiveLatch(2);
+		RecursiveLatch latch = new RecursiveLatch(1);
 		ThreadPool threads = ThreadUtils.commonPool(10);
 		final AtomicInteger score = new AtomicInteger();
 		for (int i : Sequence.forEach(0, 100)) {

@@ -199,7 +199,7 @@ public class ThreadPoolTaskExecutor implements TaskExecutor {
 			taskDetail.running.set(true);
 			try {
 				taskDetail.lastExecuted = now;
-				taskDetail.nextExecuted = taskDetail.trigger.getNextFireTime();
+				taskDetail.nextExecuted = taskDetail.trigger.getNextFiredTime();
 				interceptorHandler.beforeJobExecution(taskFuture);
 				if (!cancellable.cancel(taskDetail)) {
 					result = (taskFuture.paused ? true : task.execute());
@@ -256,7 +256,7 @@ public class ThreadPoolTaskExecutor implements TaskExecutor {
 			taskDetail.running.set(true);
 			try {
 				taskDetail.lastExecuted = now;
-				taskDetail.nextExecuted = taskDetail.trigger.getNextFireTime();
+				taskDetail.nextExecuted = taskDetail.trigger.getNextFiredTime();
 				interceptorHandler.beforeJobExecution(taskFuture);
 				if (!cancellable.cancel(taskDetail)) {
 					result = (taskFuture.paused ? true : task.execute());

@@ -201,7 +201,7 @@ public abstract class NetUtils {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(getRandomPort());
+		System.out.println(getLocalHost());
 	}
 
 }

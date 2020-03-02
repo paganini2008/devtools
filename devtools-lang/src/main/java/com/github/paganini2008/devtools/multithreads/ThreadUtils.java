@@ -99,7 +99,7 @@ public abstract class ThreadUtils {
 
 	public static void notify(Object monitor) {
 		notify(monitor, () -> {
-			return false;
+			return true;
 		});
 	}
 
@@ -115,7 +115,7 @@ public abstract class ThreadUtils {
 
 	public static void notifyAll(Object monitor) {
 		notifyAll(monitor, () -> {
-			return false;
+			return true;
 		});
 	}
 

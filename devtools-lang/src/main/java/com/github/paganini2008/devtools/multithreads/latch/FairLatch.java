@@ -3,12 +3,10 @@ package com.github.paganini2008.devtools.multithreads.latch;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import com.github.paganini2008.devtools.Sequence;
 import com.github.paganini2008.devtools.multithreads.AtomicUnsignedLong;
+import com.github.paganini2008.devtools.multithreads.ThreadLocalInteger;
 import com.github.paganini2008.devtools.multithreads.ThreadPool;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 
@@ -17,23 +15,13 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
  * FairLatch
  *
  * @author Fred Feng
- * 
- * 
+ * @version 1.0
  */
 public class FairLatch implements Latch {
 
-	private final ThreadLocal<AtomicUnsignedLong> threadLocal = new ThreadLocal<AtomicUnsignedLong>() {
-
-		protected AtomicUnsignedLong initialValue() {
-			return new AtomicUnsignedLong(0);
-		}
-
-	};
-
+	private final ThreadLocalInteger tickets = new ThreadLocalInteger(0);
 	private final AtomicUnsignedLong sequence = new AtomicUnsignedLong(0);
 	private final AtomicInteger counter = new AtomicInteger(0);
-	private final Lock lock = new ReentrantLock();
-	private final Condition condition = lock.newCondition();
 	private final long startTime;
 
 	public FairLatch() {
@@ -45,72 +33,38 @@ public class FairLatch implements Latch {
 	}
 
 	public boolean acquire() {
-		AtomicUnsignedLong serial = threadLocal.get();
-		final long ticket = serial.getAndIncrement();
-		while (true) {
-			lock.lock();
-			try {
-				if (ticket == sequence.get()) {
-					this.counter.incrementAndGet();
-					return true;
-				} else {
-					try {
-						condition.await();
-					} catch (InterruptedException e) {
-						break;
-					}
-				}
-			} finally {
-				lock.unlock();
+		final long ticket = tickets.getAndIncrement();
+		return ThreadUtils.wait(this, () -> {
+			if (ticket == sequence.get()) {
+				this.counter.incrementAndGet();
+				return true;
 			}
-		}
-		return false;
+			return false;
+		});
 	}
 
 	public boolean acquire(long timeout, TimeUnit timeUnit) {
-		final long begin = System.nanoTime();
-		long elapsed;
-		long nanosTimeout = TimeUnit.NANOSECONDS.convert(timeout, timeUnit);
-		AtomicUnsignedLong serial = threadLocal.get();
-		final long ticket = serial.getAndIncrement();
-		while (true) {
-			lock.lock();
-			try {
-				if (ticket == sequence.get()) {
-					this.counter.incrementAndGet();
-					return true;
-				} else {
-					if (nanosTimeout > 0) {
-						try {
-							condition.awaitNanos(nanosTimeout);
-						} catch (InterruptedException e) {
-							break;
-						}
-						elapsed = (System.nanoTime() - begin);
-						nanosTimeout -= elapsed;
-					} else {
-						break;
-					}
-				}
-			} finally {
-				lock.unlock();
+		final long ticket = tickets.getAndIncrement();
+		return ThreadUtils.wait(this, () -> {
+			if (ticket == sequence.get()) {
+				this.counter.incrementAndGet();
+				return true;
 			}
-		}
-		return false;
+			return false;
+		}, TimeUnit.MILLISECONDS.convert(timeout, timeUnit));
 	}
 
 	public boolean tryAcquire() {
-		AtomicUnsignedLong serial = threadLocal.get();
-		long ticket = serial.getAndIncrement();
+		long ticket = tickets.getAndIncrement();
 		return ticket == sequence.get();
 	}
 
 	public void release() {
-		lock.lock();
-		sequence.getAndIncrement();
-		counter.decrementAndGet();
-		condition.signalAll();
-		lock.unlock();
+		ThreadUtils.notify(this, () -> {
+			sequence.getAndIncrement();
+			counter.decrementAndGet();
+			return true;
+		});
 	}
 
 	public boolean isLocked() {
@@ -128,11 +82,11 @@ public class FairLatch implements Latch {
 		FairLatch latch = new FairLatch();
 		ThreadPool threads = ThreadUtils.commonPool(10);
 		final AtomicInteger score = new AtomicInteger();
-		for (int i : Sequence.forEach(0, 1000)) {
+		for (int i : Sequence.forEach(0, 100000)) {
 			if (latch.acquire(1, TimeUnit.SECONDS)) {
 				threads.execute(() -> {
 
-					// ThreadUtils.randomSleep(500L);
+					//ThreadUtils.randomSleep(500L);
 					System.out.println(ThreadUtils.currentThreadName() + ": " + i);
 					score.incrementAndGet();
 					latch.release();
