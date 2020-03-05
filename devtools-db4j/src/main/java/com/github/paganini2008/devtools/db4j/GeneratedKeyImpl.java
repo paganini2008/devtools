@@ -37,7 +37,7 @@ public class GeneratedKeyImpl implements GeneratedKey {
 		return null;
 	}
 
-	public Map<String, Object> keys() {
+	public Map<String, Object> getKeys() {
 		return Collections.unmodifiableMap(keys);
 	}
 

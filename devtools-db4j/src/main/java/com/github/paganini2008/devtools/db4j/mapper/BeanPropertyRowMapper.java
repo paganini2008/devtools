@@ -28,7 +28,10 @@ public class BeanPropertyRowMapper<T> extends AbstractRowMapper<T> {
 	}
 
 	protected void setValue(T object, int columnIndex, String columnName, String columnDisplayName, JdbcType jdbcType, Object columnValue) {
-		PropertyUtils.setProperty(object, columnName, columnValue);
+		try {
+			PropertyUtils.setProperty(object, columnDisplayName, columnValue);
+		} catch (RuntimeException ignored) {
+		}
 	}
 
 }

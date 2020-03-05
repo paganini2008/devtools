@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.github.paganini2008.devtools.ArrayUtils;
 import com.github.paganini2008.devtools.Observable;
 import com.github.paganini2008.devtools.Observer;
 import com.github.paganini2008.devtools.collection.Tuple;
@@ -428,7 +429,11 @@ public class SqlRunner {
 
 	public int update(Connection connection, String sql, PreparedStatementCallback callback, GeneratedKey generatedKey)
 			throws SQLException {
-		return update(connection, PreparedStatementCreatorUtils.forColumnNames(sql, generatedKey.getKeyNames()), callback, generatedKey);
+		return update(connection,
+				ArrayUtils.isNotEmpty(generatedKey.getKeyNames())
+						? PreparedStatementCreatorUtils.forColumnNames(sql, generatedKey.getKeyNames())
+						: PreparedStatementCreatorUtils.forGeneratedKey(sql),
+				callback, generatedKey);
 	}
 
 	public int update(Connection connection, PreparedStatementCreator statementCreator, final PreparedStatementCallback callback,

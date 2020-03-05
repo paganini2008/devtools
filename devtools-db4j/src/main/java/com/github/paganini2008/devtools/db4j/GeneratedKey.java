@@ -12,7 +12,7 @@ public interface GeneratedKey {
 
 	String[] getKeyNames();
 	
-	Map<String, Object> keys();
+	Map<String, Object> getKeys();
 
 	Number getKey();
 
