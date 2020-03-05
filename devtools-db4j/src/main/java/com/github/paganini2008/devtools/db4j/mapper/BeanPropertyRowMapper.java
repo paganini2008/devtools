@@ -2,7 +2,6 @@ package com.github.paganini2008.devtools.db4j.mapper;
 
 import com.github.paganini2008.devtools.beans.PropertyUtils;
 import com.github.paganini2008.devtools.db4j.JdbcType;
-import com.github.paganini2008.devtools.db4j.TypeHandlerRegistry;
 import com.github.paganini2008.devtools.reflection.ConstructorUtils;
 
 /**
@@ -10,16 +9,13 @@ import com.github.paganini2008.devtools.reflection.ConstructorUtils;
  * BeanPropertyRowMapper
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public class BeanPropertyRowMapper<T> extends AbstractRowMapper<T> {
 
 	private final Class<T> elementType;
 
-	public BeanPropertyRowMapper(TypeHandlerRegistry typeHandlerRegistry, Class<T> elementType) {
-		super(typeHandlerRegistry);
+	public BeanPropertyRowMapper(Class<T> elementType) {
 		this.elementType = elementType;
 	}
 

@@ -19,13 +19,15 @@ import com.github.paganini2008.devtools.jdbc.DetachedSqlException;
 public class CursorResultSetExtractor<T> implements ResultSetExtractor<Cursor<T>> {
 
 	private final RowMapper<T> rowMapper;
+	private final TypeHandlerRegistry typeHandlerRegistry;
 	private final Observable closeable;
 
-	CursorResultSetExtractor(RowMapper<T> rowMapper, Observable closeable) {
+	CursorResultSetExtractor(RowMapper<T> rowMapper, TypeHandlerRegistry typeHandlerRegistry, Observable closeable) {
 		if (rowMapper == null) {
 			throw new IllegalArgumentException("RowMapper must not be null.");
 		}
 		this.rowMapper = rowMapper;
+		this.typeHandlerRegistry = typeHandlerRegistry;
 		this.closeable = closeable;
 	}
 
@@ -54,7 +56,7 @@ public class CursorResultSetExtractor<T> implements ResultSetExtractor<Cursor<T>
 			@Override
 			public T next() {
 				try {
-					return rowMapper.mapRow(index.incrementAndGet(), delegate);
+					return rowMapper.mapRow(index.incrementAndGet(), delegate, typeHandlerRegistry);
 				} catch (SQLException e) {
 					opened.set(false);
 					throw new DetachedSqlException(e.getMessage(), e);

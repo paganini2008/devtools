@@ -12,7 +12,7 @@ import com.github.paganini2008.devtools.db4j.type.TypeHandler;
  */
 public interface TypeHandlerRegistry {
 
-	TypeHandler getTypeHandler(Type type);
+	TypeHandler getTypeHandler(Type javaType);
 
 	TypeHandler getTypeHandler(Type javaType, JdbcType jdbcType);
 

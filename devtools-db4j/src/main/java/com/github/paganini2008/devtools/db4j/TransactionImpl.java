@@ -3,6 +3,7 @@ package com.github.paganini2008.devtools.db4j;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.github.paganini2008.devtools.collection.Tuple;
 import com.github.paganini2008.devtools.db4j.mapper.RowMapper;
@@ -22,10 +23,12 @@ public class TransactionImpl implements Transaction {
 
 	private final Connection connection;
 	private final ParsedSqlRunner sqlRunner;
+	private final AtomicBoolean completed;
 
 	TransactionImpl(Connection connection, ParsedSqlRunner sqlRunner) {
 		this.connection = connection;
 		this.sqlRunner = sqlRunner;
+		this.completed = new AtomicBoolean(false);
 	}
 
 	@Override
@@ -90,17 +93,33 @@ public class TransactionImpl implements Transaction {
 
 	@Override
 	public void rollback() {
-		JdbcUtils.rollbackQuietly(connection);
+		try {
+			JdbcUtils.rollback(connection);
+			completed.set(true);
+		} catch (SQLException e) {
+			throw new TransactionException(e);
+		}
+
 	}
 
 	@Override
 	public void commit() {
-		JdbcUtils.commitQuietly(connection);
+		try {
+			JdbcUtils.commit(connection);
+			completed.set(true);
+		} catch (SQLException e) {
+			throw new TransactionException(e);
+		}
 	}
 
 	@Override
 	public void close() {
 		JdbcUtils.closeQuietly(connection);
+	}
+
+	@Override
+	public boolean isCompleted() {
+		return completed.get();
 	}
 
 }

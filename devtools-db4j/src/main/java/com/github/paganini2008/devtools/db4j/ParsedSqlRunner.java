@@ -140,11 +140,11 @@ public class ParsedSqlRunner {
 	}
 
 	public PageableQuery<Tuple> queryForPage(ConnectionFactory connectionFactory, PageableSql pageableSql, SqlParameter sqlParameter) {
-		return queryForPage(connectionFactory, pageableSql, sqlParameter, new TupleRowMapper(sqlRunner.getTypeHandlerRegistry()));
+		return queryForPage(connectionFactory, pageableSql, sqlParameter, new TupleRowMapper());
 	}
 
 	public <T> T queryForObject(Connection connection, String sql, SqlParameter sqlParameter, Class<T> requiredType) throws SQLException {
-		return queryForObject(connection, sql, sqlParameter, new ColumnIndexRowMapper<T>(sqlRunner.getTypeHandlerRegistry(), requiredType));
+		return queryForObject(connection, sql, sqlParameter, new ColumnIndexRowMapper<T>(requiredType));
 	}
 
 	public <T> T queryForObject(Connection connection, String sql, SqlParameter sqlParameter, RowMapper<T> rowMapper) throws SQLException {

@@ -1,8 +1,16 @@
 package com.github.paganini2008.devtools.db4j;
 
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.github.paganini2008.devtools.jdbc.PreparedStatementCallback;
 
@@ -14,6 +22,46 @@ import com.github.paganini2008.devtools.jdbc.PreparedStatementCallback;
  * @version 1.0
  */
 public abstract class Db4jUtils {
+
+	private static final Map<String, Type> classNamesAndJavaTypes = new HashMap<String, Type>();
+
+	static {
+		classNamesAndJavaTypes.put(Byte.class.getName(), Byte.class);
+		classNamesAndJavaTypes.put(Short.class.getName(), Short.class);
+		classNamesAndJavaTypes.put(Integer.class.getName(), Integer.class);
+		classNamesAndJavaTypes.put(Long.class.getName(), Long.class);
+		classNamesAndJavaTypes.put(Float.class.getName(), Float.class);
+		classNamesAndJavaTypes.put(Double.class.getName(), Double.class);
+		classNamesAndJavaTypes.put(Character.class.getName(), Character.class);
+		classNamesAndJavaTypes.put(Boolean.class.getName(), Boolean.class);
+
+		classNamesAndJavaTypes.put(Byte.TYPE.getName(), Byte.TYPE);
+		classNamesAndJavaTypes.put(Short.TYPE.getName(), Short.TYPE);
+		classNamesAndJavaTypes.put(Integer.TYPE.getName(), Integer.TYPE);
+		classNamesAndJavaTypes.put(Long.TYPE.getName(), Long.TYPE);
+		classNamesAndJavaTypes.put(Float.TYPE.getName(), Float.TYPE);
+		classNamesAndJavaTypes.put(Double.TYPE.getName(), Double.TYPE);
+		classNamesAndJavaTypes.put(Character.TYPE.getName(), Character.TYPE);
+		classNamesAndJavaTypes.put(Boolean.TYPE.getName(), Boolean.TYPE);
+
+		classNamesAndJavaTypes.put(BigDecimal.class.getName(), BigDecimal.class);
+		classNamesAndJavaTypes.put(BigInteger.class.getName(), BigInteger.class);
+		classNamesAndJavaTypes.put(String.class.getName(), String.class);
+
+		classNamesAndJavaTypes.put(Date.class.getName(), Date.class);
+		classNamesAndJavaTypes.put(Time.class.getName(), Time.class);
+		classNamesAndJavaTypes.put(Timestamp.class.getName(), Timestamp.class);
+
+		classNamesAndJavaTypes.put(byte[].class.getName(), byte[].class);
+	}
+
+	public static void mappingClassNameAndJavaType(String className, Type javaType) {
+		classNamesAndJavaTypes.put(className, javaType);
+	}
+
+	public static Map<String, Type> getClassNamesAndJavaTypes() {
+		return classNamesAndJavaTypes;
+	}
 
 	public static PreparedStatementCallback batchPrepare(List<Object[]> parameterList, int[] jdbcTypes) {
 		return new BatchArgumentJdbcTypePreparedStatementCallback(parameterList, jdbcTypes);

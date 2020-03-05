@@ -11,12 +11,18 @@ import java.util.Map;
 public interface GeneratedKey {
 
 	String[] getKeyNames();
+	
+	Map<String, Object> keys();
 
 	Number getKey();
 
 	Object getKey(String keyName);
 
 	void setKeys(Map<String, Object> map);
+	
+	static GeneratedKey auto() {
+		return forNames();
+	}
 
 	static GeneratedKey forNames(String... columnNames) {
 		return new GeneratedKeyImpl(columnNames);

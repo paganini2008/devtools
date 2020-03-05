@@ -23,12 +23,14 @@ import com.sun.rowset.CachedRowSetImpl;
 public class CachedCursorResultSetExtractor<T> implements ResultSetExtractor<Cursor<T>> {
 
 	private final RowMapper<T> rowMapper;
+	private final TypeHandlerRegistry typeHandlerRegistry;
 
-	CachedCursorResultSetExtractor(RowMapper<T> rowMapper) {
+	CachedCursorResultSetExtractor(RowMapper<T> rowMapper, TypeHandlerRegistry typeHandlerRegistry) {
 		if (rowMapper == null) {
 			throw new IllegalArgumentException("RowMapper must not be null.");
 		}
 		this.rowMapper = rowMapper;
+		this.typeHandlerRegistry = typeHandlerRegistry;
 	}
 
 	public Cursor<T> extractData(ResultSet rs) throws SQLException {
@@ -58,7 +60,7 @@ public class CachedCursorResultSetExtractor<T> implements ResultSetExtractor<Cur
 			@Override
 			public T next() {
 				try {
-					return rowMapper.mapRow(index.incrementAndGet(), delegate);
+					return rowMapper.mapRow(index.incrementAndGet(), delegate, typeHandlerRegistry);
 				} catch (SQLException e) {
 					opened.set(false);
 					throw new DetachedSqlException(e.getMessage(), e);
@@ -68,7 +70,7 @@ public class CachedCursorResultSetExtractor<T> implements ResultSetExtractor<Cur
 					}
 				}
 			}
-			
+
 			@Override
 			public int getRownum() {
 				try {

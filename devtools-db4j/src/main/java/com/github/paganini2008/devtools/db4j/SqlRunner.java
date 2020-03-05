@@ -95,7 +95,7 @@ public class SqlRunner {
 
 	public <T> T queryForObject(Connection connection, PreparedStatementCreator statementCreator, PreparedStatementCallback callback,
 			Class<T> requiredType) throws SQLException {
-		return queryForObject(connection, statementCreator, callback, new ColumnIndexRowMapper<T>(typeHandlerRegistry, requiredType));
+		return queryForObject(connection, statementCreator, callback, new ColumnIndexRowMapper<T>(requiredType));
 	}
 
 	public <T> T queryForObject(Connection connection, String sql, Object[] parameters, RowMapper<T> rowMapper) throws SQLException {
@@ -115,7 +115,7 @@ public class SqlRunner {
 
 	public <T> T queryForObject(Connection connection, PreparedStatementCreator statementCreator, PreparedStatementCallback callback,
 			RowMapper<T> rowMapper) throws SQLException {
-		return query(connection, statementCreator, callback, new FirstRowResultSetExtractor<T>(rowMapper));
+		return query(connection, statementCreator, callback, new FirstRowResultSetExtractor<T>(rowMapper, typeHandlerRegistry));
 	}
 
 	public Tuple queryForTuple(Connection connection, String sql, Object[] parameters) throws SQLException {
@@ -132,7 +132,7 @@ public class SqlRunner {
 
 	public Tuple queryForTuple(Connection connection, PreparedStatementCreator statementCreator, PreparedStatementCallback callback)
 			throws SQLException {
-		return queryForObject(connection, statementCreator, callback, new TupleRowMapper(typeHandlerRegistry));
+		return queryForObject(connection, statementCreator, callback, new TupleRowMapper());
 	}
 
 	public <T> List<T> queryForList(Connection connection, String sql, Object[] parameters, RowMapper<T> rowMapper) throws SQLException {
@@ -152,28 +152,27 @@ public class SqlRunner {
 
 	public <T> List<T> queryForList(Connection connection, PreparedStatementCreator statementCreator, PreparedStatementCallback callback,
 			RowMapper<T> rowMapper) throws SQLException {
-		return query(connection, statementCreator, callback, new RowMapperResultSetExtractor<T>(rowMapper));
+		return query(connection, statementCreator, callback, new RowMapperResultSetExtractor<T>(rowMapper, typeHandlerRegistry));
 	}
 
 	public List<Tuple> queryForList(Connection connection, String sql, Object[] parameters) throws SQLException {
-		return queryForList(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, typeHandlerRegistry),
-				new TupleRowMapper(typeHandlerRegistry));
+		return queryForList(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, typeHandlerRegistry), new TupleRowMapper());
 	}
 
 	public List<Tuple> queryForList(Connection connection, String sql, Object[] parameters, JdbcType[] jdbcTypes) throws SQLException {
 		return queryForList(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry),
-				new TupleRowMapper(typeHandlerRegistry));
+				new TupleRowMapper());
 	}
 
 	public List<Tuple> queryForList(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
 		return queryForList(connection,
 				PreparedStatementCreatorUtils.forQuery(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY), callback,
-				new TupleRowMapper(typeHandlerRegistry));
+				new TupleRowMapper());
 	}
 
 	public List<Tuple> queryForList(Connection connection, PreparedStatementCreator statementCreator, PreparedStatementCallback callback)
 			throws SQLException {
-		return queryForList(connection, statementCreator, callback, new TupleRowMapper(typeHandlerRegistry));
+		return queryForList(connection, statementCreator, callback, new TupleRowMapper());
 	}
 
 	public <T> List<T> queryForList(Connection connection, String sql, Object[] parameters, Class<T> objectClass) throws SQLException {
@@ -195,7 +194,7 @@ public class SqlRunner {
 
 	public <T> List<T> queryForList(Connection connection, PreparedStatementCreator statementCreator, PreparedStatementCallback callback,
 			Class<T> objectClass) throws SQLException {
-		return queryForList(connection, statementCreator, callback, new BeanPropertyRowMapper<T>(typeHandlerRegistry, objectClass));
+		return queryForList(connection, statementCreator, callback, new BeanPropertyRowMapper<T>(objectClass));
 	}
 
 	// ---------------------- Cursor ------------------------
@@ -215,23 +214,23 @@ public class SqlRunner {
 	public Cursor<Tuple> queryForCursor(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
 		return queryForCursor(connection,
 				PreparedStatementCreatorUtils.forQuery(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY), callback,
-				new TupleRowMapper(typeHandlerRegistry));
+				new TupleRowMapper());
 	}
 
 	public <T> Cursor<T> queryForCursor(Connection connection, String sql, Object[] parameters, Class<T> objectClass) throws SQLException {
 		return queryForCursor(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, typeHandlerRegistry),
-				new BeanPropertyRowMapper<T>(typeHandlerRegistry, objectClass));
+				new BeanPropertyRowMapper<T>(objectClass));
 	}
 
 	public <T> Cursor<T> queryForCursor(Connection connection, String sql, Object[] parameters, JdbcType[] jdbcTypes, Class<T> objectClass)
 			throws SQLException {
 		return queryForCursor(connection, sql, PreparedStatementCallbackUtils.prepare(parameters, jdbcTypes, typeHandlerRegistry),
-				new BeanPropertyRowMapper<T>(typeHandlerRegistry, objectClass));
+				new BeanPropertyRowMapper<T>(objectClass));
 	}
 
 	public <T> Cursor<T> queryForCursor(Connection connection, String sql, PreparedStatementCallback callback, Class<T> objectClass)
 			throws SQLException {
-		return queryForCursor(connection, sql, callback, new BeanPropertyRowMapper<T>(typeHandlerRegistry, objectClass));
+		return queryForCursor(connection, sql, callback, new BeanPropertyRowMapper<T>(objectClass));
 	}
 
 	public <T> Cursor<T> queryForCursor(Connection connection, String sql, Object[] parameters, RowMapper<T> rowMapper)
@@ -266,7 +265,8 @@ public class SqlRunner {
 					ResultSet rs = null;
 					try {
 						rs = ps.executeQuery();
-						ResultSetExtractor<Cursor<T>> extractor = new CursorResultSetExtractor<T>(rowMapper, closeable);
+						ResultSetExtractor<Cursor<T>> extractor = new CursorResultSetExtractor<T>(rowMapper, typeHandlerRegistry,
+								closeable);
 						return extractor.extractData(rs);
 					} catch (SQLException e) {
 						success.set(false);
@@ -325,7 +325,7 @@ public class SqlRunner {
 	}
 
 	public Cursor<Tuple> queryForCachedCursor(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
-		return queryForCachedCursor(connection, sql, callback, new TupleRowMapper(typeHandlerRegistry));
+		return queryForCachedCursor(connection, sql, callback, new TupleRowMapper());
 	}
 
 	public <T> Cursor<T> queryForCachedCursor(Connection connection, String sql, Object[] parameters, RowMapper<T> rowMapper)
@@ -358,7 +358,7 @@ public class SqlRunner {
 					ResultSet rs = null;
 					try {
 						rs = ps.executeQuery();
-						ResultSetExtractor<Cursor<T>> extractor = new CachedCursorResultSetExtractor<T>(rowMapper);
+						ResultSetExtractor<Cursor<T>> extractor = new CachedCursorResultSetExtractor<T>(rowMapper, typeHandlerRegistry);
 						return extractor.extractData(rs);
 					} finally {
 						JdbcUtils.closeQuietly(rs);
@@ -412,7 +412,7 @@ public class SqlRunner {
 
 	public PageableQuery<Tuple> queryForPage(ConnectionFactory connectionFactory, PageableSql pageableSql,
 			PreparedStatementCallback callback) {
-		return queryForPage(connectionFactory, pageableSql, callback, new TupleRowMapper(typeHandlerRegistry));
+		return queryForPage(connectionFactory, pageableSql, callback, new TupleRowMapper());
 	}
 
 	// ------------------------- Update ---------------------------
@@ -444,8 +444,8 @@ public class SqlRunner {
 					ResultSet rs = ps.getGeneratedKeys();
 					if (rs != null) {
 						try {
-							ResultSetExtractor<Tuple> extractor = new FirstRowResultSetExtractor<Tuple>(
-									new TupleRowMapper(typeHandlerRegistry));
+							ResultSetExtractor<Tuple> extractor = new FirstRowResultSetExtractor<Tuple>(new TupleRowMapper(),
+									typeHandlerRegistry);
 							Tuple keys = extractor.extractData(rs);
 							if (keys != null) {
 								generatedKey.setKeys((Map<String, Object>) keys);

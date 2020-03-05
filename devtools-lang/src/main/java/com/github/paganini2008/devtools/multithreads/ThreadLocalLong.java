@@ -51,6 +51,10 @@ public class ThreadLocalLong extends Number {
 		threadLocal.set(prev + delta);
 		return threadLocal.get();
 	}
+	
+	public void reset() {
+		threadLocal.remove();
+	}
 
 	public void set(long delta) {
 		threadLocal.set(delta);

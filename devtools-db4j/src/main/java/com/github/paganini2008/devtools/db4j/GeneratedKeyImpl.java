@@ -1,5 +1,6 @@
 package com.github.paganini2008.devtools.db4j;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -16,8 +17,10 @@ public class GeneratedKeyImpl implements GeneratedKey {
 
 	GeneratedKeyImpl(String... columnNames) {
 		keys = new LinkedHashMap<String, Object>();
-		for (String columnName : columnNames) {
-			keys.put(columnName, null);
+		if (columnNames != null) {
+			for (String columnName : columnNames) {
+				keys.put(columnName, null);
+			}
 		}
 	}
 
@@ -34,6 +37,10 @@ public class GeneratedKeyImpl implements GeneratedKey {
 		return null;
 	}
 
+	public Map<String, Object> keys() {
+		return Collections.unmodifiableMap(keys);
+	}
+
 	public Object getKey(String keyName) {
 		return keys.get(keyName);
 	}
@@ -44,11 +51,15 @@ public class GeneratedKeyImpl implements GeneratedKey {
 
 	public void setKeys(Map<String, Object> map) {
 		if (MapUtils.isNotEmpty(map)) {
-			Object[] values = map.values().toArray();
-			if (values.length == keys.size()) {
-				int i = 0;
-				for (Map.Entry<String, Object> entry : keys.entrySet()) {
-					entry.setValue(values[i++]);
+			if (keys.isEmpty()) {
+				keys.putAll(map);
+			} else {
+				Object[] values = map.values().toArray();
+				if (values.length == keys.size()) {
+					int i = 0;
+					for (Map.Entry<String, Object> entry : keys.entrySet()) {
+						entry.setValue(values[i++]);
+					}
 				}
 			}
 		}

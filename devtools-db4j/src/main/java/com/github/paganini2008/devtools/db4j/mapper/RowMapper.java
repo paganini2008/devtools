@@ -3,6 +3,8 @@ package com.github.paganini2008.devtools.db4j.mapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.github.paganini2008.devtools.db4j.TypeHandlerRegistry;
+
 /**
  * RowMapper
  * 
@@ -11,6 +13,6 @@ import java.sql.SQLException;
  */
 public interface RowMapper<T> {
 
-	T mapRow(int rownum, ResultSet rs) throws SQLException;
-	
+	T mapRow(int rowNum, ResultSet rs, TypeHandlerRegistry typeHandlerRegistry) throws SQLException;
+
 }

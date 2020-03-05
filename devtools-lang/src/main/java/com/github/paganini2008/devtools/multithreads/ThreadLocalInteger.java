@@ -52,6 +52,10 @@ public class ThreadLocalInteger extends Number {
 		return addAndGet(-1);
 	}
 	
+	public void reset() {
+		threadLocal.remove();
+	}
+	
 	public void set(int delta) {
 		threadLocal.set(delta);
 	}

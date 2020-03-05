@@ -15,4 +15,6 @@ public interface Transaction extends JdbcOperations {
 	
 	void close();
 	
+	boolean isCompleted();
+	
 }

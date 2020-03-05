@@ -16,19 +16,21 @@ import com.github.paganini2008.devtools.db4j.mapper.RowMapper;
 public class RowMapperResultSetExtractor<T> implements ResultSetExtractor<List<T>> {
 
 	private final RowMapper<T> rowMapper;
+	private final TypeHandlerRegistry typeHandlerRegistry;
 
-	public RowMapperResultSetExtractor(RowMapper<T> rowMapper) {
+	public RowMapperResultSetExtractor(RowMapper<T> rowMapper, TypeHandlerRegistry typeHandlerRegistry) {
 		if (rowMapper == null) {
 			throw new IllegalArgumentException("RowMapper must not be null.");
 		}
 		this.rowMapper = rowMapper;
+		this.typeHandlerRegistry = typeHandlerRegistry;
 	}
 
 	public List<T> extractData(ResultSet rs) throws SQLException {
 		List<T> results = new ArrayList<T>();
 		int rownum = 1;
 		while (rs.next()) {
-			results.add(this.rowMapper.mapRow(rownum++, rs));
+			results.add(this.rowMapper.mapRow(rownum++, rs, typeHandlerRegistry));
 		}
 		return results;
 	}
