@@ -79,10 +79,10 @@ public class SqlPlusTester {
 		Transaction transaction = null;
 		try {
 			transaction = sqlPlus.beginTransaction(); // Open transaction
-			GeneratedKey generatedKey = GeneratedKey.forNames("id");
+			GeneratedKey generatedKey = GeneratedKey.auto();
 
 			Point point = new Point();// Pojo
-			point.setUsername("tester-12");
+			point.setUsername("tester-14");
 			point.setPoints(100);
 			point.setTag(5);
 			point.setDate(new Date());
@@ -99,9 +99,9 @@ public class SqlPlusTester {
 					new MapSqlParameter(parameterMap)); // Map mapping
 			System.out.println("EffectedRows: " + effectedRows);
 
-			effectedRows = transaction.update("delete from tb_point where username!={0}", new ArraySqlParameter("tester-12")); // Array
+			//effectedRows = transaction.update("delete from tb_point where username!={0}", new ArraySqlParameter("tester-12")); // Array
 																																// mapping
-			System.out.println("EffectedRows: " + effectedRows);
+			//System.out.println("EffectedRows: " + effectedRows);
 			transaction.commit();
 		} catch (SQLException e) {
 			transaction.rollback();
@@ -151,6 +151,7 @@ public class SqlPlusTester {
 
 	public static void main(String[] args) throws Exception {
 		// testQuery();
-		testPageableQuery();
+		// testPageableQuery();
+		testUpdateInTransaction();
 	}
 }
