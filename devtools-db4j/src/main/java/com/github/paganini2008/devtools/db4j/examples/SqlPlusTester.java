@@ -151,7 +151,7 @@ public class SqlPlusTester {
 
 	public static void main(String[] args) throws Exception {
 		// testQuery();
-		// testPageableQuery();
-		testUpdateInTransaction();
+		testPageableQuery();
+		//testUpdateInTransaction();
 	}
 }

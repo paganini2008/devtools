@@ -19,14 +19,19 @@ public final class ParsedSql implements Serializable {
 	private static final LruMap<String, ParsedSql> parsedSqlCache = new LruMap<String, ParsedSql>(1024);
 	private static final String DEFAULT_PLACEHOLDER_PREFIX = "{";
 	private static final String DEFAULT_PLACEHOLDER_SUFFEX = "}";
-	private final StringBuilder rawSql = new StringBuilder();
-	private final List<String> parameterNames = new ArrayList<String>();
+	final StringBuilder rawSql = new StringBuilder();
+	final List<String> parameterNames = new ArrayList<String>();
+	final List<String> defaultValues = new ArrayList<String>();
 
 	ParsedSql() {
 	}
 
-	public List<String> getParameterNames() {
-		return parameterNames;
+	public String[] getParameterNames() {
+		return parameterNames.toArray(new String[0]);
+	}
+
+	public String[] getDefaultValues() {
+		return defaultValues.toArray(new String[0]);
 	}
 
 	public StringBuilder getRawSql() {
@@ -44,8 +49,16 @@ public final class ParsedSql implements Serializable {
 	private static ParsedSql doParse(String sql) {
 		ParsedSql parsedSql = new ParsedSql();
 		PlaceholderTokenParser placeholderTokenizer = new PlaceholderTokenParser(DEFAULT_PLACEHOLDER_PREFIX, DEFAULT_PLACEHOLDER_SUFFEX);
-		parsedSql.getRawSql().append(placeholderTokenizer.parse(sql, parameterName -> {
-			parsedSql.getParameterNames().add(parameterName);
+		parsedSql.rawSql.append(placeholderTokenizer.parse(sql, variable -> {
+			String parameterName = variable;
+			String defaultValue = null;
+			int index;
+			if ((index = variable.indexOf(':')) > 0) {
+				parameterName = variable.substring(0, index);
+				defaultValue = variable.substring(index + 1);
+			}
+			parsedSql.parameterNames.add(parameterName);
+			parsedSql.defaultValues.add(defaultValue);
 			return "?";
 		}));
 		return parsedSql;

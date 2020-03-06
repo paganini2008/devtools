@@ -40,7 +40,7 @@ public class ParsedSqlRunner {
 	public <T> T query(Connection connection, String sql, SqlParameter sqlParameter, ResultSetExtractor<T> extractor) throws SQLException {
 		ParsedSql parsedSql = getParsedSql(sql);
 		String rawSql = parsedSql.toString();
-		Object[] parameters = sqlParameter != null ? getParameters(parsedSql, sqlParameter) : null;
+		Object[] parameters = sqlParameter != null ? getArguments(parsedSql, sqlParameter) : null;
 		JdbcType[] jdbcTypes = sqlParameter != null ? getJdbcTypes(parsedSql, sqlParameter) : null;
 		return sqlRunner.query(connection, rawSql, parameters, jdbcTypes, extractor);
 	}
@@ -52,7 +52,7 @@ public class ParsedSqlRunner {
 	public List<Tuple> queryForList(Connection connection, String sql, SqlParameter sqlParameter) throws SQLException {
 		ParsedSql parsedSql = getParsedSql(sql);
 		String rawSql = parsedSql.toString();
-		Object[] parameters = sqlParameter != null ? getParameters(parsedSql, sqlParameter) : null;
+		Object[] parameters = sqlParameter != null ? getArguments(parsedSql, sqlParameter) : null;
 		JdbcType[] jdbcTypes = sqlParameter != null ? getJdbcTypes(parsedSql, sqlParameter) : null;
 		return sqlRunner.queryForList(connection, rawSql, parameters, jdbcTypes);
 	}
@@ -64,7 +64,7 @@ public class ParsedSqlRunner {
 	public Cursor<Tuple> queryForCursor(Connection connection, String sql, SqlParameter sqlParameter) throws SQLException {
 		ParsedSql parsedSql = getParsedSql(sql);
 		String rawSql = parsedSql.toString();
-		Object[] parameters = sqlParameter != null ? getParameters(parsedSql, sqlParameter) : null;
+		Object[] parameters = sqlParameter != null ? getArguments(parsedSql, sqlParameter) : null;
 		JdbcType[] jdbcTypes = sqlParameter != null ? getJdbcTypes(parsedSql, sqlParameter) : null;
 		return sqlRunner.queryForCursor(connection, rawSql, parameters, jdbcTypes);
 	}
@@ -79,7 +79,7 @@ public class ParsedSqlRunner {
 			throws SQLException {
 		ParsedSql parsedSql = getParsedSql(sql);
 		String rawSql = parsedSql.toString();
-		Object[] parameters = sqlParameter != null ? getParameters(parsedSql, sqlParameter) : null;
+		Object[] parameters = sqlParameter != null ? getArguments(parsedSql, sqlParameter) : null;
 		JdbcType[] jdbcTypes = sqlParameter != null ? getJdbcTypes(parsedSql, sqlParameter) : null;
 		return sqlRunner.queryForList(connection, rawSql, parameters, jdbcTypes, rowMapper);
 	}
@@ -88,7 +88,7 @@ public class ParsedSqlRunner {
 			throws SQLException {
 		ParsedSql parsedSql = getParsedSql(sql);
 		String rawSql = parsedSql.toString();
-		Object[] parameters = sqlParameter != null ? getParameters(parsedSql, sqlParameter) : null;
+		Object[] parameters = sqlParameter != null ? getArguments(parsedSql, sqlParameter) : null;
 		JdbcType[] jdbcTypes = sqlParameter != null ? getJdbcTypes(parsedSql, sqlParameter) : null;
 		return sqlRunner.queryForCursor(connection, rawSql, parameters, jdbcTypes, rowMapper);
 	}
@@ -102,7 +102,7 @@ public class ParsedSqlRunner {
 			throws SQLException {
 		ParsedSql parsedSql = getParsedSql(sql);
 		String rawSql = parsedSql.toString();
-		Object[] parameters = sqlParameter != null ? getParameters(parsedSql, sqlParameter) : null;
+		Object[] parameters = sqlParameter != null ? getArguments(parsedSql, sqlParameter) : null;
 		JdbcType[] jdbcTypes = sqlParameter != null ? getJdbcTypes(parsedSql, sqlParameter) : null;
 		return sqlRunner.queryForCachedCursor(connection, rawSql, parameters, jdbcTypes, rowMapper);
 	}
@@ -114,7 +114,7 @@ public class ParsedSqlRunner {
 	public Cursor<Tuple> queryForCachedCursor(Connection connection, String sql, SqlParameter sqlParameter) throws SQLException {
 		ParsedSql parsedSql = getParsedSql(sql);
 		String rawSql = parsedSql.toString();
-		Object[] parameters = sqlParameter != null ? getParameters(parsedSql, sqlParameter) : null;
+		Object[] parameters = sqlParameter != null ? getArguments(parsedSql, sqlParameter) : null;
 		JdbcType[] jdbcTypes = sqlParameter != null ? getJdbcTypes(parsedSql, sqlParameter) : null;
 		return sqlRunner.queryForCachedCursor(connection, rawSql, parameters, jdbcTypes);
 	}
@@ -150,7 +150,7 @@ public class ParsedSqlRunner {
 	public <T> T queryForObject(Connection connection, String sql, SqlParameter sqlParameter, RowMapper<T> rowMapper) throws SQLException {
 		ParsedSql parsedSql = getParsedSql(sql);
 		String rawSql = parsedSql.toString();
-		Object[] parameters = sqlParameter != null ? getParameters(parsedSql, sqlParameter) : null;
+		Object[] parameters = sqlParameter != null ? getArguments(parsedSql, sqlParameter) : null;
 		JdbcType[] jdbcTypes = sqlParameter != null ? getJdbcTypes(parsedSql, sqlParameter) : null;
 		return sqlRunner.queryForObject(connection, rawSql, parameters, jdbcTypes, rowMapper);
 	}
@@ -158,7 +158,7 @@ public class ParsedSqlRunner {
 	public int[] batchUpdate(Connection connection, String sql, SqlParameters sqlParameters) throws SQLException {
 		ParsedSql parsedSql = getParsedSql(sql);
 		String rawSql = parsedSql.toString();
-		List<Object[]> parameterList = sqlParameters != null ? getParameterList(parsedSql, sqlParameters) : null;
+		List<Object[]> parameterList = sqlParameters != null ? getArgumentsList(parsedSql, sqlParameters) : null;
 		JdbcType[] jdbcTypes = sqlParameters != null ? getJdbcTypes(parsedSql, sqlParameters) : null;
 		return sqlRunner.batchUpdate(connection, rawSql, parameterList, jdbcTypes);
 	}
@@ -166,7 +166,7 @@ public class ParsedSqlRunner {
 	public int update(Connection connection, String sql, SqlParameter sqlParameter) throws SQLException {
 		ParsedSql parsedSql = getParsedSql(sql);
 		String rawSql = parsedSql.toString();
-		Object[] parameters = sqlParameter != null ? getParameters(parsedSql, sqlParameter) : null;
+		Object[] parameters = sqlParameter != null ? getArguments(parsedSql, sqlParameter) : null;
 		JdbcType[] jdbcTypes = sqlParameter != null ? getJdbcTypes(parsedSql, sqlParameter) : null;
 		return sqlRunner.update(connection, rawSql, parameters, jdbcTypes);
 	}
@@ -174,46 +174,42 @@ public class ParsedSqlRunner {
 	public int update(Connection connection, String sql, SqlParameter sqlParameter, GeneratedKey generatedKey) throws SQLException {
 		ParsedSql parsedSql = getParsedSql(sql);
 		String rawSql = parsedSql.toString();
-		Object[] parameters = sqlParameter != null ? getParameters(parsedSql, sqlParameter) : null;
+		Object[] parameters = sqlParameter != null ? getArguments(parsedSql, sqlParameter) : null;
 		JdbcType[] jdbcTypes = sqlParameter != null ? getJdbcTypes(parsedSql, sqlParameter) : null;
 		return sqlRunner.update(connection, rawSql, parameters, jdbcTypes, generatedKey);
 	}
 
-	private List<Object[]> getParameterList(ParsedSql parsedSql, SqlParameters sqlParameters) {
+	private List<Object[]> getArgumentsList(ParsedSql parsedSql, SqlParameters sqlParameters) {
+		String[] parameterNames = parsedSql.getParameterNames();
+		String[] defaultValues = parsedSql.getDefaultValues();
 		List<Object[]> results = new ArrayList<Object[]>();
 		for (int index = 0; index < sqlParameters.getSize(); index++) {
-			List<Object> list = new ArrayList<Object>();
-			for (String paramName : parsedSql.getParameterNames()) {
-				list.add(sqlParameters.hasValue(index, paramName) ? sqlParameters.getValue(index, paramName) : null);
+			Object[] arguments = new Object[parameterNames.length];
+			for (int i = 0; i < parameterNames.length; i++) {
+				arguments[i] = sqlParameters.hasValue(index, parameterNames[i]) ? sqlParameters.getValue(index, parameterNames[i])
+						: defaultValues[i];
 			}
-			results.add(list.toArray());
+			results.add(arguments);
 		}
 		return results;
 	}
 
-	private Object[] getParameters(ParsedSql parsedSql, SqlParameter sqlParameter) {
-		Object[] results = new Object[parsedSql.getParameterNames().size()];
-		int i = 0;
-		for (String paramName : parsedSql.getParameterNames()) {
-			results[i++] = sqlParameter.hasValue(paramName) ? sqlParameter.getValue(paramName) : null;
+	private Object[] getArguments(ParsedSql parsedSql, SqlParameter sqlParameter) {
+		String[] parameterNames = parsedSql.getParameterNames();
+		String[] defaultValues = parsedSql.getDefaultValues();
+		Object[] arguments = new Object[parameterNames.length];
+		for (int i = 0; i < parameterNames.length; i++) {
+			arguments[i] = sqlParameter.hasValue(parameterNames[i]) ? sqlParameter.getValue(parameterNames[i]) : defaultValues[i];
 		}
-		return results;
+		return arguments;
 	}
 
-	private JdbcType[] getJdbcTypes(ParsedSql parsedSql, SqlParameter sqlParameter) {
-		JdbcType[] results = new JdbcType[parsedSql.getParameterNames().size()];
+	private JdbcType[] getJdbcTypes(ParsedSql parsedSql, SqlType sqlType) {
+		String[] parameterNames = parsedSql.getParameterNames();
+		JdbcType[] results = new JdbcType[parameterNames.length];
 		int i = 0;
-		for (String paramName : parsedSql.getParameterNames()) {
-			results[i++] = sqlParameter.getJdbcType(paramName);
-		}
-		return results;
-	}
-
-	private JdbcType[] getJdbcTypes(ParsedSql parsedSql, SqlParameters sqlParameters) {
-		JdbcType[] results = new JdbcType[parsedSql.getParameterNames().size()];
-		int i = 0;
-		for (String paramName : parsedSql.getParameterNames()) {
-			results[i++] = sqlParameters.getJdbcType(paramName);
+		for (String parameterName : parameterNames) {
+			results[i++] = sqlType.getJdbcType(parameterName);
 		}
 		return results;
 	}

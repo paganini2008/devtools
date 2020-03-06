@@ -176,4 +176,8 @@ public class SqlPlus implements JdbcOperations {
 		return new TransactionImpl(connection, sqlRunner);
 	}
 
+	public ParsedSqlRunner getSqlRunner() {
+		return sqlRunner;
+	}
+
 }

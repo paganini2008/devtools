@@ -9,7 +9,7 @@ import java.util.Map;
  * @author Fred Feng
  * @version 1.0
  */
-public abstract class AbstractSqlParameter {
+public abstract class AbstractSqlParameter implements SqlType {
 
 	private final Map<String, JdbcType> jdbcTypeMap = new HashMap<String, JdbcType>();
 
