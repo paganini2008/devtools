@@ -5,7 +5,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
-import com.github.paganini2008.devtools.scheduler.Clock.ClockTask;
+import com.github.paganini2008.devtools.multithreads.Clock;
+import com.github.paganini2008.devtools.multithreads.Clock.ClockTask;
 import com.github.paganini2008.devtools.scheduler.cron.CronExpression;
 
 /**
@@ -43,13 +44,18 @@ public class ClockTaskExecutor implements TaskExecutor {
 		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(task, () -> System.currentTimeMillis() + delay);
 		taskDetail.nextExecuted = System.currentTimeMillis() + delay;
 		final SimpleTask wrappedTask = new SimpleTask(task, taskDetail);
-		clock.schedule(wrappedTask, delay, period, TimeUnit.MILLISECONDS);
+		clock.scheduleAtFixedRate(wrappedTask, delay, period, TimeUnit.MILLISECONDS);
 		taskFutures.put(task, new TaskFutureImpl(taskDetail, wrappedTask));
 		return taskFutures.get(task);
 	}
 
 	public TaskFuture scheduleWithFixedDelay(Task task, long delay, long period) {
-		return scheduleAtFixedRate(task, delay, period);
+		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(task, () -> System.currentTimeMillis() + delay);
+		taskDetail.nextExecuted = System.currentTimeMillis() + delay;
+		final SimpleTask wrappedTask = new SimpleTask(task, taskDetail);
+		clock.schedule(wrappedTask, delay, period, TimeUnit.MILLISECONDS);
+		taskFutures.put(task, new TaskFutureImpl(taskDetail, wrappedTask));
+		return taskFutures.get(task);
 	}
 
 	public TaskFuture schedule(Task task, CronExpression cronExpression) {

@@ -7,7 +7,7 @@ package com.github.paganini2008.devtools;
  * @author Fred Feng
  * @version 1.0
  */
-public class NotImplementedException extends RuntimeException {
+public class NotImplementedException extends UnsupportedOperationException {
 
 	private static final long serialVersionUID = -5391299205844009989L;
 
