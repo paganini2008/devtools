@@ -34,7 +34,7 @@ public class GeneratedKeyImpl implements GeneratedKey {
 				return ((Number) entry.getValue());
 			}
 		}
-		return null;
+		throw new NoGeneratedKeyException();
 	}
 
 	public Map<String, Object> getKeys() {

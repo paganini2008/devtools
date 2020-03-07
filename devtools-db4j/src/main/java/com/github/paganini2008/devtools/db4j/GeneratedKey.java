@@ -21,10 +21,10 @@ public interface GeneratedKey {
 	void setKeys(Map<String, Object> map);
 	
 	static GeneratedKey auto() {
-		return forNames();
+		return forNames(new String[0]);
 	}
 
-	static GeneratedKey forNames(String... columnNames) {
+	static GeneratedKey forNames(String[] columnNames) {
 		return new GeneratedKeyImpl(columnNames);
 	}
 

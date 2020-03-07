@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.paganini2008.devtools.collection.Tuple;
-import com.github.paganini2008.devtools.db4j.ArraySqlParameter;
 import com.github.paganini2008.devtools.db4j.BeanPropertySqlParameter;
 import com.github.paganini2008.devtools.db4j.GeneratedKey;
 import com.github.paganini2008.devtools.db4j.MapSqlParameter;
