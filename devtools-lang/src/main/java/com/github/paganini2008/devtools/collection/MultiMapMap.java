@@ -2,7 +2,6 @@ package com.github.paganini2008.devtools.collection;
 
 import java.io.Serializable;
 import java.util.AbstractMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -22,10 +21,10 @@ public class MultiMapMap<K, N, V> extends AbstractMap<K, Map<N, V>> implements M
 	private final Map<K, Map<N, V>> delegate;
 
 	public MultiMapMap() {
-		this(new LinkedHashMap<K, Map<N, V>>());
+		this(new ConcurrentHashMap<K, Map<N, V>>());
 	}
 
-	protected MultiMapMap(Map<K, Map<N, V>> delegate) {
+	public MultiMapMap(Map<K, Map<N, V>> delegate) {
 		this.delegate = delegate;
 	}
 
@@ -107,7 +106,7 @@ public class MultiMapMap<K, N, V> extends AbstractMap<K, Map<N, V>> implements M
 	}
 
 	protected Map<N, V> createValueMap() {
-		return new LinkedHashMap<N, V>();
+		return new ConcurrentHashMap<N, V>();
 	}
 
 	public int size() {
@@ -129,18 +128,6 @@ public class MultiMapMap<K, N, V> extends AbstractMap<K, Map<N, V>> implements M
 
 	public String toString() {
 		return delegate.toString();
-	}
-
-	public static <K, N, V> Map<K, Map<N, V>> synchronizedMap() {
-		return new MultiMapMap<K, N, V>(new ConcurrentHashMap<K, Map<N, V>>()) {
-
-			private static final long serialVersionUID = 1L;
-
-			protected Map<N, V> createValueMap() {
-				return new ConcurrentHashMap<N, V>();
-			}
-
-		};
 	}
 
 	public static void main(String[] args) {
