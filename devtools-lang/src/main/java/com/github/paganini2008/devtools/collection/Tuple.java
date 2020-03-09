@@ -9,8 +9,6 @@ import com.github.paganini2008.devtools.CaseFormat;
  * Tuple
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public interface Tuple {

@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
-import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.db4j.Db4jUtils;
 import com.github.paganini2008.devtools.db4j.JdbcType;
 import com.github.paganini2008.devtools.db4j.TypeHandlerRegistry;
@@ -36,16 +35,10 @@ public abstract class AbstractRowMapper<T> implements RowMapper<T> {
 		return object;
 	}
 
-	private boolean useCamelCase = true;
-
 	protected abstract T createObject(int columnCount);
 
 	protected abstract void setValue(T object, int columnIndex, String columnName, String columnDisplayName, JdbcType jdbcType,
 			Object columnValue);
-
-	public void setUseCamelCase(boolean useCamelCase) {
-		this.useCamelCase = useCamelCase;
-	}
 
 	protected Type getJavaType(ResultSetMetaData rsmd, int columnIndex) {
 		String className;
@@ -66,8 +59,7 @@ public abstract class AbstractRowMapper<T> implements RowMapper<T> {
 	}
 
 	protected String getColumnDisplayName(ResultSetMetaData rsmd, int columnIndex) throws SQLException {
-		String columnDisplayName = rsmd.getColumnLabel(columnIndex);
-		return useCamelCase ? StringUtils.toCamelCase(columnDisplayName, "_") : columnDisplayName;
+		return rsmd.getColumnLabel(columnIndex);
 	}
 
 	protected String getColumnName(ResultSetMetaData rsmd, int columnIndex) throws SQLException {

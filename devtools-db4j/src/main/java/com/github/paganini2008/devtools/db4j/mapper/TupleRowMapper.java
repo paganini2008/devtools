@@ -19,7 +19,7 @@ public class TupleRowMapper extends AbstractRowMapper<Tuple> {
 
 	protected void setValue(Tuple tuple, int columnIndex, String columnName, String columnDisplayName,
 			JdbcType jdbcType, Object columnValue) {
-		tuple.set(columnName, columnValue);
+		tuple.set(columnDisplayName, columnValue);
 	}
 
 }

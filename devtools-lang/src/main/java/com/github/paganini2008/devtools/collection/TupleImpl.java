@@ -15,10 +15,9 @@ import com.github.paganini2008.devtools.beans.PropertyUtils;
 /**
  * 
  * TupleImpl
- * 
+ *
  * @author Fred Feng
- * 
- * 
+ * @version 1.0
  */
 public class TupleImpl extends KeyConversionMap<String, String, Object> implements Tuple {
 
