@@ -10,6 +10,10 @@ package com.github.paganini2008.devtools.db4j;
 public class TransactionException extends IllegalStateException {
 
 	private static final long serialVersionUID = 6201907525682054380L;
+	
+	public TransactionException() {
+		super();
+	}
 
 	public TransactionException(String msg) {
 		super(msg);
