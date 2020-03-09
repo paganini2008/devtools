@@ -14,7 +14,6 @@ import com.github.paganini2008.devtools.jdbc.JdbcUtils;
 import com.github.paganini2008.devtools.jdbc.PageableQuery;
 import com.github.paganini2008.devtools.jdbc.PageableSql;
 import com.github.paganini2008.devtools.jdbc.PooledConnectionFactory;
-import com.github.paganini2008.devtools.jdbc.TransactionIsolationLevel;
 import com.github.paganini2008.devtools.jdbc.UnpooledConnectionFactory;
 import com.github.paganini2008.devtools.jdbc.UnpooledDataSource;
 
@@ -45,12 +44,6 @@ public class SqlPlus implements JdbcOperations {
 	public SqlPlus(ConnectionFactory connectionFactory) {
 		this.connectionFactory = connectionFactory;
 		this.sqlRunner = new ParsedSqlRunner();
-	}
-
-	private TransactionIsolationLevel transactionIsolationLevel;
-
-	public void setTransactionIsolationLevel(TransactionIsolationLevel transactionIsolationLevel) {
-		this.transactionIsolationLevel = transactionIsolationLevel;
 	}
 
 	@Override
@@ -168,10 +161,15 @@ public class SqlPlus implements JdbcOperations {
 	}
 
 	public Transaction beginTransaction() throws SQLException {
+		return beginTransaction(connection -> {
+		});
+	}
+
+	public Transaction beginTransaction(ConnectionSettings connectionSettings) throws SQLException {
 		Connection connection = getConnection();
 		connection.setAutoCommit(false);
-		if (transactionIsolationLevel != null) {
-			connection.setTransactionIsolation(transactionIsolationLevel.getLevel());
+		if (connectionSettings != null) {
+			connectionSettings.applySettings(connection);
 		}
 		return new TransactionImpl(connection, sqlRunner);
 	}
