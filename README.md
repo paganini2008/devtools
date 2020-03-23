@@ -351,5 +351,5 @@
       <type>pom</type>
     </dependency>
 ```
-#### Latest Version: 2.0-RC2
+#### Latest Version: 2.0-RC3
 ##### All jars can be found from https://mvnrepository.com/ or https://search.maven.org
