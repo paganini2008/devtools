@@ -24,8 +24,6 @@ import com.github.paganini2008.devtools.converter.ConvertUtils;
  * MapUtils
  * 
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 @SuppressWarnings("all")

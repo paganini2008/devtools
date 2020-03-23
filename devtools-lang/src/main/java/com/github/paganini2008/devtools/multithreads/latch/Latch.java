@@ -7,8 +7,6 @@ import java.util.concurrent.TimeUnit;
  * Latch
  * 
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public interface Latch {

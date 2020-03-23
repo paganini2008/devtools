@@ -18,6 +18,7 @@ public class CaseInsensitiveMap<V> extends KeyConversionMap<String, String, V> {
 		super(new HashMap<String, V>());
 	}
 
+	@Override
 	protected String convertKey(Object key) {
 		if (key != null) {
 			return key.toString().toLowerCase(Locale.ENGLISH);
