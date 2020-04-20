@@ -4,8 +4,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import com.github.paganini2008.devtools.Sequence;
 
@@ -22,7 +22,7 @@ public final class Producer<X, R> {
 	private final Caller caller;
 
 	public Producer(Executor executor, Consumer<X, R> consumer) {
-		this(executor, new LinkedBlockingQueue<X>(), consumer);
+		this(executor, new ConcurrentLinkedQueue<X>(), consumer);
 	}
 
 	public Producer(Executor executor, Queue<X> workQueue, Consumer<X, R> consumer) {
@@ -35,7 +35,7 @@ public final class Producer<X, R> {
 		executor.execute(caller);
 	}
 
-	class Caller implements Runnable {
+	private class Caller implements Runnable {
 
 		final Map<X, R> resultArea = new ConcurrentHashMap<X, R>();
 		final Queue<X> workQueue;
@@ -124,7 +124,7 @@ public final class Producer<X, R> {
 	}
 
 	public static void main(String[] args) throws Exception {
-		long time = Producer.executeBatch(Sequence.forEach(1, 100).iterator(), 10, new Consumer<Integer, Long>() {
+		long time = Producer.executeBatch(Sequence.forEach(1, 100000).iterator(), 10, new Consumer<Integer, Long>() {
 
 			public Long consume(Integer action) throws Exception {
 				return Long.valueOf(action);

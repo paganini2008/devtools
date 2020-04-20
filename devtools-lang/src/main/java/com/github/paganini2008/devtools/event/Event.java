@@ -7,12 +7,11 @@ import java.util.EventObject;
  * Event
  * 
  * @author Fred Feng
- * 
- * @version 1.0
+ * @since 1.0
  */
 public abstract class Event<T> extends EventObject {
 
-	private static final long serialVersionUID = 1369049759719737665L;
+	private static final long serialVersionUID = 1L;
 
 	public Event(Object source, T argument) {
 		super(source);

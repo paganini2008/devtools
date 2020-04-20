@@ -42,11 +42,11 @@ public class TestMain {
 	}
 
 	public static void main(String[] args) throws Exception {
-		EventBus<TestEvent, String> eventBus = new EventBus<TestEvent, String>(Executors.newCachedThreadPool(), false);
+		EventBus<TestEvent, String> eventBus = new EventBus<TestEvent, String>(Executors.newFixedThreadPool(8), true);
 		for (int i = 0; i < 5; i++) {
 			eventBus.subscribe(new TestSubcriber("Name_" + i));
 		}
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < 100000; i++) {
 			eventBus.publish(new TestEvent(eventBus, String.valueOf(i)));
 		}
 		System.in.read();

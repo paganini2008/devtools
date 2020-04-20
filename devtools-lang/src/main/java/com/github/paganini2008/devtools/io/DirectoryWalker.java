@@ -212,8 +212,17 @@ public class DirectoryWalker {
 	}
 
 	public static void main(String[] args) throws IOException {
-		File directory = new File("H:\\JiYong2018");
-		DirectoryWalker walker = new DirectoryWalker(directory, -1, null);
+		File directory = new File("d:/sql");
+		DirectoryWalker walker = new DirectoryWalker(directory, -1, null) {
+
+			@Override
+			protected void handleFile(File file, int depth, Map<String, Object> context) throws IOException {
+				if(file.length() > 100* FileUtils.MB) {
+					System.out.println(file);
+				}
+			}
+			
+		};
 		FileInfo fileInfo = walker.walk(10, new Progressable() {
 
 			public void progress(int fileCount, int folderCount, long length, float completedRatio, long elapsed) {

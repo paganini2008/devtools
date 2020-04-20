@@ -128,7 +128,6 @@ public class EnhancedDirectoryWalker {
 		}
 
 		public float getCompletedRatio() {
-			System.out.println("fileSize: " + fileSize + ", files.size(): " + files.size());
 			float value = (fileSize - files.size()) / (float) fileSize;
 			return Floats.toFixed(value, 3);
 		}
@@ -335,6 +334,9 @@ public class EnhancedDirectoryWalker {
 	}
 
 	protected void leaveDirectory(File directory, FileInfo fileInfo) throws Exception {
+		if (((EnhancedFileInfo) fileInfo).getLength(true) > 1 * FileUtils.GB) {
+			System.out.println("Big data: " + fileInfo.getFile());
+		}
 	}
 
 	protected boolean shouldHandleDirectory(File directory, FileInfo fileInfo) throws Exception {
@@ -356,13 +358,14 @@ public class EnhancedDirectoryWalker {
 	}
 
 	public static void main(String[] args) throws Exception {
-		File directory = new File("D:\\work\\gitlab_0613");
+		File directory = new File("C:\\");
 		EnhancedDirectoryWalker walker = new EnhancedDirectoryWalker(directory, -1, null);
 		FileInfo fileInfo = walker.walk(10, new Progressable() {
 
 			public void progress(int fileCount, int folderCount, long length, float completedRatio, long elapsed) {
-				System.out.println("fileCount: " + fileCount + ", folderCount: " + folderCount + ", length: " + length
-						+ ", completedRatio: " + completedRatio + ", elapsed: " + elapsed);
+				// System.out.println("fileCount: " + fileCount + ", folderCount: " +
+				// folderCount + ", length: " + length
+				// + ", completedRatio: " + completedRatio + ", elapsed: " + elapsed);
 			}
 		});
 		System.out.println(fileInfo.getElapsed());
