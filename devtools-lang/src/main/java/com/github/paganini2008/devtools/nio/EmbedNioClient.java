@@ -21,17 +21,17 @@ import com.github.paganini2008.devtools.nio.ChannelEvent.EventType;
  * @author Fred Feng
  * @since 1.0
  */
-public class NioClient implements Runnable, Client {
+public class EmbedNioClient implements Runnable, EmbedClient {
 
-	public NioClient() {
+	public EmbedNioClient() {
 		this(8);
 	}
 
-	public NioClient(int nThreads) {
+	public EmbedNioClient(int nThreads) {
 		this(Executors.newFixedThreadPool(nThreads), Executors.newFixedThreadPool(nThreads));
 	}
 
-	public NioClient(Executor ioThreads, Executor channelThreads) {
+	public EmbedNioClient(Executor ioThreads, Executor channelThreads) {
 		reactor = new Reactor(ioThreads, channelThreads);
 	}
 
@@ -66,9 +66,9 @@ public class NioClient implements Runnable, Client {
 	public void setWriterBufferSize(int writerBufferSize) {
 		this.writerBufferSize = writerBufferSize;
 	}
-	
+
 	public void addHandler(ChannelHandler channelHandler) {
-		this.reactor.subscribeChannelEvent(channelHandler);
+		this.reactor.getChannelEventPublisher().subscribeChannelEvent(channelHandler);
 	}
 
 	public void connect(String hostName, int port) throws IOException {
@@ -82,23 +82,30 @@ public class NioClient implements Runnable, Client {
 		socket.setReuseAddress(true);
 		socket.setTcpNoDelay(true);
 		socket.setSendBufferSize(writerBufferSize);
-		
+
 		socketChannel.configureBlocking(false);
 		socketChannel.connect(remoteAddress);
-		
-		reactor.registerIoEvent(socketChannel, new ConnectableEventHandler());
+
+		reactor.getIoEventPublisher().subscribeIoEvent(socketChannel, new ConnectableEventListener());
 		channel = new NioChannel(reactor, socketChannel, transformer);
-		
+
 		running.set(true);
 		runner = ThreadUtils.runAsThread(this);
-		System.out.println("Connect to " + remoteAddress);
 	}
 
 	public void write(Object object) {
 		try {
 			channel.write(object, writerBatchSize);
 		} catch (IOException e) {
-			reactor.publishChannelEvent(channel, EventType.FATAL, null, e);
+			reactor.getChannelEventPublisher().publishChannelEvent(new ChannelEvent(channel, EventType.FATAL, null, e));
+		}
+	}
+
+	public void flush() {
+		try {
+			channel.flush();
+		} catch (IOException e) {
+			reactor.getChannelEventPublisher().publishChannelEvent(new ChannelEvent(channel, EventType.FATAL, null, e));
 		}
 	}
 
@@ -110,7 +117,7 @@ public class NioClient implements Runnable, Client {
 		return channel != null && channel.isActive();
 	}
 
-	public void close() throws IOException  {
+	public void close() throws IOException {
 		running.set(false);
 		try {
 			runner.join();
@@ -121,17 +128,19 @@ public class NioClient implements Runnable, Client {
 			channel.close();
 		}
 		reactor.close();
-		System.out.println("Close Connector");
 	}
 
-	private class ConnectableEventHandler implements IoEventHandler {
+	/**
+	 * 
+	 * ConnectableEventListener
+	 *
+	 * @author Fred Feng
+	 * @since 1.0
+	 */
+	private class ConnectableEventListener implements IoEventListener {
 
 		@Override
 		public void onEventFired(IoEvent event) {
-			if (event.getCause() != null) {
-				return;
-			}
-			System.out.println("触发： ConnectableEventHandler");
 			final Reactor reactor = (Reactor) event.getSource();
 			final SelectionKey selectionKey = event.getSelectionKey();
 			final SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
@@ -146,7 +155,7 @@ public class NioClient implements Runnable, Client {
 				}
 			}
 			if (connected) {
-				reactor.publishChannelEvent(channel, EventType.ACTIVE);
+				reactor.getChannelEventPublisher().publishChannelEvent(new ChannelEvent(channel, EventType.ACTIVE));
 			}
 		}
 
@@ -164,7 +173,7 @@ public class NioClient implements Runnable, Client {
 			}
 		} catch (IOException e) {
 			running.set(false);
-			e.printStackTrace();
+			throw new IOError(e);
 		}
 	}
 

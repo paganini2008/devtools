@@ -4,12 +4,12 @@ import java.io.IOException;
 
 /**
  * 
- * Server
+ * EmbedServer
  *
  * @author Fred Feng
  * @since 1.0
  */
-public interface Server {
+public interface EmbedServer {
 
 	void start() throws IOException;
 

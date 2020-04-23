@@ -11,9 +11,11 @@ import java.io.IOException;
  */
 public interface Channel {
 
-	void write(Object message, int batchSize) throws IOException;
+	int write(Object message, int batchSize) throws IOException;
+	
+	int flush() throws IOException;
 
-	int read() throws IOException;
+	int read(int bufferSize) throws IOException;
 
 	void close();
 

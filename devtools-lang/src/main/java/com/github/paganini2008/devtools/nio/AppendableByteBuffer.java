@@ -2,7 +2,6 @@ package com.github.paganini2008.devtools.nio;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.github.paganini2008.devtools.CharsetUtils;
@@ -219,31 +218,6 @@ public class AppendableByteBuffer {
 	
 	public String toString() {
 		return buffer.toString();
-	}
-
-	public static void main(String[] args) {
-		AppendableByteBuffer byteBuffer = new AppendableByteBuffer(32);
-		byteBuffer.append(10).append('f').append(3.14f).append(5.618902d).append("Hello new world! 中国人", CharsetUtils.UTF_8);
-		StringBuilder str = new StringBuilder();
-		for (int i = 0; i < 20; i++) {
-			str.append(UUID.randomUUID().toString());
-		}
-		byteBuffer.append(str.toString());
-		System.out.println("Total: " + byteBuffer.length());
-
-		byteBuffer.flip();
-		System.out.println(byteBuffer.getInt());
-		System.out.println(byteBuffer.getChar());
-		System.out.println(byteBuffer.getFloat());
-		System.out.println(byteBuffer.getDouble());
-		System.out.println(byteBuffer.getString(CharsetUtils.UTF_8));
-		System.out.println(byteBuffer.getString());
-
-		System.out.println("---------------------------------------------------");
-		System.out.println(byteBuffer.length());
-		System.out.println(byteBuffer.hasRemaining());
-		System.out.println(byteBuffer.position());
-		System.out.println(byteBuffer.limit());
 	}
 
 }

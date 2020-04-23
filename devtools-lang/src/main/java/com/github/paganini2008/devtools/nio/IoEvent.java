@@ -1,8 +1,6 @@
 package com.github.paganini2008.devtools.nio;
 
 import java.nio.channels.SelectionKey;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.github.paganini2008.devtools.event.Event;
 
@@ -18,24 +16,14 @@ public class IoEvent extends Event<Object> {
 	private static final long serialVersionUID = 836117816543430982L;
 
 	public IoEvent(Reactor source, SelectionKey selectionKey) {
-		this(source, selectionKey, null);
-	}
-
-	public IoEvent(Reactor source, SelectionKey selectionKey, Throwable cause) {
 		super(source, null);
 		this.selectionKey = selectionKey;
-		this.cause = cause;
 	}
 
 	private final SelectionKey selectionKey;
-	private final Throwable cause;
 
 	public SelectionKey getSelectionKey() {
 		return selectionKey;
-	}
-
-	public Throwable getCause() {
-		return cause;
 	}
 
 	public EventType getEventType() {
@@ -48,39 +36,33 @@ public class IoEvent extends Event<Object> {
 		} else if (selectionKey.isWritable()) {
 			return EventType.WRITEABLE;
 		}
-		return null;
+		throw new IllegalStateException();
 	}
 
 	public static enum EventType {
 
-		ACCEPTABLE(SelectionKey.OP_ACCEPT),
+		ACCEPTABLE(SelectionKey.OP_ACCEPT, false),
 
-		CONNECTABLE(SelectionKey.OP_CONNECT),
+		CONNECTABLE(SelectionKey.OP_CONNECT, false),
 
-		READABLE(SelectionKey.OP_READ),
+		READABLE(SelectionKey.OP_READ, true),
 
-		WRITEABLE(SelectionKey.OP_WRITE);
+		WRITEABLE(SelectionKey.OP_WRITE, true);
 
 		private final int operationCode;
+		private final boolean asynchronous;
 
-		private EventType(int operationCode) {
+		private EventType(int operationCode, boolean asynchronous) {
 			this.operationCode = operationCode;
+			this.asynchronous = asynchronous;
 		}
 
 		public int getOperationCode() {
 			return operationCode;
 		}
 
-		private static final Map<Integer, EventType> types = new HashMap<Integer, EventType>();
-
-		static {
-			for (EventType eventType : EventType.values()) {
-				types.put(eventType.getOperationCode(), eventType);
-			}
-		}
-
-		public static EventType get(int operationCode) {
-			return types.get(operationCode);
+		public boolean isAsynchronous() {
+			return asynchronous;
 		}
 
 	}

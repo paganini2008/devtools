@@ -7,14 +7,14 @@ import java.util.UUID;
 public class TestClient {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		NioClient client = new NioClient();
+		EmbedNioClient client = new EmbedNioClient();
 		client.setWriterBatchSize(10);
 		client.setWriterBufferSize(2 * 1024);
-		client.addHandler(new TestChannelHandler());
+		client.addHandler(new LoggingChannelHandler());
 		client.connect(new InetSocketAddress(8090));
 		System.in.read();
 		System.out.println("开始写");
-		for (int i = 0; i < 10000; i++) {
+		for (int i = 0; i < 500000; i++) {
 			client.write(new Item("fengy_" + i, toFullString()));
 		}
 		Thread.sleep(60 * 60 * 1000L);

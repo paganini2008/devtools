@@ -5,16 +5,18 @@ import java.net.SocketAddress;
 
 /**
  * 
- * Client
+ * EmbedClient
  *
  * @author Fred Feng
  * @since 1.0
  */
-public interface Client {
+public interface EmbedClient {
 
 	void connect(SocketAddress remoteAddress) throws IOException;
 
 	void write(Object object);
+	
+	void flush();
 
 	boolean isRunning();
 	

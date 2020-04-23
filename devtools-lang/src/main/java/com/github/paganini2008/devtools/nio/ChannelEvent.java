@@ -1,7 +1,5 @@
 package com.github.paganini2008.devtools.nio;
 
-import java.util.List;
-
 import com.github.paganini2008.devtools.event.Event;
 
 /**
@@ -15,21 +13,23 @@ public class ChannelEvent extends Event<Object> {
 
 	private static final long serialVersionUID = 5631405024269581391L;
 
-	public ChannelEvent(Reactor source, Channel channel, EventType eventType, List<Object> messages, Throwable cause) {
+	public ChannelEvent(Channel source, EventType eventType) {
+		this(source, eventType, null, null);
+	}
+
+	public ChannelEvent(Channel source, EventType eventType, MessagePacket packet, Throwable cause) {
 		super(source, null);
-		this.channel = channel;
 		this.eventType = eventType;
-		this.messages = messages;
+		this.packet = packet;
 		this.cause = cause;
 	}
 
-	private final Channel channel;
 	private final EventType eventType;
-	private final List<Object> messages;
+	private final MessagePacket packet;
 	private final Throwable cause;
 
-	public List<Object> getMessages() {
-		return messages;
+	public MessagePacket getMessagePacket() {
+		return packet;
 	}
 
 	public EventType getEventType() {
@@ -41,7 +41,7 @@ public class ChannelEvent extends Event<Object> {
 	}
 
 	public Channel getChannel() {
-		return channel;
+		return (Channel) getSource();
 	}
 
 	public static enum EventType {

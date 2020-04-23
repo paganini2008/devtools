@@ -16,25 +16,25 @@ import com.github.paganini2008.devtools.nio.IoEvent.EventType;
 
 /**
  * 
- * NioServer
+ * EmbedNioServer
  *
  * @author Fred Feng
  * @since 1.0
  */
-public class NioServer implements Runnable, Server {
+public class EmbedNioServer implements Runnable, EmbedServer {
 
 	private final AtomicBoolean running = new AtomicBoolean(false);
 	private final Reactor reactor;
 
-	public NioServer() {
+	public EmbedNioServer() {
 		this(8);
 	}
 
-	public NioServer(int nThreads) {
+	public EmbedNioServer(int nThreads) {
 		this(Executors.newFixedThreadPool(nThreads), Executors.newFixedThreadPool(nThreads));
 	}
 
-	public NioServer(Executor ioThreads, Executor channelThreads) {
+	public EmbedNioServer(Executor ioThreads, Executor channelThreads) {
 		reactor = new Reactor(ioThreads, channelThreads);
 	}
 
@@ -78,7 +78,7 @@ public class NioServer implements Runnable, Server {
 	}
 
 	public void addHandler(ChannelHandler channelHandler) {
-		this.reactor.subscribeChannelEvent(channelHandler);
+		this.reactor.getChannelEventPublisher().subscribeChannelEvent(channelHandler);
 	}
 
 	public void start() throws IOException {
@@ -89,7 +89,7 @@ public class NioServer implements Runnable, Server {
 		socket.setReuseAddress(true);
 		socket.bind(localAddress, backlog);
 		serverSocket.configureBlocking(false);
-		reactor.registerIoEvent(serverSocket, new AcceptableEventHandler());
+		reactor.getIoEventPublisher().subscribeIoEvent(serverSocket, new AcceptableEventListener());
 
 		running.set(true);
 		runner = ThreadUtils.runAsThread(this);
@@ -122,28 +122,21 @@ public class NioServer implements Runnable, Server {
 			}
 		} catch (IOException e) {
 			running.set(false);
-			e.printStackTrace();
+			throw new IOError(e);
 		}
 	}
 
 	/**
 	 * 
-	 * AcceptableEventHandler
+	 * AcceptableEventListener
 	 *
 	 * @author Fred Feng
 	 * @since 1.0
 	 */
-	private class AcceptableEventHandler implements IoEventHandler {
-
-		AcceptableEventHandler() {
-		}
+	private class AcceptableEventListener implements IoEventListener {
 
 		@Override
 		public void onEventFired(IoEvent event) {
-			if (event.getCause() != null) {
-				return;
-			}
-			System.out.println("触发：AcceptableEventHandler ");
 			final Reactor reactor = (Reactor) event.getSource();
 			Channel channel = null;
 			try {
@@ -152,11 +145,11 @@ public class NioServer implements Runnable, Server {
 				socketChannel.configureBlocking(false);
 
 				channel = new NioChannel(reactor, socketChannel, transformer);
-				reactor.registerIoEvent(socketChannel, new ReadableEventHandler(channel));
+				reactor.getIoEventPublisher().subscribeIoEvent(socketChannel, new ReadableEventListener(channel));
 
-				reactor.publishChannelEvent(channel, ChannelEvent.EventType.ACTIVE);
+				reactor.getChannelEventPublisher().publishChannelEvent(new ChannelEvent(channel, ChannelEvent.EventType.ACTIVE));
 			} catch (IOException e) {
-				reactor.publishChannelEvent(channel, ChannelEvent.EventType.FATAL, null, e);
+				reactor.getChannelEventPublisher().publishChannelEvent(new ChannelEvent(channel, ChannelEvent.EventType.FATAL, null, e));
 			}
 		}
 
@@ -169,29 +162,25 @@ public class NioServer implements Runnable, Server {
 
 	/**
 	 * 
-	 * ReadableEventHandler
+	 * ReadableEventListener
 	 *
 	 * @author Fred Feng
 	 * @since 1.0
 	 */
-	private class ReadableEventHandler implements IoEventHandler {
+	private class ReadableEventListener implements IoEventListener {
 
 		private final Channel channel;
 
-		ReadableEventHandler(Channel channel) {
+		ReadableEventListener(Channel channel) {
 			this.channel = channel;
 		}
 
 		@Override
 		public void onEventFired(IoEvent event) {
-			if (event.getCause() != null) {
-				return;
-			}
-			System.out.println("触发：ReadableEventHandler ");
 			try {
-				channel.read();
+				channel.read(128);
 			} catch (IOException e) {
-				reactor.publishChannelEvent(channel, ChannelEvent.EventType.FATAL, null, e);
+				reactor.getChannelEventPublisher().publishChannelEvent(new ChannelEvent(channel, ChannelEvent.EventType.FATAL, null, e));
 			}
 		}
 
