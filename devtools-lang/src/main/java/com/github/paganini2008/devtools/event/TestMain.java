@@ -37,16 +37,19 @@ public class TestMain {
 		public void onEventFired(TestEvent event) {
 			System.out.println("Name: " + name + ", Value: " + event.getArgument());
 			counter.incrementAndGet();
+			
+			EventBus<TestEvent, String> eventBus = (EventBus<TestEvent, String>)event.getSource();
+			//eventBus.subscribe(this);
 		}
 
 	}
 
 	public static void main(String[] args) throws Exception {
-		EventBus<TestEvent, String> eventBus = new EventBus<TestEvent, String>(Executors.newFixedThreadPool(8), true);
+		EventBus<TestEvent, String> eventBus = new EventBus<TestEvent, String>(Executors.newFixedThreadPool(8), false);
 		for (int i = 0; i < 5; i++) {
 			eventBus.subscribe(new TestSubcriber("Name_" + i));
 		}
-		for (int i = 0; i < 100000; i++) {
+		for (int i = 0; i < 10; i++) {
 			eventBus.publish(new TestEvent(eventBus, String.valueOf(i)));
 		}
 		System.in.read();

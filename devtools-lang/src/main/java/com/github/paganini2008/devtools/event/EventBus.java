@@ -135,8 +135,7 @@ public class EventBus<E extends Event<T>, T> implements EventPubSub<E, T> {
 				});
 			} else {
 				List<EventSubscriber<E, T>> list = new ArrayList<EventSubscriber<E, T>>();
-				int elements = q.drainTo(list);
-				if (elements > 0) {
+				if (q.drainTo(list) > 0) {
 					list.forEach(subscriber -> {
 						producer.produce(() -> {
 							subscriber.onEventFired(event);
