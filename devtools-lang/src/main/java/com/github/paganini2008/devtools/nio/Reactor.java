@@ -22,7 +22,6 @@ import com.github.paganini2008.devtools.nio.ChannelEvent.EventType;
  */
 public final class Reactor {
 
-	private final EventBus<IoEvent, Object> ioEventPublisher;
 	private final EventBus<ChannelEvent, Object> channelEventPublisher;
 	private final Selector selector;
 
@@ -32,7 +31,6 @@ public final class Reactor {
 		} catch (IOException e) {
 			throw new IOError(e);
 		}
-		ioEventPublisher = new EventBus<>(ioThreads, true);
 		channelEventPublisher = new EventBus<>(channelThreads, true);
 	}
 
@@ -45,8 +43,6 @@ public final class Reactor {
 		Iterator<?> it = selector.selectedKeys().iterator();
 		while (it.hasNext()) {
 			SelectionKey selectionKey = (SelectionKey) it.next();
-			System.out.println("::: acceptable=" + selectionKey.isAcceptable() + ",readable=" + selectionKey.isReadable() + ",writable="
-					+ selectionKey.isWritable() + ",connectable=" + selectionKey.isConnectable());
 			IoEventHandler handler = (IoEventHandler) selectionKey.attachment();
 			handler.onEventFired(new IoEvent(this, selectionKey));
 			it.remove();
