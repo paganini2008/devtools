@@ -16,7 +16,7 @@ public class TestClient {
 		client.addHandler(new LoggingChannelHandler());
 		client.connect(new InetSocketAddress(8090));
 		System.in.read();
-		for (int i = 0; i < 50000; i++) {
+		for (int i = 0; i < 100000; i++) {
 			client.write(new Item("fengy_" + i, toFullString()));
 		}
 		Thread.sleep(60 * 60 * 1000L);

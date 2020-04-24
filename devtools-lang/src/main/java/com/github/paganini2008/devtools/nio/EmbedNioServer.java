@@ -126,7 +126,6 @@ public class EmbedNioServer implements Runnable, EmbedServer {
 			serverSocket.close();
 		}
 		reactor.close();
-		System.out.println("Over.");
 	}
 
 	public boolean isRunning() {
@@ -168,6 +167,7 @@ public class EmbedNioServer implements Runnable, EmbedServer {
 				reactor.getChannelEventPublisher().publishChannelEvent(new ChannelEvent(channel, ChannelEvent.EventType.ACTIVE));
 			} catch (IOException e) {
 				reactor.getChannelEventPublisher().publishChannelEvent(new ChannelEvent(channel, ChannelEvent.EventType.FATAL, null, e));
+				reactor.getIoEventPublisher().publishIoEvent(new IoEvent((Reactor) event.getSource(), event.getSelectionKey(), null));
 			}
 		}
 
@@ -199,6 +199,7 @@ public class EmbedNioServer implements Runnable, EmbedServer {
 				channel.read();
 			} catch (IOException e) {
 				reactor.getChannelEventPublisher().publishChannelEvent(new ChannelEvent(channel, ChannelEvent.EventType.FATAL, null, e));
+				reactor.getIoEventPublisher().publishIoEvent(new IoEvent((Reactor) event.getSource(), event.getSelectionKey(), null));
 			}
 		}
 

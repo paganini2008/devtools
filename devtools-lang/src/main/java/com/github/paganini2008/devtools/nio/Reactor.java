@@ -49,9 +49,12 @@ public final class Reactor {
 	}
 
 	public void close() throws IOException {
-		selector.close();
-		ioEventPublisher.destroy();
-		channelEventPublisher.destroy();
+		try {
+			selector.close();
+		} finally {
+			ioEventPublisher.destroy();
+			channelEventPublisher.destroy();
+		}
 	}
 
 	public IoEventPublisher getIoEventPublisher() {

@@ -29,6 +29,9 @@ public class LoggingChannelHandler implements ChannelHandler {
 	@Override
 	public void fireChannelReadable(Channel channel, MessagePacket packet) throws IOException {
 		log.info("Channel read length: " + packet.getLength());
+		packet.getMessages().forEach(data -> {
+			log.info(data);
+		});
 	}
 
 	@Override

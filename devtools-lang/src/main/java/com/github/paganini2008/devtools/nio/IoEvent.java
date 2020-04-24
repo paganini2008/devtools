@@ -14,16 +14,26 @@ import com.github.paganini2008.devtools.event.Event;
 public class IoEvent extends Event<Object> {
 
 	private static final long serialVersionUID = 836117816543430982L;
-
+	
 	public IoEvent(Reactor source, SelectionKey selectionKey) {
+		this(source, selectionKey, null);
+	}
+
+	public IoEvent(Reactor source, SelectionKey selectionKey, Throwable cause) {
 		super(source, null);
 		this.selectionKey = selectionKey;
+		this.cause = cause;
 	}
 
 	private final SelectionKey selectionKey;
+	private final Throwable cause;
 
 	public SelectionKey getSelectionKey() {
 		return selectionKey;
+	}
+
+	public Throwable getCause() {
+		return cause;
 	}
 
 	public EventType getEventType() {
@@ -45,7 +55,7 @@ public class IoEvent extends Event<Object> {
 
 		CONNECTABLE(SelectionKey.OP_CONNECT, false),
 
-		READABLE(SelectionKey.OP_READ, true),
+		READABLE(SelectionKey.OP_READ, false),
 
 		WRITEABLE(SelectionKey.OP_WRITE, true);
 
