@@ -1,7 +1,9 @@
 package com.github.paganini2008.devtools.nio;
 
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
+
+import com.github.paganini2008.devtools.logging.Log;
+import com.github.paganini2008.devtools.logging.LogFactory;
 
 /**
  * 
@@ -12,34 +14,27 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class LoggingChannelHandler implements ChannelHandler {
 
+	private static final Log log = LogFactory.getLog(LoggingChannelHandler.class);
+
 	@Override
 	public void fireChannelActive(Channel channel) throws IOException {
-		System.out.println("TestChannelHandler.fireChannelActive(): " + channel.toString());
+		log.info("Channel is active. Channel info: " + channel);
 	}
 
 	@Override
 	public void fireChannelInactive(Channel channel) throws IOException {
-		System.out.println("TestChannelHandler.fireChannelInactive(): " + channel.toString());
+		log.info("Channel is inactive. Channel info: " + channel);
 	}
-
-	private final AtomicInteger counter = new AtomicInteger();
 
 	@Override
 	public void fireChannelReadable(Channel channel, MessagePacket packet) throws IOException {
-		System.out.println("TestChannelHandler.fireChannelReadable(): " + packet.getLength());
-		for (Object object : packet.getMessages()) {
-			System.out.println("[" + counter.incrementAndGet() + "] 接收： " + object);
-		}
+		log.info("Channel read length: " + packet.getLength());
 	}
 
 	@Override
 	public void fireChannelFatal(Channel channel, Throwable e) {
-		System.out.println("TestChannelHandler.fireChannelFatal(): " + channel);
-		e.printStackTrace();
-	}
-
-	public int count() {
-		return counter.get();
+		log.info("Channel has fatal error. Channel info: " + channel);
+		log.error(e.getMessage(), e);
 	}
 
 }

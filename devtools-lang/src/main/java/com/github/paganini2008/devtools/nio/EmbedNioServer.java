@@ -112,7 +112,6 @@ public class EmbedNioServer implements Runnable, EmbedServer {
 
 		running.set(true);
 		runner = ThreadUtils.runAsThread(this);
-		System.out.println("Start at " + localAddress);
 	}
 
 	public void stop() throws IOException {

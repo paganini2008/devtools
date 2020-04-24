@@ -1,4 +1,4 @@
-package com.github.paganini2008.devtools.nio;
+package com.github.paganini2008.devtools.nio.examples;
 
 import java.io.Serializable;
 
