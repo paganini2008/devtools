@@ -1,7 +1,6 @@
 package com.github.paganini2008.devtools.nio;
 
 import java.nio.BufferUnderflowException;
-import java.nio.ByteBuffer;
 import java.util.List;
 
 /**
@@ -23,41 +22,24 @@ public class SerializationTransformer implements Transformer {
 	}
 
 	@Override
-	public ByteBuffer transferTo(Object value) {
+	public void transferTo(Object value, AppendableByteBuffer byteBuffer) {
 		byte[] bytes = serialization.serialize(value);
-		int dataLength = bytes.length;
-		ByteBuffer byteBuffer = ByteBuffer.allocate(dataLength + 4);
-		byteBuffer.putInt(dataLength);
-		byteBuffer.put(bytes);
+		byteBuffer.append(bytes);
+	}
+
+	@Override
+	public void transferFrom(AppendableByteBuffer byteBuffer, List<Object> output) {
 		byteBuffer.flip();
-		return byteBuffer;
-	}
-
-	@Override
-	public Object transferFrom(AppendableByteBuffer b) {
-		b.flip();
-		int dataLength = b.getInt();
-		if (dataLength <= 0) {
-			throw new BufferUnderflowException();
-		}
-		byte[] bytes = new byte[dataLength];
-		b.get(bytes);
-		return serialization.deserialize(bytes);
-	}
-
-	@Override
-	public void transferFrom(AppendableByteBuffer b, List<Object> output) {
-		b.flip();
 		int dataLength;
 		Object object;
-		while (b.hasRemaining()) {
-			dataLength = b.getInt();
+		while (byteBuffer.hasRemaining()) {
+			dataLength = byteBuffer.getInt();
 			if (dataLength <= 0) {
 				throw new BufferUnderflowException();
 			}
 			byte[] bytes = new byte[dataLength];
 			try {
-				b.get(bytes);
+				byteBuffer.get(bytes);
 				object = serialization.deserialize(bytes);
 				output.add(object);
 			} catch (Exception e) {

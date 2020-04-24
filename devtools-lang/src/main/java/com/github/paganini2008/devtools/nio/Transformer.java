@@ -1,6 +1,5 @@
 package com.github.paganini2008.devtools.nio;
 
-import java.nio.ByteBuffer;
 import java.util.List;
 
 /**
@@ -13,10 +12,8 @@ import java.util.List;
 public interface Transformer {
 
 	void setSerialization(Serialization serialization);
-	
-	ByteBuffer transferTo(Object value);
 
-	Object transferFrom(AppendableByteBuffer b);
+	void transferTo(Object value, AppendableByteBuffer byteBuffer);
 
 	void transferFrom(AppendableByteBuffer b, List<Object> output);
 

@@ -16,7 +16,7 @@ import com.github.paganini2008.devtools.nio.ChannelEvent.EventType;
 
 /**
  * 
- * NioClient
+ * EmbedNioClient
  *
  * @author Fred Feng
  * @since 1.0
@@ -40,8 +40,9 @@ public class EmbedNioClient implements Runnable, EmbedClient {
 	private Channel channel;
 	private Transformer transformer = new SerializationTransformer();
 	private Thread runner;
-	private int writerBatchSize = 100;
+	private int writerBatchSize = 10;
 	private int writerBufferSize = 1024;
+	private int autoFlushInterval = 3;
 
 	public int getWriterBatchSize() {
 		return writerBatchSize;
@@ -67,6 +68,14 @@ public class EmbedNioClient implements Runnable, EmbedClient {
 		this.writerBufferSize = writerBufferSize;
 	}
 
+	public int getAutoFlushInterval() {
+		return autoFlushInterval;
+	}
+
+	public void setAutoFlushInterval(int autoFlushInterval) {
+		this.autoFlushInterval = autoFlushInterval;
+	}
+
 	public void addHandler(ChannelHandler channelHandler) {
 		this.reactor.getChannelEventPublisher().subscribeChannelEvent(channelHandler);
 	}
@@ -87,7 +96,7 @@ public class EmbedNioClient implements Runnable, EmbedClient {
 		socketChannel.connect(remoteAddress);
 
 		reactor.getIoEventPublisher().subscribeIoEvent(socketChannel, new ConnectableEventListener());
-		channel = new NioChannel(reactor, socketChannel, transformer);
+		channel = new NioChannel(reactor, socketChannel, transformer, autoFlushInterval);
 
 		running.set(true);
 		runner = ThreadUtils.runAsThread(this);
@@ -152,6 +161,7 @@ public class EmbedNioClient implements Runnable, EmbedClient {
 					}
 				} catch (IOException e) {
 					connected = false;
+					reactor.getChannelEventPublisher().publishChannelEvent(new ChannelEvent(channel, EventType.INACTIVE, null, e));
 				}
 			}
 			if (connected) {

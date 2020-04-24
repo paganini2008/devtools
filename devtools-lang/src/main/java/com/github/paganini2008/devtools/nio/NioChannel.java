@@ -26,12 +26,16 @@ public class NioChannel implements Executable, Channel {
 	private final Reactor reactor;
 	private final SocketChannel channel;
 	private final Transformer transformer;
+	private final BufferPool bufferPool;
 
-	public NioChannel(Reactor reactor, SocketChannel channel, Transformer transformer) {
+	public NioChannel(Reactor reactor, SocketChannel channel, Transformer transformer, int autoFlushInterval) {
 		this.reactor = reactor;
 		this.channel = channel;
 		this.transformer = transformer;
-		ThreadUtils.scheduleWithFixedDelay(this, 3, TimeUnit.SECONDS);
+		this.bufferPool = new BufferPool(4096);
+		if (autoFlushInterval > 0) {
+			ThreadUtils.scheduleWithFixedDelay(this, autoFlushInterval, TimeUnit.SECONDS);
+		}
 	}
 
 	public void close() {
@@ -53,10 +57,9 @@ public class NioChannel implements Executable, Channel {
 		return 0;
 	}
 
-	public int read(int bufferSize) throws IOException {
-		final AppendableByteBuffer byteBuffer = new AppendableByteBuffer(bufferSize);
-		int readerBufferSize;
-		readerBufferSize = channel.socket().getReceiveBufferSize();
+	public int read() throws IOException {
+		AppendableByteBuffer byteBuffer = bufferPool.borrowBuffer();
+		int readerBufferSize = channel.socket().getReceiveBufferSize();
 		ByteBuffer readerBuffer = ByteBuffer.allocate(readerBufferSize);
 		int length, total = 0;
 		synchronized (this) {
@@ -72,12 +75,15 @@ public class NioChannel implements Executable, Channel {
 				close();
 			}
 		}
-		List<Object> output = new ArrayList<Object>();
-		transformer.transferFrom(byteBuffer, output);
-		if (output.size() > 0) {
-			reactor.getChannelEventPublisher()
-					.publishChannelEvent(new ChannelEvent(this, EventType.READABLE, MessagePacket.of(output, total), null));
+		if (byteBuffer.hasRemaining()) {
+			List<Object> output = new ArrayList<Object>();
+			transformer.transferFrom(byteBuffer, output);
+			if (output.size() > 0) {
+				reactor.getChannelEventPublisher()
+						.publishChannelEvent(new ChannelEvent(this, EventType.READABLE, MessagePacket.of(output, total), null));
+			}
 		}
+		bufferPool.givebackBuffer(byteBuffer);
 		return total;
 	}
 
@@ -100,13 +106,11 @@ public class NioChannel implements Executable, Channel {
 
 	public int flush() throws IOException {
 		int length = 0;
-		AppendableByteBuffer byteBuffer = new AppendableByteBuffer(128);
+		AppendableByteBuffer byteBuffer = bufferPool.borrowBuffer();
 		List<Object> list = new ArrayList<Object>();
 		if (writerQueue.drainTo(list) > 0) {
-			ByteBuffer buffer;
 			for (Object object : list) {
-				buffer = transformer.transferTo(object);
-				byteBuffer.append(buffer);
+				transformer.transferTo(object, byteBuffer);
 			}
 			ByteBuffer data = byteBuffer.get();
 			synchronized (this) {
@@ -121,6 +125,7 @@ public class NioChannel implements Executable, Channel {
 				}
 			}
 		}
+		bufferPool.givebackBuffer(byteBuffer);
 		return length;
 	}
 

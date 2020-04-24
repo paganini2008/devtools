@@ -15,7 +15,7 @@ public interface Channel {
 	
 	int flush() throws IOException;
 
-	int read(int bufferSize) throws IOException;
+	int read() throws IOException;
 
 	void close();
 

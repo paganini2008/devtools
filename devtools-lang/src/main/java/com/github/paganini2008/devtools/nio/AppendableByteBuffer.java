@@ -211,11 +211,11 @@ public class AppendableByteBuffer {
 	public ByteBuffer get(boolean clear) {
 		ByteBuffer result = buffer.duplicate();
 		if (clear) {
-			buffer = buffer.isDirect() ? ByteBuffer.allocateDirect(bufferSize) : ByteBuffer.allocate(bufferSize);
+			clear();
 		}
 		return result;
 	}
-	
+
 	public String toString() {
 		return buffer.toString();
 	}

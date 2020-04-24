@@ -27,9 +27,9 @@ public class LoggingChannelHandler implements ChannelHandler {
 	@Override
 	public void fireChannelReadable(Channel channel, MessagePacket packet) throws IOException {
 		System.out.println("TestChannelHandler.fireChannelReadable(): " + packet.getLength());
-		for (Object object : packet.getMessages()) {
-			System.out.println("[" + counter.incrementAndGet() + "] 接收： " + object);
-		}
+		//for (Object object : packet.getMessages()) {
+			//System.out.println("[" + counter.incrementAndGet() + "] 接收： " + object);
+		//}
 	}
 
 	@Override
