@@ -41,7 +41,8 @@ public class EmbedNioClient implements Runnable, EmbedClient {
 	private Transformer transformer = new SerializationTransformer();
 	private Thread runner;
 	private int writerBatchSize = 10;
-	private int writerBufferSize = 1024;
+	private int writerBufferSize = -1;
+	private int bufferPoolSize = 128;
 	private int autoFlushInterval = 3;
 
 	public int getWriterBatchSize() {
@@ -72,6 +73,14 @@ public class EmbedNioClient implements Runnable, EmbedClient {
 		return autoFlushInterval;
 	}
 
+	public int getBufferPoolSize() {
+		return bufferPoolSize;
+	}
+
+	public void setBufferPoolSize(int bufferPoolSize) {
+		this.bufferPoolSize = bufferPoolSize;
+	}
+
 	public void setAutoFlushInterval(int autoFlushInterval) {
 		this.autoFlushInterval = autoFlushInterval;
 	}
@@ -90,13 +99,14 @@ public class EmbedNioClient implements Runnable, EmbedClient {
 		socket.setKeepAlive(true);
 		socket.setReuseAddress(true);
 		socket.setTcpNoDelay(true);
-		socket.setSendBufferSize(writerBufferSize);
-
+		if (writerBufferSize > 0) {
+			socket.setSendBufferSize(writerBufferSize);
+		}
 		socketChannel.configureBlocking(false);
 		socketChannel.connect(remoteAddress);
 
 		reactor.getIoEventPublisher().subscribeIoEvent(socketChannel, new ConnectableEventListener());
-		channel = new NioChannel(reactor, socketChannel, transformer, autoFlushInterval);
+		channel = new NioChannel(reactor, socketChannel, transformer, bufferPoolSize, autoFlushInterval);
 
 		running.set(true);
 		runner = ThreadUtils.runAsThread(this);

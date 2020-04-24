@@ -42,8 +42,9 @@ public class EmbedNioServer implements Runnable, EmbedServer {
 	private int backlog = 128;
 	private Transformer transformer = new SerializationTransformer();
 	private SocketAddress localAddress = new InetSocketAddress(8090);
-	private int readerBufferSize = 2 * 1024;
+	private int readerBufferSize = -1;
 	private int autoFlushInterval = 3;
+	private int bufferPoolSize = 128;
 	private Thread runner;
 
 	public int getBacklog() {
@@ -86,15 +87,24 @@ public class EmbedNioServer implements Runnable, EmbedServer {
 		this.autoFlushInterval = autoFlushInterval;
 	}
 
+	public int getBufferPoolSize() {
+		return bufferPoolSize;
+	}
+
+	public void setBufferPoolSize(int bufferPoolSize) {
+		this.bufferPoolSize = bufferPoolSize;
+	}
+
 	public void addHandler(ChannelHandler channelHandler) {
 		this.reactor.getChannelEventPublisher().subscribeChannelEvent(channelHandler);
 	}
 
 	public void start() throws IOException {
-
 		serverSocket = ServerSocketChannel.open();
 		final ServerSocket socket = serverSocket.socket();
-		socket.setReceiveBufferSize(readerBufferSize);
+		if (readerBufferSize > 0) {
+			socket.setReceiveBufferSize(readerBufferSize);
+		}
 		socket.setReuseAddress(true);
 		socket.bind(localAddress, backlog);
 		serverSocket.configureBlocking(false);
@@ -153,7 +163,7 @@ public class EmbedNioServer implements Runnable, EmbedServer {
 				SocketChannel socketChannel = serverSocketChannel.accept();
 				socketChannel.configureBlocking(false);
 
-				channel = new NioChannel(reactor, socketChannel, transformer, autoFlushInterval);
+				channel = new NioChannel(reactor, socketChannel, transformer, bufferPoolSize, autoFlushInterval);
 				reactor.getIoEventPublisher().subscribeIoEvent(socketChannel, new ReadableEventListener(channel));
 
 				reactor.getChannelEventPublisher().publishChannelEvent(new ChannelEvent(channel, ChannelEvent.EventType.ACTIVE));

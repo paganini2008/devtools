@@ -1,5 +1,6 @@
 package com.github.paganini2008.devtools.nio;
 
+import java.io.IOException;
 import java.nio.BufferUnderflowException;
 import java.util.List;
 
@@ -22,13 +23,13 @@ public class SerializationTransformer implements Transformer {
 	}
 
 	@Override
-	public void transferTo(Object value, AppendableByteBuffer byteBuffer) {
+	public void transferTo(Object value, AppendableByteBuffer byteBuffer) throws IOException {
 		byte[] bytes = serialization.serialize(value);
 		byteBuffer.append(bytes);
 	}
 
 	@Override
-	public void transferFrom(AppendableByteBuffer byteBuffer, List<Object> output) {
+	public void transferFrom(AppendableByteBuffer byteBuffer, List<Object> output) throws IOException {
 		byteBuffer.flip();
 		int dataLength;
 		Object object;
@@ -42,8 +43,8 @@ public class SerializationTransformer implements Transformer {
 				byteBuffer.get(bytes);
 				object = serialization.deserialize(bytes);
 				output.add(object);
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (RuntimeException e) {
+				throw new IllegalStateException("ReadBufferSize is so small that can not fetch all data.", e);
 			}
 		}
 	}

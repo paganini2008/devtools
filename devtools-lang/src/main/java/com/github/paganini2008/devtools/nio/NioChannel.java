@@ -28,11 +28,11 @@ public class NioChannel implements Executable, Channel {
 	private final Transformer transformer;
 	private final BufferPool bufferPool;
 
-	public NioChannel(Reactor reactor, SocketChannel channel, Transformer transformer, int autoFlushInterval) {
+	public NioChannel(Reactor reactor, SocketChannel channel, Transformer transformer, int bufferPoolSize, int autoFlushInterval) {
 		this.reactor = reactor;
 		this.channel = channel;
 		this.transformer = transformer;
-		this.bufferPool = new BufferPool(4096);
+		this.bufferPool = new BufferPool(bufferPoolSize);
 		if (autoFlushInterval > 0) {
 			ThreadUtils.scheduleWithFixedDelay(this, autoFlushInterval, TimeUnit.SECONDS);
 		}
