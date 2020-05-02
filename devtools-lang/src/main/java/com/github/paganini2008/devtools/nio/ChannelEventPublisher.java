@@ -13,7 +13,7 @@ public interface ChannelEventPublisher {
 
 	void subscribeChannelEvent(ChannelHandler channelHandler);
 
-	void subscribeChannelEvent(final ChannelEventListener listener);
+	void subscribeChannelEvent(ChannelEventListener listener);
 
 	void destroy();
 }

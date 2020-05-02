@@ -10,7 +10,7 @@ import java.util.List;
  * @author Fred Feng
  * @since 1.0
  */
-public class MessagePacket implements Serializable{
+public class MessagePacket implements Serializable {
 
 	private static final long serialVersionUID = -4067748468303232269L;
 	private final List<Object> messages;

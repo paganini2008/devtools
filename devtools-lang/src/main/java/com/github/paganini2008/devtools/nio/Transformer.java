@@ -1,6 +1,5 @@
 package com.github.paganini2008.devtools.nio;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -14,8 +13,8 @@ public interface Transformer {
 
 	void setSerialization(Serialization serialization);
 
-	void transferTo(Object value, AppendableByteBuffer byteBuffer) throws IOException;
+	void transferTo(Object value, AppendableByteBuffer byteBuffer);
 
-	void transferFrom(AppendableByteBuffer b, List<Object> output) throws IOException;
+	void transferFrom(AppendableByteBuffer byteBuffer, List<Object> output);
 
 }

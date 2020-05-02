@@ -1,10 +1,15 @@
 package com.github.paganini2008.devtools.nio;
 
+import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.github.paganini2008.devtools.CharsetUtils;
+import com.github.paganini2008.devtools.nio.examples.Item;
 
 /**
  * 
@@ -15,6 +20,7 @@ import com.github.paganini2008.devtools.CharsetUtils;
  */
 public class AppendableByteBuffer {
 
+	public static final AtomicLong increment = new AtomicLong();
 	private final AtomicLong length = new AtomicLong(0);
 	private ByteBuffer buffer;
 	private final int bufferSize;
@@ -46,7 +52,11 @@ public class AppendableByteBuffer {
 	}
 
 	public String getString(Charset charset) {
-		return new String(getBytes(), CharsetUtils.toCharset(charset));
+		byte[] bytes = getBytes();
+		if (bytes == null) {
+			throw new BufferOverflowException();
+		}
+		return new String(bytes, CharsetUtils.toCharset(charset));
 	}
 
 	public AppendableByteBuffer append(ByteBuffer bb) {
@@ -67,11 +77,20 @@ public class AppendableByteBuffer {
 	}
 
 	public byte[] getBytes() {
+		if (!hasRemaining(4)) {
+			return null;
+		}
+		buffer.mark();
 		int dataLength = buffer.getInt();
-		byte[] bytes = new byte[dataLength];
-		buffer.get(bytes);
-		length.addAndGet(-dataLength);
-		return bytes;
+		if (hasRemaining(dataLength)) {
+			byte[] bytes = new byte[dataLength];
+			buffer.get(bytes);
+			length.addAndGet(-dataLength);
+			return bytes;
+		} else {
+			buffer.reset();
+			return null;
+		}
 	}
 
 	public AppendableByteBuffer append(double value) {
@@ -175,8 +194,14 @@ public class AppendableByteBuffer {
 		return length.get();
 	}
 
-	public void flip() {
+	public AppendableByteBuffer flip() {
 		buffer.flip();
+		return this;
+	}
+
+	public AppendableByteBuffer limit(int limit) {
+		buffer.limit(limit);
+		return this;
 	}
 
 	public int limit() {
@@ -195,8 +220,20 @@ public class AppendableByteBuffer {
 		return buffer.hasRemaining();
 	}
 
+	public boolean hasRemaining(int length) {
+		return buffer.limit() - buffer.position() >= length;
+	}
+
 	public void get(byte[] bytes) {
 		buffer.get(bytes);
+	}
+
+	public void reset() {
+		if (buffer.hasRemaining()) {
+			int position = buffer.remaining();
+			buffer.compact();
+			buffer.limit(position);
+		}
 	}
 
 	public void clear() {
@@ -205,19 +242,95 @@ public class AppendableByteBuffer {
 	}
 
 	public ByteBuffer get() {
-		return get(true);
-	}
-
-	public ByteBuffer get(boolean clear) {
 		ByteBuffer result = buffer.duplicate();
-		if (clear) {
-			clear();
-		}
+		clear();
 		return result;
 	}
 
 	public String toString() {
 		return buffer.toString();
+	}
+
+	public static void main(String[] args) {
+		AppendableByteBuffer byteBuffer = new AppendableByteBuffer(32);
+		byteBuffer.append('A');
+		byteBuffer.append("Test123");
+		byteBuffer.append(10000);
+		byteBuffer.append(56);
+		byteBuffer.append("Hello world Hello world Hello worldHello worldHello worldHello worldHello worldHello worldHello world");
+
+		byteBuffer.flip();
+		System.out.println(byteBuffer.getChar());
+		System.out.println(byteBuffer.getString());
+		System.out.println(byteBuffer.getBytes());
+
+		byteBuffer.reset();
+		byteBuffer.flip();
+
+		System.out.println(byteBuffer.getInt());
+		System.out.println(byteBuffer.getInt());
+		System.out.println(byteBuffer.getString());
+	}
+
+	public static void main3(String[] args) {
+		AppendableByteBuffer byteBuffer = new AppendableByteBuffer();
+		byteBuffer.append('A');
+		byteBuffer.append("Test123");
+		byteBuffer.append(100);
+		byteBuffer.append(56);
+		byteBuffer.append("Hello world");
+		byteBuffer.flip();
+		System.out.println(byteBuffer.getChar());
+		System.out.println(byteBuffer.getString());
+		System.out.println(byteBuffer.getBytes());
+		System.out.println(byteBuffer.getInt());
+		System.out.println(byteBuffer.getInt());
+		System.out.println(byteBuffer.getString());
+		// System.out.println(byteBuffer.hasRemaining());
+		// System.out.println(byteBuffer);
+		// System.out.println(byteBuffer);
+		byteBuffer.reset();
+		// byteBuffer.append(3.14d);
+		// byteBuffer.append((short)28);
+
+		if (byteBuffer.hasRemaining()) {
+			byteBuffer.flip();
+			System.out.println(byteBuffer.getInt());
+			System.out.println(byteBuffer.getInt());
+			System.out.println(byteBuffer.getString());
+		}
+		// System.out.println(byteBuffer.getDouble());
+		// System.out.println(byteBuffer.getShort());
+		// System.out.println(byteBuffer.hasRemaining());
+		// byteBuffer.reset();
+		// byteBuffer.append('Y');
+		// byteBuffer.append(3.14F);
+		// byteBuffer.flip();
+		// System.out.println(byteBuffer.getChar());
+		// System.out.println(byteBuffer.getFloat());
+		// System.out.println(byteBuffer.hasRemaining());
+	}
+
+	public static void main2(String[] args) throws Exception {
+		Transformer transformer = new SerializationTransformer();
+		AppendableByteBuffer byteBuffer = new AppendableByteBuffer();
+		for (int i = 0; i < 3; i++) {
+			transformer.transferTo(new Item("fengy_" + i, toFullString()), byteBuffer);
+		}
+		System.out.println(byteBuffer);
+		List<Object> output = new ArrayList<Object>();
+		transformer.transferFrom(byteBuffer, output);
+		for (Object object : output) {
+			System.out.println(object);
+		}
+	}
+
+	private static String toFullString() {
+		StringBuilder str = new StringBuilder();
+		for (int i = 0; i < 10; i++) {
+			str.append(UUID.randomUUID().toString());
+		}
+		return str.toString();
 	}
 
 }

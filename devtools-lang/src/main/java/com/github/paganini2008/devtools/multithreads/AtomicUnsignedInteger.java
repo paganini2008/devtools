@@ -6,8 +6,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * AtomicUnsignedInteger
  * 
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public class AtomicUnsignedInteger extends Number {

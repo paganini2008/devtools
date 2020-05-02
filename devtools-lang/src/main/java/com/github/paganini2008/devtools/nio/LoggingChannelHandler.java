@@ -1,6 +1,7 @@
 package com.github.paganini2008.devtools.nio;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.github.paganini2008.devtools.logging.Log;
 import com.github.paganini2008.devtools.logging.LogFactory;
@@ -26,11 +27,13 @@ public class LoggingChannelHandler implements ChannelHandler {
 		log.info("Channel is inactive. Channel info: " + channel);
 	}
 
+	private final AtomicInteger counter = new AtomicInteger();
+
 	@Override
 	public void fireChannelReadable(Channel channel, MessagePacket packet) throws IOException {
 		log.info("Channel read length: " + packet.getLength());
 		packet.getMessages().forEach(data -> {
-			log.info(data);
+			log.info("[" + counter.incrementAndGet() + "]: " + data);
 		});
 	}
 

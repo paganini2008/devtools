@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.nio.ChannelEvent.EventType;
 
 /**
  * 
- * NioChannelEventPublisher
+ * DefaultChannelEventPublisher
  *
  * @author Fred Feng
  * @since 1.0

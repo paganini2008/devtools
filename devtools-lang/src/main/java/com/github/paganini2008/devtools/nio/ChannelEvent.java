@@ -17,19 +17,19 @@ public class ChannelEvent extends Event<Object> {
 		this(source, eventType, null, null);
 	}
 
-	public ChannelEvent(Channel source, EventType eventType, MessagePacket packet, Throwable cause) {
+	public ChannelEvent(Channel source, EventType eventType, MessagePacket messagePacket, Throwable cause) {
 		super(source, null);
 		this.eventType = eventType;
-		this.packet = packet;
+		this.messagePacket = messagePacket;
 		this.cause = cause;
 	}
 
 	private final EventType eventType;
-	private final MessagePacket packet;
+	private final MessagePacket messagePacket;
 	private final Throwable cause;
 
 	public MessagePacket getMessagePacket() {
-		return packet;
+		return messagePacket;
 	}
 
 	public EventType getEventType() {
@@ -45,7 +45,7 @@ public class ChannelEvent extends Event<Object> {
 	}
 
 	public static enum EventType {
-		ALL, ACTIVE, INACTIVE, READABLE, FATAL
+		ALL, ACTIVE, INACTIVE, READABLE, WRITEABLE, FATAL
 	}
 
 }

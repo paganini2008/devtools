@@ -4,18 +4,18 @@ import java.io.IOException;
 
 /**
  * 
- * Channel
+ * NioChannel
  *
  * @author Fred Feng
  * @since 1.0
  */
 public interface Channel {
 
-	int write(Object message, int batchSize) throws IOException;
-	
-	int flush() throws IOException;
+	long write(Object message, int batchSize) throws IOException;
 
-	int read() throws IOException;
+	long flush() throws IOException;
+
+	long read();
 
 	void close();
 
