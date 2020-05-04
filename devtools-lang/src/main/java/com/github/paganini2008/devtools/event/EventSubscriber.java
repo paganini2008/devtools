@@ -12,6 +12,10 @@ public interface EventSubscriber<E extends Event<T>, T> extends Comparable<Event
 
 	void onEventFired(E event);
 
+	default boolean isPubSub() {
+		return true;
+	}
+
 	default int compareTo(EventSubscriber<E, T> subscriber) {
 		return 0;
 	}

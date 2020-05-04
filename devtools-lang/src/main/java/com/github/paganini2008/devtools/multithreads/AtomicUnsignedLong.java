@@ -16,7 +16,7 @@ public class AtomicUnsignedLong extends Number {
 
 	private final AtomicLong l;
 
-	private final long maxValue;
+	private long maxValue;
 	private final long initialValue;
 
 	public AtomicUnsignedLong() {
@@ -116,6 +116,10 @@ public class AtomicUnsignedLong extends Number {
 				return next;
 			}
 		}
+	}
+
+	public void setMaxValue(long maxValue) {
+		this.maxValue = maxValue;
 	}
 
 	public boolean compareAndSet(long expect, long update) {

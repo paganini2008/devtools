@@ -13,6 +13,8 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class ExecutorUtils {
 
+	public static final int processorCount = Runtime.getRuntime().availableProcessors();
+
 	public static boolean isTerminated(Executor executor) {
 		if (executor instanceof ExecutorService) {
 			if (((ExecutorService) executor).isTerminated()) {

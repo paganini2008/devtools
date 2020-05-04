@@ -1,15 +1,10 @@
 package com.github.paganini2008.devtools.multithreads.latch;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.github.paganini2008.devtools.Sequence;
 import com.github.paganini2008.devtools.multithreads.ThreadLocalInteger;
-import com.github.paganini2008.devtools.multithreads.ThreadPool;
-import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 
 /**
  * 
@@ -114,26 +109,6 @@ public class RecursiveLatch implements Latch {
 
 	public long join() {
 		return delegate.join();
-	}
-
-	public static void main(String[] args) throws IOException {
-		RecursiveLatch latch = new RecursiveLatch(1);
-		ThreadPool threads = ThreadUtils.commonPool(10);
-		final AtomicInteger score = new AtomicInteger();
-		for (int i : Sequence.forEach(0, 100)) {
-			if (latch.acquire(1, TimeUnit.SECONDS)) {
-				threads.execute(() -> {
-
-					ThreadUtils.randomSleep(500L);
-					System.out.println(ThreadUtils.currentThreadName() + ": " + i);
-					score.incrementAndGet();
-					latch.release();
-				});
-			}
-		}
-		latch.join();
-		threads.shutdown();
-		System.out.println(score);
 	}
 
 }

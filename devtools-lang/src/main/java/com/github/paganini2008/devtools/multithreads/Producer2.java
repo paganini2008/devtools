@@ -6,6 +6,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import com.github.paganini2008.devtools.Sequence;
 
@@ -16,16 +17,16 @@ import com.github.paganini2008.devtools.Sequence;
  * @author Fred Feng
  * @version 1.0
  */
-public final class Producer<X, R> {
+public final class Producer2<X, R> {
 
 	private final Executor executor;
 	private final Caller caller;
 
-	public Producer(Executor executor, Consumer<X, R> consumer) {
+	public Producer2(Executor executor, Consumer<X, R> consumer) {
 		this(executor, new ConcurrentLinkedQueue<X>(), consumer);
 	}
 
-	public Producer(Executor executor, Queue<X> workQueue, Consumer<X, R> consumer) {
+	public Producer2(Executor executor, Queue<X> workQueue, Consumer<X, R> consumer) {
 		this.executor = executor;
 		this.caller = new Caller(workQueue, consumer);
 	}
@@ -115,7 +116,7 @@ public final class Producer<X, R> {
 
 	public static <X, R> long executeBatch(Iterator<X> batch, int nThreads, Consumer<X, R> consumer) {
 		long start = System.currentTimeMillis();
-		Producer<X, R> producer = new Producer<X, R>(ThreadUtils.commonPool(nThreads), consumer);
+		Producer2<X, R> producer = new Producer2<X, R>(Executors.newCachedThreadPool(), consumer);
 		while (batch.hasNext()) {
 			producer.produce(batch.next());
 		}
@@ -124,7 +125,7 @@ public final class Producer<X, R> {
 	}
 
 	public static void main(String[] args) throws Exception {
-		long time = Producer.executeBatch(Sequence.forEach(1, 100000).iterator(), 10, new Consumer<Integer, Long>() {
+		long time = Producer2.executeBatch(Sequence.forEach(1, 100000).iterator(), 10, new Consumer<Integer, Long>() {
 
 			public Long consume(Integer action) throws Exception {
 				return Long.valueOf(action);

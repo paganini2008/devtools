@@ -1,13 +1,11 @@
 package com.github.paganini2008.devtools.multithreads.latch;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.github.paganini2008.devtools.Sequence;
 import com.github.paganini2008.devtools.multithreads.AtomicUnsignedLong;
 import com.github.paganini2008.devtools.multithreads.ThreadLocalInteger;
-import com.github.paganini2008.devtools.multithreads.ThreadPool;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 
 /**
@@ -36,7 +34,7 @@ public class FairLatch implements Latch {
 		final long ticket = tickets.getAndIncrement();
 		return ThreadUtils.wait(this, () -> {
 			if (ticket == sequence.get()) {
-				this.counter.incrementAndGet();
+				counter.incrementAndGet();
 				return true;
 			}
 			return false;
@@ -47,7 +45,7 @@ public class FairLatch implements Latch {
 		final long ticket = tickets.getAndIncrement();
 		return ThreadUtils.wait(this, () -> {
 			if (ticket == sequence.get()) {
-				this.counter.incrementAndGet();
+				counter.incrementAndGet();
 				return true;
 			}
 			return false;
@@ -77,25 +75,12 @@ public class FairLatch implements Latch {
 		}
 		return System.currentTimeMillis() - startTime;
 	}
-
-	public static void main(String[] args) throws IOException {
-		FairLatch latch = new FairLatch();
-		ThreadPool threads = ThreadUtils.commonPool(10);
-		final AtomicInteger score = new AtomicInteger();
-		for (int i : Sequence.forEach(0, 100000)) {
-			if (latch.acquire(1, TimeUnit.SECONDS)) {
-				threads.execute(() -> {
-
-					//ThreadUtils.randomSleep(500L);
-					System.out.println(ThreadUtils.currentThreadName() + ": " + i);
-					score.incrementAndGet();
-					latch.release();
-				});
-			}
-		}
-		latch.join();
-		threads.shutdown();
-		System.out.println(score);
+	
+	public static void main(String[] args) throws Exception {
+		Latch latch = new FairLatch();
+		latch.forEach(Sequence.forEach(0, 1000000), e -> {
+			System.out.println(e);
+		});
 	}
 
 }

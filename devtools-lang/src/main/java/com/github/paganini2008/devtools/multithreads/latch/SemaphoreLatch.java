@@ -1,12 +1,8 @@
 package com.github.paganini2008.devtools.multithreads.latch;
 
-import java.io.IOException;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import com.github.paganini2008.devtools.Sequence;
-import com.github.paganini2008.devtools.multithreads.ThreadPool;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 
 /**
@@ -77,24 +73,6 @@ public class SemaphoreLatch implements Latch {
 
 	public boolean isLocked() {
 		return latch.availablePermits() != maxPermits;
-	}
-
-	public static void main(String[] args) throws IOException {
-		SemaphoreLatch latch = new SemaphoreLatch();
-		ThreadPool threads = ThreadUtils.commonPool(10);
-		final AtomicInteger score = new AtomicInteger();
-		for (int i : Sequence.forEach(0, 100)) {
-			threads.execute(() -> {
-				if (latch.acquire(1, TimeUnit.SECONDS)) {
-					System.out.println(ThreadUtils.currentThreadName() + ": " + i);
-					score.incrementAndGet();
-					latch.release();
-				}
-			});
-		}
-		latch.join();
-		threads.shutdown();
-		System.out.println(score);
 	}
 
 }

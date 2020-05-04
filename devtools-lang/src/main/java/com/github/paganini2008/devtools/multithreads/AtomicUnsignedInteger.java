@@ -15,7 +15,7 @@ public class AtomicUnsignedInteger extends Number {
 	private final AtomicInteger i;
 
 	private final int initialValue;
-	private final int maxValue;
+	private int maxValue;
 
 	public AtomicUnsignedInteger() {
 		this(0);
@@ -128,6 +128,10 @@ public class AtomicUnsignedInteger extends Number {
 			return i.weakCompareAndSet(expect, update);
 		}
 		throw new IllegalArgumentException("New value must >= " + initialValue + " and <= " + maxValue + ".");
+	}
+
+	public void setMaxValue(int maxValue) {
+		this.maxValue = maxValue;
 	}
 
 	public byte byteValue() {

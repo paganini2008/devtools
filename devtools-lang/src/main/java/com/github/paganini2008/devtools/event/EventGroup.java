@@ -2,15 +2,12 @@ package com.github.paganini2008.devtools.event;
 
 /**
  * 
- * EventPubSub
- * 
+ * EventGroup
+ *
  * @author Fred Feng
- * 
- * @version 1.0
+ * @since 1.0
  */
-public interface EventPubSub<E extends Event<T>, T> {
-
-	void publish(E event);
+public interface EventGroup<E extends Event<T>, T> extends EventSubscriber<E, T> {
 
 	void subscribe(EventSubscriber<E, T> subscriber);
 
