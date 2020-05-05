@@ -72,7 +72,7 @@ public class EventBus<E extends Event<T>, T> {
 		final ConcurrentMap<Class<?>, EventGroup<E, T>> eventGroups = new ConcurrentHashMap<Class<?>, EventGroup<E, T>>();
 
 		EventHandler(Executor executor, boolean multicast) {
-			super(executor, -1);
+			super(executor, 200);
 			this.multicast = multicast;
 		}
 

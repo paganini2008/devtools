@@ -15,7 +15,7 @@ public class AtomicUnsignedInteger extends Number {
 	private final AtomicInteger i;
 
 	private final int initialValue;
-	private int maxValue;
+	private volatile int maxValue;
 
 	public AtomicUnsignedInteger() {
 		this(0);

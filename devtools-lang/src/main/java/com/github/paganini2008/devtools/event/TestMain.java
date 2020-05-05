@@ -1,7 +1,10 @@
 package com.github.paganini2008.devtools.event;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
 
 /**
  * 
@@ -37,23 +40,22 @@ public class TestMain {
 		public void onEventFired(TestEvent event) {
 			System.out.println("Name: " + name + ", Value: " + event.getArgument());
 			counter.incrementAndGet();
-			
-			//EventBus<TestEvent, String> eventBus = (EventBus<TestEvent, String>)event.getSource();
-			//eventBus.subscribe(this);
+
+			// EventBus<TestEvent, String> eventBus = (EventBus<TestEvent,
+			// String>)event.getSource();
+			// eventBus.subscribe(this);
 		}
 
 		@Override
 		public boolean isPubSub() {
-			return true;
+			return false;
 		}
-		
-		
 
 	}
 
 	public static void main(String[] args) throws Exception {
-		 Executors.newFixedThreadPool(8);
-		EventBus<TestEvent, String> eventBus = new EventBus<TestEvent, String>(8,true);
+		Executor executor = Executors.newFixedThreadPool(16);
+		EventBus<TestEvent, String> eventBus = new EventBus<TestEvent, String>(executor, true);
 		for (int i = 0; i < 5; i++) {
 			eventBus.subscribe(new TestSubcriber("Name_" + i));
 		}
@@ -62,6 +64,7 @@ public class TestMain {
 		}
 		System.in.read();
 		eventBus.close();
+		ExecutorUtils.gracefulShutdown(executor, 60000L);
 		System.out.println("TestMain.main(): " + counter);
 	}
 
