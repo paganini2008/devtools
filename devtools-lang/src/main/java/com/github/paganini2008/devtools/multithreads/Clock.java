@@ -149,17 +149,9 @@ public final class Clock implements Executable {
 		});
 	}
 
-	private ClockEvent clockEvent;
-
 	public boolean execute() {
 		String now = DateUtils.format(System.currentTimeMillis(), DEFAULT_DATE_FORMAT);
-		if (clockEvent == null) {
-			clockEvent = new ClockEvent(this, now);
-		} else {
-			clockEvent = clockEvent.clone();
-			clockEvent.setArgument(now);
-		}
-		eventBus.publish(clockEvent);
+		eventBus.publish(new ClockEvent(this, now));
 		return running.get();
 	}
 
