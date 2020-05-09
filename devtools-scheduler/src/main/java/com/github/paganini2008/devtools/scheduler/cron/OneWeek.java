@@ -5,8 +5,6 @@ package com.github.paganini2008.devtools.scheduler.cron;
  * OneWeek
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public interface OneWeek extends Week {

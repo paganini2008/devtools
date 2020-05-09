@@ -56,7 +56,7 @@ public abstract class ThreadUtils {
 						return true;
 					} else {
 						try {
-							monitor.wait(1000L);
+							monitor.wait();
 						} catch (InterruptedException ignored) {
 							break;
 						}

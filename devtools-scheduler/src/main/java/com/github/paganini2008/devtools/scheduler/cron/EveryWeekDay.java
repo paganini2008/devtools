@@ -12,8 +12,6 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * EveryWeekDay
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public class EveryWeekDay implements Day, Serializable {
