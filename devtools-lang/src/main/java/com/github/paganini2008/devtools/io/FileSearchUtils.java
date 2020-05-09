@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.paganini2008.devtools.io.DirectoryWalker.FileInfo;
-
 /**
  * 
  * FileSearchUtils
@@ -16,13 +14,13 @@ import com.github.paganini2008.devtools.io.DirectoryWalker.FileInfo;
  */
 public abstract class FileSearchUtils {
 
-	public static File[] search(File directory, FileInfoFilter fileInfoFilter, int nThreads, int maxDepth) {
+	public static File[] search(File directory, DirectoryFilter fileInfoFilter, int nThreads, int maxDepth) {
 		List<File> files = new ArrayList<File>();
 		ForkJoinDirectoryWalker directoryWalker = new ForkJoinDirectoryWalker(directory, new DirectoryWalkerHandler() {
 
 			@Override
-			public void handleDirectoryEnd(File file, FileInfo fileInfo, int depth) throws IOException {
-				if (fileInfoFilter.accept(fileInfo)) {
+			public void handleDirectoryEnd(File file, Directory directory, int depth) throws IOException {
+				if (fileInfoFilter.accept(directory)) {
 					files.add(file);
 				}
 			}
@@ -42,15 +40,15 @@ public abstract class FileSearchUtils {
 
 	public static void main(String[] args) {
 		File directory = new File("d:/sql");
-		File[] files = FileSearchUtils.search(directory, new FileInfoFilter() {
+		File[] files = FileSearchUtils.search(directory, new DirectoryFilter() {
 			@Override
-			public boolean accept(FileInfo fileInfo) {
+			public boolean accept(Directory fileInfo) {
 				if (fileInfo.getLength() > 50 * FileUtils.MB) {
 					return true;
 				}
 				return false;
 			}
-		}, 8, -1);
+		}, 8, 5);
 		for (File file : files) {
 			System.out.println(file);
 		}

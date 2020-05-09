@@ -3,19 +3,17 @@ package com.github.paganini2008.devtools.io;
 import java.io.File;
 import java.io.FileFilter;
 
-import com.github.paganini2008.devtools.io.DirectoryWalker.FileInfo;
-
 /**
  * 
- * FileInfoFilter
+ * DirectoryFilter
  * 
  * @author Fred Feng
  * 
  * @version 1.0
  */
-public interface FileInfoFilter extends FileFilter {
+public interface DirectoryFilter extends FileFilter {
 
-	boolean accept(FileInfo fileInfo);
+	boolean accept(Directory directory);
 
 	@Override
 	default boolean accept(File pathname) {

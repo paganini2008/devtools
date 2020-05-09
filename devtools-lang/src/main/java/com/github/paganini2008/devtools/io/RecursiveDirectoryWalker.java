@@ -69,7 +69,7 @@ public class RecursiveDirectoryWalker extends AbstractDirectoryWalker {
 						progressBar.processBegin(childFile);
 						directoryInfo.sum(childFile);
 						if (childFile.isDirectory()) {
-							FileInfo childFileInfo = directoryInfo.newChildInfo(childFile);
+							FileInfo childFileInfo = directoryInfo.newDirectory(childFile);
 							executor.execute(() -> {
 								try {
 									doWalk(executor, childFile, childFileInfo, childDepth, progressBar);
@@ -120,7 +120,7 @@ public class RecursiveDirectoryWalker extends AbstractDirectoryWalker {
 						+ ", completedRatio: " + NumberUtils.format(completedRatio, "0.00%") + ", elapsed: " + elapsed);
 			}
 		});
-		FileInfo fileInfo = directoryWalker.walk();
+		Directory fileInfo = directoryWalker.walk();
 		System.out.println(fileInfo.getLength());
 		System.out.println("DirectoryWalker.main()");
 	}

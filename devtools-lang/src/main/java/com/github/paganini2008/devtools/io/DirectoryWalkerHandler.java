@@ -3,8 +3,6 @@ package com.github.paganini2008.devtools.io;
 import java.io.File;
 import java.io.IOException;
 
-import com.github.paganini2008.devtools.io.DirectoryWalker.FileInfo;
-
 /**
  * 
  * DirectoryWalkerHandler
@@ -17,7 +15,7 @@ public interface DirectoryWalkerHandler {
 	default void handleDirectoryStart(File file, int depth) throws IOException {
 	}
 
-	default void handleDirectoryEnd(File file, FileInfo fileInfo, int depth) throws IOException {
+	default void handleDirectoryEnd(File file, Directory directory, int depth) throws IOException {
 	}
 
 	default boolean handleDirectoryOnError(File file, int depth, Throwable e) {

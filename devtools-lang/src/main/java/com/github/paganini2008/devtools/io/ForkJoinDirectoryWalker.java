@@ -73,7 +73,7 @@ public class ForkJoinDirectoryWalker extends AbstractDirectoryWalker {
 								progressBar.processBegin(childFile);
 								directoryInfo.sum(childFile);
 								if (childFile.isDirectory()) {
-									FileInfo childFileInfo = directoryInfo.newChildInfo(childFile);
+									FileInfo childFileInfo = directoryInfo.newDirectory(childFile);
 									DirectoryWalkTask task = new DirectoryWalkTask(childFile, childFileInfo, depth + 1, progressBar);
 									task.fork();
 									task.join();
@@ -133,7 +133,7 @@ public class ForkJoinDirectoryWalker extends AbstractDirectoryWalker {
 						+ ", completedRatio: " + NumberUtils.format(completedRatio, "0.00%") + ", elapsed: " + elapsed);
 			}
 		});
-		FileInfo fileInfo = walker.walk();
+		Directory fileInfo = walker.walk();
 		System.out.println(fileInfo.getLength());
 		System.out.println("DirectoryWalker.main()");
 		System.in.read();

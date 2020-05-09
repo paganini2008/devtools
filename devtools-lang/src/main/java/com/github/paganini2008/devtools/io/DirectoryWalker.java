@@ -16,25 +16,18 @@ public interface DirectoryWalker {
 
 	void setProgressable(Progressable progressable);
 
-	FileInfo walk() throws IOException;
+	Directory walk() throws IOException;
 
-	interface FileInfo {
+	/**
+	 * 
+	 * FileInfo
+	 *
+	 * @author Fred Feng
+	 * @since 1.0
+	 */
+	interface FileInfo extends Directory {
 
-		File getFile();
-
-		FileInfo[] getChildren();
-
-		long getLength();
-
-		long getLastModified();
-
-		int getFileCount(boolean recursive);
-
-		int getFolderCount(boolean recursive);
-
-		FileInfo newChildInfo(File childFile);
-
-		FileInfo getParent();
+		FileInfo newDirectory(File childFile);
 
 		void sum(File file);
 

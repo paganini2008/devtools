@@ -45,7 +45,7 @@ public abstract class AbstractDirectoryWalker implements DirectoryWalker {
 	}
 
 	@Override
-	public FileInfo walk() {
+	public Directory walk() {
 		final Executor threadPool = getThreadPool(threadCount);
 		final ProgressBar progressBar = new ProgressBarImpl(root, progressable);
 		final FileInfo rootInfo = new FileInfoImpl(root, null);
@@ -213,16 +213,16 @@ public abstract class AbstractDirectoryWalker implements DirectoryWalker {
 	static class FileInfoImpl implements FileInfo {
 
 		private final File file;
-		private final FileInfo parent;
+		private final Directory parent;
 		private final AtomicInteger fileCount = new AtomicInteger(0);
 		private final AtomicInteger folderCount = new AtomicInteger(0);
 		private final AtomicLong length = new AtomicLong(0);
-		private final List<FileInfo> children = new CopyOnWriteArrayList<FileInfo>();
+		private final List<Directory> children = new CopyOnWriteArrayList<Directory>();
 		private final AtomicBoolean done = new AtomicBoolean();
 		private final long startTime;
 		private long elapsed;
 
-		FileInfoImpl(File file, FileInfo parent) {
+		FileInfoImpl(File file, Directory parent) {
 			this.file = file;
 			this.parent = parent;
 			this.startTime = System.currentTimeMillis();
@@ -232,7 +232,7 @@ public abstract class AbstractDirectoryWalker implements DirectoryWalker {
 		public int getFileCount(boolean recursive) {
 			int total = fileCount.get();
 			if (recursive) {
-				for (FileInfo fileInfo : children) {
+				for (Directory fileInfo : children) {
 					total += fileInfo.getFileCount(recursive);
 				}
 			}
@@ -243,7 +243,7 @@ public abstract class AbstractDirectoryWalker implements DirectoryWalker {
 		public int getFolderCount(boolean recursive) {
 			int total = folderCount.get();
 			if (recursive) {
-				for (FileInfo fileInfo : children) {
+				for (Directory fileInfo : children) {
 					total += fileInfo.getFolderCount(recursive);
 				}
 			}
@@ -253,7 +253,7 @@ public abstract class AbstractDirectoryWalker implements DirectoryWalker {
 		@Override
 		public long getLength() {
 			long total = length.get();
-			for (FileInfo fileInfo : children) {
+			for (Directory fileInfo : children) {
 				total += fileInfo.getLength();
 			}
 			return total;
@@ -265,28 +265,28 @@ public abstract class AbstractDirectoryWalker implements DirectoryWalker {
 		}
 
 		@Override
-		public FileInfo[] getChildren() {
-			return children.toArray(new FileInfo[children.size()]);
+		public Directory[] getChildren() {
+			return children.toArray(new Directory[children.size()]);
 		}
 
 		@Override
 		public long getLastModified() {
 			long lastModified = file.lastModified();
-			for (FileInfo fileInfo : children) {
+			for (Directory fileInfo : children) {
 				lastModified = Math.max(lastModified, fileInfo.getLastModified());
 			}
 			return lastModified;
 		}
 
 		@Override
-		public FileInfo newChildInfo(File childFile) {
+		public FileInfo newDirectory(File childFile) {
 			FileInfo childFileInfo = new FileInfoImpl(childFile, this);
 			children.add(childFileInfo);
 			return childFileInfo;
 		}
 
 		@Override
-		public FileInfo getParent() {
+		public Directory getParent() {
 			return parent;
 		}
 
