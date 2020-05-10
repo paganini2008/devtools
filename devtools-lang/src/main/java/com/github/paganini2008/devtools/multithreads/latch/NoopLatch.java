@@ -1,5 +1,6 @@
 package com.github.paganini2008.devtools.multithreads.latch;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -14,6 +15,11 @@ public class NoopLatch implements Latch {
 
 	private final long startTime = System.currentTimeMillis();
 
+	@Override
+	public long cons() {
+		return 0L;
+	}
+	
 	@Override
 	public long availablePermits() {
 		return Long.MAX_VALUE;
@@ -49,7 +55,7 @@ public class NoopLatch implements Latch {
 	}
 
 	@Override
-	public <E> void forEach(Iterable<E> iterable, Consumer<E> consumer) {
+	public <E> void forEach(Iterable<E> iterable, Executor executor, Consumer<E> consumer) {
 		throw new UnsupportedOperationException();
 	}
 

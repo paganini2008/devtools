@@ -27,9 +27,9 @@ public interface DirectoryWalker {
 	 */
 	interface FileInfo extends Directory {
 
-		FileInfo newDirectory(File childFile);
+		FileInfo newChildFileInfo(File childFile);
 
-		void sum(File file);
+		void process(File file);
 
 		void done();
 
@@ -38,6 +38,13 @@ public interface DirectoryWalker {
 		boolean isDone();
 	}
 
+	/**
+	 * 
+	 * Progressable
+	 *
+	 * @author Fred Feng
+	 * @since 1.0
+	 */
 	interface Progressable {
 
 		void progress(int fileCount, int folderCount, long length, float completedRatio, long elapsed);
@@ -48,6 +55,13 @@ public interface DirectoryWalker {
 
 	}
 
+	/**
+	 * 
+	 * ProgressBar
+	 *
+	 * @author Fred Feng
+	 * @since 1.0
+	 */
 	interface ProgressBar {
 
 		void processBegin(File file);

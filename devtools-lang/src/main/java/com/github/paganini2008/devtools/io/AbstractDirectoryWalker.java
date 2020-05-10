@@ -279,7 +279,7 @@ public abstract class AbstractDirectoryWalker implements DirectoryWalker {
 		}
 
 		@Override
-		public FileInfo newDirectory(File childFile) {
+		public FileInfo newChildFileInfo(File childFile) {
 			FileInfo childFileInfo = new FileInfoImpl(childFile, this);
 			children.add(childFileInfo);
 			return childFileInfo;
@@ -291,7 +291,7 @@ public abstract class AbstractDirectoryWalker implements DirectoryWalker {
 		}
 
 		@Override
-		public void sum(File file) {
+		public void process(File file) {
 			if (file.isDirectory()) {
 				folderCount.incrementAndGet();
 			} else {

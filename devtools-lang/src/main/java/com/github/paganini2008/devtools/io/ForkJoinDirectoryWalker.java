@@ -71,9 +71,9 @@ public class ForkJoinDirectoryWalker extends AbstractDirectoryWalker {
 									throw new CancellationException();
 								}
 								progressBar.processBegin(childFile);
-								directoryInfo.sum(childFile);
+								directoryInfo.process(childFile);
 								if (childFile.isDirectory()) {
-									FileInfo childFileInfo = directoryInfo.newDirectory(childFile);
+									FileInfo childFileInfo = directoryInfo.newChildFileInfo(childFile);
 									DirectoryWalkTask task = new DirectoryWalkTask(childFile, childFileInfo, depth + 1, progressBar);
 									task.fork();
 									task.join();

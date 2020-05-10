@@ -34,6 +34,10 @@ public class CounterLatch implements Latch {
 		this.startTime = System.currentTimeMillis();
 	}
 
+	public long cons() {
+		return counter.get();
+	}
+
 	public long availablePermits() {
 		return maxPermits - counter.get();
 	}

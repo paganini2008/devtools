@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.multithreads.ThreadLocalInteger;
 
 /**
  * 
- * RecursiveLatch 
+ * RecursiveLatch
  *
  * @author Fred Feng
  * @version 1.0
@@ -29,6 +29,10 @@ public class RecursiveLatch implements Latch {
 
 	public RecursiveLatch(Latch delegate) {
 		this.delegate = delegate;
+	}
+
+	public long cons() {
+		return delegate.cons();
 	}
 
 	public long availablePermits() {

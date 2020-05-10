@@ -28,8 +28,12 @@ public class SemaphoreLatch implements Latch {
 		this.startTime = System.currentTimeMillis();
 	}
 
+	public long cons() {
+		return maxPermits - availablePermits();
+	}
+
 	public long availablePermits() {
-		return maxPermits - latch.availablePermits();
+		return latch.availablePermits();
 	}
 
 	public boolean tryAcquire() {

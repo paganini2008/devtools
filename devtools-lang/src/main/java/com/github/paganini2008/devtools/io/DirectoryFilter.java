@@ -16,7 +16,7 @@ public interface DirectoryFilter extends FileFilter {
 	boolean accept(Directory directory);
 
 	@Override
-	default boolean accept(File pathname) {
+	default boolean accept(File file) {
 		return false;
 	}
 

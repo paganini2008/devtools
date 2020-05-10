@@ -187,6 +187,7 @@ public class Jdk14ThreadPool implements ThreadPool {
 					threadPool.apply(this);
 				} else {
 					synchronized (reference) {
+						reference.set(result);
 						reference.notifyAll();
 						reference.setDone(true);
 					}

@@ -67,9 +67,9 @@ public class RecursiveDirectoryWalker extends AbstractDirectoryWalker {
 							throw new CancellationException();
 						}
 						progressBar.processBegin(childFile);
-						directoryInfo.sum(childFile);
+						directoryInfo.process(childFile);
 						if (childFile.isDirectory()) {
-							FileInfo childFileInfo = directoryInfo.newDirectory(childFile);
+							FileInfo childFileInfo = directoryInfo.newChildFileInfo(childFile);
 							executor.execute(() -> {
 								try {
 									doWalk(executor, childFile, childFileInfo, childDepth, progressBar);

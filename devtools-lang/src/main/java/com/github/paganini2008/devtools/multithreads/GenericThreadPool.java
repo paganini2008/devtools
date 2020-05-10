@@ -253,6 +253,7 @@ public class GenericThreadPool extends ThreadPoolExecutor implements ThreadPool 
 				threadPool.apply(this);
 			} else {
 				synchronized (reference) {
+					reference.set(result);
 					reference.notifyAll();
 					reference.setDone(true);
 				}
@@ -272,6 +273,13 @@ public class GenericThreadPool extends ThreadPoolExecutor implements ThreadPool 
 					System.out.println(ThreadUtils.currentThreadName() + " say: " + i);
 					return new Long(i);
 				}
+
+				@Override
+				public boolean shouldReact(Long result) {
+					return false;
+				}
+				
+				
 
 			});
 			promises.add(p);
