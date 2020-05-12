@@ -13,26 +13,26 @@ import com.github.paganini2008.devtools.multithreads.latch.SemaphoreLatch;
 
 /**
  * 
- * Actor
+ * ForEach
  *
  * @author Fred Feng
  * @since 1.0
  */
-public abstract class Actor<E> {
+public abstract class ForEach<E> {
 
 	private final Latch latch;
 	private final Worker worker;
 	private final Executor executor;
 
-	public Actor(int nThreads) {
-		this(Executors.newFixedThreadPool(nThreads), nThreads);
+	public ForEach(int nThreads) {
+		this(Executors.newFixedThreadPool(nThreads), nThreads * 2);
 	}
 
-	public Actor(Executor executor, int maxPermits) {
+	public ForEach(Executor executor, int maxPermits) {
 		this(executor, new ConcurrentLinkedQueue<E>(), maxPermits);
 	}
 
-	public Actor(Executor executor, Queue<E> workQueue, int maxPermits) {
+	public ForEach(Executor executor, Queue<E> workQueue, int maxPermits) {
 		this.worker = new Worker(workQueue);
 		this.executor = executor;
 		this.latch = maxPermits > 0 ? new SemaphoreLatch(maxPermits) : new NoopLatch();
@@ -87,9 +87,9 @@ public abstract class Actor<E> {
 		}
 	}
 
-	public static <E> void forEach(final Iterable<E> iterable, final Consumer<E> consumer) {
+	public static <E> void run(final Iterable<E> iterable, final Consumer<E> consumer) {
 		final int nThreads = Runtime.getRuntime().availableProcessors() * 2;
-		Actor<E> actor = new Actor<E>(nThreads) {
+		ForEach<E> actor = new ForEach<E>(nThreads) {
 			@Override
 			protected void process(E element) {
 				consumer.accept(element);
@@ -100,7 +100,7 @@ public abstract class Actor<E> {
 	}
 
 	public static void main(String[] args) {
-		Actor.forEach(Sequence.forEach(0, 100), e -> {
+		ForEach.run(Sequence.forEach(0, 10000), e -> {
 			System.out.println(e);
 		});
 	}

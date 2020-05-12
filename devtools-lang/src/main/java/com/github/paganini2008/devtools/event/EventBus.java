@@ -14,8 +14,8 @@ import java.util.concurrent.PriorityBlockingQueue;
 
 import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.ClassUtils;
-import com.github.paganini2008.devtools.multithreads.Actor;
 import com.github.paganini2008.devtools.multithreads.AtomicUnsignedInteger;
+import com.github.paganini2008.devtools.multithreads.ForEach;
 
 /**
  * 
@@ -66,7 +66,7 @@ public class EventBus<E extends Event<T>, T> {
 	 * @author Fred Feng
 	 * @since 1.0
 	 */
-	static class EventHandler<E extends Event<T>, T> extends Actor<Runnable> {
+	static class EventHandler<E extends Event<T>, T> extends ForEach<Runnable> {
 
 		final boolean multicast;
 		final ConcurrentMap<Class<?>, EventGroup<E, T>> eventGroups = new ConcurrentHashMap<Class<?>, EventGroup<E, T>>();
@@ -119,13 +119,13 @@ public class EventBus<E extends Event<T>, T> {
 	 */
 	static class QueueGroup<E extends Event<T>, T> implements EventGroup<E, T> {
 
-		final Actor<Runnable> actor;
+		final ForEach<Runnable> forEach;
 		final List<EventSubscriber<E, T>> list;
 		final boolean multicast;
 		final AtomicUnsignedInteger index = new AtomicUnsignedInteger(0);
 
-		QueueGroup(Actor<Runnable> actor, boolean multicast) {
-			this.actor = actor;
+		QueueGroup(ForEach<Runnable> forEach, boolean multicast) {
+			this.forEach = forEach;
 			this.multicast = multicast;
 			this.list = new CopyOnWriteArrayList<EventSubscriber<E, T>>();
 		}
@@ -157,7 +157,7 @@ public class EventBus<E extends Event<T>, T> {
 			} else {
 				subscriber = list.remove(index.getAndIncrement());
 			}
-			actor.accept(() -> {
+			forEach.accept(() -> {
 				subscriber.onEventFired(event);
 			});
 		}
@@ -173,12 +173,12 @@ public class EventBus<E extends Event<T>, T> {
 	 */
 	static class PubSubGroup<E extends Event<T>, T> implements EventGroup<E, T> {
 
-		final Actor<Runnable> actor;
+		final ForEach<Runnable> forEach;
 		final BlockingQueue<EventSubscriber<E, T>> q;
 		final boolean multicast;
 
-		PubSubGroup(Actor<Runnable> actor, boolean multicast) {
-			this.actor = actor;
+		PubSubGroup(ForEach<Runnable> forEach, boolean multicast) {
+			this.forEach = forEach;
 			this.multicast = multicast;
 			this.q = new PriorityBlockingQueue<EventSubscriber<E, T>>();
 		}
@@ -199,7 +199,7 @@ public class EventBus<E extends Event<T>, T> {
 		public void onEventFired(final E event) {
 			if (multicast) {
 				q.forEach(subscriber -> {
-					actor.accept(() -> {
+					forEach.accept(() -> {
 						subscriber.onEventFired(event);
 					});
 				});
@@ -207,7 +207,7 @@ public class EventBus<E extends Event<T>, T> {
 				List<EventSubscriber<E, T>> list = new ArrayList<EventSubscriber<E, T>>();
 				if (q.drainTo(list) > 0) {
 					list.forEach(subscriber -> {
-						actor.accept(() -> {
+						forEach.accept(() -> {
 							subscriber.onEventFired(event);
 						});
 					});
