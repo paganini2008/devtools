@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.MapUtils;
+import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 import com.github.paganini2008.devtools.primitives.Booleans;
 import com.github.paganini2008.devtools.primitives.Bytes;
 import com.github.paganini2008.devtools.primitives.Chars;
@@ -196,5 +197,32 @@ public abstract class ObjectUtils {
 			}
 		}
 		return hash;
+	}
+
+	public static boolean accept(Acceptable acceptable) {
+		int retrying = 0;
+		boolean success = false;
+		do {
+			try {
+				success = acceptable.accept();
+			} catch (Throwable e) {
+				acceptable.exceptionCaught(e, retrying);
+			}
+			ThreadUtils.sleep(acceptable.retryingInterval());
+		} while (!success && retrying++ < acceptable.retries());
+		return success;
+	}
+
+	public static <T> T obtain(Obtainable<T> obtainable) {
+		int retrying = 0;
+		do {
+			try {
+				return obtainable.obtain();
+			} catch (Throwable e) {
+				obtainable.exceptionCaught(e, retrying);
+			}
+			ThreadUtils.sleep(obtainable.retryingInterval());
+		} while (retrying++ < obtainable.retries());
+		return obtainable.defaultValue();
 	}
 }

@@ -89,14 +89,14 @@ public abstract class ForEach<E> {
 
 	public static <E> void run(final Iterable<E> iterable, final Consumer<E> consumer) {
 		final int nThreads = Runtime.getRuntime().availableProcessors() * 2;
-		ForEach<E> actor = new ForEach<E>(nThreads) {
+		ForEach<E> forEach = new ForEach<E>(nThreads) {
 			@Override
 			protected void process(E element) {
 				consumer.accept(element);
 			}
 		};
-		actor.accept(iterable);
-		actor.join(true);
+		forEach.accept(iterable);
+		forEach.join(true);
 	}
 
 	public static void main(String[] args) {

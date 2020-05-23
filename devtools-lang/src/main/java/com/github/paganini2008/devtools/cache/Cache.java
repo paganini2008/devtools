@@ -7,8 +7,6 @@ import java.util.Set;
  * Cache
  * 
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public interface Cache extends Iterable<Object> {
