@@ -109,7 +109,7 @@ public class SortedCache extends LimitedCache {
 
 	public static void main(String[] args) {
 		SortedCache cache = new SortedCache(20);
-		for (int i = 0; i < 30; i++) {
+		for (int i = 0; i < 30000; i++) {
 			cache.putObject("Key_" + i, i);
 		}
 		System.out.println(cache);

@@ -12,31 +12,31 @@ import java.util.Iterator;
  */
 public abstract class AbstractCache implements Cache {
 
-	public LimitedCache fifo(int maxSize, Store store) {
+	public LimitedCache fifoCache(int maxSize, Store store) {
 		LimitedCache cache = new FifoCache(this, maxSize);
 		cache.setStore(store);
 		return cache;
 	}
 
-	public LimitedCache lifo(int maxSize, Store store) {
+	public LimitedCache lifoCache(int maxSize, Store store) {
 		LimitedCache cache = new LifoCache(this, maxSize);
 		cache.setStore(store);
 		return cache;
 	}
 
-	public LimitedCache lru(int maxSize, Store store) {
+	public LimitedCache lruCache(int maxSize, Store store) {
 		LimitedCache cache = new LruCache(this, maxSize);
 		cache.setStore(store);
 		return cache;
 	}
 
-	public LimitedCache sort(int maxSize, boolean asc, Store store) {
+	public LimitedCache sortedCache(int maxSize, boolean asc, Store store) {
 		LimitedCache cache = new SortedCache(this, maxSize, asc);
 		cache.setStore(store);
 		return cache;
 	}
 
-	public Cache masterStandby(Cache backup) {
+	public Cache masterStandbyCache(Cache backup) {
 		return new MasterStandbyCache(this, backup);
 	}
 
