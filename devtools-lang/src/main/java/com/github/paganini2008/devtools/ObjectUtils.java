@@ -1,9 +1,11 @@
 package com.github.paganini2008.devtools;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.function.Function;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.MapUtils;
@@ -25,12 +27,30 @@ import com.github.paganini2008.devtools.primitives.Shorts;
  */
 public abstract class ObjectUtils {
 
-	public static String toString(Object other) {
-		return other != null ? other.toString().trim() : "";
+	public static String toString(Object obj) {
+		return obj != null ? obj.toString().trim() : "";
 	}
 
-	public static int hashCode(Object other) {
-		return other != null ? other.hashCode() : 0;
+	public static String toStringSelectively(Object obj) {
+		return toStringSelectively(obj, cls -> {
+			return ClassUtils.isPrimitiveOrWrapper(cls) || CharSequence.class.isAssignableFrom(String.class)
+					|| Date.class.isAssignableFrom(cls) || Number.class.isAssignableFrom(cls);
+		});
+	}
+
+	public static String toStringSelectively(Object obj, Function<Class<?>, Boolean> condition) {
+		if (obj == null) {
+			return "";
+		}
+		Class<?> cls = obj.getClass();
+		if (condition.apply(cls)) {
+			return obj.toString().trim();
+		}
+		return cls.toString();
+	}
+
+	public static int hashCode(Object obj) {
+		return obj != null ? obj.hashCode() : 0;
 	}
 
 	public static boolean notEquals(Object left, Object right) {
