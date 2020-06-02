@@ -48,18 +48,6 @@ public abstract class AbstractCache implements Cache {
 		return new UncheckedExpiredCache(this);
 	}
 
-	public Object getObject(Object key, Object defaultValue) {
-		Object o = getObject(key);
-		if (o == null) {
-			o = defaultValue;
-			if (o != null) {
-				putObject(key, o);
-				o = getObject(key);
-			}
-		}
-		return o;
-	}
-
 	public Iterator<Object> iterator() {
 		return new CacheIterator(this);
 	}

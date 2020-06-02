@@ -17,6 +17,15 @@ public interface Cache extends Iterable<Object> {
 
 	Object getObject(Object key);
 
+	default Object getObject(Object key, Object defaultValue) {
+		Object o = getObject(key);
+		if (o == null) {
+			putObject(key, defaultValue);
+			o = getObject(key);
+		}
+		return o;
+	}
+
 	Object removeObject(Object key);
 
 	Set<Object> keys();
