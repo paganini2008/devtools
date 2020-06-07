@@ -28,6 +28,9 @@ public class EverySecond implements Second, Serializable {
 	private boolean forward = true;
 
 	EverySecond(Minute minute, Function<Minute, Integer> from, Function<Minute, Integer> to, int interval) {
+		if (interval <= 0) {
+			throw new IllegalArgumentException("Invalid interval: " + interval);
+		}
 		this.minute = minute;
 		this.fromSecond = from.apply(minute);
 		CalendarAssert.checkSecond(fromSecond);
@@ -99,6 +102,14 @@ public class EverySecond implements Second, Serializable {
 
 	public long getTimeInMillis() {
 		return second.getTimeInMillis();
+	}
+
+	public CronExpression getParent() {
+		return minute;
+	}
+
+	public String toCronString() {
+		return interval > 1 ? "*/" + interval : "0";
 	}
 
 	public static void main(String[] args) {

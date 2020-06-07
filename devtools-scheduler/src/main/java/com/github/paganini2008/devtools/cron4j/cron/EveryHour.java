@@ -28,6 +28,9 @@ public class EveryHour implements Hour, Serializable {
 	private boolean forward = true;
 
 	EveryHour(Day day, Function<Day, Integer> from, Function<Day, Integer> to, int interval) {
+		if (interval <= 0) {
+			throw new IllegalArgumentException("Invalid interval: " + interval);
+		}
 		this.day = day;
 		this.fromHour = from.apply(day);
 		CalendarAssert.checkHourOfDay(fromHour);
@@ -97,6 +100,14 @@ public class EveryHour implements Hour, Serializable {
 
 	public Minute everyMinute(Function<Hour, Integer> from, Function<Hour, Integer> to, int interval) {
 		return new EveryMinute(CollectionUtils.getFirst(this), from, to, interval);
+	}
+
+	public CronExpression getParent() {
+		return day;
+	}
+
+	public String toCronString() {
+		return interval > 1 ? "*/" + interval : "0";
 	}
 
 }

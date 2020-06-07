@@ -45,7 +45,7 @@ public class SingleDayOfYear implements OneDay, Serializable {
 		return day.get(Calendar.DAY_OF_MONTH);
 	}
 
-	public int getWeekDay() {
+	public int getDayOfWeek() {
 		return day.get(Calendar.DAY_OF_WEEK);
 	}
 
@@ -110,6 +110,10 @@ public class SingleDayOfYear implements OneDay, Serializable {
 		day = CollectionUtils.get(siblings.values().iterator(), index++);
 		day.set(Calendar.YEAR, year.getYear());
 		return this;
+	}
+	
+	public CronExpression getParent() {
+		return year;
 	}
 
 }

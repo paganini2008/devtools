@@ -15,7 +15,7 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * @author Fred Feng
  * @version 1.0
  */
-public class SingleDayOfWeek implements OneWeekDay, Serializable {
+public class SingleDayOfWeek implements OneDayOfWeek, Serializable {
 
 	private static final long serialVersionUID = -5353496894925284106L;
 	private final TreeMap<Integer, Calendar> siblings;
@@ -23,6 +23,7 @@ public class SingleDayOfWeek implements OneWeekDay, Serializable {
 	private int index;
 	private Calendar day;
 	private int lastDay;
+	private final StringBuilder cron = new StringBuilder();
 
 	SingleDayOfWeek(Week week, int day) {
 		CalendarAssert.checkDayOfWeek(day);
@@ -31,20 +32,40 @@ public class SingleDayOfWeek implements OneWeekDay, Serializable {
 		Calendar calendar = CalendarUtils.setField(week.getTime(), Calendar.DAY_OF_WEEK, day);
 		siblings.put(day, calendar);
 		this.lastDay = day;
+		this.cron.append(getDayOfWeekName(day));
 	}
 
-	public OneWeekDay andDay(int day) {
+	public OneDayOfWeek andDay(int day) {
+		return andDay(day, true);
+	}
+
+	private OneDayOfWeek andDay(int day, boolean writeCron) {
 		CalendarAssert.checkDayOfWeek(day);
 		Calendar calendar = CalendarUtils.setField(week.getTime(), Calendar.DAY_OF_WEEK, day);
 		siblings.put(day, calendar);
 		this.lastDay = day;
+		if (writeCron) {
+			this.cron.append(",").append(getDayOfWeekName(day));
+		}
 		return this;
 	}
 
-	public OneWeekDay toDay(int day, int interval) {
+	private String getDayOfWeekName(int day) {
+		if (week instanceof LastWeek || week instanceof SingleWeek) {
+			return day + week.toCronString();
+		}
+		return CalendarUtils.getDayOfWeekName(day);
+	}
+
+	public OneDayOfWeek toDay(int day, int interval) {
 		CalendarAssert.checkDayOfWeek(day);
 		for (int i = lastDay + interval; i <= day; i += interval) {
-			andDay(i);
+			andDay(i, false);
+		}
+		if (interval > 1) {
+			this.cron.append("/").append(interval);
+		} else {
+			this.cron.append("-").append(getDayOfWeekName(day));
 		}
 		return this;
 	}
@@ -69,7 +90,7 @@ public class SingleDayOfWeek implements OneWeekDay, Serializable {
 		return day.get(Calendar.DAY_OF_MONTH);
 	}
 
-	public int getWeekDay() {
+	public int getDayOfWeek() {
 		return day.get(Calendar.DAY_OF_WEEK);
 	}
 
@@ -103,6 +124,14 @@ public class SingleDayOfWeek implements OneWeekDay, Serializable {
 		day.set(Calendar.MONTH, week.getMonth());
 		day.set(Calendar.WEEK_OF_MONTH, week.getWeek());
 		return this;
+	}
+	
+	public CronExpression getParent() {
+		return week;
+	}
+
+	public String toCronString() {
+		return this.cron.toString();
 	}
 
 }

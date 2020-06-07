@@ -50,7 +50,7 @@ public class LastDay implements Day, Serializable {
 		return day.get(Calendar.DAY_OF_MONTH);
 	}
 
-	public int getWeekDay() {
+	public int getDayOfWeek() {
 		return day.get(Calendar.DAY_OF_WEEK);
 	}
 
@@ -85,6 +85,14 @@ public class LastDay implements Day, Serializable {
 			self = false;
 		}
 		return this;
+	}
+	
+	public CronExpression getParent() {
+		return month;
+	}
+	
+	public String toCronString() {
+		return "L";
 	}
 
 }

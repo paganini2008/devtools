@@ -26,6 +26,7 @@ public class SingleMonth implements OneMonth, Serializable {
 	private int index;
 	private Calendar month;
 	private int lastMonth;
+	private final StringBuilder cron = new StringBuilder();
 
 	SingleMonth(Year year, int month) {
 		CalendarAssert.checkMonth(month);
@@ -35,29 +36,33 @@ public class SingleMonth implements OneMonth, Serializable {
 		siblings.put(month, calendar);
 		this.month = calendar;
 		this.lastMonth = month;
+		this.cron.append(CalendarUtils.getMonthName(month));
 	}
 
 	public OneMonth andMonth(int month) {
+		return andMonth(month, true);
+	}
+
+	private OneMonth andMonth(int month, boolean writeCron) {
 		CalendarAssert.checkMonth(month);
 		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.MONTH, month);
 		siblings.put(month, calendar);
 		this.lastMonth = month;
-		return this;
-	}
-
-	public OneMonth andNextMonths(int months) {
-		CalendarAssert.checkMonth(lastMonth + months);
-		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.MONTH, lastMonth + months);
-		int month = calendar.get(Calendar.MONTH);
-		siblings.put(month, calendar);
-		this.lastMonth = month;
+		if (writeCron) {
+			this.cron.append(",").append(CalendarUtils.getMonthName(month));
+		}
 		return this;
 	}
 
 	public OneMonth toMonth(int month, int interval) {
 		CalendarAssert.checkMonth(month);
 		for (int i = lastMonth + interval; i <= month; i += interval) {
-			andMonth(i);
+			andMonth(i, false);
+		}
+		if (interval > 1) {
+			this.cron.append("/").append(interval);
+		} else {
+			this.cron.append("-").append(month);
 		}
 		return this;
 	}
@@ -126,6 +131,14 @@ public class SingleMonth implements OneMonth, Serializable {
 		month = CollectionUtils.get(siblings.values().iterator(), index++);
 		month.set(Calendar.YEAR, year.getYear());
 		return this;
+	}
+
+	public CronExpression getParent() {
+		return year;
+	}
+
+	public String toCronString() {
+		return this.cron.toString();
 	}
 
 	public static void main(String[] args) {

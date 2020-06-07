@@ -53,12 +53,12 @@ public class LastWeek implements Week, Serializable {
 		return week.get(Calendar.WEEK_OF_YEAR);
 	}
 
-	public OneWeekDay weekday(int day) {
+	public OneDayOfWeek weekday(int day) {
 		return new SingleDayOfWeek(CollectionUtils.getFirst(this), day);
 	}
 
 	public Day everyDay(Function<Week, Integer> from, Function<Week, Integer> to, int interval) {
-		return new EveryWeekDay(CollectionUtils.getFirst(this), from, to, interval);
+		return new EveryDayOfWeek(CollectionUtils.getFirst(this), from, to, interval);
 	}
 
 	public boolean hasNext() {
@@ -80,6 +80,14 @@ public class LastWeek implements Week, Serializable {
 			self = false;
 		}
 		return this;
+	}
+	
+	public CronExpression getParent() {
+		return month;
+	}
+	
+	public String toCronString() {
+		return "L";
 	}
 
 }

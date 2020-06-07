@@ -18,7 +18,7 @@ public interface Day extends Iterator<Day>, CronExpression {
 
 	int getDay();
 
-	int getWeekDay();
+	int getDayOfWeek();
 
 	int getDayOfYear();
 

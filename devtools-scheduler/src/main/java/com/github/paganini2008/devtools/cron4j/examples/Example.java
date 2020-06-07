@@ -94,18 +94,18 @@ public abstract class Example {
 	public static void test1() throws Exception {
 		getCron14().forEach(date -> {
 			System.out.println(DateUtils.format(date));
-		});
+		}, -1);
 
 		System.out.println(StringUtils.repeat("-", 32));
 
 		getCron13().forEach(date -> {
 			System.out.println(DateUtils.format(date));
-		});
+		}, -1);
 
 		System.out.println(StringUtils.repeat("-", 32));
 		getCron12().forEach(date -> {
 			System.out.println(DateUtils.format(date));
-		});
+		}, -1);
 	}
 
 	public static void test2() throws Exception {
@@ -187,7 +187,7 @@ public abstract class Example {
 		System.in.read();
 		executor.close();
 	}
-	
+
 	public static void test5() throws Exception {
 		CronExpression expression = CronBuilder.everySecond();
 		ClockTaskExecutor executor = new ClockTaskExecutor();

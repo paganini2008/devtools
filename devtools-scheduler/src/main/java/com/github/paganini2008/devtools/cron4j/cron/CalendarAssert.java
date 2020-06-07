@@ -16,7 +16,7 @@ public abstract class CalendarAssert {
 	public static void checkYear(int year) {
 		int thisYear = DateUtils.getYear();
 		if (year < thisYear) {
-			throw new IllegalArgumentException("Year: '" + year + "' is past.");
+			throw new IllegalArgumentException("Year '" + year + "' is past.");
 		}
 	}
 

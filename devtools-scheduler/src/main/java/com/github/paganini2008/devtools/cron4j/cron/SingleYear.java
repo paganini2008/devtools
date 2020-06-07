@@ -25,6 +25,7 @@ public class SingleYear implements OneYear, Serializable {
 	private Calendar year;
 	private int index;
 	private int lastYear;
+	private final StringBuilder cron = new StringBuilder();
 
 	SingleYear(int year) {
 		CalendarAssert.checkYear(year);
@@ -33,29 +34,36 @@ public class SingleYear implements OneYear, Serializable {
 		siblings.put(year, calendar);
 		this.year = calendar;
 		this.lastYear = year;
+		this.cron.append(year);
 	}
 
 	public OneYear andYear(int year) {
+		return andYear(year, true);
+	}
+
+	public OneYear andYear(int year, boolean writeCron) {
 		CalendarAssert.checkYear(year);
 		Calendar calendar = CalendarUtils.setField(new Date(), Calendar.YEAR, year);
 		siblings.put(year, calendar);
 		this.lastYear = year;
-		return this;
-	}
-
-	public OneYear andNextYears(int years) {
-		CalendarAssert.checkYear(lastYear + years);
-		Calendar calendar = CalendarUtils.setField(new Date(), Calendar.YEAR, lastYear + years);
-		int year = calendar.get(Calendar.YEAR);
-		siblings.put(year, calendar);
-		this.lastYear = year;
+		if (writeCron) {
+			this.cron.append(",").append(year);
+		}
 		return this;
 	}
 
 	public OneYear toYear(int year, int interval) {
 		CalendarAssert.checkYear(year);
+		if (interval < 0) {
+			throw new IllegalArgumentException("Invalid interval: " + interval);
+		}
 		for (int i = lastYear + interval; i <= year; i += interval) {
-			andYear(i);
+			andYear(i, false);
+		}
+		if (interval > 1) {
+			this.cron.append("/").append(interval);
+		} else {
+			this.cron.append("-").append(year);
 		}
 		return this;
 	}
@@ -95,7 +103,7 @@ public class SingleYear implements OneYear, Serializable {
 	public OneMonth month(int month) {
 		return new SingleMonth(CollectionUtils.getFirst(this), month);
 	}
-	
+
 	public Week lastWeek() {
 		return new LastWeekOfYear(CollectionUtils.getFirst(this));
 	}
@@ -109,8 +117,16 @@ public class SingleYear implements OneYear, Serializable {
 		return this;
 	}
 
+	public CronExpression getParent() {
+		return null;
+	}
+
+	public String toCronString() {
+		return this.cron.toString();
+	}
+
 	public static void main(String[] args) {
-		OneYear singleYear = new SingleYear(2019);
+		OneYear singleYear = new SingleYear(2020);
 		singleYear = singleYear.andYear(2028).andYear(2024);
 		Day day = singleYear.lastWeek().Mon().toFri();
 		while (day.hasNext()) {

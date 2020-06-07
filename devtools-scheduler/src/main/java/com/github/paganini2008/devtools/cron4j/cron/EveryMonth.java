@@ -28,6 +28,9 @@ public class EveryMonth implements Month, Serializable {
 	private boolean forward = true;
 
 	EveryMonth(Year year, Function<Year, Integer> from, Function<Year, Integer> to, int interval) {
+		if (interval <= 0) {
+			throw new IllegalArgumentException("Invalid interval: " + interval);
+		}
 		this.year = year;
 		this.fromMonth = from.apply(year);
 		CalendarAssert.checkMonth(fromMonth);
@@ -111,6 +114,14 @@ public class EveryMonth implements Month, Serializable {
 
 	public Week everyWeek(Function<Month, Integer> from, Function<Month, Integer> to, int interval) {
 		return new EveryWeek(CollectionUtils.getFirst(this), from, to, interval);
+	}
+	
+	public CronExpression getParent() {
+		return year;
+	}
+
+	public String toCronString() {
+		return interval > 0 ? "*/" + interval : "*";
 	}
 
 }

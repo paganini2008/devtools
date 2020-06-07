@@ -33,5 +33,9 @@ public final class Epoch implements CronExpression {
 	public OneYear year(int year) {
 		return new SingleYear(year);
 	}
+	
+	public CronExpression getParent() {
+		return null;
+	}
 
 }

@@ -25,6 +25,7 @@ public class SingleMinute implements OneMinute, Serializable {
 	private int index;
 	private Calendar minute;
 	private int lastMinute;
+	private final StringBuilder cron = new StringBuilder();
 
 	SingleMinute(Hour hour, int minute) {
 		CalendarAssert.checkMinute(minute);
@@ -34,20 +35,36 @@ public class SingleMinute implements OneMinute, Serializable {
 		siblings.put(minute, calendar);
 		this.minute = calendar;
 		this.lastMinute = minute;
+		this.cron.append(minute);
 	}
 
 	public SingleMinute andMinute(int minute) {
+		return andMinute(minute, true);
+	}
+
+	private SingleMinute andMinute(int minute, boolean writeCron) {
 		CalendarAssert.checkMinute(minute);
 		Calendar calendar = CalendarUtils.setField(hour.getTime(), Calendar.MINUTE, minute);
 		siblings.put(minute, calendar);
 		this.lastMinute = minute;
+		if (writeCron) {
+			this.cron.append(",").append(minute);
+		}
 		return this;
 	}
 
 	public OneMinute toMinute(int minute, int interval) {
 		CalendarAssert.checkMinute(minute);
+		if (interval < 0) {
+			throw new IllegalArgumentException("Invalid interval: " + interval);
+		}
 		for (int i = lastMinute + interval; i < minute; i += interval) {
-			andMinute(i);
+			andMinute(i, false);
+		}
+		if (interval > 1) {
+			this.cron.append("/").append(interval);
+		} else {
+			this.cron.append("-").append(minute);
 		}
 		return this;
 	}
@@ -107,6 +124,14 @@ public class SingleMinute implements OneMinute, Serializable {
 		minute.set(Calendar.DAY_OF_MONTH, hour.getDay());
 		minute.set(Calendar.HOUR_OF_DAY, hour.getHour());
 		return this;
+	}
+
+	public CronExpression getParent() {
+		return hour;
+	}
+
+	public String toCronString() {
+		return this.cron.toString();
 	}
 
 }

@@ -20,6 +20,9 @@ public class EveryYear implements Year, Serializable {
 
 	EveryYear(int fromYear, Function<Year, Integer> to, int interval) {
 		CalendarAssert.checkYear(fromYear);
+		if (interval <= 0) {
+			throw new IllegalArgumentException("Invalid interval: " + interval);
+		}
 		this.year = CalendarUtils.setField(new Date(), Calendar.YEAR, fromYear);
 		this.interval = interval;
 		this.self = true;
@@ -79,9 +82,16 @@ public class EveryYear implements Year, Serializable {
 	public OneMonth month(int month) {
 		return new SingleMonth(CollectionUtils.getFirst(this), month);
 	}
-	
+
 	public Week lastWeek() {
 		return new LastWeekOfYear(CollectionUtils.getFirst(this));
 	}
 
+	public CronExpression getParent() {
+		return null;
+	}
+
+	public String toCronString() {
+		return interval > 1 ? "*/" + interval : "";
+	}
 }

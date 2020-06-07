@@ -15,12 +15,6 @@ public interface OneMonth extends Month {
 
 	OneMonth andMonth(int andMonth);
 
-	default OneMonth andNextMonth() {
-		return andNextMonths(1);
-	}
-
-	OneMonth andNextMonths(int months);
-
 	default OneMonth toMonth(int andMonth) {
 		return toMonth(andMonth, 1);
 	}

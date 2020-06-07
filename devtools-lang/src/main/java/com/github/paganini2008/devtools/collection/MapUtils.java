@@ -321,7 +321,7 @@ public abstract class MapUtils {
 		return results;
 	}
 
-	public static <K, V> Map<V, K> invert(Map<K, V> map) {
+	public static <K, V> Map<V, K> reverse(Map<K, V> map) {
 		Assert.isNull(map, "Source map must not be null.");
 		Map<V, K> results = new LinkedHashMap<V, K>();
 		for (Map.Entry<K, V> entry : map.entrySet()) {

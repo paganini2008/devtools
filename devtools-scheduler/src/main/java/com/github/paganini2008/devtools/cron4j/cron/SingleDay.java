@@ -25,6 +25,7 @@ public class SingleDay implements OneDay, Serializable {
 	private int index;
 	private Calendar day;
 	private int lastDay;
+	private final StringBuilder cron = new StringBuilder();
 
 	SingleDay(Month month, int day) {
 		CalendarAssert.checkDayOfMonth(month, day);
@@ -34,29 +35,36 @@ public class SingleDay implements OneDay, Serializable {
 		siblings.put(day, calendar);
 		this.day = calendar;
 		this.lastDay = day;
+		this.cron.append(day);
 	}
 
 	public OneDay andDay(int day) {
+		return andDay(day, true);
+	}
+
+	private OneDay andDay(int day, boolean writeCron) {
 		CalendarAssert.checkDayOfMonth(month, day);
 		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH, day);
 		siblings.put(day, calendar);
 		this.lastDay = day;
-		return this;
-	}
-
-	public OneDay andNextDays(int days) {
-		CalendarAssert.checkDayOfMonth(month, lastDay + days);
-		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH, lastDay + days);
-		int day = calendar.get(Calendar.DAY_OF_MONTH);
-		siblings.put(day, calendar);
-		this.lastDay = day;
+		if (writeCron) {
+			this.cron.append(",").append(day);
+		}
 		return this;
 	}
 
 	public OneDay toDay(int day, int interval) {
 		CalendarAssert.checkDayOfMonth(month, day);
+		if (interval < 0) {
+			throw new IllegalArgumentException("Invalid interval: " + interval);
+		}
 		for (int i = lastDay + interval; i <= day; i += interval) {
-			andDay(i);
+			andDay(i, false);
+		}
+		if (interval > 1) {
+			this.cron.append("/").append(interval);
+		} else {
+			this.cron.append("-").append(day);
 		}
 		return this;
 	}
@@ -81,7 +89,7 @@ public class SingleDay implements OneDay, Serializable {
 		return day.get(Calendar.DAY_OF_MONTH);
 	}
 
-	public int getWeekDay() {
+	public int getDayOfWeek() {
 		return day.get(Calendar.DAY_OF_WEEK);
 	}
 
@@ -114,6 +122,14 @@ public class SingleDay implements OneDay, Serializable {
 		day.set(Calendar.YEAR, month.getYear());
 		day.set(Calendar.MONTH, month.getMonth());
 		return this;
+	}
+
+	public CronExpression getParent() {
+		return month;
+	}
+
+	public String toCronString() {
+		return this.cron.toString();
 	}
 
 }

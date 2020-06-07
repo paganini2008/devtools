@@ -29,6 +29,9 @@ public class EveryDay implements Day, Serializable {
 	private boolean forward = true;
 
 	EveryDay(Month month, Function<Month, Integer> from, Function<Month, Integer> to, int interval) {
+		if (interval <= 0) {
+			throw new IllegalArgumentException("Invalid interval: " + interval);
+		}
 		this.month = month;
 		this.fromDay = from.apply(month);
 		CalendarAssert.checkDayOfMonth(month, fromDay);
@@ -79,7 +82,7 @@ public class EveryDay implements Day, Serializable {
 		return day.get(Calendar.DAY_OF_MONTH);
 	}
 
-	public int getWeekDay() {
+	public int getDayOfWeek() {
 		return day.get(Calendar.DAY_OF_WEEK);
 	}
 
@@ -101,6 +104,14 @@ public class EveryDay implements Day, Serializable {
 
 	public Hour everyHour(Function<Day, Integer> from, Function<Day, Integer> to, int interval) {
 		return new EveryHour(CollectionUtils.getFirst(this), from, to, interval);
+	}
+
+	public CronExpression getParent() {
+		return month;
+	}
+
+	public String toCronString() {
+		return "*/" + interval;
 	}
 
 	public static void main(String[] args) {

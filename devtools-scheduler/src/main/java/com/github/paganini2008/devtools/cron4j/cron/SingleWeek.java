@@ -25,6 +25,7 @@ public class SingleWeek implements OneWeek, Serializable {
 	private int index;
 	private Calendar week;
 	private int lastWeek;
+	private final StringBuilder cron = new StringBuilder();
 
 	SingleWeek(Month month, int week) {
 		CalendarAssert.checkWeekOfMonth(month, week);
@@ -34,6 +35,7 @@ public class SingleWeek implements OneWeek, Serializable {
 		siblings.put(week, calendar);
 		this.week = calendar;
 		this.lastWeek = week;
+		this.cron.append("#").append(week);
 	}
 
 	public SingleWeek andWeek(int week) {
@@ -76,12 +78,12 @@ public class SingleWeek implements OneWeek, Serializable {
 		return week.get(Calendar.WEEK_OF_YEAR);
 	}
 
-	public OneWeekDay weekday(int day) {
+	public OneDayOfWeek weekday(int day) {
 		return new SingleDayOfWeek(CollectionUtils.getFirst(this), day);
 	}
 
 	public Day everyDay(Function<Week, Integer> from, Function<Week, Integer> to, int interval) {
-		return new EveryWeekDay(CollectionUtils.getFirst(this), from, to, interval);
+		return new EveryDayOfWeek(CollectionUtils.getFirst(this), from, to, interval);
 	}
 
 	public boolean hasNext() {
@@ -101,6 +103,14 @@ public class SingleWeek implements OneWeek, Serializable {
 		week.set(Calendar.YEAR, month.getYear());
 		week.set(Calendar.MONTH, month.getMonth());
 		return this;
+	}
+	
+	public CronExpression getParent() {
+		return month;
+	}
+
+	public String toCronString() {
+		return this.cron.toString();
 	}
 
 }

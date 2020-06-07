@@ -23,6 +23,7 @@ public class SingleHour implements OneHour, Serializable {
 	private int index;
 	private Calendar hour;
 	private int lastHour;
+	private final StringBuilder cron = new StringBuilder();
 
 	SingleHour(Day day, int hour) {
 		CalendarAssert.checkHourOfDay(hour);
@@ -32,20 +33,36 @@ public class SingleHour implements OneHour, Serializable {
 		siblings.put(hour, calendar);
 		this.hour = calendar;
 		this.lastHour = hour;
+		this.cron.append(hour);
 	}
 
 	public SingleHour andHour(int hour) {
+		return andHour(hour, true);
+	}
+
+	private SingleHour andHour(int hour, boolean writeCron) {
 		CalendarAssert.checkHourOfDay(hour);
 		Calendar calendar = CalendarUtils.setField(day.getTime(), Calendar.HOUR_OF_DAY, hour);
 		siblings.put(hour, calendar);
 		this.lastHour = hour;
+		if (writeCron) {
+			cron.append(",").append(hour);
+		}
 		return this;
 	}
 
 	public OneHour toHour(int hour, int interval) {
 		CalendarAssert.checkHourOfDay(hour);
+		if (interval < 0) {
+			throw new IllegalArgumentException("Invalid interval: " + interval);
+		}
 		for (int i = lastHour + interval; i < hour; i += interval) {
-			andHour(i);
+			andHour(i, false);
+		}
+		if (interval > 1) {
+			cron.append("/").append(interval);
+		} else {
+			cron.append("-").append(hour);
 		}
 		return this;
 	}
@@ -100,6 +117,14 @@ public class SingleHour implements OneHour, Serializable {
 		hour.set(Calendar.MONTH, day.getMonth());
 		hour.set(Calendar.DAY_OF_MONTH, day.getDay());
 		return this;
+	}
+
+	public CronExpression getParent() {
+		return day;
+	}
+
+	public String toCronString() {
+		return this.cron.toString();
 	}
 
 }

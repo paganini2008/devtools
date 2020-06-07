@@ -24,6 +24,7 @@ public class SingleSecond implements OneSecond, Serializable {
 	private int index;
 	private Calendar second;
 	private int lastSecond;
+	private final StringBuilder cron = new StringBuilder();
 
 	SingleSecond(Minute minute, int second) {
 		CalendarAssert.checkSecond(second);
@@ -33,20 +34,36 @@ public class SingleSecond implements OneSecond, Serializable {
 		siblings.put(second, calendar);
 		this.second = calendar;
 		this.lastSecond = second;
+		this.cron.append(second);
 	}
 
 	public SingleSecond andSecond(int second) {
+		return andSecond(second, true);
+	}
+
+	private SingleSecond andSecond(int second, boolean writeCron) {
 		CalendarAssert.checkSecond(second);
 		Calendar calendar = CalendarUtils.setField(minute.getTime(), Calendar.SECOND, second);
 		siblings.put(second, calendar);
 		this.lastSecond = second;
+		if (writeCron) {
+			this.cron.append(",").append(second);
+		}
 		return this;
 	}
 
 	public OneSecond toSecond(int second, int interval) {
 		CalendarAssert.checkSecond(second);
+		if (interval < 0) {
+			throw new IllegalArgumentException("Invalid interval: " + interval);
+		}
 		for (int i = lastSecond + interval; i < second; i += interval) {
-			andSecond(i);
+			andSecond(i, false);
+		}
+		if (interval > 1) {
+			this.cron.append("/").append(interval);
+		} else {
+			this.cron.append("-").append(second);
 		}
 		return this;
 	}
@@ -103,6 +120,14 @@ public class SingleSecond implements OneSecond, Serializable {
 		second.set(Calendar.HOUR_OF_DAY, minute.getHour());
 		second.set(Calendar.MINUTE, minute.getMinute());
 		return this;
+	}
+	
+	public CronExpression getParent() {
+		return minute;
+	}
+
+	public String toCronString() {
+		return this.cron.toString();
 	}
 
 }

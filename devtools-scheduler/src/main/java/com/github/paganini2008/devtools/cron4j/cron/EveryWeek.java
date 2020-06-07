@@ -29,6 +29,9 @@ public class EveryWeek implements Week, Serializable {
 	private Date previous;
 
 	EveryWeek(Month month, Function<Month, Integer> from, Function<Month, Integer> to, int interval) {
+		if (interval <= 0) {
+			throw new IllegalArgumentException("Invalid interval: " + interval);
+		}
 		this.month = month;
 		this.fromWeek = from.apply(month);
 		CalendarAssert.checkWeekOfMonth(month, fromWeek);
@@ -102,12 +105,20 @@ public class EveryWeek implements Week, Serializable {
 		return week.getTimeInMillis();
 	}
 
-	public OneWeekDay weekday(int day) {
+	public OneDayOfWeek weekday(int day) {
 		return new SingleDayOfWeek(CollectionUtils.getFirst(this), day);
 	}
 
 	public Day everyDay(Function<Week, Integer> from, Function<Week, Integer> to, int interval) {
-		return new EveryWeekDay(CollectionUtils.getFirst(this), from, to, interval);
+		return new EveryDayOfWeek(CollectionUtils.getFirst(this), from, to, interval);
+	}
+	
+	public CronExpression getParent() {
+		return month;
+	}
+	
+	public String toCronString() {
+		return "";
 	}
 
 }

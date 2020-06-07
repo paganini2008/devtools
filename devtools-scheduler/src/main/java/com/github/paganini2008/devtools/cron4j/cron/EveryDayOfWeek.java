@@ -9,12 +9,12 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
 
 /**
  * 
- * EveryWeekDay
+ * EveryDayOfWeek
  *
  * @author Fred Feng
  * @version 1.0
  */
-public class EveryWeekDay implements Day, Serializable {
+public class EveryDayOfWeek implements Day, Serializable {
 
 	private static final long serialVersionUID = 7871249122497937952L;
 	private Week week;
@@ -25,7 +25,10 @@ public class EveryWeekDay implements Day, Serializable {
 	private boolean self;
 	private boolean forward = true;
 
-	EveryWeekDay(Week week, Function<Week, Integer> from, Function<Week, Integer> to, int interval) {
+	EveryDayOfWeek(Week week, Function<Week, Integer> from, Function<Week, Integer> to, int interval) {
+		if (interval <= 0) {
+			throw new IllegalArgumentException("Invalid interval: " + interval);
+		}
 		this.week = week;
 		this.fromDay = from.apply(week);
 		CalendarAssert.checkDayOfWeek(fromDay);
@@ -78,7 +81,7 @@ public class EveryWeekDay implements Day, Serializable {
 		return day.get(Calendar.DAY_OF_MONTH);
 	}
 
-	public int getWeekDay() {
+	public int getDayOfWeek() {
 		return day.get(Calendar.DAY_OF_WEEK);
 	}
 
@@ -101,4 +104,13 @@ public class EveryWeekDay implements Day, Serializable {
 	public Hour everyHour(Function<Day, Integer> from, Function<Day, Integer> to, int interval) {
 		return new EveryHour(CollectionUtils.getFirst(this), from, to, interval);
 	}
+	
+	public CronExpression getParent() {
+		return week;
+	}
+	
+	public String toCronString() {
+		return "?";
+	}
+
 }

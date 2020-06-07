@@ -7,8 +7,8 @@ import java.util.function.Consumer;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.cron4j.Task;
-import com.github.paganini2008.devtools.cron4j.ThreadPoolTaskExecutor;
 import com.github.paganini2008.devtools.cron4j.TaskExecutor.TaskFuture;
+import com.github.paganini2008.devtools.cron4j.ThreadPoolTaskExecutor;
 import com.github.paganini2008.devtools.io.SerializationUtils;
 
 /**
@@ -24,6 +24,12 @@ public interface CronExpression {
 
 	long getTimeInMillis();
 
+	CronExpression getParent();
+
+	default String toCronString() {
+		throw new UnsupportedOperationException();
+	}
+
 	/**
 	 * copy this
 	 * 
@@ -34,12 +40,17 @@ public interface CronExpression {
 	}
 
 	@SuppressWarnings("unchecked")
-	default void forEach(Consumer<Date> consumer) {
+	default void forEach(final Consumer<Date> consumer, final int n) {
 		if (!(this instanceof Iterator)) {
 			throw new UnsupportedOperationException();
 		}
+		int i = 0;
 		for (CronExpression cronExpression : CollectionUtils.forEach((Iterator<CronExpression>) copy())) {
-			consumer.accept(cronExpression.getTime());
+			if (n < 0 || i++ < n) {
+				consumer.accept(cronExpression.getTime());
+			} else {
+				break;
+			}
 		}
 	}
 

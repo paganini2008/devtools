@@ -35,33 +35,33 @@ public interface Week extends Iterator<Week>, CronExpression {
 
 	Day everyDay(Function<Week, Integer> from, Function<Week, Integer> to, int interval);
 
-	OneWeekDay weekday(int day);
+	OneDayOfWeek weekday(int day);
 
-	default OneWeekDay Sun() {
+	default OneDayOfWeek Sun() {
 		return weekday(Calendar.SUNDAY);
 	}
 
-	default OneWeekDay Mon() {
+	default OneDayOfWeek Mon() {
 		return weekday(Calendar.MONDAY);
 	}
 
-	default OneWeekDay Tues() {
+	default OneDayOfWeek Tues() {
 		return weekday(Calendar.TUESDAY);
 	}
 
-	default OneWeekDay Wed() {
+	default OneDayOfWeek Wed() {
 		return weekday(Calendar.WEDNESDAY);
 	}
 
-	default OneWeekDay Thur() {
+	default OneDayOfWeek Thur() {
 		return weekday(Calendar.THURSDAY);
 	}
 
-	default OneWeekDay Fri() {
+	default OneDayOfWeek Fri() {
 		return weekday(Calendar.FRIDAY);
 	}
 
-	default OneWeekDay Sat() {
+	default OneDayOfWeek Sat() {
 		return weekday(Calendar.SATURDAY);
 	}
 

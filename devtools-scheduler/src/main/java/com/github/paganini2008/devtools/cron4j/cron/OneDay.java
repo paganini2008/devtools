@@ -13,12 +13,6 @@ public interface OneDay extends Day {
 
 	OneDay andDay(int day);
 
-	default OneDay andNextDay() {
-		return andNextDays(1);
-	}
-
-	OneDay andNextDays(int days);
-
 	default OneDay toDay(int day) {
 		return toDay(day, 1);
 	}
