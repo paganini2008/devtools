@@ -6,17 +6,17 @@ import com.github.paganini2008.devtools.cron4j.cron.OneHour;
 
 /**
  * 
- * HourClause
+ * HourOption
  *
  * @author Fred Feng
  *
  * @since 1.0
  */
-public class HourClause implements Clause {
+public class HourOption implements CronOption {
 
 	private final String value;
 
-	public HourClause(String value) {
+	public HourOption(String value) {
 		this.value = value;
 	}
 

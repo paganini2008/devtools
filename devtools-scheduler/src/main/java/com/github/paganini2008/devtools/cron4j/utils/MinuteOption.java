@@ -6,17 +6,17 @@ import com.github.paganini2008.devtools.cron4j.cron.OneMinute;
 
 /**
  * 
- * MinuteClause
+ * MinuteOption
  *
  * @author Fred Feng
  *
  * @since 1.0
  */
-public class MinuteClause implements Clause {
+public class MinuteOption implements CronOption {
 
 	private final String value;
 
-	public MinuteClause(String value) {
+	public MinuteOption(String value) {
 		this.value = value;
 	}
 

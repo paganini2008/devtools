@@ -6,17 +6,17 @@ import com.github.paganini2008.devtools.cron4j.cron.Year;
 
 /**
  * 
- * MonthClause
+ * MonthOption
  *
  * @author Fred Feng
  *
  * @since 1.0
  */
-public class MonthClause implements Clause {
+public class MonthOption implements CronOption {
 
 	private final String value;
 
-	public MonthClause(String value) {
+	public MonthOption(String value) {
 		this.value = value;
 	}
 

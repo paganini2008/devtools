@@ -6,17 +6,17 @@ import com.github.paganini2008.devtools.cron4j.cron.OneDay;
 
 /**
  * 
- * Day
+ * DayOption
  *
  * @author Fred Feng
  *
  * @since 1.0
  */
-public class DayClause implements Clause {
+public class DayOption implements CronOption {
 
 	private final String value;
 
-	public DayClause(String value) {
+	public DayOption(String value) {
 		this.value = value;
 	}
 

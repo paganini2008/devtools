@@ -10,13 +10,13 @@ import com.github.paganini2008.devtools.cron4j.cron.OneDayOfWeek;
 
 /**
  * 
- * WeekDayClause
+ * DayOfWeekOption
  *
  * @author Fred Feng
  *
  * @since 1.0
  */
-public class WeekDayClause implements Clause {
+public class DayOfWeekOption implements CronOption {
 
 	private static final Map<String, Integer> weekdayMapping = new HashMap<>();
 
@@ -32,7 +32,7 @@ public class WeekDayClause implements Clause {
 
 	private final String value;
 
-	public WeekDayClause(String value) {
+	public DayOfWeekOption(String value) {
 		this.value = value;
 	}
 

@@ -12,11 +12,11 @@ import com.github.paganini2008.devtools.cron4j.cron.OneSecond;
  *
  * @since 1.0
  */
-public class SecondClause implements Clause {
+public class SecondOption implements CronOption {
 
 	private final String value;
 
-	public SecondClause(String value) {
+	public SecondOption(String value) {
 		this.value = value;
 	}
 

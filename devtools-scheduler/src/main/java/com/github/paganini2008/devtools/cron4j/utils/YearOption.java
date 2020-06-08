@@ -6,17 +6,17 @@ import com.github.paganini2008.devtools.cron4j.cron.OneYear;
 
 /**
  * 
- * YearClause
+ * YearOption
  *
  * @author Fred Feng
  *
  * @since 1.0
  */
-public class YearClause implements Clause {
+public class YearOption implements CronOption {
 
 	private final String value;
 
-	public YearClause(String value) {
+	public YearOption(String value) {
 		this.value = value;
 	}
 
@@ -26,7 +26,7 @@ public class YearClause implements Clause {
 		if (value.equals("*")) {
 			return epoch.everyYear(1);
 		} else if (value.contains("-")) {
-			String[] args = value.split("-");
+			String[] args = value.split("-", 2);
 			OneYear year = epoch.year(Integer.parseInt(args[0]));
 			return year.toYear(Integer.parseInt(args[1]));
 		} else if (value.contains(",")) {

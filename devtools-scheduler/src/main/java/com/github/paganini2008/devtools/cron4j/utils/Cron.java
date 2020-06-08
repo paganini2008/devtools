@@ -67,35 +67,35 @@ public abstract class Cron {
 		}
 		Collections.reverse(clauses);
 		Collections.swap(clauses, 1, 2);
-		List<Clause> parsers = new ArrayList<Clause>(7);
+		List<CronOption> parsers = new ArrayList<CronOption>(7);
 		String value = clauses.get(0);
-		parsers.add(new YearClause(value));
+		parsers.add(new YearOption(value));
 
 		value = clauses.get(1);
-		parsers.add(new MonthClause(value));
+		parsers.add(new MonthOption(value));
 
 		value = clauses.get(2);
 		if (!value.equals("?")) {
-			parsers.add(new WeekDayClause(value));
+			parsers.add(new DayOfWeekOption(value));
 		}
 
 		value = clauses.get(3);
 		if (!value.equals("?")) {
-			parsers.add(new DayClause(value));
+			parsers.add(new DayOption(value));
 		}
 
 		value = clauses.get(4);
-		parsers.add(new HourClause(value));
+		parsers.add(new HourOption(value));
 
 		value = clauses.get(5);
-		parsers.add(new MinuteClause(value));
+		parsers.add(new MinuteOption(value));
 
 		value = clauses.get(6);
-		parsers.add(new SecondClause(value));
+		parsers.add(new SecondOption(value));
 
 		CronExpression cronExpression = new Epoch();
 		try {
-			for (Clause clause : parsers) {
+			for (CronOption clause : parsers) {
 				cronExpression = clause.join(cronExpression);
 			}
 			return cronExpression;
