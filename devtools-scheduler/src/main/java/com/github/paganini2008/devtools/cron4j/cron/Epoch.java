@@ -30,8 +30,8 @@ public final class Epoch implements CronExpression {
 		return new EveryYear(DateUtils.getYear(), y -> LAST_YEAR_OF_THE_WORLD, interval);
 	}
 
-	public OneYear year(int year) {
-		return new SingleYear(year);
+	public ThatYear year(int year) {
+		return new ThisYear(year);
 	}
 	
 	public CronExpression getParent() {

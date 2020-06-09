@@ -2,7 +2,7 @@ package com.github.paganini2008.devtools.cron4j.utils;
 
 import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
 import com.github.paganini2008.devtools.cron4j.cron.Day;
-import com.github.paganini2008.devtools.cron4j.cron.OneHour;
+import com.github.paganini2008.devtools.cron4j.cron.ThatHour;
 
 /**
  * 
@@ -28,32 +28,61 @@ public class HourOption implements CronOption {
 		} catch (NumberFormatException ignored) {
 		}
 		if (value.equals("*")) {
-			return day.everyHour(1);
-		} else if (value.contains("-")) {
-			String[] args = value.split("-", 2);
-			return day.hour(Integer.parseInt(args[0])).toHour(Integer.parseInt(args[1]));
-		} else if (value.contains(",")) {
-			String[] args = value.split(",");
-			OneHour hour = null;
-			for (String arg : args) {
-				if (hour != null) {
-					hour = hour.andHour(Integer.parseInt(arg));
+			return day.everyHour();
+		}
+		String[] args = value.split(",");
+		ThatHour hour = null;
+		for (String arg : args) {
+			if (hour != null) {
+				hour = setHour(arg, hour);
+			} else {
+				hour = setHour(arg, day);
+			}
+		}
+		return hour;
+	}
+
+	private ThatHour setHour(String cron, ThatHour hour) {
+		if (cron.contains("-")) {
+			String[] args = cron.split("-", 2);
+			return hour.andHour(Integer.parseInt(args[0])).toHour(Integer.parseInt(args[1]));
+		} else if (cron.contains("/")) {
+			String[] args = cron.split("\\/", 2);
+			int start;
+			try {
+				start = Integer.parseInt(args[0]);
+			} catch (NumberFormatException e) {
+				if (args[0].equals("*")) {
+					start = 0;
 				} else {
-					hour = day.hour(Integer.parseInt(arg));
+					throw new CronParserException(value, e);
 				}
 			}
-			return hour;
-		} else if (value.contains("/")) {
-			String[] args = value.split("\\/", 2);
-			OneHour hour;
-			try {
-				hour = day.hour(Integer.parseInt(args[0]));
-			} catch (NumberFormatException ignored) {
-				hour = day.hour(0);
-			}
-			return hour.toHour(23, Integer.parseInt(args[1]));
+			return hour.andHour(start).toHour(23, Integer.parseInt(args[1]));
 		} else {
-			throw new CronParserException(value);
+			return hour.andHour(Integer.parseInt(cron));
+		}
+	}
+
+	private ThatHour setHour(String cron, Day day) {
+		if (cron.contains("-")) {
+			String[] args = cron.split("-", 2);
+			return day.hour(Integer.parseInt(args[0])).toHour(Integer.parseInt(args[1]));
+		} else if (cron.contains("/")) {
+			String[] args = cron.split("\\/", 2);
+			int start;
+			try {
+				start = Integer.parseInt(args[0]);
+			} catch (NumberFormatException e) {
+				if (args[0].equals("*")) {
+					start = 0;
+				} else {
+					throw new CronParserException(value, e);
+				}
+			}
+			return day.hour(start).toHour(23, Integer.parseInt(args[1]));
+		} else {
+			return day.hour(Integer.parseInt(cron));
 		}
 	}
 

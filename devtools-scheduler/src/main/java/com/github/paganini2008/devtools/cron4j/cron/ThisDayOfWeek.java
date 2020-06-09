@@ -10,61 +10,62 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
 
 /**
  * 
- * SingleDay
+ * ThisDayOfWeek
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
-public class SingleDay implements OneDay, Serializable {
+public class ThisDayOfWeek implements ThatDayOfWeek, Serializable {
 
-	private static final long serialVersionUID = -6007054113405112202L;
+	private static final long serialVersionUID = -5353496894925284106L;
 	private final TreeMap<Integer, Calendar> siblings;
-	private Month month;
+	private Week week;
 	private int index;
 	private Calendar day;
 	private int lastDay;
 	private final StringBuilder cron = new StringBuilder();
 
-	SingleDay(Month month, int day) {
-		CalendarAssert.checkDayOfMonth(month, day);
-		this.month = month;
-		siblings = new TreeMap<Integer, Calendar>();
-		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH, day);
+	ThisDayOfWeek(Week week, int day) {
+		CalendarAssert.checkDayOfWeek(day);
+		this.week = week;
+		this.siblings = new TreeMap<Integer, Calendar>();
+		Calendar calendar = CalendarUtils.setField(week.getTime(), Calendar.DAY_OF_WEEK, day);
 		siblings.put(day, calendar);
-		this.day = calendar;
 		this.lastDay = day;
-		this.cron.append(day);
+		this.cron.append(getDayOfWeekName(day));
 	}
 
-	public OneDay andDay(int day) {
+	public ThatDayOfWeek andDay(int day) {
 		return andDay(day, true);
 	}
 
-	private OneDay andDay(int day, boolean writeCron) {
-		CalendarAssert.checkDayOfMonth(month, day);
-		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH, day);
+	private ThatDayOfWeek andDay(int day, boolean writeCron) {
+		CalendarAssert.checkDayOfWeek(day);
+		Calendar calendar = CalendarUtils.setField(week.getTime(), Calendar.DAY_OF_WEEK, day);
 		siblings.put(day, calendar);
 		this.lastDay = day;
 		if (writeCron) {
-			this.cron.append(",").append(day);
+			this.cron.append(",").append(getDayOfWeekName(day));
 		}
 		return this;
 	}
 
-	public OneDay toDay(int day, int interval) {
-		CalendarAssert.checkDayOfMonth(month, day);
-		if (interval < 0) {
-			throw new IllegalArgumentException("Invalid interval: " + interval);
+	private String getDayOfWeekName(int day) {
+		if (week instanceof LastWeek || week instanceof ThisWeek) {
+			return day + week.toCronString();
 		}
+		return CalendarUtils.getDayOfWeekName(day);
+	}
+
+	public ThatDayOfWeek toDay(int day, int interval) {
+		CalendarAssert.checkDayOfWeek(day);
 		for (int i = lastDay + interval; i <= day; i += interval) {
 			andDay(i, false);
 		}
 		if (interval > 1) {
 			this.cron.append("/").append(interval);
 		} else {
-			this.cron.append("-").append(day);
+			this.cron.append("-").append(getDayOfWeekName(day));
 		}
 		return this;
 	}
@@ -97,8 +98,8 @@ public class SingleDay implements OneDay, Serializable {
 		return day.get(Calendar.DAY_OF_YEAR);
 	}
 
-	public OneHour hour(int hour) {
-		return new SingleHour(CollectionUtils.getFirst(this), hour);
+	public ThatHour hour(int hour) {
+		return new ThisHour(CollectionUtils.getFirst(this), hour);
 	}
 
 	public Hour everyHour(Function<Day, Integer> from, Function<Day, Integer> to, int interval) {
@@ -108,8 +109,8 @@ public class SingleDay implements OneDay, Serializable {
 	public boolean hasNext() {
 		boolean next = index < siblings.size();
 		if (!next) {
-			if (month.hasNext()) {
-				month = month.next();
+			if (week.hasNext()) {
+				week = week.next();
 				index = 0;
 				next = true;
 			}
@@ -119,13 +120,14 @@ public class SingleDay implements OneDay, Serializable {
 
 	public Day next() {
 		day = CollectionUtils.get(siblings.values().iterator(), index++);
-		day.set(Calendar.YEAR, month.getYear());
-		day.set(Calendar.MONTH, month.getMonth());
+		day.set(Calendar.YEAR, week.getYear());
+		day.set(Calendar.MONTH, week.getMonth());
+		day.set(Calendar.WEEK_OF_MONTH, week.getWeek());
 		return this;
 	}
-
+	
 	public CronExpression getParent() {
-		return month;
+		return week;
 	}
 
 	public String toCronString() {

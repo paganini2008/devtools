@@ -36,7 +36,7 @@ public interface Minute extends Iterator<Minute>, CronExpression {
 		return everySecond(m -> from, m -> to, interval);
 	}
 
-	OneSecond second(int second);
+	ThatSecond second(int second);
 
 	Second everySecond(Function<Minute, Integer> from, Function<Minute, Integer> to, int interval);
 

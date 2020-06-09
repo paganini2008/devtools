@@ -11,14 +11,12 @@ import com.github.paganini2008.devtools.date.DateUtils;
 
 /**
  * 
- * SingleYear
+ * ThisYear
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
-public class SingleYear implements OneYear, Serializable {
+public class ThisYear implements ThatYear, Serializable {
 
 	private static final long serialVersionUID = -5316436238766770045L;
 	private final TreeMap<Integer, Calendar> siblings;
@@ -27,7 +25,7 @@ public class SingleYear implements OneYear, Serializable {
 	private int lastYear;
 	private final StringBuilder cron = new StringBuilder();
 
-	SingleYear(int year) {
+	ThisYear(int year) {
 		CalendarAssert.checkYear(year);
 		siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(new Date(), Calendar.YEAR, year);
@@ -37,11 +35,11 @@ public class SingleYear implements OneYear, Serializable {
 		this.cron.append(year);
 	}
 
-	public OneYear andYear(int year) {
+	public ThatYear andYear(int year) {
 		return andYear(year, true);
 	}
 
-	public OneYear andYear(int year, boolean writeCron) {
+	public ThatYear andYear(int year, boolean writeCron) {
 		CalendarAssert.checkYear(year);
 		Calendar calendar = CalendarUtils.setField(new Date(), Calendar.YEAR, year);
 		siblings.put(year, calendar);
@@ -52,7 +50,7 @@ public class SingleYear implements OneYear, Serializable {
 		return this;
 	}
 
-	public OneYear toYear(int year, int interval) {
+	public ThatYear toYear(int year, int interval) {
 		CalendarAssert.checkYear(year);
 		if (interval < 0) {
 			throw new IllegalArgumentException("Invalid interval: " + interval);
@@ -92,16 +90,16 @@ public class SingleYear implements OneYear, Serializable {
 		return new EveryMonth(CollectionUtils.getFirst(this), from, to, interval);
 	}
 
-	public OneDay day(int day) {
-		return new SingleDayOfYear(CollectionUtils.getFirst(this), day);
+	public ThatDay day(int day) {
+		return new ThisDayOfYear(CollectionUtils.getFirst(this), day);
 	}
 
-	public OneWeek week(int week) {
-		return new SingleWeekOfYear(CollectionUtils.getFirst(this), week);
+	public ThatWeek week(int week) {
+		return new ThisWeekOfYear(CollectionUtils.getFirst(this), week);
 	}
 
-	public OneMonth month(int month) {
-		return new SingleMonth(CollectionUtils.getFirst(this), month);
+	public ThatMonth month(int month) {
+		return new ThisMonth(CollectionUtils.getFirst(this), month);
 	}
 
 	public Week lastWeek() {
@@ -126,7 +124,7 @@ public class SingleYear implements OneYear, Serializable {
 	}
 
 	public static void main(String[] args) {
-		OneYear singleYear = new SingleYear(2020);
+		ThatYear singleYear = new ThisYear(2020);
 		singleYear = singleYear.andYear(2028).andYear(2024);
 		Day day = singleYear.lastWeek().Mon().toFri();
 		while (day.hasNext()) {

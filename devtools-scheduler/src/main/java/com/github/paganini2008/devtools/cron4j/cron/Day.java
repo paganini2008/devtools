@@ -34,13 +34,13 @@ public interface Day extends Iterator<Day>, CronExpression {
 		return everyHour(d -> from, d -> to, interval);
 	}
 
-	OneHour hour(int hourOfDay);
+	ThatHour hour(int hourOfDay);
 
-	default OneMinute at(int hourOfDay, int minute) {
+	default ThatMinute at(int hourOfDay, int minute) {
 		return hour(hourOfDay).minute(minute);
 	}
 
-	default OneSecond at(int hourOfDay, int minute, int second) {
+	default ThatSecond at(int hourOfDay, int minute, int second) {
 		return hour(hourOfDay).minute(minute).second(second);
 	}
 

@@ -9,14 +9,12 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
 
 /**
  * 
- * SingleSecond
+ * ThisSecond
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
-public class SingleSecond implements OneSecond, Serializable {
+public class ThisSecond implements ThatSecond, Serializable {
 
 	private static final long serialVersionUID = 6264419114715870528L;
 	private final TreeMap<Integer, Calendar> siblings;
@@ -26,7 +24,7 @@ public class SingleSecond implements OneSecond, Serializable {
 	private int lastSecond;
 	private final StringBuilder cron = new StringBuilder();
 
-	SingleSecond(Minute minute, int second) {
+	ThisSecond(Minute minute, int second) {
 		CalendarAssert.checkSecond(second);
 		this.minute = minute;
 		siblings = new TreeMap<Integer, Calendar>();
@@ -37,11 +35,11 @@ public class SingleSecond implements OneSecond, Serializable {
 		this.cron.append(second);
 	}
 
-	public SingleSecond andSecond(int second) {
+	public ThisSecond andSecond(int second) {
 		return andSecond(second, true);
 	}
 
-	private SingleSecond andSecond(int second, boolean writeCron) {
+	private ThisSecond andSecond(int second, boolean writeCron) {
 		CalendarAssert.checkSecond(second);
 		Calendar calendar = CalendarUtils.setField(minute.getTime(), Calendar.SECOND, second);
 		siblings.put(second, calendar);
@@ -52,7 +50,7 @@ public class SingleSecond implements OneSecond, Serializable {
 		return this;
 	}
 
-	public OneSecond toSecond(int second, int interval) {
+	public ThatSecond toSecond(int second, int interval) {
 		CalendarAssert.checkSecond(second);
 		if (interval < 0) {
 			throw new IllegalArgumentException("Invalid interval: " + interval);

@@ -10,12 +10,12 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
 
 /**
  * 
- * SingleHour
+ * ThisHour
  *
  * @author Fred Feng
  * @version 1.0
  */
-public class SingleHour implements OneHour, Serializable {
+public class ThisHour implements ThatHour, Serializable {
 
 	private static final long serialVersionUID = 8124589572544886753L;
 	private final TreeMap<Integer, Calendar> siblings;
@@ -25,7 +25,7 @@ public class SingleHour implements OneHour, Serializable {
 	private int lastHour;
 	private final StringBuilder cron = new StringBuilder();
 
-	SingleHour(Day day, int hour) {
+	ThisHour(Day day, int hour) {
 		CalendarAssert.checkHourOfDay(hour);
 		this.day = day;
 		siblings = new TreeMap<Integer, Calendar>();
@@ -36,11 +36,11 @@ public class SingleHour implements OneHour, Serializable {
 		this.cron.append(hour);
 	}
 
-	public SingleHour andHour(int hour) {
+	public ThisHour andHour(int hour) {
 		return andHour(hour, true);
 	}
 
-	private SingleHour andHour(int hour, boolean writeCron) {
+	private ThisHour andHour(int hour, boolean writeCron) {
 		CalendarAssert.checkHourOfDay(hour);
 		Calendar calendar = CalendarUtils.setField(day.getTime(), Calendar.HOUR_OF_DAY, hour);
 		siblings.put(hour, calendar);
@@ -51,7 +51,7 @@ public class SingleHour implements OneHour, Serializable {
 		return this;
 	}
 
-	public OneHour toHour(int hour, int interval) {
+	public ThatHour toHour(int hour, int interval) {
 		CalendarAssert.checkHourOfDay(hour);
 		if (interval < 0) {
 			throw new IllegalArgumentException("Invalid interval: " + interval);
@@ -91,8 +91,8 @@ public class SingleHour implements OneHour, Serializable {
 		return hour.get(Calendar.HOUR_OF_DAY);
 	}
 
-	public OneMinute minute(int minute) {
-		return new SingleMinute(CollectionUtils.getFirst(this), minute);
+	public ThatMinute minute(int minute) {
+		return new ThisMinute(CollectionUtils.getFirst(this), minute);
 	}
 
 	public Minute everyMinute(Function<Hour, Integer> from, Function<Hour, Integer> to, int interval) {

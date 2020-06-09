@@ -94,8 +94,8 @@ public class EveryHour implements Hour, Serializable {
 		return hour.getTimeInMillis();
 	}
 
-	public OneMinute minute(int minute) {
-		return new SingleMinute(CollectionUtils.getFirst(this), minute);
+	public ThatMinute minute(int minute) {
+		return new ThisMinute(CollectionUtils.getFirst(this), minute);
 	}
 
 	public Minute everyMinute(Function<Hour, Integer> from, Function<Hour, Integer> to, int interval) {

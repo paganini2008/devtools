@@ -11,14 +11,14 @@ import com.github.paganini2008.devtools.date.DateUtils;
 
 /**
  * 
- * SingleMonth
+ * ThisMonth
  *
  * @author Fred Feng
  * 
  * 
  * @version 1.0
  */
-public class SingleMonth implements OneMonth, Serializable {
+public class ThisMonth implements ThatMonth, Serializable {
 
 	private static final long serialVersionUID = 229203112866380942L;
 	private final TreeMap<Integer, Calendar> siblings;
@@ -28,7 +28,7 @@ public class SingleMonth implements OneMonth, Serializable {
 	private int lastMonth;
 	private final StringBuilder cron = new StringBuilder();
 
-	SingleMonth(Year year, int month) {
+	ThisMonth(Year year, int month) {
 		CalendarAssert.checkMonth(month);
 		this.year = year;
 		siblings = new TreeMap<Integer, Calendar>();
@@ -39,11 +39,11 @@ public class SingleMonth implements OneMonth, Serializable {
 		this.cron.append(CalendarUtils.getMonthName(month));
 	}
 
-	public OneMonth andMonth(int month) {
+	public ThatMonth andMonth(int month) {
 		return andMonth(month, true);
 	}
 
-	private OneMonth andMonth(int month, boolean writeCron) {
+	private ThatMonth andMonth(int month, boolean writeCron) {
 		CalendarAssert.checkMonth(month);
 		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.MONTH, month);
 		siblings.put(month, calendar);
@@ -54,7 +54,7 @@ public class SingleMonth implements OneMonth, Serializable {
 		return this;
 	}
 
-	public OneMonth toMonth(int month, int interval) {
+	public ThatMonth toMonth(int month, int interval) {
 		CalendarAssert.checkMonth(month);
 		for (int i = lastMonth + interval; i <= month; i += interval) {
 			andMonth(i, false);
@@ -91,8 +91,8 @@ public class SingleMonth implements OneMonth, Serializable {
 		return month.getActualMaximum(Calendar.WEEK_OF_MONTH);
 	}
 
-	public OneDay day(int day) {
-		return new SingleDay(CollectionUtils.getFirst(this), day);
+	public ThatDay day(int day) {
+		return new ThisDay(CollectionUtils.getFirst(this), day);
 	}
 
 	public Day lastDay() {
@@ -103,8 +103,8 @@ public class SingleMonth implements OneMonth, Serializable {
 		return new EveryDay(CollectionUtils.getFirst(this), from, to, interval);
 	}
 
-	public OneWeek week(int week) {
-		return new SingleWeek(CollectionUtils.getFirst(this), week);
+	public ThatWeek week(int week) {
+		return new ThisWeek(CollectionUtils.getFirst(this), week);
 	}
 
 	public Week lastWeek() {
@@ -142,9 +142,9 @@ public class SingleMonth implements OneMonth, Serializable {
 	}
 
 	public static void main(String[] args) {
-		OneYear singleYear = new SingleYear(2019);
+		ThatYear singleYear = new ThisYear(2019);
 		singleYear = singleYear.andYear(2024).andYear(2028);
-		OneMonth singleMonth = singleYear.July().andAug().andMonth(11);
+		ThatMonth singleMonth = singleYear.July().andAug().andMonth(11);
 		Day every = singleMonth.lastWeek().Fri().andSat();
 		while (every.hasNext()) {
 			Day time = every.next();

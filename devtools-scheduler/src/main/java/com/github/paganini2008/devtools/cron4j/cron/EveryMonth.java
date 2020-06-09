@@ -92,8 +92,8 @@ public class EveryMonth implements Month, Serializable {
 		return month.getTimeInMillis();
 	}
 
-	public OneDay day(int day) {
-		return new SingleDay(CollectionUtils.getFirst(this), day);
+	public ThatDay day(int day) {
+		return new ThisDay(CollectionUtils.getFirst(this), day);
 	}
 
 	public Day lastDay() {
@@ -104,8 +104,8 @@ public class EveryMonth implements Month, Serializable {
 		return new EveryDay(CollectionUtils.getFirst(this), from, to, interval);
 	}
 
-	public OneWeek week(int week) {
-		return new SingleWeek(CollectionUtils.getFirst(this), week);
+	public ThatWeek week(int week) {
+		return new ThisWeek(CollectionUtils.getFirst(this), week);
 	}
 
 	public Week lastWeek() {

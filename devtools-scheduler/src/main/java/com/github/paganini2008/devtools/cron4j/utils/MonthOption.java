@@ -1,7 +1,10 @@
 package com.github.paganini2008.devtools.cron4j.utils;
 
+import java.util.Calendar;
+
+import com.github.paganini2008.devtools.cron4j.cron.CalendarUtils;
 import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
-import com.github.paganini2008.devtools.cron4j.cron.OneMonth;
+import com.github.paganini2008.devtools.cron4j.cron.ThatMonth;
 import com.github.paganini2008.devtools.cron4j.cron.Year;
 
 /**
@@ -25,35 +28,68 @@ public class MonthOption implements CronOption {
 		final Year year = (Year) cronExpression;
 		try {
 			return year.month(Integer.parseInt(value));
-		} catch (NumberFormatException ignored) {
+		} catch (NumberFormatException e) {
+			try {
+				return year.month(CalendarUtils.getMonthValue(value));
+			} catch (CronParserException ignored) {
+			}
 		}
 		if (value.equals("*")) {
-			return year.everyMonth(1);
-		} else if (value.contains("-")) {
-			String[] args = value.split("-", 2);
-			return year.month(Integer.parseInt(args[0])).toMonth(Integer.parseInt(args[1]));
-		} else if (value.contains(",")) {
-			String[] args = value.split(",");
-			OneMonth month = null;
-			for (String arg : args) {
-				if (month != null) {
-					month = month.andMonth(Integer.parseInt(arg));
+			return year.everyMonth();
+		}
+		String[] args = value.split(",");
+		ThatMonth month = null;
+		for (String arg : args) {
+			if (month != null) {
+				month = setMonth(arg, month);
+			} else {
+				month = setMonth(arg, year);
+			}
+		}
+		return month;
+	}
+
+	private ThatMonth setMonth(String cron, ThatMonth month) {
+		if (cron.contains("-")) {
+			String[] args = cron.split("-", 2);
+			return month.andMonth(Integer.parseInt(args[0])).toMonth(Integer.parseInt(args[1]));
+		} else if (cron.contains("/")) {
+			String[] args = cron.split("\\/", 2);
+			int start;
+			try {
+				start = Integer.parseInt(args[0]);
+			} catch (NumberFormatException e) {
+				if (args[0].equals("*")) {
+					start = Calendar.JANUARY;
 				} else {
-					month = year.month(Integer.parseInt(arg));
+					throw new CronParserException(value, e);
 				}
 			}
-			return month;
-		} else if (value.contains("/")) {
-			String[] args = value.split("\\/", 2);
-			OneMonth month;
-			try {
-				month = year.month(Integer.parseInt(args[0]));
-			} catch (NumberFormatException ignored) {
-				month = year.month(1);
-			}
-			return month.toMonth(11, Integer.parseInt(args[1]));
+			return month.andMonth(start).toMonth(Calendar.DECEMBER, Integer.parseInt(args[1]));
 		} else {
-			throw new CronParserException(value);
+			return month.andMonth(Integer.parseInt(cron));
+		}
+	}
+
+	private ThatMonth setMonth(String cron, Year year) {
+		if (cron.contains("-")) {
+			String[] args = cron.split("-", 2);
+			return year.month(Integer.parseInt(args[0])).toMonth(Integer.parseInt(args[1]));
+		} else if (cron.contains("/")) {
+			String[] args = cron.split("\\/", 2);
+			int start;
+			try {
+				start = Integer.parseInt(args[0]);
+			} catch (NumberFormatException e) {
+				if (args[0].equals("*")) {
+					start = Calendar.JANUARY;
+				} else {
+					throw new CronParserException(value, e);
+				}
+			}
+			return year.month(start).toMonth(Calendar.DECEMBER, Integer.parseInt(args[1]));
+		} else {
+			return year.month(Integer.parseInt(cron));
 		}
 	}
 

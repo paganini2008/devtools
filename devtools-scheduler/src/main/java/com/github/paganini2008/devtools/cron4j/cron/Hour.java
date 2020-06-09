@@ -22,6 +22,10 @@ public interface Hour extends Iterator<Hour>, CronExpression {
 
 	int getHour();
 
+	default Minute everyMinute() {
+		return everyMinute(1);
+	}
+
 	default Minute everyMinute(int interval) {
 		return everyMinute(0, 59, interval);
 	}
@@ -30,9 +34,9 @@ public interface Hour extends Iterator<Hour>, CronExpression {
 		return everyMinute(h -> from, h -> to, interval);
 	}
 
-	OneMinute minute(int minute);
+	ThatMinute minute(int minute);
 
-	default OneSecond at(int minute, int second) {
+	default ThatSecond at(int minute, int second) {
 		return minute(minute).second(second);
 	}
 

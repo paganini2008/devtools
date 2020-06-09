@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
 import com.github.paganini2008.devtools.cron4j.cron.Epoch;
 import com.github.paganini2008.devtools.cron4j.cron.EveryYear;
-import com.github.paganini2008.devtools.cron4j.cron.OneDayOfWeek;
+import com.github.paganini2008.devtools.cron4j.cron.ThatDayOfWeek;
 import com.github.paganini2008.devtools.date.DateUtils;
 
 /**
@@ -31,7 +31,7 @@ public abstract class Cron {
 		CronExpression day = hour.getParent();
 		boolean hasDayOfWeek = false;
 		CronExpression week = null;
-		if (day instanceof OneDayOfWeek) {
+		if (day instanceof ThatDayOfWeek) {
 			hasDayOfWeek = true;
 		}
 		if (hasDayOfWeek) {

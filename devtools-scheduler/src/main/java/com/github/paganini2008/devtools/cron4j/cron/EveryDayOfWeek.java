@@ -97,8 +97,8 @@ public class EveryDayOfWeek implements Day, Serializable {
 		return day.getTimeInMillis();
 	}
 
-	public OneHour hour(int hour) {
-		return new SingleHour(CollectionUtils.getFirst(this), hour);
+	public ThatHour hour(int hour) {
+		return new ThisHour(CollectionUtils.getFirst(this), hour);
 	}
 
 	public Hour everyHour(Function<Day, Integer> from, Function<Day, Integer> to, int interval) {

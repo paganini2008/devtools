@@ -10,62 +10,61 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
 
 /**
  * 
- * SingleDayOfWeek
+ * ThisDay
  *
  * @author Fred Feng
+ * 
+ * 
  * @version 1.0
  */
-public class SingleDayOfWeek implements OneDayOfWeek, Serializable {
+public class ThisDay implements ThatDay, Serializable {
 
-	private static final long serialVersionUID = -5353496894925284106L;
+	private static final long serialVersionUID = -6007054113405112202L;
 	private final TreeMap<Integer, Calendar> siblings;
-	private Week week;
+	private Month month;
 	private int index;
 	private Calendar day;
 	private int lastDay;
 	private final StringBuilder cron = new StringBuilder();
 
-	SingleDayOfWeek(Week week, int day) {
-		CalendarAssert.checkDayOfWeek(day);
-		this.week = week;
-		this.siblings = new TreeMap<Integer, Calendar>();
-		Calendar calendar = CalendarUtils.setField(week.getTime(), Calendar.DAY_OF_WEEK, day);
+	ThisDay(Month month, int day) {
+		CalendarAssert.checkDayOfMonth(month, day);
+		this.month = month;
+		siblings = new TreeMap<Integer, Calendar>();
+		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH, day);
 		siblings.put(day, calendar);
+		this.day = calendar;
 		this.lastDay = day;
-		this.cron.append(getDayOfWeekName(day));
+		this.cron.append(day);
 	}
 
-	public OneDayOfWeek andDay(int day) {
+	public ThatDay andDay(int day) {
 		return andDay(day, true);
 	}
 
-	private OneDayOfWeek andDay(int day, boolean writeCron) {
-		CalendarAssert.checkDayOfWeek(day);
-		Calendar calendar = CalendarUtils.setField(week.getTime(), Calendar.DAY_OF_WEEK, day);
+	private ThatDay andDay(int day, boolean writeCron) {
+		CalendarAssert.checkDayOfMonth(month, day);
+		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH, day);
 		siblings.put(day, calendar);
 		this.lastDay = day;
 		if (writeCron) {
-			this.cron.append(",").append(getDayOfWeekName(day));
+			this.cron.append(",").append(day);
 		}
 		return this;
 	}
 
-	private String getDayOfWeekName(int day) {
-		if (week instanceof LastWeek || week instanceof SingleWeek) {
-			return day + week.toCronString();
+	public ThatDay toDay(int day, int interval) {
+		CalendarAssert.checkDayOfMonth(month, day);
+		if (interval < 0) {
+			throw new IllegalArgumentException("Invalid interval: " + interval);
 		}
-		return CalendarUtils.getDayOfWeekName(day);
-	}
-
-	public OneDayOfWeek toDay(int day, int interval) {
-		CalendarAssert.checkDayOfWeek(day);
 		for (int i = lastDay + interval; i <= day; i += interval) {
 			andDay(i, false);
 		}
 		if (interval > 1) {
 			this.cron.append("/").append(interval);
 		} else {
-			this.cron.append("-").append(getDayOfWeekName(day));
+			this.cron.append("-").append(day);
 		}
 		return this;
 	}
@@ -98,8 +97,8 @@ public class SingleDayOfWeek implements OneDayOfWeek, Serializable {
 		return day.get(Calendar.DAY_OF_YEAR);
 	}
 
-	public OneHour hour(int hour) {
-		return new SingleHour(CollectionUtils.getFirst(this), hour);
+	public ThatHour hour(int hour) {
+		return new ThisHour(CollectionUtils.getFirst(this), hour);
 	}
 
 	public Hour everyHour(Function<Day, Integer> from, Function<Day, Integer> to, int interval) {
@@ -109,8 +108,8 @@ public class SingleDayOfWeek implements OneDayOfWeek, Serializable {
 	public boolean hasNext() {
 		boolean next = index < siblings.size();
 		if (!next) {
-			if (week.hasNext()) {
-				week = week.next();
+			if (month.hasNext()) {
+				month = month.next();
 				index = 0;
 				next = true;
 			}
@@ -120,14 +119,13 @@ public class SingleDayOfWeek implements OneDayOfWeek, Serializable {
 
 	public Day next() {
 		day = CollectionUtils.get(siblings.values().iterator(), index++);
-		day.set(Calendar.YEAR, week.getYear());
-		day.set(Calendar.MONTH, week.getMonth());
-		day.set(Calendar.WEEK_OF_MONTH, week.getWeek());
+		day.set(Calendar.YEAR, month.getYear());
+		day.set(Calendar.MONTH, month.getMonth());
 		return this;
 	}
-	
+
 	public CronExpression getParent() {
-		return week;
+		return month;
 	}
 
 	public String toCronString() {

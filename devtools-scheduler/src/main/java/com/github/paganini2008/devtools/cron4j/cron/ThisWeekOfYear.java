@@ -10,14 +10,14 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
 
 /**
  * 
- * SingleWeekOfYear
+ * ThisWeekOfYear
  *
  * @author Fred Feng
  * 
  * 
  * @version 1.0
  */
-public class SingleWeekOfYear implements OneWeek, Serializable {
+public class ThisWeekOfYear implements ThatWeek, Serializable {
 
 	private static final long serialVersionUID = -3294283555586718358L;
 	private final TreeMap<Integer, Calendar> siblings;
@@ -26,7 +26,7 @@ public class SingleWeekOfYear implements OneWeek, Serializable {
 	private Calendar week;
 	private int lastWeek;
 
-	SingleWeekOfYear(Year year, int week) {
+	ThisWeekOfYear(Year year, int week) {
 		CalendarAssert.checkWeekOfYear(year, week);
 		this.year = year;
 		siblings = new TreeMap<Integer, Calendar>();
@@ -36,7 +36,7 @@ public class SingleWeekOfYear implements OneWeek, Serializable {
 		this.lastWeek = week;
 	}
 
-	public OneWeek andWeek(int week) {
+	public ThatWeek andWeek(int week) {
 		CalendarAssert.checkWeekOfYear(year, week);
 		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.WEEK_OF_YEAR, week);
 		siblings.put(week, calendar);
@@ -44,7 +44,7 @@ public class SingleWeekOfYear implements OneWeek, Serializable {
 		return this;
 	}
 
-	public OneWeek toWeek(int week, int interval) {
+	public ThatWeek toWeek(int week, int interval) {
 		CalendarAssert.checkWeekOfYear(year, week);
 		for (int i = lastWeek + interval; i < week; i += interval) {
 			andWeek(i);
@@ -76,8 +76,8 @@ public class SingleWeekOfYear implements OneWeek, Serializable {
 		return week.get(Calendar.WEEK_OF_YEAR);
 	}
 
-	public OneDayOfWeek weekday(int day) {
-		return new SingleDayOfWeek(CollectionUtils.getFirst(this), day);
+	public ThatDayOfWeek day(int day) {
+		return new ThisDayOfWeek(CollectionUtils.getFirst(this), day);
 	}
 
 	public Day everyDay(Function<Week, Integer> from, Function<Week, Integer> to, int interval) {

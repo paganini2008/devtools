@@ -2,7 +2,7 @@ package com.github.paganini2008.devtools.cron4j.utils;
 
 import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
 import com.github.paganini2008.devtools.cron4j.cron.Minute;
-import com.github.paganini2008.devtools.cron4j.cron.OneSecond;
+import com.github.paganini2008.devtools.cron4j.cron.ThatSecond;
 
 /**
  * 
@@ -22,30 +22,54 @@ public class SecondOption implements CronOption {
 
 	@Override
 	public CronExpression join(CronExpression cronExpression) {
-		final Minute minute = ((Minute) cronExpression);
+		final Minute minute = (Minute) cronExpression;
 		try {
-			int second = Integer.parseInt(value);
-			return minute.second(second);
+			return minute.second(Integer.parseInt(value));
 		} catch (NumberFormatException ignored) {
 		}
 
 		if (value.equals("*")) {
 			return minute.everySecond();
-		} else if (value.contains("-")) {
+		}
+		String[] args = value.split(",");
+		ThatSecond second = null;
+		for (String arg : args) {
+			if (second != null) {
+				second = setSecond(arg, second);
+			} else {
+				second = setSecond(arg, minute);
+			}
+		}
+		return second;
+	}
+
+	private ThatSecond setSecond(String cron, ThatSecond oneSecond) {
+		if (cron.contains("-")) {
 			String[] args = value.split("-", 2);
-			return minute.second(Integer.parseInt(args[0])).toSecond(Integer.parseInt(args[1]));
-		} else if (value.contains(",")) {
-			String[] args = value.split(",");
-			OneSecond second = null;
-			for (String arg : args) {
-				if (second != null) {
-					second = second.andSecond(Integer.parseInt(arg));
+			return oneSecond.andSecond(Integer.parseInt(args[0])).toSecond(Integer.parseInt(args[1]));
+		} else if (cron.contains("/")) {
+			String[] args = value.split("\\/", 2);
+			int start;
+			try {
+				start = Integer.parseInt(args[0]);
+			} catch (NumberFormatException e) {
+				if (args[0].equals("*")) {
+					start = 0;
 				} else {
-					second = minute.second(Integer.parseInt(arg));
+					throw new CronParserException(value, e);
 				}
 			}
-			return second;
-		} else if (value.contains("/")) {
+			return oneSecond.andSecond(start).toSecond(59, Integer.parseInt(args[1]));
+		} else {
+			return oneSecond.andSecond(Integer.parseInt(cron));
+		}
+	}
+
+	private ThatSecond setSecond(String cron, Minute minute) {
+		if (cron.contains("-")) {
+			String[] args = value.split("-", 2);
+			return minute.second(Integer.parseInt(args[0])).toSecond(Integer.parseInt(args[1]));
+		} else if (cron.contains("/")) {
 			String[] args = value.split("\\/", 2);
 			int start;
 			try {
@@ -55,7 +79,7 @@ public class SecondOption implements CronOption {
 			}
 			return minute.second(start).toSecond(59, Integer.parseInt(args[1]));
 		} else {
-			throw new CronParserException(value);
+			return minute.second(Integer.parseInt(cron));
 		}
 	}
 

@@ -105,8 +105,8 @@ public class EveryWeek implements Week, Serializable {
 		return week.getTimeInMillis();
 	}
 
-	public OneDayOfWeek weekday(int day) {
-		return new SingleDayOfWeek(CollectionUtils.getFirst(this), day);
+	public ThatDayOfWeek day(int day) {
+		return new ThisDayOfWeek(CollectionUtils.getFirst(this), day);
 	}
 
 	public Day everyDay(Function<Week, Integer> from, Function<Week, Integer> to, int interval) {

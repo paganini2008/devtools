@@ -10,14 +10,14 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
 
 /**
  * 
- * SingleMinute
+ * ThisMinute
  *
  * @author Fred Feng
  * 
  * 
  * @version 1.0
  */
-public class SingleMinute implements OneMinute, Serializable {
+public class ThisMinute implements ThatMinute, Serializable {
 
 	private static final long serialVersionUID = 7090607807516357598L;
 	private final TreeMap<Integer, Calendar> siblings;
@@ -27,7 +27,7 @@ public class SingleMinute implements OneMinute, Serializable {
 	private int lastMinute;
 	private final StringBuilder cron = new StringBuilder();
 
-	SingleMinute(Hour hour, int minute) {
+	ThisMinute(Hour hour, int minute) {
 		CalendarAssert.checkMinute(minute);
 		this.hour = hour;
 		siblings = new TreeMap<Integer, Calendar>();
@@ -38,11 +38,11 @@ public class SingleMinute implements OneMinute, Serializable {
 		this.cron.append(minute);
 	}
 
-	public SingleMinute andMinute(int minute) {
+	public ThisMinute andMinute(int minute) {
 		return andMinute(minute, true);
 	}
 
-	private SingleMinute andMinute(int minute, boolean writeCron) {
+	private ThisMinute andMinute(int minute, boolean writeCron) {
 		CalendarAssert.checkMinute(minute);
 		Calendar calendar = CalendarUtils.setField(hour.getTime(), Calendar.MINUTE, minute);
 		siblings.put(minute, calendar);
@@ -53,7 +53,7 @@ public class SingleMinute implements OneMinute, Serializable {
 		return this;
 	}
 
-	public OneMinute toMinute(int minute, int interval) {
+	public ThatMinute toMinute(int minute, int interval) {
 		CalendarAssert.checkMinute(minute);
 		if (interval < 0) {
 			throw new IllegalArgumentException("Invalid interval: " + interval);
@@ -97,8 +97,8 @@ public class SingleMinute implements OneMinute, Serializable {
 		return minute.get(Calendar.MINUTE);
 	}
 
-	public OneSecond second(int second) {
-		return new SingleSecond(CollectionUtils.getFirst(this), second);
+	public ThatSecond second(int second) {
+		return new ThisSecond(CollectionUtils.getFirst(this), second);
 	}
 
 	public Second everySecond(Function<Minute, Integer> from, Function<Minute, Integer> to, int interval) {

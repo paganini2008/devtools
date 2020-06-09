@@ -13,59 +13,59 @@ import com.github.paganini2008.devtools.date.DateUtils;
  */
 public abstract class CronBuilder {
 
-	public static OneYear year() {
+	public static ThatYear year() {
 		return year(DateUtils.getYear());
 	}
 
-	public static OneYear year(int year) {
-		return new SingleYear(year);
+	public static ThatYear year(int year) {
+		return new ThisYear(year);
 	}
 
-	public static OneMonth month() {
+	public static ThatMonth month() {
 		return year().month(DateUtils.getMonth());
 	}
 
-	public static OneMonth month(int year, int month) {
+	public static ThatMonth month(int year, int month) {
 		return year(year).month(month);
 	}
 
-	public static OneWeek week() {
+	public static ThatWeek week() {
 		return month().week(DateUtils.getWeekOfMonth());
 	}
 
-	public static OneWeek week(int year, int month, int week) {
+	public static ThatWeek week(int year, int month, int week) {
 		return month(year, month).week(week);
 	}
 
-	public static OneDay day() {
+	public static ThatDay day() {
 		return month().day(DateUtils.getDate());
 	}
 
-	public static OneDay day(int year, int month, int day) {
+	public static ThatDay day(int year, int month, int day) {
 		return month(year, month).day(day);
 	}
 
-	public static OneHour hour() {
+	public static ThatHour hour() {
 		return day().hour(DateUtils.getHourOfDay());
 	}
 
-	public static OneHour hour(int hourOfDay) {
+	public static ThatHour hour(int hourOfDay) {
 		return day().hour(hourOfDay);
 	}
 
-	public static OneMinute minute() {
+	public static ThatMinute minute() {
 		return hour().minute(DateUtils.getMinute());
 	}
 
-	public static OneMinute minute(int minute) {
+	public static ThatMinute minute(int minute) {
 		return hour().minute(minute);
 	}
 
-	public static OneMinute at(int hourOfDay, int minute) {
+	public static ThatMinute at(int hourOfDay, int minute) {
 		return day().hour(hourOfDay).minute(minute);
 	}
 
-	public static OneSecond at(int hourOfDay, int minute, int second) {
+	public static ThatSecond at(int hourOfDay, int minute, int second) {
 		return day().hour(hourOfDay).minute(minute).second(second);
 	}
 

@@ -71,16 +71,16 @@ public class EveryYear implements Year, Serializable {
 		return new EveryMonth(CollectionUtils.getFirst(this), from, to, interval);
 	}
 
-	public OneDay day(int day) {
-		return new SingleDayOfYear(CollectionUtils.getFirst(this), day);
+	public ThatDay day(int day) {
+		return new ThisDayOfYear(CollectionUtils.getFirst(this), day);
 	}
 
-	public OneWeek week(int week) {
-		return new SingleWeekOfYear(CollectionUtils.getFirst(this), week);
+	public ThatWeek week(int week) {
+		return new ThisWeekOfYear(CollectionUtils.getFirst(this), week);
 	}
 
-	public OneMonth month(int month) {
-		return new SingleMonth(CollectionUtils.getFirst(this), month);
+	public ThatMonth month(int month) {
+		return new ThisMonth(CollectionUtils.getFirst(this), month);
 	}
 
 	public Week lastWeek() {

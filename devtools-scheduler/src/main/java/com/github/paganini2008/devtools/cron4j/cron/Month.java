@@ -36,13 +36,13 @@ public interface Month extends Iterator<Month>, CronExpression {
 		return everyDay(m -> from, m -> to, interval);
 	}
 
-	OneDay day(int day);
+	ThatDay day(int day);
 
 	Day lastDay();
 
 	Day everyDay(Function<Month, Integer> from, Function<Month, Integer> to, int interval);
 
-	OneWeek week(int week);
+	ThatWeek week(int week);
 	
 	Week lastWeek();
 

@@ -2,7 +2,7 @@ package com.github.paganini2008.devtools.cron4j.utils;
 
 import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
 import com.github.paganini2008.devtools.cron4j.cron.Month;
-import com.github.paganini2008.devtools.cron4j.cron.OneDay;
+import com.github.paganini2008.devtools.cron4j.cron.ThatDay;
 
 /**
  * 
@@ -33,31 +33,60 @@ public class DayOption implements CronOption {
 			return month.lastDay();
 		} else if (value.equals("LW")) {
 			return month.lastWeek().Fri();
-		} else if (value.contains("-")) {
-			String[] args = value.split("-", 2);
-			return month.day(Integer.parseInt(args[0])).toDay(Integer.parseInt(args[1]));
-		} else if (value.contains(",")) {
-			String[] args = value.split(",");
-			OneDay day = null;
-			for (String arg : args) {
-				if (day != null) {
-					day = day.andDay(Integer.parseInt(arg));
+		}
+		String[] args = value.split(",");
+		ThatDay day = null;
+		for (String arg : args) {
+			if (day != null) {
+				day = setDay(arg, day, month);
+			} else {
+				day = setDay(arg, month);
+			}
+		}
+		return day;
+	}
+
+	private ThatDay setDay(String cron, ThatDay day, Month month) {
+		if (cron.contains("-")) {
+			String[] args = cron.split("-", 2);
+			return day.andDay(Integer.parseInt(args[0])).toDay(Integer.parseInt(args[1]));
+		} else if (cron.contains("/")) {
+			String[] args = cron.split("\\/", 2);
+			int start;
+			try {
+				start = Integer.parseInt(args[0]);
+			} catch (NumberFormatException e) {
+				if (args[0].equals("*")) {
+					start = 1;
 				} else {
-					day = month.day(Integer.parseInt(arg));
+					throw new CronParserException(value, e);
 				}
 			}
-			return day;
-		} else if (value.contains("/")) {
-			String[] args = value.split("\\/", 2);
-			OneDay day;
-			try {
-				day = month.day(Integer.parseInt(args[0]));
-			} catch (NumberFormatException ignored) {
-				day = month.day(1);
-			}
-			return day.toDay(month.getLasyDay(), Integer.parseInt(args[1]));
+			return day.andDay(start).toDay(month.getLasyDay(), Integer.parseInt(args[1]));
 		} else {
-			throw new CronParserException(value);
+			return day.andDay(Integer.parseInt(cron));
+		}
+	}
+
+	private ThatDay setDay(String cron, Month month) {
+		if (cron.contains("-")) {
+			String[] args = cron.split("-", 2);
+			return month.day(Integer.parseInt(args[0])).toDay(Integer.parseInt(args[1]));
+		} else if (cron.contains("/")) {
+			String[] args = cron.split("\\/", 2);
+			int start;
+			try {
+				start = Integer.parseInt(args[0]);
+			} catch (NumberFormatException e) {
+				if (args[0].equals("*")) {
+					start = 1;
+				} else {
+					throw new CronParserException(value, e);
+				}
+			}
+			return month.day(start).toDay(month.getLasyDay(), Integer.parseInt(args[1]));
+		} else {
+			return month.day(Integer.parseInt(cron));
 		}
 	}
 

@@ -99,8 +99,8 @@ public class EveryMinute implements Minute, Serializable {
 		return minute.getTimeInMillis();
 	}
 
-	public OneSecond second(int second) {
-		return new SingleSecond(CollectionUtils.getFirst(this), second);
+	public ThatSecond second(int second) {
+		return new ThisSecond(CollectionUtils.getFirst(this), second);
 	}
 
 	public Second everySecond(Function<Minute, Integer> from, Function<Minute, Integer> to, int interval) {

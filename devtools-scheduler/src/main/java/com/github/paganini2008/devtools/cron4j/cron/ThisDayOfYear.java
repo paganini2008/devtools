@@ -10,12 +10,12 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
 
 /**
  * 
- * SingleDayOfYear
+ * ThisDayOfYear
  *
  * @author Fred Feng
  * @version 1.0
  */
-public class SingleDayOfYear implements OneDay, Serializable {
+public class ThisDayOfYear implements ThatDay, Serializable {
 
 	private static final long serialVersionUID = -8235489088108418524L;
 	private final TreeMap<Integer, Calendar> siblings;
@@ -24,7 +24,7 @@ public class SingleDayOfYear implements OneDay, Serializable {
 	private Calendar day;
 	private int lastDay;
 
-	SingleDayOfYear(Year year, int day) {
+	ThisDayOfYear(Year year, int day) {
 		CalendarAssert.checkDayOfYear(year, day);
 		this.year = year;
 		siblings = new TreeMap<Integer, Calendar>();
@@ -53,8 +53,8 @@ public class SingleDayOfYear implements OneDay, Serializable {
 		return day.get(Calendar.DAY_OF_YEAR);
 	}
 
-	public OneHour hour(int hour) {
-		return new SingleHour(CollectionUtils.getFirst(this), hour);
+	public ThatHour hour(int hour) {
+		return new ThisHour(CollectionUtils.getFirst(this), hour);
 	}
 
 	public Hour everyHour(Function<Day, Integer> from, Function<Day, Integer> to, int interval) {
@@ -69,7 +69,7 @@ public class SingleDayOfYear implements OneDay, Serializable {
 		return day.getTimeInMillis();
 	}
 
-	public OneDay andDay(int day) {
+	public ThatDay andDay(int day) {
 		CalendarAssert.checkDayOfYear(year, day);
 		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.DAY_OF_YEAR, day);
 		siblings.put(day, calendar);
@@ -77,7 +77,7 @@ public class SingleDayOfYear implements OneDay, Serializable {
 		return this;
 	}
 
-	public OneDay andNextDays(int days) {
+	public ThatDay andNextDays(int days) {
 		CalendarAssert.checkDayOfYear(year, lastDay + days);
 		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.DAY_OF_YEAR, lastDay + days);
 		int day = calendar.get(Calendar.DAY_OF_YEAR);
@@ -86,7 +86,7 @@ public class SingleDayOfYear implements OneDay, Serializable {
 		return this;
 	}
 
-	public OneDay toDay(int day, int interval) {
+	public ThatDay toDay(int day, int interval) {
 		CalendarAssert.checkDayOfYear(year, day);
 		for (int i = lastDay + interval; i < day; i += interval) {
 			andDay(i);

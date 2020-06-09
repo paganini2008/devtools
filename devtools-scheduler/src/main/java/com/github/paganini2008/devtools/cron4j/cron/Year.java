@@ -22,13 +22,13 @@ public interface Year extends Iterator<Year>, CronExpression {
 
 	int getLastDay();
 
-	OneDay day(int day);
+	ThatDay day(int day);
 
 	default Day lastDay() {
 		return day(getLastDay());
 	}
 
-	OneWeek week(int week);
+	ThatWeek week(int week);
 
 	Week lastWeek();
 
@@ -51,53 +51,53 @@ public interface Year extends Iterator<Year>, CronExpression {
 		return everyMonth(y -> from, y -> to, interval);
 	}
 
-	OneMonth month(int month);
+	ThatMonth month(int month);
 
-	default OneMonth Jan() {
+	default ThatMonth Jan() {
 		return month(Calendar.JANUARY);
 	}
 
-	default OneMonth Feb() {
+	default ThatMonth Feb() {
 		return month(Calendar.FEBRUARY);
 	}
 
-	default OneMonth Mar() {
+	default ThatMonth Mar() {
 		return month(Calendar.MARCH);
 	}
 
-	default OneMonth Apr() {
+	default ThatMonth Apr() {
 		return month(Calendar.APRIL);
 	}
 
-	default OneMonth May() {
+	default ThatMonth May() {
 		return month(Calendar.MAY);
 	}
 
-	default OneMonth June() {
+	default ThatMonth June() {
 		return month(Calendar.JUNE);
 	}
 
-	default OneMonth July() {
+	default ThatMonth July() {
 		return month(Calendar.JULY);
 	}
 
-	default OneMonth Aug() {
+	default ThatMonth Aug() {
 		return month(Calendar.AUGUST);
 	}
 
-	default OneMonth Sept() {
+	default ThatMonth Sept() {
 		return month(Calendar.SEPTEMBER);
 	}
 
-	default OneMonth Oct() {
+	default ThatMonth Oct() {
 		return month(Calendar.OCTOBER);
 	}
 
-	default OneMonth Nov() {
+	default ThatMonth Nov() {
 		return month(Calendar.NOVEMBER);
 	}
 
-	default OneMonth Dec() {
+	default ThatMonth Dec() {
 		return month(Calendar.DECEMBER);
 	}
 }
