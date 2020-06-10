@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import com.github.paganini2008.devtools.collection.MapUtils;
-import com.github.paganini2008.devtools.cron4j.utils.CronParserException;
+import com.github.paganini2008.devtools.cron4j.parser.MalformedCronException;
 
 /**
  * 
@@ -59,28 +59,28 @@ public abstract class CalendarUtils {
 
 	public static int getDayOfWeekValue(String repr) {
 		if (!dayOfWeekValues.containsKey(repr)) {
-			throw new CronParserException("Unknown dayOfWeek string: " + repr);
+			throw new MalformedCronException("Unknown dayOfWeek string: " + repr);
 		}
 		return dayOfWeekValues.get(repr);
 	}
 
 	public static String getDayOfWeekName(int calendarField) {
 		if (!dayOfWeekNames.containsKey(calendarField)) {
-			throw new CronParserException("Unknown calendarField: " + calendarField);
+			throw new MalformedCronException("Unknown calendarField: " + calendarField);
 		}
 		return dayOfWeekNames.get(calendarField);
 	}
 
 	public static int getMonthValue(String repr) {
 		if (!monthValues.containsKey(repr)) {
-			throw new CronParserException("Unknown month string: " + repr);
+			throw new MalformedCronException("Unknown month string: " + repr);
 		}
 		return monthValues.get(repr);
 	}
 
 	public static String getMonthName(int calendarField) {
 		if (!monthNames.containsKey(calendarField)) {
-			throw new CronParserException("Unknown calendarField: " + calendarField);
+			throw new MalformedCronException("Unknown calendarField: " + calendarField);
 		}
 		return monthNames.get(calendarField);
 	}

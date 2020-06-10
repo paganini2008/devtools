@@ -1,4 +1,4 @@
-package com.github.paganini2008.devtools.cron4j.utils;
+package com.github.paganini2008.devtools.cron4j.parser;
 
 import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
 import com.github.paganini2008.devtools.cron4j.cron.Month;
@@ -59,7 +59,7 @@ public class DayOption implements CronOption {
 				if (args[0].equals("*")) {
 					start = 1;
 				} else {
-					throw new CronParserException(value, e);
+					throw new MalformedCronException(value, e);
 				}
 			}
 			return day.andDay(start).toDay(month.getLasyDay(), Integer.parseInt(args[1]));
@@ -81,7 +81,7 @@ public class DayOption implements CronOption {
 				if (args[0].equals("*")) {
 					start = 1;
 				} else {
-					throw new CronParserException(value, e);
+					throw new MalformedCronException(value, e);
 				}
 			}
 			return month.day(start).toDay(month.getLasyDay(), Integer.parseInt(args[1]));

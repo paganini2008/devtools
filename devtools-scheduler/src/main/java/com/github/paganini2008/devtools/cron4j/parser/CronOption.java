@@ -1,4 +1,4 @@
-package com.github.paganini2008.devtools.cron4j.utils;
+package com.github.paganini2008.devtools.cron4j.parser;
 
 import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
 

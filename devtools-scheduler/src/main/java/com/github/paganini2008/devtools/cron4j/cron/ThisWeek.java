@@ -3,10 +3,12 @@ package com.github.paganini2008.devtools.cron4j.cron;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
+import com.github.paganini2008.devtools.collection.MapUtils;
 
 /**
  * 
@@ -99,12 +101,16 @@ public class ThisWeek implements ThatWeek, Serializable {
 	}
 
 	public Week next() {
-		week = CollectionUtils.get(siblings.values().iterator(), index++);
-		week.set(Calendar.YEAR, month.getYear());
-		week.set(Calendar.MONTH, month.getMonth());
+		Map.Entry<Integer, Calendar> entry = MapUtils.getEntry(siblings, index++);
+		int week = entry.getKey();
+		Calendar time = entry.getValue();
+		time.set(Calendar.YEAR, month.getYear());
+		time.set(Calendar.MONTH, month.getMonth());
+		time.set(Calendar.WEEK_OF_MONTH, week);
+		this.week = time;
 		return this;
 	}
-	
+
 	public CronExpression getParent() {
 		return month;
 	}

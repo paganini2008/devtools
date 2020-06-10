@@ -81,9 +81,9 @@ public abstract class Example {
 		return CronBuilder.everyMonth().lastDay().at(23, 30);
 	}
 
-	// 0 10,20,30 12 ? 3,4 5L 2002-2005
+	// 0 10,20,30 12 ? 3,4 5L 2020-2025
 	public static CronExpression getCron13() {
-		return CronBuilder.year(2020).toYear(2025).Mar().andApr().lastWeek().Thur().hour(12).minute(10).andMinute(20).andMinute(30);
+		return CronBuilder.year(2020).Aug().lastWeek().Fri().hour(12).minute(10).andMinute(20).andMinute(30);
 	}
 
 	// 0 10 23 ? * 6#3
@@ -92,20 +92,20 @@ public abstract class Example {
 	}
 
 	public static void test1() throws Exception {
-		getCron14().forEach(date -> {
-			System.out.println(DateUtils.format(date));
-		}, -1);
+//		getCron14().forEach(date -> {
+//			System.out.println(DateUtils.format(date));
+//		}, 10);
 
-		System.out.println(StringUtils.repeat("-", 32));
-
+//		System.out.println(StringUtils.repeat("-", 32));
+//
 		getCron13().forEach(date -> {
 			System.out.println(DateUtils.format(date));
-		}, -1);
+		}, 20);
 
-		System.out.println(StringUtils.repeat("-", 32));
-		getCron12().forEach(date -> {
-			System.out.println(DateUtils.format(date));
-		}, -1);
+//		System.out.println(StringUtils.repeat("-", 32));
+//		getCron10().forEach(date -> {
+//			System.out.println(DateUtils.format(date));
+//		}, 20);
 	}
 
 	public static void test2() throws Exception {

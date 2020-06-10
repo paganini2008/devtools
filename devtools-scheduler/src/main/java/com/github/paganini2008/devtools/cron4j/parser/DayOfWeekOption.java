@@ -1,4 +1,4 @@
-package com.github.paganini2008.devtools.cron4j.utils;
+package com.github.paganini2008.devtools.cron4j.parser;
 
 import java.util.Calendar;
 
@@ -27,11 +27,11 @@ public class DayOfWeekOption implements CronOption {
 	public CronExpression join(CronExpression cronExpression) {
 		final Month month = (Month) cronExpression;
 		try {
-			return month.everyWeek().day(Integer.parseInt(value));
+			return ((Month) month.copy()).everyWeek().day(Integer.parseInt(value));
 		} catch (NumberFormatException e) {
 			try {
-				return month.everyWeek().day(CalendarUtils.getDayOfWeekValue(value));
-			} catch (CronParserException ignored) {
+				return ((Month) month.copy()).everyWeek().day(CalendarUtils.getDayOfWeekValue(value));
+			} catch (MalformedCronException ignored) {
 			}
 		}
 		if (value.equals("*")) {
@@ -50,10 +50,10 @@ public class DayOfWeekOption implements CronOption {
 	}
 
 	private ThatDayOfWeek setDayOfWeek(String cron, ThatDayOfWeek dayOfWeek, Month month) {
-		if (value.endsWith("L")) {
-			return month.lastWeek().day(Integer.parseInt(value.substring(0, 1)));
-		} else if (value.contains("#")) {
-			String[] args = value.split("#", 2);
+		if (cron.endsWith("L")) {
+			return month.lastWeek().day(Integer.parseInt(cron.substring(0, 1)));
+		} else if (cron.contains("#")) {
+			String[] args = cron.split("#", 2);
 			return month.week(Integer.parseInt(args[1])).day(Integer.parseInt(args[0]));
 		} else if (cron.contains("-")) {
 			String[] args = cron.split("-", 2);
@@ -67,10 +67,10 @@ public class DayOfWeekOption implements CronOption {
 	}
 
 	private ThatDayOfWeek setDayOfWeek(String cron, Month month) {
-		if (value.endsWith("L")) {
-			return month.lastWeek().day(Integer.parseInt(value.substring(0, 1)));
-		} else if (value.contains("#")) {
-			String[] args = value.split("#", 2);
+		if (cron.endsWith("L")) {
+			return month.lastWeek().day(Integer.parseInt(cron.substring(0, 1)));
+		} else if (cron.contains("#")) {
+			String[] args = cron.split("#", 2);
 			return month.week(Integer.parseInt(args[1])).day(Integer.parseInt(args[0]));
 		} else if (cron.contains("-")) {
 			String[] args = cron.split("-", 2);

@@ -1,4 +1,4 @@
-package com.github.paganini2008.devtools.cron4j.utils;
+package com.github.paganini2008.devtools.cron4j;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,9 +6,18 @@ import java.util.List;
 
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
-import com.github.paganini2008.devtools.cron4j.cron.Epoch;
 import com.github.paganini2008.devtools.cron4j.cron.EveryYear;
 import com.github.paganini2008.devtools.cron4j.cron.ThatDayOfWeek;
+import com.github.paganini2008.devtools.cron4j.parser.CronOption;
+import com.github.paganini2008.devtools.cron4j.parser.DayOfWeekOption;
+import com.github.paganini2008.devtools.cron4j.parser.DayOption;
+import com.github.paganini2008.devtools.cron4j.parser.Epoch;
+import com.github.paganini2008.devtools.cron4j.parser.HourOption;
+import com.github.paganini2008.devtools.cron4j.parser.MalformedCronException;
+import com.github.paganini2008.devtools.cron4j.parser.MinuteOption;
+import com.github.paganini2008.devtools.cron4j.parser.MonthOption;
+import com.github.paganini2008.devtools.cron4j.parser.SecondOption;
+import com.github.paganini2008.devtools.cron4j.parser.YearOption;
 import com.github.paganini2008.devtools.date.DateUtils;
 
 /**
@@ -63,7 +72,7 @@ public abstract class Cron {
 			clauses.add("*");
 		}
 		if (clauses.size() != 7) {
-			throw new CronParserException(cronString);
+			throw new MalformedCronException(cronString);
 		}
 		Collections.reverse(clauses);
 		Collections.swap(clauses, 1, 2);
@@ -74,13 +83,18 @@ public abstract class Cron {
 		value = clauses.get(1);
 		parsers.add(new MonthOption(value));
 
+		boolean hasDay = false;
 		value = clauses.get(2);
 		if (!value.equals("?")) {
 			parsers.add(new DayOfWeekOption(value));
+			hasDay = true;
 		}
 
 		value = clauses.get(3);
 		if (!value.equals("?")) {
+			if (hasDay) {
+				throw new MalformedCronException(cronString);
+			}
 			parsers.add(new DayOption(value));
 		}
 
@@ -93,25 +107,25 @@ public abstract class Cron {
 		value = clauses.get(6);
 		parsers.add(new SecondOption(value));
 
-		CronExpression cronExpression = new Epoch();
+		CronExpression cronExpression = Epoch.getInstance();
 		try {
 			for (CronOption clause : parsers) {
 				cronExpression = clause.join(cronExpression);
 			}
 			return cronExpression;
 		} catch (RuntimeException e) {
-			if (e instanceof CronParserException) {
+			if (e instanceof MalformedCronException) {
 				throw e;
 			}
-			throw new CronParserException(cronString, e);
+			throw new MalformedCronException(cronString, e);
 		}
 	}
 
 	public static void main(String[] args) {
-		CronExpression cronExpression = Cron.parse("0 0 12 ? 3,4 5L 2020-2025");
+		CronExpression cronExpression = Cron.parse("0 10 23 ? * 6#3");
 		cronExpression.forEach(date -> {
 			System.out.println(DateUtils.format(date));
-		}, 10);
+		}, 20);
 	}
 
 }

@@ -77,15 +77,6 @@ public class ThisDayOfYear implements ThatDay, Serializable {
 		return this;
 	}
 
-	public ThatDay andNextDays(int days) {
-		CalendarAssert.checkDayOfYear(year, lastDay + days);
-		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.DAY_OF_YEAR, lastDay + days);
-		int day = calendar.get(Calendar.DAY_OF_YEAR);
-		siblings.put(day, calendar);
-		this.lastDay = day;
-		return this;
-	}
-
 	public ThatDay toDay(int day, int interval) {
 		CalendarAssert.checkDayOfYear(year, day);
 		for (int i = lastDay + interval; i < day; i += interval) {

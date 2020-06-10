@@ -1,4 +1,4 @@
-package com.github.paganini2008.devtools.cron4j.utils;
+package com.github.paganini2008.devtools.cron4j.parser;
 
 import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
 import com.github.paganini2008.devtools.cron4j.cron.Minute;
@@ -56,7 +56,7 @@ public class SecondOption implements CronOption {
 				if (args[0].equals("*")) {
 					start = 0;
 				} else {
-					throw new CronParserException(value, e);
+					throw new MalformedCronException(value, e);
 				}
 			}
 			return oneSecond.andSecond(start).toSecond(59, Integer.parseInt(args[1]));

@@ -2,6 +2,7 @@ package com.github.paganini2008.devtools.cron4j.cron;
 
 import java.util.Calendar;
 
+import com.github.paganini2008.devtools.cron4j.parser.Epoch;
 import com.github.paganini2008.devtools.date.DateUtils;
 
 /**
@@ -74,7 +75,7 @@ public abstract class CronBuilder {
 	}
 
 	public static Year everyYear(int interval) {
-		return everyYear(DateUtils.getYear(), Epoch.LAST_YEAR_OF_THE_WORLD, interval);
+		return everyYear(DateUtils.getYear(), Epoch.MAX_YEAR, interval);
 	}
 
 	public static Year everyYear(int fromYear, int toYear, int interval) {

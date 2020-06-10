@@ -1,4 +1,4 @@
-package com.github.paganini2008.devtools.cron4j.utils;
+package com.github.paganini2008.devtools.cron4j.parser;
 
 import java.util.Calendar;
 
@@ -31,7 +31,7 @@ public class MonthOption implements CronOption {
 		} catch (NumberFormatException e) {
 			try {
 				return year.month(CalendarUtils.getMonthValue(value));
-			} catch (CronParserException ignored) {
+			} catch (MalformedCronException ignored) {
 			}
 		}
 		if (value.equals("*")) {
@@ -62,7 +62,7 @@ public class MonthOption implements CronOption {
 				if (args[0].equals("*")) {
 					start = Calendar.JANUARY;
 				} else {
-					throw new CronParserException(value, e);
+					throw new MalformedCronException(value, e);
 				}
 			}
 			return month.andMonth(start).toMonth(Calendar.DECEMBER, Integer.parseInt(args[1]));
@@ -84,7 +84,7 @@ public class MonthOption implements CronOption {
 				if (args[0].equals("*")) {
 					start = Calendar.JANUARY;
 				} else {
-					throw new CronParserException(value, e);
+					throw new MalformedCronException(value, e);
 				}
 			}
 			return year.month(start).toMonth(Calendar.DECEMBER, Integer.parseInt(args[1]));

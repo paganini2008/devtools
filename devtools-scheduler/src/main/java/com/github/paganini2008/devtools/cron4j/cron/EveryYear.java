@@ -18,7 +18,7 @@ public class EveryYear implements Year, Serializable {
 
 	private static final long serialVersionUID = 1487831872493410360L;
 
-	EveryYear(int fromYear, Function<Year, Integer> to, int interval) {
+	public EveryYear(int fromYear, Function<Year, Integer> to, int interval) {
 		CalendarAssert.checkYear(fromYear);
 		if (interval <= 0) {
 			throw new IllegalArgumentException("Invalid interval: " + interval);

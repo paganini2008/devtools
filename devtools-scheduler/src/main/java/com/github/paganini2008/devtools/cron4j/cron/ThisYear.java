@@ -25,7 +25,7 @@ public class ThisYear implements ThatYear, Serializable {
 	private int lastYear;
 	private final StringBuilder cron = new StringBuilder();
 
-	ThisYear(int year) {
+	public ThisYear(int year) {
 		CalendarAssert.checkYear(year);
 		siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(new Date(), Calendar.YEAR, year);

@@ -1,4 +1,4 @@
-package com.github.paganini2008.devtools.cron4j.utils;
+package com.github.paganini2008.devtools.cron4j.parser;
 
 import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
 import com.github.paganini2008.devtools.cron4j.cron.Day;
@@ -55,7 +55,7 @@ public class HourOption implements CronOption {
 				if (args[0].equals("*")) {
 					start = 0;
 				} else {
-					throw new CronParserException(value, e);
+					throw new MalformedCronException(value, e);
 				}
 			}
 			return hour.andHour(start).toHour(23, Integer.parseInt(args[1]));
@@ -77,7 +77,7 @@ public class HourOption implements CronOption {
 				if (args[0].equals("*")) {
 					start = 0;
 				} else {
-					throw new CronParserException(value, e);
+					throw new MalformedCronException(value, e);
 				}
 			}
 			return day.hour(start).toHour(23, Integer.parseInt(args[1]));
