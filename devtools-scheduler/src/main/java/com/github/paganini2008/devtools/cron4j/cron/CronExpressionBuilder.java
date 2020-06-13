@@ -6,12 +6,12 @@ import com.github.paganini2008.devtools.date.DateUtils;
 
 /**
  * 
- * CronBuilder
+ * CronExpressionBuilder
  *
  * @author Fred Feng
  * @version 1.0
  */
-public abstract class CronBuilder {
+public abstract class CronExpressionBuilder {
 
 	public static TheYear year() {
 		return year(DateUtils.getYear());

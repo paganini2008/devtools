@@ -32,6 +32,7 @@ public abstract class CRON {
 
 	public static String toCronString(CronExpression cronExpression) {
 		StringBuilder cron = new StringBuilder();
+		
 		CronExpression second = cronExpression;
 		CronExpression minute = second.getParent();
 		CronExpression hour = minute.getParent();
@@ -122,10 +123,11 @@ public abstract class CRON {
 	}
 
 	public static void main(String[] args) {
-		CronExpression cronExpression = CRON.parse("0 10,20,30 12 ? 5,6,7 5L,6L 2020");
+		CronExpression cronExpression = CRON.parse("0 10 23 ? * 6#3,5#2,6L");
 		cronExpression.forEach(date -> {
 			System.out.println(DateUtils.format(date));
 		}, 20);
+		System.out.println(CRON.toCronString(cronExpression));
 	}
 
 }

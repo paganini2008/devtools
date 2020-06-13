@@ -18,14 +18,12 @@ import com.github.paganini2008.devtools.io.SerializationUtils;
  * @author Fred Feng
  * @version 1.0
  */
-public interface CronExpression {
+public interface CronExpression extends CronStringBuilder {
 
 	Date getTime();
 
 	long getTimeInMillis();
-
-	CronExpression getParent();
-
+	
 	default String toCronString() {
 		throw new UnsupportedOperationException();
 	}

@@ -2,6 +2,7 @@ package com.github.paganini2008.devtools.cron4j.cron;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
@@ -21,11 +22,25 @@ import com.github.paganini2008.devtools.collection.MapUtils;
 public class ThisDayOfWeekInMonth implements TheDayOfWeekInMonth, Serializable {
 
 	private static final long serialVersionUID = -5853750543470928852L;
-	private final TreeMap<String, Calendar> siblings = new TreeMap<String, Calendar>();
+
+	private final TreeMap<String, Calendar> siblings = new TreeMap<String, Calendar>(new InnerCmp());
 	private final StringBuilder cron = new StringBuilder();
 	private Month month;
 	private Calendar day;
 	private int index;
+
+	private static class InnerCmp implements Comparator<String>, Serializable {
+
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public int compare(String a, String b) {
+			String x = a.split("#", 2)[1];
+			String y = b.split("#", 2)[1];
+			return Integer.parseInt(x) - Integer.parseInt(y);
+		}
+
+	}
 
 	ThisDayOfWeekInMonth(Month month, int week, int dayOfWeek) {
 		CalendarAssert.checkWeekOfMonth(month, week);
