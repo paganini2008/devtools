@@ -22,13 +22,13 @@ import com.github.paganini2008.devtools.date.DateUtils;
 
 /**
  * 
- * Cron
+ * CRON
  *
  * @author Fred Feng
  *
  * @since 1.0
  */
-public abstract class Cron {
+public abstract class CRON {
 
 	public static String toCronString(CronExpression cronExpression) {
 		StringBuilder cron = new StringBuilder();
@@ -122,7 +122,7 @@ public abstract class Cron {
 	}
 
 	public static void main(String[] args) {
-		CronExpression cronExpression = Cron.parse("0 10,20,30 12 ? 3,4,5 5L,6L 2020");
+		CronExpression cronExpression = CRON.parse("0 10,20,30 12 ? 5,6,7 5L,6L 2020");
 		cronExpression.forEach(date -> {
 			System.out.println(DateUtils.format(date));
 		}, 20);

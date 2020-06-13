@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
 
+import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.MapUtils;
 
 /**
@@ -32,7 +33,12 @@ public class ThisDayOfWeekInMonth implements TheDayOfWeekInMonth, Serializable {
 		this.month = month;
 		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.WEEK_OF_MONTH, week);
 		calendar = CalendarUtils.setField(calendar, Calendar.DAY_OF_WEEK, dayOfWeek);
-		this.siblings.put(day + "#" + week, calendar);
+		this.siblings.put(dayOfWeek + "#" + week, calendar);
+		this.cron.append(cronFor(week, dayOfWeek));
+	}
+
+	private String cronFor(int week, int dayOfWeek) {
+		return month.getWeekCount() == week ? dayOfWeek + "L" : dayOfWeek + "#" + week;
 	}
 
 	@Override
@@ -63,13 +69,13 @@ public class ThisDayOfWeekInMonth implements TheDayOfWeekInMonth, Serializable {
 	@Override
 	public TheHour hour(int hourOfDay) {
 		final Day copy = (Day) this.copy();
-		return new ThisHour(copy, hourOfDay);
+		return new ThisHour(CollectionUtils.getFirst(copy), hourOfDay);
 	}
 
 	@Override
 	public Hour everyHour(Function<Day, Integer> from, Function<Day, Integer> to, int interval) {
 		final Day copy = (Day) this.copy();
-		return new EveryHour(copy, from, to, interval);
+		return new EveryHour(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
 	@Override
@@ -109,13 +115,13 @@ public class ThisDayOfWeekInMonth implements TheDayOfWeekInMonth, Serializable {
 	}
 
 	@Override
-	public TheDayOfWeekInMonth and(int week, int day) {
+	public TheDayOfWeekInMonth and(int week, int dayOfWeek) {
 		CalendarAssert.checkWeekOfMonth(month, week);
-		CalendarAssert.checkDayOfWeek(day);
+		CalendarAssert.checkDayOfWeek(dayOfWeek);
 		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.WEEK_OF_MONTH, week);
-		calendar = CalendarUtils.setField(calendar, Calendar.DAY_OF_WEEK, day);
-		this.siblings.put(day + "#" + week, calendar);
-		this.cron.append(",").append(day + "#" + week);
+		calendar = CalendarUtils.setField(calendar, Calendar.DAY_OF_WEEK, dayOfWeek);
+		this.siblings.put(dayOfWeek + "#" + week, calendar);
+		this.cron.append(",").append(cronFor(week, dayOfWeek));
 		return this;
 	}
 

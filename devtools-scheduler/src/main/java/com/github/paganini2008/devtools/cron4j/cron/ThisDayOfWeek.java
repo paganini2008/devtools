@@ -34,17 +34,17 @@ public class ThisDayOfWeek implements TheDayOfWeek, Serializable {
 		this.cron.append(getDayOfWeekName(day));
 	}
 
-	public TheDayOfWeek andDay(int day) {
-		return andDay(day, true);
+	public TheDayOfWeek andDay(int dayOfWeek) {
+		return andDay(dayOfWeek, true);
 	}
 
-	private TheDayOfWeek andDay(int day, boolean writeCron) {
-		CalendarAssert.checkDayOfWeek(day);
-		Calendar calendar = CalendarUtils.setField(week.getTime(), Calendar.DAY_OF_WEEK, day);
-		this.siblings.put(day, calendar);
-		this.lastDay = day;
+	private TheDayOfWeek andDay(int dayOfWeek, boolean writeCron) {
+		CalendarAssert.checkDayOfWeek(dayOfWeek);
+		Calendar calendar = CalendarUtils.setField(week.getTime(), Calendar.DAY_OF_WEEK, dayOfWeek);
+		this.siblings.put(dayOfWeek, calendar);
+		this.lastDay = dayOfWeek;
 		if (writeCron) {
-			this.cron.append(",").append(getDayOfWeekName(day));
+			this.cron.append(",").append(getDayOfWeekName(dayOfWeek));
 		}
 		return this;
 	}

@@ -83,7 +83,7 @@ public abstract class Example {
 
 	// 0 10,20,30 12 ? 3,4 5L 2020-2025
 	public static CronExpression getCron13() {
-		return CronBuilder.year(2020).Aug().lastWeek().Fri().hour(12).minute(10).andMinute(20).andMinute(30);
+		return CronBuilder.year(2020).Aug().toDec().lastWeek().Fri().hour(12).minute(10).andMinute(20).andMinute(30);
 	}
 
 	// 0 10 23 ? * 6#3
