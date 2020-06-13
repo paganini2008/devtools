@@ -2,7 +2,7 @@ package com.github.paganini2008.devtools.cron4j.parser;
 
 import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
 import com.github.paganini2008.devtools.cron4j.cron.Minute;
-import com.github.paganini2008.devtools.cron4j.cron.ThatSecond;
+import com.github.paganini2008.devtools.cron4j.cron.TheSecond;
 
 /**
  * 
@@ -32,7 +32,7 @@ public class SecondOption implements CronOption {
 			return minute.everySecond();
 		}
 		String[] args = value.split(",");
-		ThatSecond second = null;
+		TheSecond second = null;
 		for (String arg : args) {
 			if (second != null) {
 				second = setSecond(arg, second);
@@ -43,7 +43,7 @@ public class SecondOption implements CronOption {
 		return second;
 	}
 
-	private ThatSecond setSecond(String cron, ThatSecond oneSecond) {
+	private TheSecond setSecond(String cron, TheSecond oneSecond) {
 		if (cron.contains("-")) {
 			String[] args = value.split("-", 2);
 			return oneSecond.andSecond(Integer.parseInt(args[0])).toSecond(Integer.parseInt(args[1]));
@@ -65,7 +65,7 @@ public class SecondOption implements CronOption {
 		}
 	}
 
-	private ThatSecond setSecond(String cron, Minute minute) {
+	private TheSecond setSecond(String cron, Minute minute) {
 		if (cron.contains("-")) {
 			String[] args = value.split("-", 2);
 			return minute.second(Integer.parseInt(args[0])).toSecond(Integer.parseInt(args[1]));

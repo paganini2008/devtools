@@ -9,21 +9,21 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
 
 /**
  * 
- * LastWeek
+ * LastWeekOfMonth
  *
  * @author Fred Feng
  * 
  * 
  * @version 1.0
  */
-public class LastWeek implements Week, Serializable {
+public class LastWeekOfMonth implements Week, Serializable {
 
 	private static final long serialVersionUID = 2658610900522209361L;
 	private Month month;
 	private Calendar week;
 	private boolean self;
 
-	LastWeek(Month month) {
+	LastWeekOfMonth(Month month) {
 		this.month = month;
 		this.week = CalendarUtils.setField(month.getTime(), Calendar.WEEK_OF_MONTH, month.getWeekCount());
 		this.self = true;
@@ -53,12 +53,14 @@ public class LastWeek implements Week, Serializable {
 		return week.get(Calendar.WEEK_OF_YEAR);
 	}
 
-	public ThatDayOfWeek day(int day) {
-		return new ThisDayOfWeek(CollectionUtils.getFirst(this), day);
+	public TheDayOfWeek day(int day) {
+		final Week copy = (Week) this.copy();
+		return new ThisDayOfWeek(CollectionUtils.getFirst(copy), day);
 	}
 
 	public Day everyDay(Function<Week, Integer> from, Function<Week, Integer> to, int interval) {
-		return new EveryDayOfWeek(CollectionUtils.getFirst(this), from, to, interval);
+		final Week copy = (Week) this.copy();
+		return new EveryDayOfWeek(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
 	public boolean hasNext() {
@@ -81,11 +83,11 @@ public class LastWeek implements Week, Serializable {
 		}
 		return this;
 	}
-	
+
 	public CronExpression getParent() {
 		return month;
 	}
-	
+
 	public String toCronString() {
 		return "L";
 	}

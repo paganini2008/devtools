@@ -9,14 +9,14 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
 
 /**
  * 
- * LastDay
+ * LastDayOfMonth
  *
  * @author Fred Feng
  * 
  * 
  * @version 1.0
  */
-public class LastDay implements Day, Serializable {
+public class LastDayOfMonth implements Day, Serializable {
 
 	private static final long serialVersionUID = 3379984313144390130L;
 
@@ -24,7 +24,7 @@ public class LastDay implements Day, Serializable {
 	private Calendar day;
 	private boolean self;
 
-	LastDay(Month month) {
+	LastDayOfMonth(Month month) {
 		this.month = month;
 		this.day = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH, month.getLasyDay());
 		this.self = true;
@@ -58,12 +58,14 @@ public class LastDay implements Day, Serializable {
 		return day.get(Calendar.DAY_OF_YEAR);
 	}
 
-	public ThatHour hour(int hour) {
-		return new ThisHour(CollectionUtils.getFirst(this), hour);
+	public TheHour hour(int hour) {
+		final Day copy = (Day) this.copy();
+		return new ThisHour(CollectionUtils.getFirst(copy), hour);
 	}
 
 	public Hour everyHour(Function<Day, Integer> from, Function<Day, Integer> to, int interval) {
-		return new EveryHour(CollectionUtils.getFirst(this), from, to, interval);
+		final Day copy = (Day) this.copy();
+		return new EveryHour(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
 	public boolean hasNext() {
@@ -86,11 +88,11 @@ public class LastDay implements Day, Serializable {
 		}
 		return this;
 	}
-	
+
 	public CronExpression getParent() {
 		return month;
 	}
-	
+
 	public String toCronString() {
 		return "L";
 	}

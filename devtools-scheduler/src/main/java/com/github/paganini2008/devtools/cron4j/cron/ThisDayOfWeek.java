@@ -15,10 +15,10 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * @author Fred Feng
  * @version 1.0
  */
-public class ThisDayOfWeek implements ThatDayOfWeek, Serializable {
+public class ThisDayOfWeek implements TheDayOfWeek, Serializable {
 
 	private static final long serialVersionUID = -5353496894925284106L;
-	private final TreeMap<Integer, Calendar> siblings;
+	private final TreeMap<Integer, Calendar> siblings = new TreeMap<Integer, Calendar>();
 	private Week week;
 	private int index;
 	private Calendar day;
@@ -28,21 +28,20 @@ public class ThisDayOfWeek implements ThatDayOfWeek, Serializable {
 	ThisDayOfWeek(Week week, int day) {
 		CalendarAssert.checkDayOfWeek(day);
 		this.week = week;
-		this.siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(week.getTime(), Calendar.DAY_OF_WEEK, day);
-		siblings.put(day, calendar);
+		this.siblings.put(day, calendar);
 		this.lastDay = day;
 		this.cron.append(getDayOfWeekName(day));
 	}
 
-	public ThatDayOfWeek andDay(int day) {
+	public TheDayOfWeek andDay(int day) {
 		return andDay(day, true);
 	}
 
-	private ThatDayOfWeek andDay(int day, boolean writeCron) {
+	private TheDayOfWeek andDay(int day, boolean writeCron) {
 		CalendarAssert.checkDayOfWeek(day);
 		Calendar calendar = CalendarUtils.setField(week.getTime(), Calendar.DAY_OF_WEEK, day);
-		siblings.put(day, calendar);
+		this.siblings.put(day, calendar);
 		this.lastDay = day;
 		if (writeCron) {
 			this.cron.append(",").append(getDayOfWeekName(day));
@@ -51,13 +50,13 @@ public class ThisDayOfWeek implements ThatDayOfWeek, Serializable {
 	}
 
 	private String getDayOfWeekName(int day) {
-		if (week instanceof LastWeek || week instanceof ThisWeek) {
+		if (week instanceof LastWeekOfMonth || week instanceof ThisWeek) {
 			return day + week.toCronString();
 		}
 		return CalendarUtils.getDayOfWeekName(day);
 	}
 
-	public ThatDayOfWeek toDay(int day, int interval) {
+	public TheDayOfWeek toDay(int day, int interval) {
 		CalendarAssert.checkDayOfWeek(day);
 		for (int i = lastDay + interval; i <= day; i += interval) {
 			andDay(i, false);
@@ -98,12 +97,14 @@ public class ThisDayOfWeek implements ThatDayOfWeek, Serializable {
 		return day.get(Calendar.DAY_OF_YEAR);
 	}
 
-	public ThatHour hour(int hour) {
-		return new ThisHour(CollectionUtils.getFirst(this), hour);
+	public TheHour hour(int hour) {
+		final Day copy = (Day) this.copy();
+		return new ThisHour(CollectionUtils.getFirst(copy), hour);
 	}
 
 	public Hour everyHour(Function<Day, Integer> from, Function<Day, Integer> to, int interval) {
-		return new EveryHour(CollectionUtils.getFirst(this), from, to, interval);
+		final Day copy = (Day) this.copy();
+		return new EveryHour(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
 	public boolean hasNext() {
@@ -125,7 +126,7 @@ public class ThisDayOfWeek implements ThatDayOfWeek, Serializable {
 		day.set(Calendar.WEEK_OF_MONTH, week.getWeek());
 		return this;
 	}
-	
+
 	public CronExpression getParent() {
 		return week;
 	}

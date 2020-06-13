@@ -2,7 +2,6 @@ package com.github.paganini2008.devtools.cron4j.cron;
 
 import java.util.Calendar;
 
-import com.github.paganini2008.devtools.cron4j.parser.Epoch;
 import com.github.paganini2008.devtools.date.DateUtils;
 
 /**
@@ -14,59 +13,59 @@ import com.github.paganini2008.devtools.date.DateUtils;
  */
 public abstract class CronBuilder {
 
-	public static ThatYear year() {
+	public static TheYear year() {
 		return year(DateUtils.getYear());
 	}
 
-	public static ThatYear year(int year) {
+	public static TheYear year(int year) {
 		return new ThisYear(year);
 	}
 
-	public static ThatMonth month() {
+	public static TheMonth month() {
 		return year().month(DateUtils.getMonth());
 	}
 
-	public static ThatMonth month(int year, int month) {
+	public static TheMonth month(int year, int month) {
 		return year(year).month(month);
 	}
 
-	public static ThatWeek week() {
+	public static TheWeek week() {
 		return month().week(DateUtils.getWeekOfMonth());
 	}
 
-	public static ThatWeek week(int year, int month, int week) {
+	public static TheWeek week(int year, int month, int week) {
 		return month(year, month).week(week);
 	}
 
-	public static ThatDay day() {
+	public static TheDay day() {
 		return month().day(DateUtils.getDate());
 	}
 
-	public static ThatDay day(int year, int month, int day) {
+	public static TheDay day(int year, int month, int day) {
 		return month(year, month).day(day);
 	}
 
-	public static ThatHour hour() {
+	public static TheHour hour() {
 		return day().hour(DateUtils.getHourOfDay());
 	}
 
-	public static ThatHour hour(int hourOfDay) {
+	public static TheHour hour(int hourOfDay) {
 		return day().hour(hourOfDay);
 	}
 
-	public static ThatMinute minute() {
+	public static TheMinute minute() {
 		return hour().minute(DateUtils.getMinute());
 	}
 
-	public static ThatMinute minute(int minute) {
+	public static TheMinute minute(int minute) {
 		return hour().minute(minute);
 	}
 
-	public static ThatMinute at(int hourOfDay, int minute) {
+	public static TheMinute at(int hourOfDay, int minute) {
 		return day().hour(hourOfDay).minute(minute);
 	}
 
-	public static ThatSecond at(int hourOfDay, int minute, int second) {
+	public static TheSecond at(int hourOfDay, int minute, int second) {
 		return day().hour(hourOfDay).minute(minute).second(second);
 	}
 
@@ -75,7 +74,7 @@ public abstract class CronBuilder {
 	}
 
 	public static Year everyYear(int interval) {
-		return everyYear(DateUtils.getYear(), Epoch.MAX_YEAR, interval);
+		return everyYear(DateUtils.getYear(), Year.MAX_YEAR, interval);
 	}
 
 	public static Year everyYear(int fromYear, int toYear, int interval) {

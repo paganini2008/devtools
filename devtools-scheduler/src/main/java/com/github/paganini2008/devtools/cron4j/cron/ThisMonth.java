@@ -18,10 +18,10 @@ import com.github.paganini2008.devtools.date.DateUtils;
  * 
  * @version 1.0
  */
-public class ThisMonth implements ThatMonth, Serializable {
+public class ThisMonth implements TheMonth, Serializable {
 
 	private static final long serialVersionUID = 229203112866380942L;
-	private final TreeMap<Integer, Calendar> siblings;
+	private final TreeMap<Integer, Calendar> siblings = new TreeMap<Integer, Calendar>();
 	private Year year;
 	private int index;
 	private Calendar month;
@@ -31,22 +31,21 @@ public class ThisMonth implements ThatMonth, Serializable {
 	ThisMonth(Year year, int month) {
 		CalendarAssert.checkMonth(month);
 		this.year = year;
-		siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.MONTH, month);
-		siblings.put(month, calendar);
+		this.siblings.put(month, calendar);
 		this.month = calendar;
 		this.lastMonth = month;
 		this.cron.append(CalendarUtils.getMonthName(month));
 	}
 
-	public ThatMonth andMonth(int month) {
+	public TheMonth andMonth(int month) {
 		return andMonth(month, true);
 	}
 
-	private ThatMonth andMonth(int month, boolean writeCron) {
+	private TheMonth andMonth(int month, boolean writeCron) {
 		CalendarAssert.checkMonth(month);
 		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.MONTH, month);
-		siblings.put(month, calendar);
+		this.siblings.put(month, calendar);
 		this.lastMonth = month;
 		if (writeCron) {
 			this.cron.append(",").append(CalendarUtils.getMonthName(month));
@@ -54,7 +53,7 @@ public class ThisMonth implements ThatMonth, Serializable {
 		return this;
 	}
 
-	public ThatMonth toMonth(int month, int interval) {
+	public TheMonth toMonth(int month, int interval) {
 		CalendarAssert.checkMonth(month);
 		for (int i = lastMonth + interval; i <= month; i += interval) {
 			andMonth(i, false);
@@ -91,28 +90,39 @@ public class ThisMonth implements ThatMonth, Serializable {
 		return month.getActualMaximum(Calendar.WEEK_OF_MONTH);
 	}
 
-	public ThatDay day(int day) {
-		return new ThisDay(CollectionUtils.getFirst(this), day);
+	public TheDay day(int day) {
+		final Month copy = (Month) this.copy();
+		return new ThisDay(CollectionUtils.getFirst(copy), day);
 	}
 
 	public Day lastDay() {
-		return new LastDay(CollectionUtils.getFirst(this));
+		final Month copy = (Month) this.copy();
+		return new LastDayOfMonth(CollectionUtils.getFirst(copy));
 	}
 
 	public Day everyDay(Function<Month, Integer> from, Function<Month, Integer> to, int interval) {
-		return new EveryDay(CollectionUtils.getFirst(this), from, to, interval);
+		final Month copy = (Month) this.copy();
+		return new EveryDay(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
-	public ThatWeek week(int week) {
-		return new ThisWeek(CollectionUtils.getFirst(this), week);
+	public TheWeek week(int week) {
+		final Month copy = (Month) this.copy();
+		return new ThisWeek(CollectionUtils.getFirst(copy), week);
+	}
+
+	public TheDayOfWeekInMonth dayOfWeek(int week, int dayOfWeek) {
+		final Month copy = (Month) this.copy();
+		return new ThisDayOfWeekInMonth(CollectionUtils.getFirst(copy), week, dayOfWeek);
 	}
 
 	public Week lastWeek() {
-		return new LastWeek(CollectionUtils.getFirst(this));
+		final Month copy = (Month) this.copy();
+		return new LastWeekOfMonth(CollectionUtils.getFirst(copy));
 	}
 
 	public Week everyWeek(Function<Month, Integer> from, Function<Month, Integer> to, int interval) {
-		return new EveryWeek(CollectionUtils.getFirst(this), from, to, interval);
+		final Month copy = (Month) this.copy();
+		return new EveryWeek(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
 	public boolean hasNext() {
@@ -142,9 +152,9 @@ public class ThisMonth implements ThatMonth, Serializable {
 	}
 
 	public static void main(String[] args) {
-		ThatYear singleYear = new ThisYear(2019);
+		TheYear singleYear = new ThisYear(2019);
 		singleYear = singleYear.andYear(2024).andYear(2028);
-		ThatMonth singleMonth = singleYear.July().andAug().andMonth(11);
+		TheMonth singleMonth = singleYear.July().andAug().andMonth(11);
 		Day every = singleMonth.lastWeek().Fri().andSat();
 		while (every.hasNext()) {
 			Day time = every.next();

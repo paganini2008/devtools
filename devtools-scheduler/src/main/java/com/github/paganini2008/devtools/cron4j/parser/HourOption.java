@@ -2,7 +2,7 @@ package com.github.paganini2008.devtools.cron4j.parser;
 
 import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
 import com.github.paganini2008.devtools.cron4j.cron.Day;
-import com.github.paganini2008.devtools.cron4j.cron.ThatHour;
+import com.github.paganini2008.devtools.cron4j.cron.TheHour;
 
 /**
  * 
@@ -31,7 +31,7 @@ public class HourOption implements CronOption {
 			return day.everyHour();
 		}
 		String[] args = value.split(",");
-		ThatHour hour = null;
+		TheHour hour = null;
 		for (String arg : args) {
 			if (hour != null) {
 				hour = setHour(arg, hour);
@@ -42,7 +42,7 @@ public class HourOption implements CronOption {
 		return hour;
 	}
 
-	private ThatHour setHour(String cron, ThatHour hour) {
+	private TheHour setHour(String cron, TheHour hour) {
 		if (cron.contains("-")) {
 			String[] args = cron.split("-", 2);
 			return hour.andHour(Integer.parseInt(args[0])).toHour(Integer.parseInt(args[1]));
@@ -64,7 +64,7 @@ public class HourOption implements CronOption {
 		}
 	}
 
-	private ThatHour setHour(String cron, Day day) {
+	private TheHour setHour(String cron, Day day) {
 		if (cron.contains("-")) {
 			String[] args = cron.split("-", 2);
 			return day.hour(Integer.parseInt(args[0])).toHour(Integer.parseInt(args[1]));

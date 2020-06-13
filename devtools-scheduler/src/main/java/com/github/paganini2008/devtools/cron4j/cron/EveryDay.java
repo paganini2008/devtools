@@ -13,8 +13,6 @@ import com.github.paganini2008.devtools.date.DateUtils;
  * EveryDay
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public class EveryDay implements Day, Serializable {
@@ -98,12 +96,14 @@ public class EveryDay implements Day, Serializable {
 		return day.getTimeInMillis();
 	}
 
-	public ThatHour hour(int hour) {
-		return new ThisHour(CollectionUtils.getFirst(this), hour);
+	public TheHour hour(int hour) {
+		final Day copy = (Day) this.copy();
+		return new ThisHour(CollectionUtils.getFirst(copy), hour);
 	}
 
 	public Hour everyHour(Function<Day, Integer> from, Function<Day, Integer> to, int interval) {
-		return new EveryHour(CollectionUtils.getFirst(this), from, to, interval);
+		final Day copy = (Day) this.copy();
+		return new EveryHour(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
 	public CronExpression getParent() {
@@ -115,11 +115,10 @@ public class EveryDay implements Day, Serializable {
 	}
 
 	public static void main(String[] args) {
-		Day everyDay = CronBuilder.everyYear(2019, 2030, 3).everyMonth(5, 10, 2).everyDay(1, 15, 3);
-		while (everyDay.hasNext()) {
-			Day day = everyDay.next();
-			System.out.println(DateUtils.format(day.getTime()));
-		}
+		Second time = CronBuilder.everyYear(2020, 2030, 3).everyMonth(5, 11, 2).everyDay(1, 15, 3).at(12, 0, 0);
+		time.forEach(date -> {
+			System.out.println(DateUtils.format(date));
+		}, 100);
 	}
 
 }

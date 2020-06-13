@@ -68,23 +68,28 @@ public class EveryYear implements Year, Serializable {
 	}
 
 	public Month everyMonth(Function<Year, Integer> from, Function<Year, Integer> to, int interval) {
-		return new EveryMonth(CollectionUtils.getFirst(this), from, to, interval);
+		final Year copy = (Year) this.copy();
+		return new EveryMonth(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
-	public ThatDay day(int day) {
-		return new ThisDayOfYear(CollectionUtils.getFirst(this), day);
+	public TheDay day(int day) {
+		final Year copy = (Year) this.copy();
+		return new ThisDayOfYear(CollectionUtils.getFirst(copy), day);
 	}
 
-	public ThatWeek week(int week) {
-		return new ThisWeekOfYear(CollectionUtils.getFirst(this), week);
+	public TheWeek week(int week) {
+		final Year copy = (Year) this.copy();
+		return new ThisWeekOfYear(CollectionUtils.getFirst(copy), week);
 	}
 
-	public ThatMonth month(int month) {
-		return new ThisMonth(CollectionUtils.getFirst(this), month);
+	public TheMonth month(int month) {
+		final Year copy = (Year) this.copy();
+		return new ThisMonth(CollectionUtils.getFirst(copy), month);
 	}
 
 	public Week lastWeek() {
-		return new LastWeekOfYear(CollectionUtils.getFirst(this));
+		final Year copy = (Year) this.copy();
+		return new LastWeekOfYear(CollectionUtils.getFirst(copy));
 	}
 
 	public CronExpression getParent() {

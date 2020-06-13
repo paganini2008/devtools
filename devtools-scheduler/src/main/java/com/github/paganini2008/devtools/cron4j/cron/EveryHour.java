@@ -12,8 +12,6 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * EveryHour
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public class EveryHour implements Hour, Serializable {
@@ -94,12 +92,14 @@ public class EveryHour implements Hour, Serializable {
 		return hour.getTimeInMillis();
 	}
 
-	public ThatMinute minute(int minute) {
-		return new ThisMinute(CollectionUtils.getFirst(this), minute);
+	public TheMinute minute(int minute) {
+		final Hour copy = (Hour) this.copy();
+		return new ThisMinute(CollectionUtils.getFirst(copy), minute);
 	}
 
 	public Minute everyMinute(Function<Hour, Integer> from, Function<Hour, Integer> to, int interval) {
-		return new EveryMinute(CollectionUtils.getFirst(this), from, to, interval);
+		final Hour copy = (Hour) this.copy();
+		return new EveryMinute(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
 	public CronExpression getParent() {

@@ -15,10 +15,10 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * @author Fred Feng
  * @version 1.0
  */
-public class ThisHour implements ThatHour, Serializable {
+public class ThisHour implements TheHour, Serializable {
 
 	private static final long serialVersionUID = 8124589572544886753L;
-	private final TreeMap<Integer, Calendar> siblings;
+	private final TreeMap<Integer, Calendar> siblings = new TreeMap<Integer, Calendar>();
 	private Day day;
 	private int index;
 	private Calendar hour;
@@ -28,9 +28,8 @@ public class ThisHour implements ThatHour, Serializable {
 	ThisHour(Day day, int hour) {
 		CalendarAssert.checkHourOfDay(hour);
 		this.day = day;
-		siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(day.getTime(), Calendar.HOUR_OF_DAY, hour);
-		siblings.put(hour, calendar);
+		this.siblings.put(hour, calendar);
 		this.hour = calendar;
 		this.lastHour = hour;
 		this.cron.append(hour);
@@ -51,7 +50,7 @@ public class ThisHour implements ThatHour, Serializable {
 		return this;
 	}
 
-	public ThatHour toHour(int hour, int interval) {
+	public TheHour toHour(int hour, int interval) {
 		CalendarAssert.checkHourOfDay(hour);
 		if (interval < 0) {
 			throw new IllegalArgumentException("Invalid interval: " + interval);
@@ -91,12 +90,14 @@ public class ThisHour implements ThatHour, Serializable {
 		return hour.get(Calendar.HOUR_OF_DAY);
 	}
 
-	public ThatMinute minute(int minute) {
-		return new ThisMinute(CollectionUtils.getFirst(this), minute);
+	public TheMinute minute(int minute) {
+		final Hour copy = (Hour) this.copy();
+		return new ThisMinute(CollectionUtils.getFirst(copy), minute);
 	}
 
 	public Minute everyMinute(Function<Hour, Integer> from, Function<Hour, Integer> to, int interval) {
-		return new EveryMinute(CollectionUtils.getFirst(this), from, to, interval);
+		final Hour copy = (Hour) this.copy();
+		return new EveryMinute(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
 	public boolean hasNext() {

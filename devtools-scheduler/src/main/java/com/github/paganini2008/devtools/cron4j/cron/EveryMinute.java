@@ -12,8 +12,6 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * EveryMinute
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public class EveryMinute implements Minute, Serializable {
@@ -99,12 +97,14 @@ public class EveryMinute implements Minute, Serializable {
 		return minute.getTimeInMillis();
 	}
 
-	public ThatSecond second(int second) {
-		return new ThisSecond(CollectionUtils.getFirst(this), second);
+	public TheSecond second(int second) {
+		final Minute copy = (Minute) this.copy();
+		return new ThisSecond(CollectionUtils.getFirst(copy), second);
 	}
 
 	public Second everySecond(Function<Minute, Integer> from, Function<Minute, Integer> to, int interval) {
-		return new EverySecond(CollectionUtils.getFirst(this), from, to, interval);
+		final Minute copy = (Minute) this.copy();
+		return new EverySecond(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
 	public CronExpression getParent() {

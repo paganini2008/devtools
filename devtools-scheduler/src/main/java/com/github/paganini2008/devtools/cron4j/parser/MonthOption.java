@@ -4,7 +4,7 @@ import java.util.Calendar;
 
 import com.github.paganini2008.devtools.cron4j.cron.CalendarUtils;
 import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
-import com.github.paganini2008.devtools.cron4j.cron.ThatMonth;
+import com.github.paganini2008.devtools.cron4j.cron.TheMonth;
 import com.github.paganini2008.devtools.cron4j.cron.Year;
 
 /**
@@ -38,7 +38,7 @@ public class MonthOption implements CronOption {
 			return year.everyMonth();
 		}
 		String[] args = value.split(",");
-		ThatMonth month = null;
+		TheMonth month = null;
 		for (String arg : args) {
 			if (month != null) {
 				month = setMonth(arg, month);
@@ -49,7 +49,7 @@ public class MonthOption implements CronOption {
 		return month;
 	}
 
-	private ThatMonth setMonth(String cron, ThatMonth month) {
+	private TheMonth setMonth(String cron, TheMonth month) {
 		if (cron.contains("-")) {
 			String[] args = cron.split("-", 2);
 			return month.andMonth(Integer.parseInt(args[0])).toMonth(Integer.parseInt(args[1]));
@@ -71,7 +71,7 @@ public class MonthOption implements CronOption {
 		}
 	}
 
-	private ThatMonth setMonth(String cron, Year year) {
+	private TheMonth setMonth(String cron, Year year) {
 		if (cron.contains("-")) {
 			String[] args = cron.split("-", 2);
 			return year.month(Integer.parseInt(args[0])).toMonth(Integer.parseInt(args[1]));

@@ -16,10 +16,10 @@ import com.github.paganini2008.devtools.date.DateUtils;
  * @author Fred Feng
  * @version 1.0
  */
-public class ThisYear implements ThatYear, Serializable {
+public class ThisYear implements TheYear, Serializable {
 
 	private static final long serialVersionUID = -5316436238766770045L;
-	private final TreeMap<Integer, Calendar> siblings;
+	private final TreeMap<Integer, Calendar> siblings = new TreeMap<Integer, Calendar>();
 	private Calendar year;
 	private int index;
 	private int lastYear;
@@ -27,19 +27,18 @@ public class ThisYear implements ThatYear, Serializable {
 
 	public ThisYear(int year) {
 		CalendarAssert.checkYear(year);
-		siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(new Date(), Calendar.YEAR, year);
-		siblings.put(year, calendar);
+		this.siblings.put(year, calendar);
 		this.year = calendar;
 		this.lastYear = year;
 		this.cron.append(year);
 	}
 
-	public ThatYear andYear(int year) {
+	public TheYear andYear(int year) {
 		return andYear(year, true);
 	}
 
-	public ThatYear andYear(int year, boolean writeCron) {
+	public TheYear andYear(int year, boolean writeCron) {
 		CalendarAssert.checkYear(year);
 		Calendar calendar = CalendarUtils.setField(new Date(), Calendar.YEAR, year);
 		siblings.put(year, calendar);
@@ -50,7 +49,7 @@ public class ThisYear implements ThatYear, Serializable {
 		return this;
 	}
 
-	public ThatYear toYear(int year, int interval) {
+	public TheYear toYear(int year, int interval) {
 		CalendarAssert.checkYear(year);
 		if (interval < 0) {
 			throw new IllegalArgumentException("Invalid interval: " + interval);
@@ -87,23 +86,28 @@ public class ThisYear implements ThatYear, Serializable {
 	}
 
 	public Month everyMonth(Function<Year, Integer> from, Function<Year, Integer> to, int interval) {
-		return new EveryMonth(CollectionUtils.getFirst(this), from, to, interval);
+		final Year copy = (Year) this.copy();
+		return new EveryMonth(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
-	public ThatDay day(int day) {
-		return new ThisDayOfYear(CollectionUtils.getFirst(this), day);
+	public TheDay day(int day) {
+		final Year copy = (Year) this.copy();
+		return new ThisDayOfYear(CollectionUtils.getFirst(copy), day);
 	}
 
-	public ThatWeek week(int week) {
-		return new ThisWeekOfYear(CollectionUtils.getFirst(this), week);
+	public TheWeek week(int week) {
+		final Year copy = (Year) this.copy();
+		return new ThisWeekOfYear(CollectionUtils.getFirst(copy), week);
 	}
 
-	public ThatMonth month(int month) {
-		return new ThisMonth(CollectionUtils.getFirst(this), month);
+	public TheMonth month(int month) {
+		final Year copy = (Year) this.copy();
+		return new ThisMonth(CollectionUtils.getFirst(copy), month);
 	}
 
 	public Week lastWeek() {
-		return new LastWeekOfYear(CollectionUtils.getFirst(this));
+		final Year copy = (Year) this.copy();
+		return new LastWeekOfYear(CollectionUtils.getFirst(copy));
 	}
 
 	public boolean hasNext() {
@@ -124,7 +128,7 @@ public class ThisYear implements ThatYear, Serializable {
 	}
 
 	public static void main(String[] args) {
-		ThatYear singleYear = new ThisYear(2020);
+		TheYear singleYear = new ThisYear(2020);
 		singleYear = singleYear.andYear(2028).andYear(2024);
 		Day day = singleYear.lastWeek().Mon().toFri();
 		while (day.hasNext()) {

@@ -2,7 +2,7 @@ package com.github.paganini2008.devtools.cron4j.parser;
 
 import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
 import com.github.paganini2008.devtools.cron4j.cron.Month;
-import com.github.paganini2008.devtools.cron4j.cron.ThatDay;
+import com.github.paganini2008.devtools.cron4j.cron.TheDay;
 
 /**
  * 
@@ -35,7 +35,7 @@ public class DayOption implements CronOption {
 			return month.lastWeek().Fri();
 		}
 		String[] args = value.split(",");
-		ThatDay day = null;
+		TheDay day = null;
 		for (String arg : args) {
 			if (day != null) {
 				day = setDay(arg, day, month);
@@ -46,7 +46,7 @@ public class DayOption implements CronOption {
 		return day;
 	}
 
-	private ThatDay setDay(String cron, ThatDay day, Month month) {
+	private TheDay setDay(String cron, TheDay day, Month month) {
 		if (cron.contains("-")) {
 			String[] args = cron.split("-", 2);
 			return day.andDay(Integer.parseInt(args[0])).toDay(Integer.parseInt(args[1]));
@@ -68,7 +68,7 @@ public class DayOption implements CronOption {
 		}
 	}
 
-	private ThatDay setDay(String cron, Month month) {
+	private TheDay setDay(String cron, Month month) {
 		if (cron.contains("-")) {
 			String[] args = cron.split("-", 2);
 			return month.day(Integer.parseInt(args[0])).toDay(Integer.parseInt(args[1]));

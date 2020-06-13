@@ -4,8 +4,10 @@ import java.util.Calendar;
 
 import com.github.paganini2008.devtools.cron4j.cron.CalendarUtils;
 import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
+import com.github.paganini2008.devtools.cron4j.cron.Day;
 import com.github.paganini2008.devtools.cron4j.cron.Month;
-import com.github.paganini2008.devtools.cron4j.cron.ThatDayOfWeek;
+import com.github.paganini2008.devtools.cron4j.cron.TheDayOfWeek;
+import com.github.paganini2008.devtools.cron4j.cron.ThisDayOfWeekInMonth;
 
 /**
  * 
@@ -27,10 +29,10 @@ public class DayOfWeekOption implements CronOption {
 	public CronExpression join(CronExpression cronExpression) {
 		final Month month = (Month) cronExpression;
 		try {
-			return ((Month) month.copy()).everyWeek().day(Integer.parseInt(value));
+			return month.everyWeek().day(Integer.parseInt(value));
 		} catch (NumberFormatException e) {
 			try {
-				return ((Month) month.copy()).everyWeek().day(CalendarUtils.getDayOfWeekValue(value));
+				return month.everyWeek().day(CalendarUtils.getDayOfWeekValue(value));
 			} catch (MalformedCronException ignored) {
 			}
 		}
@@ -38,40 +40,44 @@ public class DayOfWeekOption implements CronOption {
 			return month.everyWeek().everyDay();
 		}
 		String[] args = value.split(",");
-		ThatDayOfWeek dayOfWeek = null;
+		Day dayOfWeek = null;
 		for (String arg : args) {
-			if (dayOfWeek != null) {
-				dayOfWeek = setDayOfWeek(arg, dayOfWeek, month);
-			} else {
-				dayOfWeek = setDayOfWeek(arg, month);
+			try {
+				if (dayOfWeek != null) {
+					dayOfWeek = setDayOfWeek(arg, dayOfWeek);
+				} else {
+					dayOfWeek = setDayOfWeek(arg, month);
+				}
+			} catch (ClassCastException e) {
+				throw new MalformedCronException(value, e);
 			}
 		}
 		return dayOfWeek;
 	}
 
-	private ThatDayOfWeek setDayOfWeek(String cron, ThatDayOfWeek dayOfWeek, Month month) {
+	private Day setDayOfWeek(String cron, Day day) {
 		if (cron.endsWith("L")) {
-			return month.lastWeek().day(Integer.parseInt(cron.substring(0, 1)));
+			return ((ThisDayOfWeekInMonth) day).andLast(Integer.parseInt(cron.substring(0, 1)));
 		} else if (cron.contains("#")) {
 			String[] args = cron.split("#", 2);
-			return month.week(Integer.parseInt(args[1])).day(Integer.parseInt(args[0]));
+			return ((ThisDayOfWeekInMonth) day).and(Integer.parseInt(args[1]), Integer.parseInt(args[0]));
 		} else if (cron.contains("-")) {
 			String[] args = cron.split("-", 2);
-			return dayOfWeek.andDay(CalendarUtils.getDayOfWeekValue(args[0])).toDay(CalendarUtils.getDayOfWeekValue(args[1]));
+			return ((TheDayOfWeek) day).andDay(CalendarUtils.getDayOfWeekValue(args[0])).toDay(CalendarUtils.getDayOfWeekValue(args[1]));
 		} else if (cron.contains("/")) {
 			String[] args = cron.split("\\/", 2);
-			return dayOfWeek.andDay(Integer.parseInt(args[0])).toDay(Calendar.SATURDAY, Integer.parseInt(args[1]));
+			return ((TheDayOfWeek) day).andDay(Integer.parseInt(args[0])).toDay(Calendar.SATURDAY, Integer.parseInt(args[1]));
 		} else {
-			return dayOfWeek.andDay(Integer.parseInt(cron));
+			return ((TheDayOfWeek) day).andDay(Integer.parseInt(cron));
 		}
 	}
 
-	private ThatDayOfWeek setDayOfWeek(String cron, Month month) {
+	private Day setDayOfWeek(String cron, Month month) {
 		if (cron.endsWith("L")) {
-			return month.lastWeek().day(Integer.parseInt(cron.substring(0, 1)));
+			return month.lastDayOfWeek(Integer.parseInt(cron.substring(0, 1)));
 		} else if (cron.contains("#")) {
 			String[] args = cron.split("#", 2);
-			return month.week(Integer.parseInt(args[1])).day(Integer.parseInt(args[0]));
+			return month.dayOfWeek(Integer.parseInt(args[1]), Integer.parseInt(args[0]));
 		} else if (cron.contains("-")) {
 			String[] args = cron.split("-", 2);
 			return month.everyWeek().day(CalendarUtils.getDayOfWeekValue(args[0])).toDay(CalendarUtils.getDayOfWeekValue(args[1]));

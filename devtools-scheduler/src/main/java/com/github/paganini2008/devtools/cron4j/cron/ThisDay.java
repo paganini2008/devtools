@@ -3,24 +3,24 @@ package com.github.paganini2008.devtools.cron4j.cron;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
+import com.github.paganini2008.devtools.collection.MapUtils;
 
 /**
  * 
  * ThisDay
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
-public class ThisDay implements ThatDay, Serializable {
+public class ThisDay implements TheDay, Serializable {
 
 	private static final long serialVersionUID = -6007054113405112202L;
-	private final TreeMap<Integer, Calendar> siblings;
+	private final TreeMap<Integer, Calendar> siblings = new TreeMap<Integer, Calendar>();
 	private Month month;
 	private int index;
 	private Calendar day;
@@ -30,22 +30,21 @@ public class ThisDay implements ThatDay, Serializable {
 	ThisDay(Month month, int day) {
 		CalendarAssert.checkDayOfMonth(month, day);
 		this.month = month;
-		siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH, day);
-		siblings.put(day, calendar);
+		this.siblings.put(day, calendar);
 		this.day = calendar;
 		this.lastDay = day;
 		this.cron.append(day);
 	}
 
-	public ThatDay andDay(int day) {
+	public TheDay andDay(int day) {
 		return andDay(day, true);
 	}
 
-	private ThatDay andDay(int day, boolean writeCron) {
+	private TheDay andDay(int day, boolean writeCron) {
 		CalendarAssert.checkDayOfMonth(month, day);
 		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH, day);
-		siblings.put(day, calendar);
+		this.siblings.put(day, calendar);
 		this.lastDay = day;
 		if (writeCron) {
 			this.cron.append(",").append(day);
@@ -53,7 +52,7 @@ public class ThisDay implements ThatDay, Serializable {
 		return this;
 	}
 
-	public ThatDay toDay(int day, int interval) {
+	public TheDay toDay(int day, int interval) {
 		CalendarAssert.checkDayOfMonth(month, day);
 		if (interval < 0) {
 			throw new IllegalArgumentException("Invalid interval: " + interval);
@@ -97,12 +96,14 @@ public class ThisDay implements ThatDay, Serializable {
 		return day.get(Calendar.DAY_OF_YEAR);
 	}
 
-	public ThatHour hour(int hour) {
-		return new ThisHour(CollectionUtils.getFirst(this), hour);
+	public TheHour hour(int hour) {
+		final Day copy = (Day) this.copy();
+		return new ThisHour(CollectionUtils.getFirst(copy), hour);
 	}
 
 	public Hour everyHour(Function<Day, Integer> from, Function<Day, Integer> to, int interval) {
-		return new EveryHour(CollectionUtils.getFirst(this), from, to, interval);
+		final Day copy = (Day) this.copy();
+		return new EveryHour(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
 	public boolean hasNext() {
@@ -118,9 +119,11 @@ public class ThisDay implements ThatDay, Serializable {
 	}
 
 	public Day next() {
-		day = CollectionUtils.get(siblings.values().iterator(), index++);
+		Map.Entry<Integer, Calendar> entry = MapUtils.getEntry(siblings, index++);
+		day = entry.getValue();
 		day.set(Calendar.YEAR, month.getYear());
 		day.set(Calendar.MONTH, month.getMonth());
+		day.set(Calendar.DAY_OF_MONTH, Math.min(entry.getKey(), month.getLasyDay()));
 		return this;
 	}
 

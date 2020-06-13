@@ -18,6 +18,9 @@ public abstract class CalendarAssert {
 		if (year < thisYear) {
 			throw new IllegalArgumentException("Year '" + year + "' is past.");
 		}
+		if (year > Year.MAX_YEAR) {
+			throw new IllegalArgumentException("Year '" + year + "' is greater than the Max Year " + Year.MAX_YEAR);
+		}
 	}
 
 	public static void checkMonth(int month) {
@@ -50,8 +53,8 @@ public abstract class CalendarAssert {
 		}
 	}
 
-	public static void checkDayOfWeek(int weekday) {
-		if (weekday < Calendar.SUNDAY || weekday > Calendar.SATURDAY) {
+	public static void checkDayOfWeek(int dayOfWeek) {
+		if (dayOfWeek < Calendar.SUNDAY || dayOfWeek > Calendar.SATURDAY) {
 			throw new IllegalArgumentException("WeekDay's range is " + Calendar.SUNDAY + " to " + Calendar.SATURDAY);
 		}
 	}

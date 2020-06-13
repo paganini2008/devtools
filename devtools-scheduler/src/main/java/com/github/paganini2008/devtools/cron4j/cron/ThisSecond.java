@@ -14,10 +14,10 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * @author Fred Feng
  * @version 1.0
  */
-public class ThisSecond implements ThatSecond, Serializable {
+public class ThisSecond implements TheSecond, Serializable {
 
 	private static final long serialVersionUID = 6264419114715870528L;
-	private final TreeMap<Integer, Calendar> siblings;
+	private final TreeMap<Integer, Calendar> siblings = new TreeMap<Integer, Calendar>();
 	private Minute minute;
 	private int index;
 	private Calendar second;
@@ -27,9 +27,8 @@ public class ThisSecond implements ThatSecond, Serializable {
 	ThisSecond(Minute minute, int second) {
 		CalendarAssert.checkSecond(second);
 		this.minute = minute;
-		siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(minute.getTime(), Calendar.SECOND, second);
-		siblings.put(second, calendar);
+		this.siblings.put(second, calendar);
 		this.second = calendar;
 		this.lastSecond = second;
 		this.cron.append(second);
@@ -42,7 +41,7 @@ public class ThisSecond implements ThatSecond, Serializable {
 	private ThisSecond andSecond(int second, boolean writeCron) {
 		CalendarAssert.checkSecond(second);
 		Calendar calendar = CalendarUtils.setField(minute.getTime(), Calendar.SECOND, second);
-		siblings.put(second, calendar);
+		this.siblings.put(second, calendar);
 		this.lastSecond = second;
 		if (writeCron) {
 			this.cron.append(",").append(second);
@@ -50,7 +49,7 @@ public class ThisSecond implements ThatSecond, Serializable {
 		return this;
 	}
 
-	public ThatSecond toSecond(int second, int interval) {
+	public TheSecond toSecond(int second, int interval) {
 		CalendarAssert.checkSecond(second);
 		if (interval < 0) {
 			throw new IllegalArgumentException("Invalid interval: " + interval);
@@ -119,7 +118,7 @@ public class ThisSecond implements ThatSecond, Serializable {
 		second.set(Calendar.MINUTE, minute.getMinute());
 		return this;
 	}
-	
+
 	public CronExpression getParent() {
 		return minute;
 	}

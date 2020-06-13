@@ -3,10 +3,12 @@ package com.github.paganini2008.devtools.cron4j.cron;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
+import com.github.paganini2008.devtools.collection.MapUtils;
 
 /**
  * 
@@ -15,10 +17,10 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * @author Fred Feng
  * @version 1.0
  */
-public class ThisDayOfYear implements ThatDay, Serializable {
+public class ThisDayOfYear implements TheDay, Serializable {
 
 	private static final long serialVersionUID = -8235489088108418524L;
-	private final TreeMap<Integer, Calendar> siblings;
+	private final TreeMap<Integer, Calendar> siblings = new TreeMap<Integer, Calendar>();
 	private Year year;
 	private int index;
 	private Calendar day;
@@ -27,9 +29,8 @@ public class ThisDayOfYear implements ThatDay, Serializable {
 	ThisDayOfYear(Year year, int day) {
 		CalendarAssert.checkDayOfYear(year, day);
 		this.year = year;
-		siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.DAY_OF_YEAR, day);
-		siblings.put(day, calendar);
+		this.siblings.put(day, calendar);
 		this.lastDay = day;
 	}
 
@@ -53,12 +54,14 @@ public class ThisDayOfYear implements ThatDay, Serializable {
 		return day.get(Calendar.DAY_OF_YEAR);
 	}
 
-	public ThatHour hour(int hour) {
-		return new ThisHour(CollectionUtils.getFirst(this), hour);
+	public TheHour hour(int hour) {
+		final Day copy = (Day) this.copy();
+		return new ThisHour(CollectionUtils.getFirst(copy), hour);
 	}
 
 	public Hour everyHour(Function<Day, Integer> from, Function<Day, Integer> to, int interval) {
-		return new EveryHour(CollectionUtils.getFirst(this), from, to, interval);
+		final Day copy = (Day) this.copy();
+		return new EveryHour(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
 	public Date getTime() {
@@ -69,15 +72,15 @@ public class ThisDayOfYear implements ThatDay, Serializable {
 		return day.getTimeInMillis();
 	}
 
-	public ThatDay andDay(int day) {
+	public TheDay andDay(int day) {
 		CalendarAssert.checkDayOfYear(year, day);
 		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.DAY_OF_YEAR, day);
-		siblings.put(day, calendar);
+		this.siblings.put(day, calendar);
 		this.lastDay = day;
 		return this;
 	}
 
-	public ThatDay toDay(int day, int interval) {
+	public TheDay toDay(int day, int interval) {
 		CalendarAssert.checkDayOfYear(year, day);
 		for (int i = lastDay + interval; i < day; i += interval) {
 			andDay(i);
@@ -98,11 +101,13 @@ public class ThisDayOfYear implements ThatDay, Serializable {
 	}
 
 	public Day next() {
-		day = CollectionUtils.get(siblings.values().iterator(), index++);
+		Map.Entry<Integer, Calendar> entry = MapUtils.getEntry(siblings, index++);
+		day = entry.getValue();
 		day.set(Calendar.YEAR, year.getYear());
+		day.set(Calendar.DAY_OF_YEAR, Math.min(entry.getKey(), year.getLastDay()));
 		return this;
 	}
-	
+
 	public CronExpression getParent() {
 		return year;
 	}

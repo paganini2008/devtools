@@ -35,9 +35,8 @@ public interface CronExpression {
 	 * 
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	default <T extends CronExpression> T copy() {
-		return (T) SerializationUtils.copy(this);
+	default CronExpression copy() {
+		return SerializationUtils.copy(this);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -50,9 +49,9 @@ public interface CronExpression {
 		Date date;
 		for (CronExpression cronExpression : CollectionUtils.forEach((Iterator<CronExpression>) copy())) {
 			date = cronExpression.getTime();
-//			if (date.before(now)) {
-//				continue;
-//			}
+			if (date.before(now)) {
+				continue;
+			}
 			if (n < 0 || i++ < n) {
 				consumer.accept(date);
 			} else {

@@ -2,10 +2,9 @@ package com.github.paganini2008.devtools.cron4j.parser;
 
 import java.util.Date;
 
-import com.github.paganini2008.devtools.SystemPropertyUtils;
 import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
 import com.github.paganini2008.devtools.cron4j.cron.EveryYear;
-import com.github.paganini2008.devtools.cron4j.cron.ThatYear;
+import com.github.paganini2008.devtools.cron4j.cron.TheYear;
 import com.github.paganini2008.devtools.cron4j.cron.ThisYear;
 import com.github.paganini2008.devtools.cron4j.cron.Year;
 import com.github.paganini2008.devtools.date.DateUtils;
@@ -21,11 +20,6 @@ import com.github.paganini2008.devtools.date.DateUtils;
 public final class Epoch implements CronExpression {
 
 	private static final Epoch instance = new Epoch();
-	public static final int MAX_YEAR;
-
-	static {
-		MAX_YEAR = SystemPropertyUtils.getInteger("MAX_YAER_OF_CRON", 2099);
-	}
 
 	private Epoch() {
 	}
@@ -41,13 +35,14 @@ public final class Epoch implements CronExpression {
 	}
 
 	public Year everyYear(int interval) {
-		return new EveryYear(DateUtils.getYear(), y -> MAX_YEAR, interval);
+		return new EveryYear(DateUtils.getYear(), y -> Year.MAX_YEAR, interval);
 	}
 
-	public ThatYear year(int year) {
+	public TheYear year(int year) {
 		return new ThisYear(year);
 	}
 
+	@Override
 	public CronExpression getParent() {
 		return null;
 	}

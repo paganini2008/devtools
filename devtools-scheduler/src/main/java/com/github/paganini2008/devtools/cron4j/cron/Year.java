@@ -16,19 +16,21 @@ import java.util.function.Function;
  */
 public interface Year extends Iterator<Year>, CronExpression {
 
+	static final int MAX_YEAR = 2099;
+
 	int getYear();
 
 	int getWeekCount();
 
 	int getLastDay();
 
-	ThatDay day(int day);
+	TheDay day(int day);
 
 	default Day lastDay() {
 		return day(getLastDay());
 	}
 
-	ThatWeek week(int week);
+	TheWeek week(int week);
 
 	Week lastWeek();
 
@@ -51,53 +53,53 @@ public interface Year extends Iterator<Year>, CronExpression {
 		return everyMonth(y -> from, y -> to, interval);
 	}
 
-	ThatMonth month(int month);
+	TheMonth month(int month);
 
-	default ThatMonth Jan() {
+	default TheMonth Jan() {
 		return month(Calendar.JANUARY);
 	}
 
-	default ThatMonth Feb() {
+	default TheMonth Feb() {
 		return month(Calendar.FEBRUARY);
 	}
 
-	default ThatMonth Mar() {
+	default TheMonth Mar() {
 		return month(Calendar.MARCH);
 	}
 
-	default ThatMonth Apr() {
+	default TheMonth Apr() {
 		return month(Calendar.APRIL);
 	}
 
-	default ThatMonth May() {
+	default TheMonth May() {
 		return month(Calendar.MAY);
 	}
 
-	default ThatMonth June() {
+	default TheMonth June() {
 		return month(Calendar.JUNE);
 	}
 
-	default ThatMonth July() {
+	default TheMonth July() {
 		return month(Calendar.JULY);
 	}
 
-	default ThatMonth Aug() {
+	default TheMonth Aug() {
 		return month(Calendar.AUGUST);
 	}
 
-	default ThatMonth Sept() {
+	default TheMonth Sept() {
 		return month(Calendar.SEPTEMBER);
 	}
 
-	default ThatMonth Oct() {
+	default TheMonth Oct() {
 		return month(Calendar.OCTOBER);
 	}
 
-	default ThatMonth Nov() {
+	default TheMonth Nov() {
 		return month(Calendar.NOVEMBER);
 	}
 
-	default ThatMonth Dec() {
+	default TheMonth Dec() {
 		return month(Calendar.DECEMBER);
 	}
 }

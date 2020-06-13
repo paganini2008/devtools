@@ -4,108 +4,106 @@ import java.util.Calendar;
 
 /**
  * 
- * ThatMonth
+ * TheMonth
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
-public interface ThatMonth extends Month {
+public interface TheMonth extends Month {
 
-	ThatMonth andMonth(int andMonth);
+	TheMonth andMonth(int andMonth);
 
-	default ThatMonth toMonth(int andMonth) {
+	default TheMonth toMonth(int andMonth) {
 		return toMonth(andMonth, 1);
 	}
 
-	ThatMonth toMonth(int andMonth, int interval);
+	TheMonth toMonth(int andMonth, int interval);
 
-	default ThatMonth toMar() {
+	default TheMonth toMar() {
 		return toMonth(Calendar.MARCH);
 	}
 
-	default ThatMonth toApr() {
+	default TheMonth toApr() {
 		return toMonth(Calendar.APRIL);
 	}
 
-	default ThatMonth toMay() {
+	default TheMonth toMay() {
 		return toMonth(Calendar.MAY);
 	}
 
-	default ThatMonth toJune() {
+	default TheMonth toJune() {
 		return toMonth(Calendar.JUNE);
 	}
 
-	default ThatMonth toJuly() {
+	default TheMonth toJuly() {
 		return toMonth(Calendar.JULY);
 	}
 
-	default ThatMonth toAug() {
+	default TheMonth toAug() {
 		return toMonth(Calendar.AUGUST);
 	}
 
-	default ThatMonth toSept() {
+	default TheMonth toSept() {
 		return toMonth(Calendar.SEPTEMBER);
 	}
 
-	default ThatMonth toOct() {
+	default TheMonth toOct() {
 		return toMonth(Calendar.OCTOBER);
 	}
 
-	default ThatMonth toNov() {
+	default TheMonth toNov() {
 		return toMonth(Calendar.NOVEMBER);
 	}
 
-	default ThatMonth toDec() {
+	default TheMonth toDec() {
 		return toMonth(Calendar.DECEMBER);
 	}
 
-	default ThatMonth andJan() {
+	default TheMonth andJan() {
 		return andMonth(Calendar.JANUARY);
 	}
 
-	default ThatMonth andFeb() {
+	default TheMonth andFeb() {
 		return andMonth(Calendar.FEBRUARY);
 	}
 
-	default ThatMonth andMar() {
+	default TheMonth andMar() {
 		return andMonth(Calendar.MARCH);
 	}
 
-	default ThatMonth andApr() {
+	default TheMonth andApr() {
 		return andMonth(Calendar.APRIL);
 	}
 
-	default ThatMonth andMay() {
+	default TheMonth andMay() {
 		return andMonth(Calendar.MAY);
 	}
 
-	default ThatMonth andJune() {
+	default TheMonth andJune() {
 		return andMonth(Calendar.JUNE);
 	}
 
-	default ThatMonth andJuly() {
+	default TheMonth andJuly() {
 		return andMonth(Calendar.JULY);
 	}
 
-	default ThatMonth andAug() {
+	default TheMonth andAug() {
 		return andMonth(Calendar.AUGUST);
 	}
 
-	default ThatMonth andSept() {
+	default TheMonth andSept() {
 		return andMonth(Calendar.SEPTEMBER);
 	}
 
-	default ThatMonth andOct() {
+	default TheMonth andOct() {
 		return andMonth(Calendar.OCTOBER);
 	}
 
-	default ThatMonth andNov() {
+	default TheMonth andNov() {
 		return andMonth(Calendar.NOVEMBER);
 	}
 
-	default ThatMonth andDec() {
+	default TheMonth andDec() {
 		return andMonth(Calendar.DECEMBER);
 	}
 }

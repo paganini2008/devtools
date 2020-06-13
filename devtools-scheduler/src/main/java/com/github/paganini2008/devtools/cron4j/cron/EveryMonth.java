@@ -92,30 +92,41 @@ public class EveryMonth implements Month, Serializable {
 		return month.getTimeInMillis();
 	}
 
-	public ThatDay day(int day) {
-		return new ThisDay(CollectionUtils.getFirst(this), day);
+	public TheDay day(int day) {
+		final Month copy = (Month) this.copy();
+		return new ThisDay(CollectionUtils.getFirst(copy), day);
 	}
 
 	public Day lastDay() {
-		return new LastDay(CollectionUtils.getFirst(this));
+		final Month copy = (Month) this.copy();
+		return new LastDayOfMonth(CollectionUtils.getFirst(copy));
 	}
-
+	
 	public Day everyDay(Function<Month, Integer> from, Function<Month, Integer> to, int interval) {
-		return new EveryDay(CollectionUtils.getFirst(this), from, to, interval);
+		final Month copy = (Month) this.copy();
+		return new EveryDay(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
-	public ThatWeek week(int week) {
-		return new ThisWeek(CollectionUtils.getFirst(this), week);
+	public TheWeek week(int week) {
+		final Month copy = (Month) this.copy();
+		return new ThisWeek(CollectionUtils.getFirst(copy), week);
+	}
+
+	public TheDayOfWeekInMonth dayOfWeek(int week, int dayOfWeek) {
+		final Month copy = (Month) this.copy();
+		return new ThisDayOfWeekInMonth(CollectionUtils.getFirst(copy), week, dayOfWeek);
 	}
 
 	public Week lastWeek() {
-		return new LastWeek(CollectionUtils.getFirst(this));
+		final Month copy = (Month) this.copy();
+		return new LastWeekOfMonth(CollectionUtils.getFirst(copy));
 	}
 
 	public Week everyWeek(Function<Month, Integer> from, Function<Month, Integer> to, int interval) {
-		return new EveryWeek(CollectionUtils.getFirst(this), from, to, interval);
+		final Month copy = (Month) this.copy();
+		return new EveryWeek(CollectionUtils.getFirst(copy), from, to, interval);
 	}
-	
+
 	public CronExpression getParent() {
 		return year;
 	}

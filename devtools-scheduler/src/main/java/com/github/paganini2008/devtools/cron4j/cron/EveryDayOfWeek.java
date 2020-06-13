@@ -97,18 +97,20 @@ public class EveryDayOfWeek implements Day, Serializable {
 		return day.getTimeInMillis();
 	}
 
-	public ThatHour hour(int hour) {
-		return new ThisHour(CollectionUtils.getFirst(this), hour);
+	public TheHour hour(int hour) {
+		final Day copy = (Day) this.copy();
+		return new ThisHour(CollectionUtils.getFirst(copy), hour);
 	}
 
 	public Hour everyHour(Function<Day, Integer> from, Function<Day, Integer> to, int interval) {
-		return new EveryHour(CollectionUtils.getFirst(this), from, to, interval);
+		final Day copy = (Day) this.copy();
+		return new EveryHour(CollectionUtils.getFirst(copy), from, to, interval);
 	}
-	
+
 	public CronExpression getParent() {
 		return week;
 	}
-	
+
 	public String toCronString() {
 		return "?";
 	}

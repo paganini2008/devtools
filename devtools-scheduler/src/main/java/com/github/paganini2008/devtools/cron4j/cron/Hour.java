@@ -34,9 +34,9 @@ public interface Hour extends Iterator<Hour>, CronExpression {
 		return everyMinute(h -> from, h -> to, interval);
 	}
 
-	ThatMinute minute(int minute);
+	TheMinute minute(int minute);
 
-	default ThatSecond at(int minute, int second) {
+	default TheSecond at(int minute, int second) {
 		return minute(minute).second(second);
 	}
 

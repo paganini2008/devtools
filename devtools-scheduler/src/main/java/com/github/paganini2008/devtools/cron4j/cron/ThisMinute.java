@@ -17,10 +17,10 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * 
  * @version 1.0
  */
-public class ThisMinute implements ThatMinute, Serializable {
+public class ThisMinute implements TheMinute, Serializable {
 
 	private static final long serialVersionUID = 7090607807516357598L;
-	private final TreeMap<Integer, Calendar> siblings;
+	private final TreeMap<Integer, Calendar> siblings = new TreeMap<Integer, Calendar>();
 	private Hour hour;
 	private int index;
 	private Calendar minute;
@@ -30,9 +30,8 @@ public class ThisMinute implements ThatMinute, Serializable {
 	ThisMinute(Hour hour, int minute) {
 		CalendarAssert.checkMinute(minute);
 		this.hour = hour;
-		siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(hour.getTime(), Calendar.MINUTE, minute);
-		siblings.put(minute, calendar);
+		this.siblings.put(minute, calendar);
 		this.minute = calendar;
 		this.lastMinute = minute;
 		this.cron.append(minute);
@@ -45,7 +44,7 @@ public class ThisMinute implements ThatMinute, Serializable {
 	private ThisMinute andMinute(int minute, boolean writeCron) {
 		CalendarAssert.checkMinute(minute);
 		Calendar calendar = CalendarUtils.setField(hour.getTime(), Calendar.MINUTE, minute);
-		siblings.put(minute, calendar);
+		this.siblings.put(minute, calendar);
 		this.lastMinute = minute;
 		if (writeCron) {
 			this.cron.append(",").append(minute);
@@ -53,7 +52,7 @@ public class ThisMinute implements ThatMinute, Serializable {
 		return this;
 	}
 
-	public ThatMinute toMinute(int minute, int interval) {
+	public TheMinute toMinute(int minute, int interval) {
 		CalendarAssert.checkMinute(minute);
 		if (interval < 0) {
 			throw new IllegalArgumentException("Invalid interval: " + interval);
@@ -97,12 +96,14 @@ public class ThisMinute implements ThatMinute, Serializable {
 		return minute.get(Calendar.MINUTE);
 	}
 
-	public ThatSecond second(int second) {
-		return new ThisSecond(CollectionUtils.getFirst(this), second);
+	public TheSecond second(int second) {
+		final Minute copy = (Minute) this.copy();
+		return new ThisSecond(CollectionUtils.getFirst(copy), second);
 	}
 
 	public Second everySecond(Function<Minute, Integer> from, Function<Minute, Integer> to, int interval) {
-		return new EverySecond(CollectionUtils.getFirst(this), from, to, interval);
+		final Minute copy = (Minute) this.copy();
+		return new EverySecond(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
 	public boolean hasNext() {

@@ -4,68 +4,68 @@ import java.util.Calendar;
 
 /**
  * 
- * ThatDayOfWeek
+ * TheDayOfWeek
  *
  * @author Fred Feng
  * 
  * 
  * @version 1.0
  */
-public interface ThatDayOfWeek extends Day {
+public interface TheDayOfWeek extends Day {
 
-	ThatDayOfWeek andDay(int day);
+	TheDayOfWeek andDay(int day);
 
-	default ThatDayOfWeek toDay(int day) {
+	default TheDayOfWeek toDay(int day) {
 		return toDay(day, 1);
 	}
 
-	ThatDayOfWeek toDay(int day, int interval);
+	TheDayOfWeek toDay(int day, int interval);
 
-	default ThatDayOfWeek toTues() {
+	default TheDayOfWeek toTues() {
 		return toDay(Calendar.TUESDAY);
 	}
 
-	default ThatDayOfWeek toWed() {
+	default TheDayOfWeek toWed() {
 		return toDay(Calendar.WEDNESDAY);
 	}
 
-	default ThatDayOfWeek toThur() {
+	default TheDayOfWeek toThur() {
 		return toDay(Calendar.THURSDAY);
 	}
 
-	default ThatDayOfWeek toFri() {
+	default TheDayOfWeek toFri() {
 		return toDay(Calendar.FRIDAY);
 	}
 
-	default ThatDayOfWeek toSat() {
+	default TheDayOfWeek toSat() {
 		return toDay(Calendar.SATURDAY);
 	}
 
-	default ThatDayOfWeek andSun() {
+	default TheDayOfWeek andSun() {
 		return andDay(Calendar.SUNDAY);
 	}
 
-	default ThatDayOfWeek andMon() {
+	default TheDayOfWeek andMon() {
 		return andDay(Calendar.MONDAY);
 	}
 
-	default ThatDayOfWeek andTues() {
+	default TheDayOfWeek andTues() {
 		return andDay(Calendar.TUESDAY);
 	}
 
-	default ThatDayOfWeek andWed() {
+	default TheDayOfWeek andWed() {
 		return andDay(Calendar.WEDNESDAY);
 	}
 
-	default ThatDayOfWeek andThur() {
+	default TheDayOfWeek andThur() {
 		return andDay(Calendar.THURSDAY);
 	}
 
-	default ThatDayOfWeek andFri() {
+	default TheDayOfWeek andFri() {
 		return andDay(Calendar.FRIDAY);
 	}
 
-	default ThatDayOfWeek andSat() {
+	default TheDayOfWeek andSat() {
 		return andDay(Calendar.SATURDAY);
 	}
 }

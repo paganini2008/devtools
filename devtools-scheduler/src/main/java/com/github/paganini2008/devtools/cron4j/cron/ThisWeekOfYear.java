@@ -3,24 +3,24 @@ package com.github.paganini2008.devtools.cron4j.cron;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
+import com.github.paganini2008.devtools.collection.MapUtils;
 
 /**
  * 
  * ThisWeekOfYear
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
-public class ThisWeekOfYear implements ThatWeek, Serializable {
+public class ThisWeekOfYear implements TheWeek, Serializable {
 
 	private static final long serialVersionUID = -3294283555586718358L;
-	private final TreeMap<Integer, Calendar> siblings;
+	private final TreeMap<Integer, Calendar> siblings = new TreeMap<Integer, Calendar>();
 	private Year year;
 	private int index;
 	private Calendar week;
@@ -29,22 +29,21 @@ public class ThisWeekOfYear implements ThatWeek, Serializable {
 	ThisWeekOfYear(Year year, int week) {
 		CalendarAssert.checkWeekOfYear(year, week);
 		this.year = year;
-		siblings = new TreeMap<Integer, Calendar>();
 		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.WEEK_OF_YEAR, week);
-		siblings.put(week, calendar);
+		this.siblings.put(week, calendar);
 		this.week = calendar;
 		this.lastWeek = week;
 	}
 
-	public ThatWeek andWeek(int week) {
+	public TheWeek andWeek(int week) {
 		CalendarAssert.checkWeekOfYear(year, week);
 		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.WEEK_OF_YEAR, week);
-		siblings.put(week, calendar);
+		this.siblings.put(week, calendar);
 		this.lastWeek = week;
 		return this;
 	}
 
-	public ThatWeek toWeek(int week, int interval) {
+	public TheWeek toWeek(int week, int interval) {
 		CalendarAssert.checkWeekOfYear(year, week);
 		for (int i = lastWeek + interval; i < week; i += interval) {
 			andWeek(i);
@@ -76,12 +75,14 @@ public class ThisWeekOfYear implements ThatWeek, Serializable {
 		return week.get(Calendar.WEEK_OF_YEAR);
 	}
 
-	public ThatDayOfWeek day(int day) {
-		return new ThisDayOfWeek(CollectionUtils.getFirst(this), day);
+	public TheDayOfWeek day(int day) {
+		final Week copy = (Week) this;
+		return new ThisDayOfWeek(CollectionUtils.getFirst(copy), day);
 	}
 
 	public Day everyDay(Function<Week, Integer> from, Function<Week, Integer> to, int interval) {
-		return new EveryDayOfWeek(CollectionUtils.getFirst(this), from, to, interval);
+		final Week copy = (Week) this;
+		return new EveryDayOfWeek(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
 	public boolean hasNext() {
@@ -97,8 +98,10 @@ public class ThisWeekOfYear implements ThatWeek, Serializable {
 	}
 
 	public Week next() {
-		week = CollectionUtils.get(siblings.values().iterator(), index++);
+		Map.Entry<Integer, Calendar> entry = MapUtils.getEntry(siblings, index++);
+		week = entry.getValue();
 		week.set(Calendar.YEAR, year.getYear());
+		week.set(Calendar.WEEK_OF_YEAR, Math.min(entry.getKey(), year.getWeekCount()));
 		return this;
 	}
 

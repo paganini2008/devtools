@@ -12,8 +12,6 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * EveryWeek
  *
  * @author Fred Feng
- * 
- * 
  * @version 1.0
  */
 public class EveryWeek implements Week, Serializable {
@@ -105,18 +103,20 @@ public class EveryWeek implements Week, Serializable {
 		return week.getTimeInMillis();
 	}
 
-	public ThatDayOfWeek day(int day) {
-		return new ThisDayOfWeek(CollectionUtils.getFirst(this), day);
+	public TheDayOfWeek day(int day) {
+		final Week copy = (Week) this.copy();
+		return new ThisDayOfWeek(CollectionUtils.getFirst(copy), day);
 	}
 
 	public Day everyDay(Function<Week, Integer> from, Function<Week, Integer> to, int interval) {
-		return new EveryDayOfWeek(CollectionUtils.getFirst(this), from, to, interval);
+		final Week copy = (Week) this.copy();
+		return new EveryDayOfWeek(CollectionUtils.getFirst(copy), from, to, interval);
 	}
-	
+
 	public CronExpression getParent() {
 		return month;
 	}
-	
+
 	public String toCronString() {
 		return "";
 	}

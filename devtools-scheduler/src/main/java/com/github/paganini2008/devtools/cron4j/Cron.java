@@ -7,7 +7,7 @@ import java.util.List;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
 import com.github.paganini2008.devtools.cron4j.cron.EveryYear;
-import com.github.paganini2008.devtools.cron4j.cron.ThatDayOfWeek;
+import com.github.paganini2008.devtools.cron4j.cron.TheDayOfWeek;
 import com.github.paganini2008.devtools.cron4j.parser.CronOption;
 import com.github.paganini2008.devtools.cron4j.parser.DayOfWeekOption;
 import com.github.paganini2008.devtools.cron4j.parser.DayOption;
@@ -40,7 +40,7 @@ public abstract class Cron {
 		CronExpression day = hour.getParent();
 		boolean hasDayOfWeek = false;
 		CronExpression week = null;
-		if (day instanceof ThatDayOfWeek) {
+		if (day instanceof TheDayOfWeek) {
 			hasDayOfWeek = true;
 		}
 		if (hasDayOfWeek) {
@@ -122,7 +122,7 @@ public abstract class Cron {
 	}
 
 	public static void main(String[] args) {
-		CronExpression cronExpression = Cron.parse("0 10 23 ? * 6#3");
+		CronExpression cronExpression = Cron.parse("0 10,20,30 12 ? 3,4,5 5L,6L 2020");
 		cronExpression.forEach(date -> {
 			System.out.println(DateUtils.format(date));
 		}, 20);
