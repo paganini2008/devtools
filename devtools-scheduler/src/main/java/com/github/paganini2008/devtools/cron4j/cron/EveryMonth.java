@@ -101,7 +101,7 @@ public class EveryMonth implements Month, Serializable {
 		final Month copy = (Month) this.copy();
 		return new LastDayOfMonth(CollectionUtils.getFirst(copy));
 	}
-	
+
 	public Day everyDay(Function<Month, Integer> from, Function<Month, Integer> to, int interval) {
 		final Month copy = (Month) this.copy();
 		return new EveryDay(CollectionUtils.getFirst(copy), from, to, interval);
@@ -132,7 +132,7 @@ public class EveryMonth implements Month, Serializable {
 	}
 
 	public String toCronString() {
-		return interval > 0 ? "*/" + interval : "*";
+		return interval > 1 ? "*/" + interval : "*";
 	}
 
 }
