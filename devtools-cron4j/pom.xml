@@ -9,10 +9,10 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>devtools-scheduler</artifactId>
+	<artifactId>devtools-cron4j</artifactId>
 	<packaging>jar</packaging>
 
-	<name>devtools-scheduler</name>
+	<name>devtools-cron4j</name>
 	<url>https://github.com/paganini2008/devtools</url>
 	<description>A light weight task scheduling tools</description>
 
