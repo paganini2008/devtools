@@ -298,7 +298,7 @@ public abstract class ClassUtils {
 	private static void getAllSuperClassesAndInterfaces(Class<?> cls, List<Class<?>> found) {
 		if (cls != null && cls != Object.class) {
 			Class<?> superClass = cls.getSuperclass();
-			if (superClass != Object.class && !found.contains(superClass)) {
+			if (superClass != null && superClass != Object.class && !found.contains(superClass)) {
 				found.add(superClass);
 			}
 			Class<?>[] interfaces = cls.getInterfaces();

@@ -1,6 +1,6 @@
 package com.github.paganini2008.devtools.io;
 
-import com.github.paganini2008.devtools.collection.MultiMapMap;
+import com.github.paganini2008.devtools.collection.MultiMappedMap;
 
 /**
  * 
@@ -11,6 +11,6 @@ import com.github.paganini2008.devtools.collection.MultiMapMap;
  */
 public interface IniConfigAdapter {
 
-	void adapt(MultiMapMap<String, String, String> config);
+	void adapt(MultiMappedMap<String, String, String> config);
 
 }

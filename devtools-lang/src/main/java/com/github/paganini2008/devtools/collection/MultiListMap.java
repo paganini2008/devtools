@@ -2,7 +2,6 @@ package com.github.paganini2008.devtools.collection;
 
 import java.io.Serializable;
 import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -10,25 +9,30 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Supplier;
 
 /**
  * 
- * MultiValueMap
+ * MultiListMap
  * 
  * @author Fred Feng
  * @version 1.0
  */
-public class MultiValueMap<K, V> extends AbstractMap<K, List<V>> implements Map<K, List<V>>, Serializable {
+public class MultiListMap<K, V> extends AbstractMap<K, List<V>> implements Map<K, List<V>>, Serializable {
 
 	private static final long serialVersionUID = 4293668328277273376L;
 	private final Map<K, List<V>> delegate;
+	private final Supplier<List<V>> supplier;
 
-	public MultiValueMap() {
-		this(new HashMap<K, List<V>>());
+	public MultiListMap() {
+		this(new ConcurrentHashMap<K, List<V>>(), () -> {
+			return new CopyOnWriteArrayList<V>();
+		});
 	}
 
-	protected MultiValueMap(Map<K, List<V>> delegate) {
+	public MultiListMap(Map<K, List<V>> delegate, Supplier<List<V>> supplier) {
 		this.delegate = delegate;
+		this.supplier = supplier;
 	}
 
 	public void clear() {
@@ -51,22 +55,22 @@ public class MultiValueMap<K, V> extends AbstractMap<K, List<V>> implements Map<
 		return ListUtils.remove(list, index);
 	}
 
-	public V removeLast(K key) {
+	public V pollLast(K key) {
 		List<V> list = delegate.get(key);
 		return ListUtils.removeLast(list);
 	}
 
-	public V removeFirst(K key) {
+	public V pollFirst(K key) {
 		List<V> list = delegate.get(key);
 		return ListUtils.removeFirst(list);
 	}
 
-	public V getFirst(K key) {
+	public V peekFirst(K key) {
 		List<V> list = delegate.get(key);
 		return ListUtils.getFirst(list);
 	}
 
-	public V getLast(K key) {
+	public V peekLast(K key) {
 		List<V> list = delegate.get(key);
 		return ListUtils.getLast(list);
 	}
@@ -117,7 +121,7 @@ public class MultiValueMap<K, V> extends AbstractMap<K, List<V>> implements Map<
 	public void addAll(K key, Collection<V> values) {
 		List<V> list = delegate.get(key);
 		if (list == null) {
-			delegate.putIfAbsent(key, createValueList());
+			delegate.putIfAbsent(key, supplier.get());
 			list = delegate.get(key);
 		}
 		list.addAll(values);
@@ -126,15 +130,11 @@ public class MultiValueMap<K, V> extends AbstractMap<K, List<V>> implements Map<
 	public V add(K key, V value) {
 		List<V> list = delegate.get(key);
 		if (list == null) {
-			delegate.putIfAbsent(key, createValueList());
+			delegate.putIfAbsent(key, supplier.get());
 			list = delegate.get(key);
 		}
 		list.add(value);
 		return value;
-	}
-
-	protected List<V> createValueList() {
-		return new ArrayList<V>();
 	}
 
 	public Map<K, V> toSingleValueMap() {
@@ -143,17 +143,6 @@ public class MultiValueMap<K, V> extends AbstractMap<K, List<V>> implements Map<
 			map.put(entry.getKey(), ListUtils.getFirst(entry.getValue()));
 		}
 		return map;
-	}
-
-	public static <K, V> Map<K, List<V>> synchronizedMap() {
-		return new MultiValueMap<K, V>(new ConcurrentHashMap<K, List<V>>()) {
-
-			private static final long serialVersionUID = 1L;
-
-			protected List<V> createValueList() {
-				return new CopyOnWriteArrayList<V>();
-			}
-		};
 	}
 
 	public String toString() {

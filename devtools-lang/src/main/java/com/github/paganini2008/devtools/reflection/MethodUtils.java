@@ -220,8 +220,10 @@ public abstract class MethodUtils {
 	public static class DeclaredMethodIterator implements Iterator<Method> {
 
 		DeclaredMethodIterator(Class<?> type) {
-			this.methods = CollectionUtils.iterator(type.getDeclaredMethods());
-			this.interfaces = CollectionUtils.iterator(type.getInterfaces());
+			Method[] methods = type.getDeclaredMethods();
+			this.methods = methods != null ? CollectionUtils.iterator(methods) : CollectionUtils.emptyIterator();
+			Class<?>[] types = type.getInterfaces();
+			this.interfaces = types != null ? CollectionUtils.iterator(types) : CollectionUtils.emptyIterator();
 		}
 
 		private Iterator<Class<?>> interfaces;

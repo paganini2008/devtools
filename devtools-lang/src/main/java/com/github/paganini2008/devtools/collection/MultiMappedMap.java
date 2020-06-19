@@ -2,30 +2,46 @@ package com.github.paganini2008.devtools.collection;
 
 import java.io.Serializable;
 import java.util.AbstractMap;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.function.Supplier;
 
 /**
  * 
- * MultiMapMap
+ * MultiMappedMap
  * 
  * @author Fred Feng
  * @version 1.0
  */
-public class MultiMapMap<K, N, V> extends AbstractMap<K, Map<N, V>> implements Map<K, Map<N, V>>, Serializable {
+public class MultiMappedMap<K, N, V> extends AbstractMap<K, Map<N, V>> implements Map<K, Map<N, V>>, Serializable {
 
 	private static final long serialVersionUID = 1256299819433654455L;
 
 	private final Map<K, Map<N, V>> delegate;
+	private final Supplier<Map<N, V>> supplier;
 
-	public MultiMapMap() {
-		this(new ConcurrentHashMap<K, Map<N, V>>());
+	public MultiMappedMap() {
+		this(new ConcurrentHashMap<K, Map<N, V>>(), () -> {
+			return new ConcurrentHashMap<N, V>();
+		});
 	}
 
-	public MultiMapMap(Map<K, Map<N, V>> delegate) {
+	public MultiMappedMap(Comparator<N> c) {
+		this(new ConcurrentHashMap<K, Map<N, V>>(), () -> {
+			return new ConcurrentSkipListMap<N, V>(c);
+		});
+	}
+
+	public MultiMappedMap(Supplier<Map<N, V>> supplier) {
+		this(new ConcurrentHashMap<K, Map<N, V>>(), supplier);
+	}
+
+	public MultiMappedMap(Map<K, Map<N, V>> delegate, Supplier<Map<N, V>> supplier) {
 		this.delegate = delegate;
+		this.supplier = supplier;
 	}
 
 	public V get(K key, N name) {
@@ -86,7 +102,7 @@ public class MultiMapMap<K, N, V> extends AbstractMap<K, Map<N, V>> implements M
 	public void append(K key, Map<N, V> value) {
 		Map<N, V> map = delegate.get(key);
 		if (map == null) {
-			delegate.putIfAbsent(key, createValueMap());
+			delegate.putIfAbsent(key, supplier.get());
 			map = delegate.get(key);
 		}
 		map.putAll(value);
@@ -99,14 +115,10 @@ public class MultiMapMap<K, N, V> extends AbstractMap<K, Map<N, V>> implements M
 	public V put(K key, N name, V value) {
 		Map<N, V> map = delegate.get(key);
 		if (map == null) {
-			delegate.putIfAbsent(key, createValueMap());
+			delegate.putIfAbsent(key, supplier.get());
 			map = delegate.get(key);
 		}
 		return map.put(name, value);
-	}
-
-	protected Map<N, V> createValueMap() {
-		return new ConcurrentHashMap<N, V>();
 	}
 
 	public int size() {
@@ -128,13 +140,5 @@ public class MultiMapMap<K, N, V> extends AbstractMap<K, Map<N, V>> implements M
 
 	public String toString() {
 		return delegate.toString();
-	}
-
-	public static void main(String[] args) {
-		MultiMapMap<String, String, String> map = new MultiMapMap<>();
-		for (int i = 0; i < 100; i++) {
-			map.put("Key_" + i, "Name_" + i, UUID.randomUUID().toString());
-		}
-		System.out.println(map);
 	}
 }

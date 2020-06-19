@@ -453,14 +453,23 @@ public abstract class DateUtils {
 	}
 
 	public static long converToSecond(long interval, TimeUnit timeUnit) {
+		if (interval < 0) {
+			throw new IllegalArgumentException("interval < 0");
+		}
 		return timeUnit != TimeUnit.SECONDS ? TimeUnit.SECONDS.convert(interval, timeUnit) : interval;
 	}
 
 	public static long convertToMillis(long interval, TimeUnit timeUnit) {
+		if (interval < 0) {
+			throw new IllegalArgumentException("interval < 0");
+		}
 		return timeUnit != TimeUnit.MILLISECONDS ? TimeUnit.MILLISECONDS.convert(interval, timeUnit) : interval;
 	}
 
 	public static long convertToNanos(long interval, TimeUnit timeUnit) {
+		if (interval < 0) {
+			throw new IllegalArgumentException("interval < 0");
+		}
 		return timeUnit != TimeUnit.NANOSECONDS ? TimeUnit.NANOSECONDS.convert(interval, timeUnit) : interval;
 	}
 

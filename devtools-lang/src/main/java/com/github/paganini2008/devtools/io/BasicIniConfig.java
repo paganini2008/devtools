@@ -18,7 +18,7 @@ import com.github.paganini2008.devtools.MatchMode;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.ListUtils;
 import com.github.paganini2008.devtools.collection.MapUtils;
-import com.github.paganini2008.devtools.collection.MultiMapMap;
+import com.github.paganini2008.devtools.collection.MultiMappedMap;
 
 /**
  * 
@@ -30,13 +30,13 @@ import com.github.paganini2008.devtools.collection.MultiMapMap;
 public class BasicIniConfig implements IniConfig, Serializable {
 
 	private static final long serialVersionUID = 7872169560893030827L;
-	private final MultiMapMap<String, String, String> config;
+	private final MultiMappedMap<String, String, String> config;
 
 	public BasicIniConfig() {
-		this(new MultiMapMap<String, String, String>());
+		this(new MultiMappedMap<String, String, String>());
 	}
 
-	protected BasicIniConfig(MultiMapMap<String, String, String> config) {
+	protected BasicIniConfig(MultiMappedMap<String, String, String> config) {
 		this.config = config;
 	}
 
