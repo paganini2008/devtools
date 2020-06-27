@@ -6,10 +6,10 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
+import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.Sequence;
+import com.github.paganini2008.devtools.multithreads.latch.CounterLatch;
 import com.github.paganini2008.devtools.multithreads.latch.Latch;
-import com.github.paganini2008.devtools.multithreads.latch.NoopLatch;
-import com.github.paganini2008.devtools.multithreads.latch.SemaphoreLatch;
 
 /**
  * 
@@ -35,7 +35,7 @@ public abstract class ForEach<E> {
 	public ForEach(Executor executor, Queue<E> workQueue, int maxPermits) {
 		this.worker = new Worker(workQueue);
 		this.executor = executor;
-		this.latch = maxPermits > 0 ? new SemaphoreLatch(maxPermits) : new NoopLatch();
+		this.latch = maxPermits > 0 ? new CounterLatch(maxPermits) : CounterLatch.newUnlimitedLatch();
 	}
 
 	public void accept(Iterable<E> iterable) {
@@ -45,6 +45,7 @@ public abstract class ForEach<E> {
 	}
 
 	public void accept(E element) {
+		Assert.isNull(element, "Null for forEach");
 		worker.push(element);
 		executor.execute(worker);
 	}
@@ -71,18 +72,20 @@ public abstract class ForEach<E> {
 		}
 
 		public void push(E element) {
-			latch.acquire();
-			queue.add(element);
+			if (element != null) {
+				latch.acquire();
+				queue.add(element);
+			}
 		}
 
 		public void run() {
 			E element = queue.poll();
-			try {
-				if (element != null) {
+			if (element != null) {
+				try {
 					process(element);
+				} finally {
+					latch.release();
 				}
-			} finally {
-				latch.release();
 			}
 		}
 	}

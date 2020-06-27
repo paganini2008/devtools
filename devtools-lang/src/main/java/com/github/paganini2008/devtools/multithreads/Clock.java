@@ -7,6 +7,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.github.paganini2008.devtools.date.DateUtils;
 import com.github.paganini2008.devtools.event.Event;
@@ -168,7 +169,7 @@ public final class Clock implements Executable {
 	public static abstract class ClockTask implements Runnable {
 
 		private final String taskId;
-		private boolean cancelled;
+		private volatile boolean cancelled;
 
 		protected ClockTask() {
 			this.taskId = UUID.randomUUID().toString();
@@ -219,35 +220,42 @@ public final class Clock implements Executable {
 
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Throwable {
+		final AtomicInteger counter = new AtomicInteger();
 		Clock clock = new Clock();
-		clock.schedule(new ClockTask() {
+		ClockTask task = new ClockTask() {
 			protected void runTask() {
 				System.out.println("Test1: " + DateUtils.format(System.currentTimeMillis()));
+				if (counter.incrementAndGet() >= 3) {
+					cancel();
+				}
 			}
-		}, 2, 1, TimeUnit.SECONDS);
-		clock.scheduleAtFixedRate(new ClockTask() {
-			protected void runTask() {
-				ThreadUtils.randomSleep(1000);
-				System.out.println("Test2: " + DateUtils.format(System.currentTimeMillis()));
-			}
-		}, 5, 2, TimeUnit.SECONDS);
-		clock.scheduleAtFixedRate(new ClockTask() {
-			protected void runTask() {
-				ThreadUtils.randomSleep(1000, 4000);
-				System.out.println("Test3: " + DateUtils.format(System.currentTimeMillis()));
-			}
-		}, 10, 5, TimeUnit.SECONDS);
-		clock.schedule(new ClockTask() {
-			protected void runTask() {
-				System.out.println("Test4: " + DateUtils.format(System.currentTimeMillis()));
-			}
-		}, 10, TimeUnit.SECONDS);
-		clock.schedule(new ClockTask() {
-			protected void runTask() {
-				System.out.println("Test5: " + DateUtils.format(System.currentTimeMillis()));
-			}
-		}, 15, TimeUnit.SECONDS);
+		};
+		clock.schedule(task, 3, 1, TimeUnit.SECONDS);
+		System.in.read();
+		clock.stop();
+		// clock.scheduleAtFixedRate(new ClockTask() {
+		// protected void runTask() {
+		// ThreadUtils.randomSleep(1000);
+		// System.out.println("Test2: " + DateUtils.format(System.currentTimeMillis()));
+		// }
+		// }, 5, 2, TimeUnit.SECONDS);
+		// clock.scheduleAtFixedRate(new ClockTask() {
+		// protected void runTask() {
+		// ThreadUtils.randomSleep(1000, 4000);
+		// System.out.println("Test3: " + DateUtils.format(System.currentTimeMillis()));
+		// }
+		// }, 10, 5, TimeUnit.SECONDS);
+		// clock.schedule(new ClockTask() {
+		// protected void runTask() {
+		// System.out.println("Test4: " + DateUtils.format(System.currentTimeMillis()));
+		// }
+		// }, 10, TimeUnit.SECONDS);
+		// clock.schedule(new ClockTask() {
+		// protected void runTask() {
+		// System.out.println("Test5: " + DateUtils.format(System.currentTimeMillis()));
+		// }
+		// }, 15, TimeUnit.SECONDS);
 	}
 
 }

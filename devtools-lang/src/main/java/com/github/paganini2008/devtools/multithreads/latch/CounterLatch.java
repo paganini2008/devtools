@@ -51,7 +51,7 @@ public class CounterLatch implements Latch {
 					return true;
 				} else {
 					try {
-						condition.await();
+						condition.await(1, TimeUnit.SECONDS);
 					} catch (InterruptedException e) {
 						break;
 					}

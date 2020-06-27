@@ -197,6 +197,9 @@ public class EventBus<E extends Event<T>, T> {
 
 		@Override
 		public void onEventFired(final E event) {
+			if (q.isEmpty()) {
+				return;
+			}
 			if (multicast) {
 				q.forEach(subscriber -> {
 					forEach.accept(() -> {
