@@ -1,6 +1,5 @@
 package com.github.paganini2008.devtools.multithreads;
 
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
@@ -30,11 +29,11 @@ public final class Clock implements Executable {
 	private final EventBus<ClockEvent, String> eventBus;
 
 	public Clock() {
-		this(Executors.newCachedThreadPool());
+		this(Executors.newCachedThreadPool(), true);
 	}
 
-	public Clock(Executor executor) {
-		eventBus = new EventBus<ClockEvent, String>(executor, true);
+	public Clock(Executor executor, boolean autoShutdownExecutor) {
+		eventBus = new EventBus<ClockEvent, String>(executor, true, autoShutdownExecutor);
 		running.set(true);
 		ThreadUtils.scheduleAtFixedRate(this, 1, TimeUnit.SECONDS);
 	}
@@ -151,51 +150,26 @@ public final class Clock implements Executable {
 	}
 
 	public boolean execute() {
-		String now = DateUtils.format(System.currentTimeMillis(), DEFAULT_DATE_FORMAT);
-		eventBus.publish(new ClockEvent(this, now));
-		return running.get();
+		if (isRunning()) {
+			String now = DateUtils.format(System.currentTimeMillis(), DEFAULT_DATE_FORMAT);
+			eventBus.publish(new ClockEvent(this, now));
+			return true;
+		}
+		return false;
 	}
 
 	public boolean isRunning() {
 		return running.get();
 	}
 
+	public int getTaskCount() {
+		return tasks.size();
+	}
+
 	public void stop() {
 		running.set(false);
 		tasks.clear();
 		eventBus.close();
-	}
-
-	public static abstract class ClockTask implements Runnable {
-
-		private final String taskId;
-		private volatile boolean cancelled;
-
-		protected ClockTask() {
-			this.taskId = UUID.randomUUID().toString();
-		}
-
-		public boolean isCancelled() {
-			return cancelled;
-		}
-
-		public boolean cancel() {
-			this.cancelled = true;
-			return true;
-		}
-
-		public String getTaskId() {
-			return taskId;
-		}
-
-		public void run() {
-			if (!isCancelled()) {
-				runTask();
-			}
-		}
-
-		protected abstract void runTask();
-
 	}
 
 	public static class ClockEvent extends Event<String> implements Cloneable {
@@ -212,7 +186,7 @@ public final class Clock implements Executable {
 			try {
 				return (ClockEvent) super.clone();
 			} catch (CloneNotSupportedException e) {
-				throw new IllegalStateException(e);
+				throw new IllegalStateException(e.getMessage(), e);
 			}
 		}
 

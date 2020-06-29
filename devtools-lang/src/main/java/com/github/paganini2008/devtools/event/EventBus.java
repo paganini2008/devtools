@@ -26,22 +26,17 @@ import com.github.paganini2008.devtools.multithreads.ForEach;
  */
 public class EventBus<E extends Event<T>, T> {
 
-	public EventBus() {
-		this(8, true);
-	}
-
 	public EventBus(int nThreads, boolean multicast) {
-		this(Executors.newFixedThreadPool(nThreads), multicast);
-		this.autoShutdown = true;
+		this(Executors.newFixedThreadPool(nThreads), multicast, true);
 	}
 
-	public EventBus(Executor executor, boolean multicast) {
+	public EventBus(Executor executor, boolean multicast, boolean autoShutdownExecutor) {
 		this.eventHandler = new EventHandler<E, T>(executor, multicast);
-		this.autoShutdown = false;
+		this.autoShutdown = autoShutdownExecutor;
 	}
 
 	private EventHandler<E, T> eventHandler;
-	private boolean autoShutdown;
+	private final boolean autoShutdown;
 
 	public void publish(E event) {
 		eventHandler.publish(event);

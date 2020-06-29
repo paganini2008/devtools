@@ -6,7 +6,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.Sequence;
 import com.github.paganini2008.devtools.multithreads.latch.CounterLatch;
 import com.github.paganini2008.devtools.multithreads.latch.Latch;
@@ -45,9 +44,10 @@ public abstract class ForEach<E> {
 	}
 
 	public void accept(E element) {
-		Assert.isNull(element, "Null for forEach");
-		worker.push(element);
-		executor.execute(worker);
+		if (element != null) {
+			worker.push(element);
+			executor.execute(worker);
+		}
 	}
 
 	public void join(boolean shutdown) {
@@ -72,20 +72,16 @@ public abstract class ForEach<E> {
 		}
 
 		public void push(E element) {
-			if (element != null) {
-				latch.acquire();
-				queue.add(element);
-			}
+			latch.acquire();
+			queue.add(element);
 		}
 
 		public void run() {
 			E element = queue.poll();
-			if (element != null) {
-				try {
-					process(element);
-				} finally {
-					latch.release();
-				}
+			try {
+				process(element);
+			} finally {
+				latch.release();
 			}
 		}
 	}

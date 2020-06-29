@@ -48,14 +48,14 @@ public class TestMain {
 
 		@Override
 		public boolean isPubSub() {
-			return false;
+			return true;
 		}
 
 	}
 
 	public static void main(String[] args) throws Exception {
 		Executor executor = Executors.newFixedThreadPool(16);
-		EventBus<TestEvent, String> eventBus = new EventBus<TestEvent, String>(executor, true);
+		EventBus<TestEvent, String> eventBus = new EventBus<TestEvent, String>(executor, true, false);
 		for (int i = 0; i < 5; i++) {
 			eventBus.subscribe(new TestSubcriber("Name_" + i));
 		}
