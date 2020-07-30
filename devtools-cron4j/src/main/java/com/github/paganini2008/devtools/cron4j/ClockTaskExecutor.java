@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
 import com.github.paganini2008.devtools.multithreads.Clock;
-import com.github.paganini2008.devtools.multithreads.Clock.ClockTask;
+import com.github.paganini2008.devtools.multithreads.ClockTask;
 
 /**
  * 
@@ -33,7 +33,7 @@ public class ClockTaskExecutor implements TaskExecutor {
 
 	public TaskFuture schedule(Task task, long delay) {
 		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(task, () -> System.currentTimeMillis() + delay);
-		taskDetail.nextExecuted = System.currentTimeMillis() + delay;
+		taskDetail.nextExectionTime = System.currentTimeMillis() + delay;
 		final SimpleTask wrappedTask = new SimpleTask(task, taskDetail);
 		clock.schedule(wrappedTask, delay, TimeUnit.MILLISECONDS);
 		taskFutures.put(task, new TaskFutureImpl(taskDetail, wrappedTask));
@@ -42,7 +42,7 @@ public class ClockTaskExecutor implements TaskExecutor {
 
 	public TaskFuture scheduleAtFixedRate(Task task, long delay, long period) {
 		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(task, () -> System.currentTimeMillis() + delay);
-		taskDetail.nextExecuted = System.currentTimeMillis() + delay;
+		taskDetail.nextExectionTime = System.currentTimeMillis() + delay;
 		final SimpleTask wrappedTask = new SimpleTask(task, taskDetail);
 		clock.scheduleAtFixedRate(wrappedTask, delay, period, TimeUnit.MILLISECONDS);
 		taskFutures.put(task, new TaskFutureImpl(taskDetail, wrappedTask));
@@ -51,7 +51,7 @@ public class ClockTaskExecutor implements TaskExecutor {
 
 	public TaskFuture scheduleWithFixedDelay(Task task, long delay, long period) {
 		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(task, () -> System.currentTimeMillis() + delay);
-		taskDetail.nextExecuted = System.currentTimeMillis() + delay;
+		taskDetail.nextExectionTime = System.currentTimeMillis() + delay;
 		final SimpleTask wrappedTask = new SimpleTask(task, taskDetail);
 		clock.schedule(wrappedTask, delay, period, TimeUnit.MILLISECONDS);
 		taskFutures.put(task, new TaskFutureImpl(taskDetail, wrappedTask));
@@ -74,7 +74,7 @@ public class ClockTaskExecutor implements TaskExecutor {
 		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(task, () -> {
 			return iterator.hasNext() ? ((CronExpression) iterator.next()).getTimeInMillis() : -1;
 		});
-		taskDetail.nextExecuted = executed;
+		taskDetail.nextExectionTime = executed;
 		final CronTask wrappedTask = new CronTask(task, taskDetail);
 		clock.schedule(wrappedTask, executed - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
 		taskFutures.put(task, new TaskFutureImpl(taskDetail, wrappedTask));
@@ -192,7 +192,7 @@ public class ClockTaskExecutor implements TaskExecutor {
 		}
 
 		public void runTask() {
-			if (taskDetail.nextExecuted == -1) {
+			if (taskDetail.nextExectionTime == -1) {
 				removeSchedule(task);
 				return;
 			}
@@ -202,8 +202,8 @@ public class ClockTaskExecutor implements TaskExecutor {
 			Throwable throwing = null;
 			taskDetail.running.set(true);
 			try {
-				taskDetail.lastExecuted = now;
-				taskDetail.nextExecuted = taskDetail.trigger.getNextFiredTime();
+				taskDetail.lastExectionTime = now;
+				taskDetail.nextExectionTime = taskDetail.trigger.getNextFiredTime();
 				interceptorHandler.beforeJobExecution(taskFuture);
 				if (!cancellable.cancel(taskDetail)) {
 					result = (taskFuture.paused ? true : task.execute());
@@ -223,7 +223,7 @@ public class ClockTaskExecutor implements TaskExecutor {
 
 				if (result) {
 					CronTask nextTask = new CronTask(task, cancellable, taskDetail);
-					clock.schedule(nextTask, taskDetail.nextExecuted - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+					clock.schedule(nextTask, taskDetail.nextExectionTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
 					taskFuture.clockTask = nextTask;
 				} else {
 					removeSchedule(task);
@@ -259,8 +259,8 @@ public class ClockTaskExecutor implements TaskExecutor {
 			Throwable throwing = null;
 			taskDetail.running.set(true);
 			try {
-				taskDetail.lastExecuted = now;
-				taskDetail.nextExecuted = taskDetail.trigger.getNextFiredTime();
+				taskDetail.lastExectionTime = now;
+				taskDetail.nextExectionTime = taskDetail.trigger.getNextFiredTime();
 				interceptorHandler.beforeJobExecution(taskFuture);
 				if (!cancellable.cancel(taskDetail)) {
 					result = (taskFuture.paused ? true : task.execute());

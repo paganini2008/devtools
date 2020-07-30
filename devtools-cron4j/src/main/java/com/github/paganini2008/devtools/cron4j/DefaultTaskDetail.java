@@ -20,8 +20,8 @@ public class DefaultTaskDetail implements TaskDetail {
 	final AtomicBoolean running = new AtomicBoolean(false);
 	final AtomicInteger completedCount = new AtomicInteger(0);
 	final AtomicInteger failedCount = new AtomicInteger(0);
-	volatile long lastExecuted = -1;
-	volatile long nextExecuted = -1;
+	volatile long lastExectionTime = -1;
+	volatile long nextExectionTime = -1;
 
 	DefaultTaskDetail(Task task, Trigger trigger) {
 		this.task = task;
@@ -40,12 +40,12 @@ public class DefaultTaskDetail implements TaskDetail {
 		return failedCount.get();
 	}
 
-	public long lastExecuted() {
-		return lastExecuted;
+	public long lastExectionTime() {
+		return lastExectionTime;
 	}
 
-	public long nextExecuted() {
-		return nextExecuted;
+	public long nextExectionTime() {
+		return nextExectionTime;
 	}
 
 	public void completedCount(int count) {
@@ -56,8 +56,8 @@ public class DefaultTaskDetail implements TaskDetail {
 		failedCount.set(count);
 	}
 
-	public void nextExecuted(long time) {
-		nextExecuted = time;
+	public void nextExectionTime(long time) {
+		nextExectionTime = time;
 	}
 
 	public Task getTaskObject() {
@@ -70,8 +70,8 @@ public class DefaultTaskDetail implements TaskDetail {
 		str.append(", Running: ").append(isRunning());
 		str.append(", CompletedCount: ").append(completedCount());
 		str.append(", FailedCount: ").append(failedCount());
-		str.append(", LastExecuted: ").append(lastExecuted() > 0 ? DateUtils.format(lastExecuted()) : "-");
-		str.append(", NextExecuted: ").append(nextExecuted() > 0 ? DateUtils.format(nextExecuted()) : "-");
+		str.append(", LastExecuted: ").append(lastExectionTime() > 0 ? DateUtils.format(lastExectionTime()) : "-");
+		str.append(", NextExecuted: ").append(nextExectionTime() > 0 ? DateUtils.format(nextExectionTime()) : "-");
 		return str.toString();
 	}
 

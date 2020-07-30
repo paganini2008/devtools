@@ -35,7 +35,7 @@ public class TimerTaskExecutor implements TaskExecutor {
 		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(task, () -> {
 			return System.currentTimeMillis() + delay;
 		});
-		taskDetail.nextExecuted = System.currentTimeMillis() + delay;
+		taskDetail.nextExectionTime = System.currentTimeMillis() + delay;
 		final SimpleTask wrappedTask = new SimpleTask(task, taskDetail);
 		timer.schedule(wrappedTask, delay);
 		taskFutures.put(task, new TaskFutureImpl(taskDetail, wrappedTask));
@@ -46,7 +46,7 @@ public class TimerTaskExecutor implements TaskExecutor {
 		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(task, () -> {
 			return System.currentTimeMillis() + delay;
 		});
-		taskDetail.nextExecuted = System.currentTimeMillis() + delay;
+		taskDetail.nextExectionTime = System.currentTimeMillis() + delay;
 		final SimpleTask wrappedTask = new SimpleTask(task, taskDetail);
 		timer.scheduleAtFixedRate(wrappedTask, delay, period);
 		taskFutures.put(task, new TaskFutureImpl(taskDetail, wrappedTask));
@@ -57,7 +57,7 @@ public class TimerTaskExecutor implements TaskExecutor {
 		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(task, () -> {
 			return System.currentTimeMillis() + delay;
 		});
-		taskDetail.nextExecuted = System.currentTimeMillis() + delay;
+		taskDetail.nextExectionTime = System.currentTimeMillis() + delay;
 		final SimpleTask wrappedTask = new SimpleTask(task, taskDetail);
 		timer.schedule(wrappedTask, delay, period);
 		taskFutures.put(task, new TaskFutureImpl(taskDetail, wrappedTask));
@@ -80,7 +80,7 @@ public class TimerTaskExecutor implements TaskExecutor {
 		final DefaultTaskDetail taskDetail = new DefaultTaskDetail(task, () -> {
 			return iterator.hasNext() ? ((CronExpression) iterator.next()).getTimeInMillis() : -1;
 		});
-		taskDetail.nextExecuted = executed;
+		taskDetail.nextExectionTime = executed;
 		final CronTask wrappedTask = new CronTask(task, taskDetail);
 		timer.schedule(wrappedTask, executed - System.currentTimeMillis());
 		taskFutures.put(task, new TaskFutureImpl(taskDetail, wrappedTask));
@@ -196,7 +196,7 @@ public class TimerTaskExecutor implements TaskExecutor {
 		}
 
 		public void run() {
-			if (taskDetail.nextExecuted == -1) {
+			if (taskDetail.nextExectionTime == -1) {
 				removeSchedule(task);
 				return;
 			}
@@ -206,8 +206,8 @@ public class TimerTaskExecutor implements TaskExecutor {
 			Throwable throwing = null;
 			taskDetail.running.set(true);
 			try {
-				taskDetail.lastExecuted = now;
-				taskDetail.nextExecuted = taskDetail.trigger.getNextFiredTime();
+				taskDetail.lastExectionTime = now;
+				taskDetail.nextExectionTime = taskDetail.trigger.getNextFiredTime();
 				interceptorHandler.beforeJobExecution(taskFuture);
 				if (!cancellable.cancel(taskDetail)) {
 					result = (taskFuture.paused ? true : task.execute());
@@ -227,7 +227,7 @@ public class TimerTaskExecutor implements TaskExecutor {
 
 				if (result) {
 					CronTask nextTask = new CronTask(task, cancellable, taskDetail);
-					timer.schedule(nextTask, taskDetail.nextExecuted - System.currentTimeMillis());
+					timer.schedule(nextTask, taskDetail.nextExectionTime - System.currentTimeMillis());
 					taskFuture.timerTask = nextTask;
 				} else {
 					removeSchedule(task);
@@ -264,8 +264,8 @@ public class TimerTaskExecutor implements TaskExecutor {
 			Throwable throwing = null;
 			taskDetail.running.set(true);
 			try {
-				taskDetail.lastExecuted = now;
-				taskDetail.nextExecuted = taskDetail.trigger.getNextFiredTime();
+				taskDetail.lastExectionTime = now;
+				taskDetail.nextExectionTime = taskDetail.trigger.getNextFiredTime();
 				interceptorHandler.beforeJobExecution(taskFuture);
 				if (!cancellable.cancel(taskDetail)) {
 					result = (taskFuture.paused ? true : task.execute());

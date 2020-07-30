@@ -79,15 +79,15 @@ public interface TaskExecutor {
 
 		int failedCount();
 
-		long lastExecuted();
+		long lastExectionTime();
 
-		long nextExecuted();
+		long nextExectionTime();
 
 		void completedCount(int count);
 
 		void failedCount(int count);
 
-		void nextExecuted(long time);
+		void nextExectionTime(long time);
 
 		Task getTaskObject();
 

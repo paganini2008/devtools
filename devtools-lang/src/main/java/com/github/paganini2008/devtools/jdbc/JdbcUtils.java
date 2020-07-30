@@ -190,6 +190,35 @@ public abstract class JdbcUtils {
 		}
 	}
 
+	public static int insert(Connection connection, String sql, Object[] args) throws SQLException {
+		return insert(connection, sql, setValues(args));
+	}
+
+	public static int insert(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			ps = connection.prepareStatement(sql);
+			if (callback != null) {
+				callback.setValues(ps);
+			}
+			int effected = ps.executeUpdate();
+			if (effected > 0) {
+				rs = ps.getGeneratedKeys();
+				if (rs != null && rs.next()) {
+					Object result = rs.getObject(1);
+					if (result instanceof Number) {
+						return ((Number) result).intValue();
+					}
+				}
+			}
+			return 0;
+		} finally {
+			closeQuietly(rs);
+			closeQuietly(ps);
+		}
+	}
+
 	public static int update(Connection connection, String sql, Object[] args) throws SQLException {
 		return update(connection, sql, setValues(args));
 	}
