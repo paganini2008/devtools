@@ -14,6 +14,6 @@ public interface ProxyFactory {
 		return getProxy(target, aspect, target.getClass().getInterfaces());
 	}
 
-	Object getProxy(Object target, Aspect aspect, Class<?>[] interfaces);
+	Object getProxy(Object target, Aspect aspect, Class<?>... interfaces);
 
 }

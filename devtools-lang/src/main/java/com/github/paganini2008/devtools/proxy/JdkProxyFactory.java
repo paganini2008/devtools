@@ -18,7 +18,7 @@ public class JdkProxyFactory implements ProxyFactory {
 	private static final JdkProxyFactory instance = new JdkProxyFactory();
 
 	@Override
-	public Object getProxy(Object target, Aspect aspect, Class<?>[] interfaces) {
+	public Object getProxy(Object target, Aspect aspect, Class<?>... interfaces) {
 		return Proxy.newProxyInstance(target.getClass().getClassLoader(), interfaces, new JdkProxyInterceptor(target, aspect));
 	}
 
