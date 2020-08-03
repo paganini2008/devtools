@@ -198,7 +198,7 @@ public abstract class JdbcUtils {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			ps = connection.prepareStatement(sql);
+			ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			if (callback != null) {
 				callback.setValues(ps);
 			}

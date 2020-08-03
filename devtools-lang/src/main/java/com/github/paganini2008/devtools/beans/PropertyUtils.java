@@ -161,8 +161,18 @@ public abstract class PropertyUtils {
 		Assert.isNull(bean, "Source instance must not be null.");
 		Assert.isNull(descriptor, "Property descriptor must not be null.");
 		Method method = descriptor.getWriteMethod();
-		Assert.isNull(method, "Cannot find the setter of '" + descriptor.getName() + "'.");
-		return setProperty(bean, method, descriptor.getPropertyType(), value);
+		Class<?> propertyType = descriptor.getPropertyType();
+		if (method == null) {
+			if (value != null) {
+				String methodName = "set" + StringUtils.capitalize(descriptor.getName());
+				method = MethodUtils.getMethod(bean.getClass(), methodName, value.getClass());
+				if (method != null) {
+					propertyType = method.getParameterTypes()[0];
+				}
+			}
+		}
+		Assert.isNull(method, "Cannot find read method of property '" + descriptor.getName() + "'.");
+		return setProperty(bean, method, propertyType, value);
 	}
 
 	private static boolean setProperty(Object bean, Method method, Class<?> propertyType, Object value) {

@@ -86,8 +86,12 @@ public class TupleImpl extends KeyConversionMap<String, String, Object> implemen
 
 	public void fill(Object object) {
 		Map<String, PropertyDescriptor> desc = PropertyUtils.getPropertyDescriptors(object.getClass());
+		Object value;
 		for (String key : desc.keySet()) {
-			PropertyUtils.setProperty(object, key, get(key));
+			value = get(key);
+			if (value != null) {
+				PropertyUtils.setProperty(object, key, value);
+			}
 		}
 	}
 
