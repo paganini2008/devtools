@@ -6,6 +6,7 @@ import com.github.paganini2008.devtools.cron4j.Cancellables;
 import com.github.paganini2008.devtools.cron4j.CancellationException;
 import com.github.paganini2008.devtools.cron4j.ClockTaskExecutor;
 import com.github.paganini2008.devtools.cron4j.Task;
+import com.github.paganini2008.devtools.cron4j.TaskExecutor.TaskFuture;
 import com.github.paganini2008.devtools.cron4j.ThreadPoolTaskExecutor;
 import com.github.paganini2008.devtools.cron4j.TimerTaskExecutor;
 import com.github.paganini2008.devtools.cron4j.cron.CronExpressionBuilder;
@@ -92,28 +93,28 @@ public abstract class Example {
 	}
 
 	public static void test1() throws Exception {
-//		getCron14().forEach(date -> {
-//			System.out.println(DateUtils.format(date));
-//		}, 10);
+		// getCron14().forEach(date -> {
+		// System.out.println(DateUtils.format(date));
+		// }, 10);
 
-//		System.out.println(StringUtils.repeat("-", 32));
-//
+		// System.out.println(StringUtils.repeat("-", 32));
+		//
 		getCron13().forEach(date -> {
 			System.out.println(DateUtils.format(date));
 		}, 20);
 
-//		System.out.println(StringUtils.repeat("-", 32));
-//		getCron10().forEach(date -> {
-//			System.out.println(DateUtils.format(date));
-//		}, 20);
+		// System.out.println(StringUtils.repeat("-", 32));
+		// getCron10().forEach(date -> {
+		// System.out.println(DateUtils.format(date));
+		// }, 20);
 	}
 
 	public static void test2() throws Exception {
-		CronExpressionBuilder.everySecond().test(new Task() {
+		final TaskFuture taskFuture = CronExpressionBuilder.everySecond().test(new Task() {
 
 			@Override
 			public boolean execute() {
-				System.out.println("Running at: " + DateUtils.format(System.currentTimeMillis()));
+				System.out.println("Running at: " + DateUtils.format(System.currentTimeMillis()) + ", Next fire: ");
 				return true;
 			}
 
@@ -189,19 +190,20 @@ public abstract class Example {
 	}
 
 	public static void test5() throws Exception {
-		CronExpression expression = CronExpressionBuilder.everySecond();
+		CronExpression expression = CronExpressionBuilder.everySecond(5);
 		ClockTaskExecutor executor = new ClockTaskExecutor();
 		executor.schedule(new Task() {
 
 			@Override
 			public boolean execute() {
-				System.out.println("Run at: " + DateUtils.format(System.currentTimeMillis()));
+				System.out.println("Run at: " + DateUtils.format(System.currentTimeMillis()) + ", next: "
+						+ DateUtils.format(executor.getTaskFuture(this).getDetail().nextExectionTime()));
 				return true;
 			}
 
 			@Override
 			public Cancellable cancellable() {
-				return Cancellables.cancelIfRuns(10);
+				return Cancellables.cancelIfRuns(100);
 			}
 
 			@Override
@@ -216,7 +218,7 @@ public abstract class Example {
 	}
 
 	public static void main(String[] args) throws Exception {
-		test1();
+		test5();
 	}
 
 }

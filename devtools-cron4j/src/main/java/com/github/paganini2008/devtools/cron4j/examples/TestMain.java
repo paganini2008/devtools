@@ -1,11 +1,6 @@
 package com.github.paganini2008.devtools.cron4j.examples;
 
-import java.util.Calendar;
 import java.util.UUID;
-
-import com.github.paganini2008.devtools.cron4j.cron.CronExpressionBuilder;
-import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
-import com.github.paganini2008.devtools.date.DateUtils;
 
 public class TestMain {
 
