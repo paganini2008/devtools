@@ -18,11 +18,17 @@ public class SimplePageResponse<T> implements PageResponse<T>, Serializable {
 	private final int totalPages;
 	private final int totalRecords;
 	private final PageRequest pageRequest;
-	private final transient ResultSetSlice<T> resultSetSlice;
+	private final ResultSetSlice<T> resultSetSlice;
 
 	public SimplePageResponse(PageRequest pageRequest, ResultSetSlice<T> resultSetSlice) {
+		this(pageRequest, resultSetSlice, () -> {
+			return resultSetSlice.rowCount();
+		});
+	}
+
+	public SimplePageResponse(PageRequest pageRequest, ResultSetSlice<T> resultSetSlice, Countable countable) {
 		this.pageNumber = pageRequest.getPageNumber();
-		this.totalRecords = resultSetSlice.rowCount();
+		this.totalRecords = countable.rowCount();
 		this.totalPages = (totalRecords + pageRequest.getPageSize() - 1) / pageRequest.getPageSize();
 		this.pageRequest = pageRequest;
 		this.resultSetSlice = resultSetSlice;

@@ -21,11 +21,11 @@ public class PropertyChangeEvent<T> extends EventObject {
 	private final T current;
 
 	@SuppressWarnings("unchecked")
-	public T getLatest() {
+	public T getLatestVersion() {
 		return (T) getSource();
 	}
 
-	public T getCurrent() {
+	public T getCurrentVersion() {
 		return current;
 	}
 
