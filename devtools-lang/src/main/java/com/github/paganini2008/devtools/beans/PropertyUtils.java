@@ -185,7 +185,7 @@ public abstract class PropertyUtils {
 		if (realValue == null && propertyType.isPrimitive()) {
 			return false;
 		}
-		invokeSetter(bean, method, realValue);
+		invokeSetterMethod(bean, method, realValue);
 		return true;
 	}
 
@@ -207,7 +207,7 @@ public abstract class PropertyUtils {
 		Assert.isNull(descriptor, "Property descriptor must not be null.");
 		Method method = descriptor.getReadMethod();
 		Assert.isNull(method, "Cannot find the getter of '" + descriptor.getName() + "'.");
-		return invokeGetter(bean, method);
+		return invokeGetterMethod(bean, method);
 	}
 
 	public static Object getProperty(Object bean, String propertyName) {
@@ -293,7 +293,7 @@ public abstract class PropertyUtils {
 		return map;
 	}
 
-	private static Object invokeSetter(Object bean, Method method, Object value) {
+	private static Object invokeSetterMethod(Object bean, Method method, Object value) {
 		try {
 			return MethodUtils.invokeMethod(bean, method, value);
 		} catch (Exception e) {
@@ -302,7 +302,7 @@ public abstract class PropertyUtils {
 		}
 	}
 
-	private static Object invokeGetter(Object bean, Method method) {
+	private static Object invokeGetterMethod(Object bean, Method method) {
 		try {
 			return MethodUtils.invokeMethod(bean, method);
 		} catch (Exception e) {

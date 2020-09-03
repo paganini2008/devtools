@@ -24,7 +24,7 @@ public class PageableQueryImpl extends PageableSlice<Tuple> implements PageableQ
 		this.callback = callback;
 	}
 
-	public int totalCount() {
+	public int rowCount() {
 		final String sql = pageableSql.countableSql();
 		Connection connection = null;
 		try {

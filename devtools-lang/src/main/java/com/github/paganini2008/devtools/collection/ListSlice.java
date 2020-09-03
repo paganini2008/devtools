@@ -23,7 +23,7 @@ public class ListSlice<T> implements ResultSetSlice<T> {
 	}
 
 	@Override
-	public int totalCount() {
+	public int rowCount() {
 		return list.size();
 	}
 

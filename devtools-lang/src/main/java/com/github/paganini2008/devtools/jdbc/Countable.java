@@ -9,6 +9,6 @@ package com.github.paganini2008.devtools.jdbc;
  */
 public interface Countable {
 
-	int totalCount();
+	int rowCount();
 
 }

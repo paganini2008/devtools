@@ -569,7 +569,7 @@ public class SqlRunner {
 		}
 
 		@Override
-		public int totalCount() {
+		public int rowCount() {
 			final String sql = pageableSql.countableSql();
 			Connection connection = null;
 			try {

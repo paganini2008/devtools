@@ -34,7 +34,7 @@ public class MemoryResultSetSlice<E, T> implements ResultSetSlice<T> {
 		return results;
 	}
 
-	public int totalCount() {
+	public int rowCount() {
 		return content.size();
 	}
 

@@ -22,7 +22,7 @@ public class SimplePageResponse<T> implements PageResponse<T>, Serializable {
 
 	public SimplePageResponse(PageRequest pageRequest, ResultSetSlice<T> resultSetSlice) {
 		this.pageNumber = pageRequest.getPageNumber();
-		this.totalRecords = resultSetSlice.totalCount();
+		this.totalRecords = resultSetSlice.rowCount();
 		this.totalPages = (totalRecords + pageRequest.getPageSize() - 1) / pageRequest.getPageSize();
 		this.pageRequest = pageRequest;
 		this.resultSetSlice = resultSetSlice;

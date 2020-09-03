@@ -52,7 +52,7 @@ public class Select<E> implements Selectable<E> {
 		return ListUtils.slice(content, maxResults, firstResult);
 	}
 
-	public int totalCount() {
+	public int rowCount() {
 		return content.size();
 	}
 
