@@ -17,7 +17,7 @@ public class DefaultPageableSql implements PageableSql {
 
 	@Override
 	public String countableSql() {
-		return new StringBuilder(sql).insert(0, "select count(*) as rowCount from (").append(") as this").toString();
+		return new StringBuilder(sql).insert(0, "select count(1) as rowCount from (").append(") as this").toString();
 	}
 
 	@Override
