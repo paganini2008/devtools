@@ -4,7 +4,7 @@
 
     <groupId>com.github.paganini2008</groupId>
     <artifactId>devtools</artifactId>
-    <version>2.0-RC3</version>
+    <version>2.0-RC4</version>
     <modules>
 	    <module>devtools-lang</module>
 		<module>devtools-objectpool</module>
