@@ -24,7 +24,7 @@ public class DateConverter extends BasicConverter<Date> {
 
 	private final Converter<String, Date> stringConverter = new Converter<String, Date>() {
 		public Date convertValue(String source, Date defaultValue) {
-			return DateUtils.parse(source, datePattern, defaultValue);
+			return DateUtils.parse(source, datePatterns, defaultValue);
 		}
 	};
 
@@ -70,14 +70,14 @@ public class DateConverter extends BasicConverter<Date> {
 	}
 
 	private ZoneId zoneId = ZoneId.systemDefault();
-	private String datePattern = DateUtils.DEFAULT_DATE_PATTERN;
+	private String[] datePatterns = new String[] { DateUtils.DEFAULT_DATE_PATTERN, "yyyy-MM-dd", "yyyyMMddHHmmss" };
 
 	public void setZoneId(ZoneId zoneId) {
 		this.zoneId = zoneId;
 	}
 
-	public void setDatePattern(String datePattern) {
-		this.datePattern = datePattern;
+	public void setDatePatterns(String[] datePatterns) {
+		this.datePatterns = datePatterns;
 	}
 
 }

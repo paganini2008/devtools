@@ -10,7 +10,8 @@ import com.github.paganini2008.devtools.Observer;
  * EventBasedRefreshingProperties
  * 
  * @author Fred Feng
- * @create 2019-03
+ *
+ * @since 1.0
  */
 public abstract class EventBasedRefreshingProperties extends RefreshingProperties {
 

@@ -259,7 +259,7 @@ public class ThreadPoolTaskExecutor implements TaskExecutor {
 				taskDetail.nextExectionTime = taskDetail.trigger.getNextFiredTime();
 				interceptorHandler.beforeJobExecution(taskFuture);
 				if (!cancellable.cancel(taskDetail)) {
-					result = (taskFuture.paused ? true : task.execute());
+					result = (taskFuture != null && taskFuture.paused ? true : task.execute());
 					taskDetail.completedCount.incrementAndGet();
 				} else {
 					throw new CancellationException(taskDetail);

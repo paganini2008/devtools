@@ -8,13 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.Supplier;
-
-import com.github.paganini2008.devtools.Debuger;
-import com.github.paganini2008.devtools.RandomUtils;
 
 /**
  * 
@@ -147,20 +143,6 @@ public class MultiSetMap<K, V> extends AbstractMap<K, NavigableSet<V>> implement
 
 	public String toString() {
 		return delegate.toString();
-	}
-
-	public static void main(String[] args) {
-		MultiSetMap<String, String> map = new MultiSetMap<>();
-		int l;
-		for (int i = 0; i < 100; i++) {
-			l = RandomUtils.randomInt(i, 200);
-			map.add("Name_" + i, l + ":" + UUID.randomUUID().toString());
-			l = RandomUtils.randomInt(i, 200);
-			map.add("Name_" + i, l + ":" + UUID.randomUUID().toString());
-			l = RandomUtils.randomInt(i, 200);
-			map.add("Name_" + i, l + ":" + UUID.randomUUID().toString());
-		}
-		Debuger.print(map);
 	}
 
 }

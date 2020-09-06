@@ -6,6 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.PriorityBlockingQueue;
 
+import com.github.paganini2008.devtools.collection.MapUtils;
+
 /**
  * 
  * Observable
@@ -15,20 +17,22 @@ import java.util.concurrent.PriorityBlockingQueue;
  */
 public class Observable {
 
-	private static final String DEFAULT_TOPIC = "default";
-	private final ConcurrentMap<String, Observers> groups = new ConcurrentHashMap<String, Observers>();
+	public static final String DEFAULT_TOPIC = "default";
+	private final ConcurrentMap<String, ObserverGroup> groups = new ConcurrentHashMap<String, ObserverGroup>();
 	private final boolean repeated;
 
 	protected Observable(boolean repeated) {
 		this.repeated = repeated;
 	}
 
-	static class Observers implements Observer {
+	static class ObserverGroup implements Observer {
 
 		private final Queue<Observer> observers = new PriorityBlockingQueue<Observer>();
+		private final String topic;
 		private final boolean repeated;
 
-		Observers(boolean repeated) {
+		ObserverGroup(String topic, boolean repeated) {
+			this.topic = topic;
 			this.repeated = repeated;
 		}
 
@@ -62,6 +66,9 @@ public class Observable {
 				o.update(ob, arg);
 				if (!repeated) {
 					observers.remove(o);
+					if (observers.isEmpty()) {
+						ob.deleteObservers(topic);
+					}
 				}
 			}
 		}
@@ -74,17 +81,15 @@ public class Observable {
 
 	public void addObserver(String topic, Observer ob) {
 		Assert.isNull(ob, "Observer must not be null.");
-		Observers obs = groups.get(topic);
-		if (obs == null) {
-			groups.putIfAbsent(topic, new Observers(repeated));
-			obs = groups.get(topic);
-		}
+		ObserverGroup obs = MapUtils.get(groups, topic, () -> {
+			return new ObserverGroup(topic, repeated);
+		});
 		obs.addObserver(ob);
 	}
 
 	public void deleteObservers(String topic) {
 		if (groups.containsKey(topic)) {
-			Observers obs = groups.remove(topic);
+			ObserverGroup obs = groups.remove(topic);
 			if (obs != null) {
 				obs.clear();
 			}
@@ -93,7 +98,7 @@ public class Observable {
 
 	public void deleteObserver(String topic, Observer ob) {
 		if (groups.containsKey(topic)) {
-			Observers obs = groups.get(topic);
+			ObserverGroup obs = groups.get(topic);
 			if (obs != null) {
 				obs.deleteObserver(ob);
 				if (obs.countOfObservers() == 0) {
@@ -125,10 +130,14 @@ public class Observable {
 
 	public int countOfObservers() {
 		int n = 0;
-		for (Observers obs : groups.values()) {
+		for (ObserverGroup obs : groups.values()) {
 			n += obs.countOfObservers();
 		}
 		return n;
+	}
+
+	public boolean hasTopic(String topicName) {
+		return groups.containsKey(topicName);
 	}
 
 	public static Observable repeatable() {

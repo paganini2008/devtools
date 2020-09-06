@@ -120,7 +120,7 @@ public abstract class ArrayUtils {
 		if (a == null && b != null) {
 			return b;
 		}
-		T[] result = (T[]) Array.newInstance(a.getClass().getComponentType(), b.length);
+		T[] result = (T[]) Array.newInstance(a.getClass().getComponentType(), a.length);
 		int i = 0;
 		for (T t : a) {
 			if (!contains(b, t)) {
@@ -140,7 +140,7 @@ public abstract class ArrayUtils {
 		if (a == null && b != null) {
 			return b;
 		}
-		T[] result = (T[]) Array.newInstance(a.getClass().getComponentType(), b.length);
+		T[] result = (T[]) Array.newInstance(a.getClass().getComponentType(), a.length);
 		int i = 0;
 		for (T t : a) {
 			if (contains(b, t)) {

@@ -172,6 +172,14 @@ public final class Clock implements Executable {
 		eventBus.close();
 	}
 
+	/**
+	 * 
+	 * ClockEvent
+	 * 
+	 * @author Fred Feng
+	 *
+	 * @since 1.0
+	 */
 	public static class ClockEvent extends Event<String> implements Cloneable {
 
 		ClockEvent(Object source, String datetime) {
@@ -196,16 +204,16 @@ public final class Clock implements Executable {
 
 	public static void main(String[] args) throws Throwable {
 		final AtomicInteger counter = new AtomicInteger();
-		Clock clock = new Clock();
+		Clock clock = new Clock(Executors.newFixedThreadPool(8),true);
 		ClockTask task = new ClockTask() {
 			protected void runTask() {
 				System.out.println("Test1: " + DateUtils.format(System.currentTimeMillis()));
-				if (counter.incrementAndGet() >= 3) {
+				if (counter.incrementAndGet() >= 100) {
 					cancel();
 				}
 			}
 		};
-		clock.schedule(task, 3, 1, TimeUnit.SECONDS);
+		clock.schedule(task, 3, 5, TimeUnit.SECONDS);
 		System.in.read();
 		clock.stop();
 		// clock.scheduleAtFixedRate(new ClockTask() {
