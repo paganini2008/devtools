@@ -10,6 +10,8 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.github.paganini2008.devtools.ObjectUtils;
+
 /**
  * 
  * LruQueue
@@ -54,7 +56,7 @@ public class LruQueue<E> extends AbstractQueue<E> implements Queue<E>, Serializa
 	private final Map<Integer, E> keys;
 
 	public boolean offer(E e) {
-		keys.put(index.incrementAndGet(), e);
+		keys.put(index.getAndIncrement(), e);
 		return delegate.offer(e);
 	}
 
@@ -68,12 +70,33 @@ public class LruQueue<E> extends AbstractQueue<E> implements Queue<E>, Serializa
 		return delegate.peek();
 	}
 
+	@Override
+	public boolean contains(Object o) {
+		keys.get(indexFor(o));
+		return delegate.contains(o);
+	}
+
+	@Override
+	public boolean remove(Object o) {
+		keys.remove(indexFor(o));
+		return delegate.remove(o);
+	}
+
 	public Iterator<E> iterator() {
 		return delegate.iterator();
 	}
 
 	public int size() {
 		return delegate.size();
+	}
+
+	private int indexFor(Object o) {
+		for (Map.Entry<Integer, E> entry : keys.entrySet()) {
+			if (ObjectUtils.equals(o, entry.getValue())) {
+				return entry.getKey();
+			}
+		}
+		return -1;
 	}
 
 	protected void onEviction(E e) {
@@ -84,15 +107,6 @@ public class LruQueue<E> extends AbstractQueue<E> implements Queue<E>, Serializa
 	}
 
 	public static void main(String[] args) {
-		LruQueue<String> q = new LruQueue<String>(1000);
-		for (int i = 0; i < 1000000; i++) {
-			q.add(String.valueOf(i));
-		}
-		System.out.println(q.poll());
-		System.out.println(q.poll());
-		System.out.println(q.poll());
-		System.out.println(q.poll());
-		System.out.println(q.poll());
 	}
 
 }

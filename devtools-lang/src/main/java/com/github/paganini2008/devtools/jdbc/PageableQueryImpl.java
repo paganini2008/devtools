@@ -29,7 +29,7 @@ public class PageableQueryImpl extends PageableSlice<Tuple> implements PageableQ
 		Connection connection = null;
 		try {
 			connection = connectionFactory.getConnection();
-			return JdbcUtils.fetchOne(connection, sql, Integer.class);
+			return JdbcUtils.fetchOne(connection, sql, callback, Integer.class);
 		} catch (SQLException e) {
 			throw new PageableException(e.getMessage(), e);
 		} finally {
