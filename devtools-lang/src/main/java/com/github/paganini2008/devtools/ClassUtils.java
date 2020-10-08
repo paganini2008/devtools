@@ -377,5 +377,12 @@ public abstract class ClassUtils {
 			throw new IllegalArgumentException(e.getMessage(), e);
 		}
 	}
+	
+	public static Object getNullableValue(Class<?> cls) {
+		if(cls.isPrimitive()) {
+			return primitiveDefaultValueMap.get(cls.getName());
+		}
+		return null;
+	}
 
 }

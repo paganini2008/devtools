@@ -137,7 +137,7 @@ public abstract class MethodUtils {
 			method.setAccessible(true);
 			return method.invoke(object, arguments);
 		} catch (Exception e) {
-			throw new ReflectionException("Invoke method failed by name: " + method.getName(), e);
+			throw new ReflectionException("Failed to invoke method: " + method.getName(), e);
 		}
 	}
 
@@ -150,7 +150,7 @@ public abstract class MethodUtils {
 			method.setAccessible(true);
 			return method.invoke(null, arguments);
 		} catch (Exception e) {
-			throw new ReflectionException("Invoke method failed by name: " + method.getName(), e);
+			throw new ReflectionException("Failed to invoke method: " + method.getName(), e);
 		}
 	}
 
