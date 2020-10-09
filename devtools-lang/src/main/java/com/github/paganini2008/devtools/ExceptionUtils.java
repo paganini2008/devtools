@@ -16,7 +16,7 @@ import com.github.paganini2008.devtools.io.StringArrayWriter;
  * @version 1.0
  */
 public abstract class ExceptionUtils {
-	
+
 	public static String[] toArray(Throwable e) {
 		if (e == null) {
 			return new String[0];
@@ -54,6 +54,17 @@ public abstract class ExceptionUtils {
 		} finally {
 			IOUtils.closeQuietly(writer);
 		}
+	}
+
+	public static boolean ignoreException(Throwable e, Class<?>[] exceptionClasses) {
+		if (ArrayUtils.isNotEmpty(exceptionClasses)) {
+			for (Class<?> exceptionClass : exceptionClasses) {
+				if (exceptionClass.isAssignableFrom(e.getClass())) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 }
