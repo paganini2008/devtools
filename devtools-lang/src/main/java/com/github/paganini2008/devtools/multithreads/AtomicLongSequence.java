@@ -3,14 +3,14 @@ package com.github.paganini2008.devtools.multithreads;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * AtomicUnsignedLong
+ * 
+ * AtomicLongSequence
  * 
  * @author Fred Feng
- * 
- * 
- * @version 1.0
+ *
+ * @since 1.0
  */
-public class AtomicUnsignedLong extends Number {
+public class AtomicLongSequence extends Number {
 
 	private static final long serialVersionUID = -2149027152615605579L;
 
@@ -19,15 +19,15 @@ public class AtomicUnsignedLong extends Number {
 	private long maxValue;
 	private final long initialValue;
 
-	public AtomicUnsignedLong() {
+	public AtomicLongSequence() {
 		this(0);
 	}
 
-	public AtomicUnsignedLong(long initialValue) {
+	public AtomicLongSequence(long initialValue) {
 		this(initialValue, Long.MAX_VALUE);
 	}
 
-	public AtomicUnsignedLong(long initialValue, long maxValue) {
+	public AtomicLongSequence(long initialValue, long maxValue) {
 		if (initialValue < 0) {
 			throw new IllegalArgumentException("Initial value must >= 0.");
 		}
@@ -165,14 +165,14 @@ public class AtomicUnsignedLong extends Number {
 	}
 
 	public int hashCode() {
-		int result = 37;
-		result = result + Long.hashCode(get());
-		return result;
+		int prime = 31;
+		prime = prime + Long.hashCode(get());
+		return prime;
 	}
 
 	public boolean equals(Object other) {
-		if (other instanceof AtomicUnsignedLong) {
-			AtomicUnsignedLong integer = (AtomicUnsignedLong) other;
+		if (other instanceof AtomicLongSequence) {
+			AtomicLongSequence integer = (AtomicLongSequence) other;
 			return integer.get() == get();
 		}
 		return false;

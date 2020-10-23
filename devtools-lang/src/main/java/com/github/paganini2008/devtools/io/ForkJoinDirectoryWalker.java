@@ -119,7 +119,7 @@ public class ForkJoinDirectoryWalker extends AbstractDirectoryWalker {
 	}
 
 	public static void main(String[] args) throws Exception {
-		File directory = new File("H:\\Howbuy2014");
+		File directory = new File("E:\\work\\repo_latest\\nexus-3.0");
 		ForkJoinDirectoryWalker walker = new ForkJoinDirectoryWalker(directory, new DirectoryWalkerHandler() {
 			@Override
 			public void handleFile(File file, int depth) throws Exception {

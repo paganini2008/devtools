@@ -3,12 +3,14 @@ package com.github.paganini2008.devtools.multithreads;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * AtomicUnsignedInteger
+ * 
+ * AtomicIntegerSequence
  * 
  * @author Fred Feng
- * @version 1.0
+ *
+ * @since 1.0
  */
-public class AtomicUnsignedInteger extends Number {
+public class AtomicIntegerSequence extends Number {
 
 	private static final long serialVersionUID = 6144822865358352926L;
 
@@ -17,15 +19,15 @@ public class AtomicUnsignedInteger extends Number {
 	private final int initialValue;
 	private volatile int maxValue;
 
-	public AtomicUnsignedInteger() {
+	public AtomicIntegerSequence() {
 		this(0);
 	}
 
-	public AtomicUnsignedInteger(int initialValue) {
+	public AtomicIntegerSequence(int initialValue) {
 		this(initialValue, Integer.MAX_VALUE);
 	}
 
-	public AtomicUnsignedInteger(int initialValue, int maxValue) {
+	public AtomicIntegerSequence(int initialValue, int maxValue) {
 		if (initialValue < 0) {
 			throw new IllegalArgumentException("Initial value must >= 0.");
 		}
@@ -163,14 +165,14 @@ public class AtomicUnsignedInteger extends Number {
 	}
 
 	public int hashCode() {
-		int result = 37;
-		result = result + Integer.hashCode(get());
-		return result;
+		int prime = 31;
+		prime = prime + Integer.hashCode(get());
+		return prime;
 	}
 
 	public boolean equals(Object other) {
-		if (other instanceof AtomicUnsignedInteger) {
-			AtomicUnsignedInteger integer = (AtomicUnsignedInteger) other;
+		if (other instanceof AtomicIntegerSequence) {
+			AtomicIntegerSequence integer = (AtomicIntegerSequence) other;
 			return integer.get() == get();
 		}
 		return false;

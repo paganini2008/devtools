@@ -3,7 +3,7 @@ package com.github.paganini2008.devtools.multithreads.latch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.github.paganini2008.devtools.multithreads.AtomicUnsignedLong;
+import com.github.paganini2008.devtools.multithreads.AtomicLongSequence;
 import com.github.paganini2008.devtools.multithreads.ThreadLocalInteger;
 import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 
@@ -17,7 +17,7 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 public class FairLatch implements Latch {
 
 	private final ThreadLocalInteger tickets = new ThreadLocalInteger(0);
-	private final AtomicUnsignedLong sequence = new AtomicUnsignedLong(0);
+	private final AtomicLongSequence sequence = new AtomicLongSequence(0);
 	private final AtomicInteger counter = new AtomicInteger(0);
 	private final long startTime;
 

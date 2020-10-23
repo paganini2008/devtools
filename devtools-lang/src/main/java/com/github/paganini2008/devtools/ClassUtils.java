@@ -19,7 +19,7 @@ import com.github.paganini2008.devtools.collection.MapUtils;
 @SuppressWarnings("all")
 public abstract class ClassUtils {
 
-	public static final Class<?>[] EMPTY_ARRAY = new Class<?>[0];
+	public static final Class[] EMPTY_ARRAY = new Class[0];
 
 	private static final Map<Class<?>, Class<?>> primitiveWrapperMapper = new LinkedHashMap<Class<?>, Class<?>>();
 
@@ -376,6 +376,14 @@ public abstract class ClassUtils {
 		} catch (ClassNotFoundException e) {
 			throw new IllegalArgumentException(e.getMessage(), e);
 		}
+	}
+
+	public static <T> Class<? extends T> forName(String className, Class<T> requiredType) {
+		Class<?> clazz = forName(className);
+		if (!requiredType.isAssignableFrom(clazz)) {
+			throw new IllegalArgumentException("Class " + className + " is not assignable from class " + requiredType.getName());
+		}
+		return (Class<T>) clazz;
 	}
 
 	public static Object getNullableValue(Class<?> cls) {

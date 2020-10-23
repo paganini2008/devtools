@@ -23,6 +23,9 @@ public abstract class ConstructorUtils {
 		}
 		Class<?>[] parameterTypes = new Class<?>[arugments.length];
 		for (int i = 0; i < parameterTypes.length; i++) {
+			if (arugments[i] == null) {
+				throw new IllegalArgumentException("arugments[" + i + "] is a null parameter");
+			}
 			parameterTypes[i] = arugments[i].getClass();
 		}
 		return invokeConstructor(cl, parameterTypes, arugments);

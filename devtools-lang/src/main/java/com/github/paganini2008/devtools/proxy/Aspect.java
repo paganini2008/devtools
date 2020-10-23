@@ -18,7 +18,7 @@ public interface Aspect {
 		return true;
 	}
 
-	default Object call(Object target, Method method, Object[] args) {
+	default Object call(Object target, Method method, Object[] args) throws Throwable {
 		return MethodUtils.invokeMethod(target, method, args);
 	}
 

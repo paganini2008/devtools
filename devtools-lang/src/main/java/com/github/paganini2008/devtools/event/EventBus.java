@@ -14,7 +14,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 
 import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.ClassUtils;
-import com.github.paganini2008.devtools.multithreads.AtomicUnsignedInteger;
+import com.github.paganini2008.devtools.multithreads.AtomicIntegerSequence;
 import com.github.paganini2008.devtools.multithreads.ForEach;
 
 /**
@@ -117,7 +117,7 @@ public class EventBus<E extends Event<T>, T> {
 		final ForEach<Runnable> forEach;
 		final List<EventSubscriber<E, T>> list;
 		final boolean multicast;
-		final AtomicUnsignedInteger index = new AtomicUnsignedInteger(0);
+		final AtomicIntegerSequence index = new AtomicIntegerSequence(0);
 
 		QueueGroup(ForEach<Runnable> forEach, boolean multicast) {
 			this.forEach = forEach;

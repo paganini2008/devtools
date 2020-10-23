@@ -7,11 +7,12 @@ import static java.lang.Double.longBitsToDouble;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 
 /**
+ * 
  * AtomicDouble
  * 
  * @author Fred Feng
- * 
- * @version 1.0
+ *
+ * @since 1.0
  */
 public class AtomicDouble extends Number {
 
@@ -96,8 +97,8 @@ public class AtomicDouble extends Number {
 	}
 
 	public boolean equals(Object other) {
-		if (other instanceof AtomicUnsignedLong) {
-			AtomicUnsignedLong integer = (AtomicUnsignedLong) other;
+		if (other instanceof AtomicLongSequence) {
+			AtomicLongSequence integer = (AtomicLongSequence) other;
 			return integer.get() == get();
 		}
 		return false;
