@@ -14,4 +14,7 @@ public interface ConnectionFactory {
 
 	Connection getConnection() throws SQLException;
 
+	default void close() {
+	}
+
 }
