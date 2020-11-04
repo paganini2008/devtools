@@ -74,7 +74,7 @@ public class StringArrayConverter extends BasicConverter<String[]> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return ArrayUtils.toStringArray(source);
+			return ArrayUtils.toStringArray(source, trim);
 		}
 	};
 
@@ -214,6 +214,7 @@ public class StringArrayConverter extends BasicConverter<String[]> {
 	private DecimalFormat decimalFormat = new DecimalFormat("0.##");
 	private DateFormat dateFormat = DateUtils.DEFAULT_DATE_FORMATTER;
 	private String delimiter = ",";
+	private boolean trim;
 
 	public void setDecimalFormat(DecimalFormat decimalFormat) {
 		this.decimalFormat = decimalFormat;
@@ -225,6 +226,10 @@ public class StringArrayConverter extends BasicConverter<String[]> {
 
 	public void setDelimiter(String delimiter) {
 		this.delimiter = delimiter;
+	}
+
+	public void setTrim(boolean trim) {
+		this.trim = trim;
 	}
 
 }

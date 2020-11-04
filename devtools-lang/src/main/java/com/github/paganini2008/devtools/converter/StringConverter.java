@@ -231,7 +231,7 @@ public class StringConverter extends BasicConverter<String> {
 			if (source == null) {
 				return defaultValue;
 			}
-			return ArrayUtils.join(source, delimiter);
+			return ArrayUtils.join(source, delimiter, trim);
 		}
 	};
 
@@ -324,12 +324,17 @@ public class StringConverter extends BasicConverter<String> {
 	}
 
 	private String delimiter = ",";
+	private boolean trim;
 	private Charset charset = CharsetUtils.DEFAULT;
 	private DecimalFormat decimalFormat = new DecimalFormat("0.##");
 	private DateFormat dateFormat = DateUtils.DEFAULT_DATE_FORMATTER;
 
 	public void setDelimiter(String delimiter) {
 		this.delimiter = delimiter;
+	}
+
+	public void setTrim(boolean trim) {
+		this.trim = trim;
 	}
 
 	public void setCharset(Charset charset) {

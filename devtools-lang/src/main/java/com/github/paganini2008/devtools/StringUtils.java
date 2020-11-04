@@ -114,55 +114,97 @@ public abstract class StringUtils {
 		return str.toString();
 	}
 
-	public static String padding(int length) {
-		return repeat(BLANK, length);
+	public static String repeat(char c, int count) {
+		return repeat(String.valueOf(c), count);
 	}
 
-	public static String repeat(String str, int length) {
-		return repeat(str, null, length);
+	public static String repeat(String str, int count) {
+		return repeat(str, null, count);
 	}
 
-	public static String repeat(String str, String delim, int length) {
+	public static String repeat(String str, String delim, int count) {
 		Assert.isNull(str, "String must not be null.");
-		if (delim == null) {
-			delim = "";
+		Assert.lte(count, 0, "Repeated count must gt 0");
+		if (count == 1) {
+			return str;
 		}
+		boolean hasDelim = StringUtils.isNotBlank(delim);
 		StringBuilder result = new StringBuilder();
-		for (int i = 0; i < length; i++) {
+		for (int i = 0; i < count; i++) {
 			result.append(str);
-			if (i != length - 1) {
+			if (hasDelim && i != count - 1) {
 				result.append(delim);
 			}
 		}
 		return result.toString();
 	}
 
-	public static String leftPadding(String str, int length) {
-		return leftPadding(str, BLANK, length);
+	public static String textRight(String str, int length) {
+		return textRight(str, ' ', length);
 	}
 
-	public static String leftPadding(String str, String place, int length) {
-		Assert.isNull(str, "String must not be null.");
-		length = Math.max(str.length(), length);
-		int n = length - str.length();
-		if (n > 0) {
-			return repeat(place, n) + str;
+	public static String textRight(String str, char place, int length) {
+		return textRight(str, 0, place, length);
+	}
+
+	public static String textRight(String str, int padding, int length) {
+		return textRight(str, padding, ' ', length);
+	}
+
+	public static String textRight(String str, int padding, char place, int length) {
+		Assert.isNull(str, "Filled string must not be null.");
+		if (padding > 0) {
+			str = str.concat(repeat(place, padding));
 		}
-		return str;
-	}
-
-	public static String rightPadding(String str, int length) {
-		return rightPadding(str, BLANK, length);
-	}
-
-	public static String rightPadding(String str, String place, int length) {
-		Assert.isNull(str, "String must not be null.");
-		length = Math.max(str.length(), length);
-		int n = length - str.length();
-		if (n > 0) {
-			return str + repeat(place, n);
+		int remaining = length - str.length();
+		if (remaining <= 0) {
+			return str;
 		}
-		return str;
+		return repeat(place, remaining).concat(str);
+	}
+
+	public static String textLeft(String str, int length) {
+		return textLeft(str, ' ', length);
+	}
+
+	public static String textLeft(String str, char place, int length) {
+		return textLeft(str, 0, place, length);
+	}
+
+	public static String textLeft(String str, int padding, int length) {
+		return textLeft(str, padding, ' ', length);
+	}
+
+	public static String textLeft(String str, int padding, char place, int length) {
+		Assert.isNull(str, "Filled string must not be null.");
+		if (padding > 0) {
+			str = repeat(place, padding).concat(str);
+		}
+		int remaining = length - str.length();
+		if (remaining <= 0) {
+			return str;
+		}
+		return str.concat(repeat(place, remaining));
+	}
+
+	public static String textMiddle(String str, int length) {
+		return textMiddle(str, ' ', length);
+	}
+
+	public static String textMiddle(String str, char place, int length) {
+		Assert.isNull(str, "Filled string must not be blank.");
+		int remaining = length - str.length();
+		if (remaining <= 0) {
+			return str;
+		}
+		if (remaining == 1) {
+			return String.valueOf(place).concat(str);
+		} else if (remaining == 2) {
+			return String.valueOf(place).concat(str).concat(String.valueOf(place));
+		}
+		int n = remaining / 2;
+		int m = remaining % 2;
+		return repeat(place, n + m).concat(str).concat(repeat(place, n));
 	}
 
 	public static String toUpperCase(String s, int... indexes) {
@@ -428,7 +470,6 @@ public abstract class StringUtils {
 	}
 
 	public static void main(String[] args) throws Exception {
-		System.out.println(capitalize("lastModfied"));
 	}
 
 	public static String parseText(String text, String prefix, String suffix, Object... args) {

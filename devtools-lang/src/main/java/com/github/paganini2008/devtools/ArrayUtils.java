@@ -4,7 +4,6 @@ import java.lang.reflect.Array;
 import java.util.Comparator;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.Function;
 
 import com.github.paganini2008.devtools.primitives.Chars;
 import com.github.paganini2008.devtools.primitives.Doubles;
@@ -298,24 +297,24 @@ public abstract class ArrayUtils {
 		}
 	}
 
-	public static <T> T[][] create(Class<?> type, int row, int column) {
-		return create(type, row, column, null);
+	public static <T> T[][] newArray(Class<?> type, int row, int column) {
+		return newArray(type, row, column, null);
 	}
 
-	public static <T> T[][] create(Class<?> type, int row, int column, T defaultValue) {
+	public static <T> T[][] newArray(Class<?> type, int row, int column, T defaultValue) {
 		Assert.isNull(type, "Array class must not be null.");
 		T[][] array = (T[][]) Array.newInstance(type, row, 2);
 		for (int i = 0; i < row; i++) {
-			array[i] = create(type, column, defaultValue);
+			array[i] = newArray(type, column, defaultValue);
 		}
 		return array;
 	}
 
-	public static <T> T[] create(Class<?> type, int length) {
-		return create(type, length, null);
+	public static <T> T[] newArray(Class<?> type, int length) {
+		return newArray(type, length, null);
 	}
 
-	public static <T> T[] create(Class<?> type, int length, T defaultValue) {
+	public static <T> T[] newArray(Class<?> type, int length, T defaultValue) {
 		Assert.isNull(type, "Array class must not be null.");
 		T[] array = (T[]) Array.newInstance(type, length);
 		if (defaultValue != null) {
@@ -353,7 +352,7 @@ public abstract class ArrayUtils {
 			index = length - Math.abs(index);
 		}
 		if (index >= 0 && index < length) {
-			T[] target = create(array.getClass().getComponentType(), length - 1);
+			T[] target = newArray(array.getClass().getComponentType(), length - 1);
 			hardCopy(array, 0, target, 0, index);
 			hardCopy(array, index + 1, target, index, length - index - 1);
 			return target;
@@ -374,7 +373,7 @@ public abstract class ArrayUtils {
 	}
 
 	public static <T> T[] copy(T[] array, int startIndex, int length, T defaultValue) {
-		T[] target = create(array.getClass().getComponentType(), length, defaultValue);
+		T[] target = newArray(array.getClass().getComponentType(), length, defaultValue);
 		hardCopy(array, startIndex, target, 0, length);
 		return target;
 	}
@@ -384,25 +383,27 @@ public abstract class ArrayUtils {
 	}
 
 	public static String toString(Object[] array) {
-		return "[" + join(array) + "]";
+		return "[" + join(array, true) + "]";
 	}
 
 	public static String join(Object[] array) {
-		return join(array, ",");
+		return join(array, true);
 	}
 
-	public static String join(Object[] array, String delimiter) {
+	public static String join(Object[] array, boolean trim) {
+		return join(array, ",", trim);
+	}
+
+	public static String join(Object[] array, String delimiter, boolean trim) {
 		int l;
 		if (array == null || (l = array.length) == 0) {
 			return "";
 		}
-		if (delimiter == null) {
-			delimiter = "";
-		}
+		boolean hasDelimiter = StringUtils.isNotBlank(delimiter);
 		StringBuilder content = new StringBuilder();
 		for (int i = 0; i < l; i++) {
-			content.append(ObjectUtils.toString(array[i]));
-			if (i != l - 1) {
+			content.append(ObjectUtils.toString(array[i], trim));
+			if (hasDelimiter && i != l - 1) {
 				content.append(delimiter);
 			}
 		}
@@ -469,11 +470,11 @@ public abstract class ArrayUtils {
 		return hash;
 	}
 
-	public static String[] toStringArray(Object[] args) {
+	public static String[] toStringArray(Object[] args, boolean trim) {
 		int l = args.length;
 		String[] array = new String[l];
 		for (int i = 0; i < l; i++) {
-			array[i] = ObjectUtils.toString(args);
+			array[i] = ObjectUtils.toString(args[i], trim);
 		}
 		return array;
 	}

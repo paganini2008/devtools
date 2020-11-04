@@ -13,14 +13,13 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * ToStringStyles
  * 
  * @author Fred Feng
- * 
- * 
- * @version 1.0
+ *
+ * @since 1.0
  */
 public abstract class ToStringStyles {
-	
+
 	private static final String NEWLINE = System.getProperty("line.separator");
-	
+
 	public static class PlainToStringStyle implements ToStringStyle {
 
 		public String toString(Object bean, Collection<PropertyDescriptor> descriptors) {
@@ -45,7 +44,7 @@ public abstract class ToStringStyles {
 		}
 
 	}
-	
+
 	public static class DefaultToSringStyle implements ToStringStyle {
 
 		public String toString(Object bean, Collection<PropertyDescriptor> descriptors) {
@@ -66,7 +65,7 @@ public abstract class ToStringStyles {
 		}
 
 	}
-	
+
 	public static class MultiLineToStringStyle implements ToStringStyle {
 
 		public String toString(Object bean, Collection<PropertyDescriptor> descriptors) {
@@ -79,7 +78,7 @@ public abstract class ToStringStyles {
 			if (CollectionUtils.isNotEmpty(descriptors)) {
 				str.append(NEWLINE);
 				for (PropertyDescriptor descriptor : descriptors) {
-					str.append(StringUtils.padding(4));
+					str.append(StringUtils.repeat(' ', 4));
 					str.append(descriptor.getName()).append(": ").append(PropertyUtils.getProperty(bean, descriptor));
 					str.append(NEWLINE);
 				}
@@ -112,5 +111,5 @@ public abstract class ToStringStyles {
 		}
 
 	}
-	
+
 }
