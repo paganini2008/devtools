@@ -299,7 +299,7 @@ public abstract class JdbcUtils {
 	public static <T> T fetchOne(Connection connection, String sql, PreparedStatementCallback callback, Class<T> requiredType)
 			throws SQLException {
 		Tuple tuple = fetchOne(connection, sql, callback);
-		if (tuple.isEmpty()) {
+		if (tuple == null || tuple.isEmpty()) {
 			return null;
 		}
 		return ConvertUtils.convertValue(tuple.toValues()[0], requiredType);

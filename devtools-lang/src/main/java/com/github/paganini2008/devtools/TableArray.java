@@ -111,7 +111,11 @@ public class TableArray {
 	}
 
 	public String toString() {
-		String[] data = toStringArray(true, true);
+		return toString(true, true);
+	}
+
+	public String toString(boolean rowBorder, boolean columnBorder) {
+		String[] data = toStringArray(rowBorder, columnBorder);
 		StringBuilder tableContent = new StringBuilder();
 		for (int i = 0, l = data.length; i < l; i++) {
 			tableContent.append(data[i]);
