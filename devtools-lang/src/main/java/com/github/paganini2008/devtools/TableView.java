@@ -5,51 +5,51 @@ import java.util.List;
 
 /**
  * 
- * TableArray
+ * TableView
  * 
  * @author Fred Feng
  *
  * @since 1.0
  */
-public class TableArray {
+public class TableView {
 
 	private static final String NEWLINE = System.getProperty("line.separator");
 	private final String[][] array;
 
-	public TableArray(int rowNumber, int columnNumber) {
+	public TableView(int rowNumber, int columnNumber) {
 		this(rowNumber, columnNumber, 1);
 	}
 
-	public TableArray(int rowNumber, int columnNumber, int width) {
+	public TableView(int rowNumber, int columnNumber, int width) {
 		this.array = ArrayUtils.newArray(String.class, rowNumber, columnNumber, StringUtils.repeat(' ', width));
 	}
 
-	public TableArray setValues(int rowIndex, String[] values) {
+	public TableView setValues(int rowIndex, String[] values) {
 		for (int i = 0; i < values.length; i++) {
 			setValue(rowIndex, i, values[i]);
 		}
 		return this;
 	}
 
-	public TableArray setValue(int rowIndex, int columnIndex, String value) {
+	public TableView setValue(int rowIndex, int columnIndex, String value) {
 		int width = array[rowIndex][columnIndex].length();
 		array[rowIndex][columnIndex] = StringUtils.textMiddle(value, width);
 		return this;
 	}
 
-	public TableArray setValueOnLeft(int rowIndex, int columnIndex, String value, int padding) {
+	public TableView setValueOnLeft(int rowIndex, int columnIndex, String value, int padding) {
 		int width = array[rowIndex][columnIndex].length();
 		array[rowIndex][columnIndex] = StringUtils.textLeft(value, padding, width);
 		return this;
 	}
 
-	public TableArray setValueOnRight(int rowIndex, int columnIndex, String value, int padding) {
+	public TableView setValueOnRight(int rowIndex, int columnIndex, String value, int padding) {
 		int width = array[rowIndex][columnIndex].length();
 		array[rowIndex][columnIndex] = StringUtils.textRight(value, padding, width);
 		return this;
 	}
 
-	public TableArray setWidth(int columnIndex, int width) {
+	public TableView setWidth(int columnIndex, int width) {
 		for (int row = 0; row < array.length; row++) {
 			array[row][columnIndex] = StringUtils.repeat(' ', width);
 		}
@@ -127,7 +127,7 @@ public class TableArray {
 	}
 
 	public static void main(String[] args) {
-		TableArray table = new TableArray(10, 8, 10);
+		TableView table = new TableView(10, 8, 10);
 		System.out.println(table.toString());
 	}
 

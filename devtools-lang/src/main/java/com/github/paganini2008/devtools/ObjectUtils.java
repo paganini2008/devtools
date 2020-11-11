@@ -28,11 +28,15 @@ import com.github.paganini2008.devtools.primitives.Shorts;
 public abstract class ObjectUtils {
 
 	public static String toString(Object obj) {
-		return toString(obj, true);
+		return toString(obj, "");
 	}
 
-	public static String toString(Object obj, boolean trim) {
-		return obj != null ? trim ? obj.toString().trim() : obj.toString() : "";
+	public static String toString(Object obj, String defaultValue) {
+		return toString(obj, true, defaultValue);
+	}
+
+	public static String toString(Object obj, boolean trim, String defaultValue) {
+		return obj != null ? trim ? obj.toString().trim() : obj.toString() : defaultValue;
 	}
 
 	public static String toStringSelectively(Object obj) {

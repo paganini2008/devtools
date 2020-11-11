@@ -402,7 +402,7 @@ public abstract class ArrayUtils {
 		boolean hasDelimiter = StringUtils.isNotBlank(delimiter);
 		StringBuilder content = new StringBuilder();
 		for (int i = 0; i < l; i++) {
-			content.append(ObjectUtils.toString(array[i], trim));
+			content.append(ObjectUtils.toString(array[i], trim, ""));
 			if (hasDelimiter && i != l - 1) {
 				content.append(delimiter);
 			}
@@ -474,7 +474,7 @@ public abstract class ArrayUtils {
 		int l = args.length;
 		String[] array = new String[l];
 		for (int i = 0; i < l; i++) {
-			array[i] = ObjectUtils.toString(args[i], trim);
+			array[i] = ObjectUtils.toString(args[i], trim, "");
 		}
 		return array;
 	}

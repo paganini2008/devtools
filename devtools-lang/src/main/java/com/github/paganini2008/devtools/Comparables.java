@@ -3,18 +3,44 @@ package com.github.paganini2008.devtools;
 /**
  * 
  * Comparables
- *
+ * 
  * @author Fred Feng
- * @version 1.0
+ *
+ * @since 1.0
  */
 public abstract class Comparables {
-	
+
 	public static <T> T nullOrMax(T leftValue, T rightValue) {
 		return leftValue == null ? rightValue : leftValue;
 	}
 
 	public static <T> T nullOrMin(T leftValue, T rightValue) {
 		return leftValue == null ? leftValue : rightValue;
+	}
+
+	public static <T extends Comparable<T>> T getOrDefault(T left, T right) {
+		return getOrDefault(left, right, null);
+	}
+
+	public static <T extends Comparable<T>> T getOrDefault(T left, T right, T defaultValue) {
+		if (compareTo(left, right) == 0) {
+			return defaultValue;
+		}
+		return left;
+	}
+
+	public static <T extends Comparable<T>> T minOrDefault(T left, T right, T defaultValue) {
+		if (compareTo(left, right) == 0) {
+			return defaultValue;
+		}
+		return min(left, defaultValue);
+	}
+
+	public static <T extends Comparable<T>> T maxOrDefault(T left, T right, T defaultValue) {
+		if (compareTo(left, right) == 0) {
+			return defaultValue;
+		}
+		return max(left, defaultValue);
 	}
 
 	public static <T extends Comparable<T>> T max(T[] array) {
