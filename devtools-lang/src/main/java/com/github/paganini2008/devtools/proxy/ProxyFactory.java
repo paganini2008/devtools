@@ -16,4 +16,7 @@ public interface ProxyFactory {
 
 	Object getProxy(Object target, Aspect aspect, Class<?>... interfaces);
 
+	static ProxyFactory getDefault() {
+		return new JdkProxyFactory();
+	}
 }
