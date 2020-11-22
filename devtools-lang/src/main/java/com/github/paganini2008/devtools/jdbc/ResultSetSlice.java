@@ -19,6 +19,10 @@ public interface ResultSetSlice<T> extends Countable {
 		return new SimplePageResponse<T>(pageRequest, this);
 	}
 
+	default PageResponse<T> list(PageRequest pageRequest, int maxResults) {
+		return new SimplePageResponse<T>(pageRequest, this, () -> maxResults);
+	}
+
 	default PageResponse<T> list(PageRequest pageRequest, Countable countable) {
 		return new SimplePageResponse<T>(pageRequest, this, countable);
 	}

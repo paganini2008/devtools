@@ -369,8 +369,18 @@ public abstract class ClassUtils {
 		return false;
 	}
 
+	public static boolean isPresent(String className) {
+		Assert.hasNoText(className, "Nullable className");
+		try {
+			Class.forName(className);
+		} catch (ClassNotFoundException e) {
+			return false;
+		}
+		return true;
+	}
+
 	public static Class<?> forName(String className) {
-		Assert.hasNoText(className);
+		Assert.hasNoText(className, "Nullable className");
 		try {
 			return Class.forName(className);
 		} catch (ClassNotFoundException e) {
@@ -379,6 +389,7 @@ public abstract class ClassUtils {
 	}
 
 	public static <T> Class<? extends T> forName(String className, Class<T> requiredType) {
+		Assert.hasNoText(className, "Nullable className");
 		Class<?> clazz = forName(className);
 		if (!requiredType.isAssignableFrom(clazz)) {
 			throw new IllegalArgumentException("Class " + className + " is not assignable from class " + requiredType.getName());

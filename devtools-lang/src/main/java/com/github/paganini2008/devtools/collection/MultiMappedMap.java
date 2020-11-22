@@ -45,17 +45,21 @@ public class MultiMappedMap<K, N, V> extends AbstractMap<K, Map<N, V>> implement
 	}
 
 	public V get(K key, N name) {
-		return get(key, name, null);
+		return get(key, name, (V) null);
 	}
 
 	public V get(K key, N name, V defaultValue) {
+		return get(key, name, () -> defaultValue);
+	}
+
+	public V get(K key, N name, Supplier<V> defaultValue) {
 		Map<N, V> map = delegate.get(key);
 		V v = null;
 		if (map != null) {
 			v = map.get(name);
 		}
 		if (v == null) {
-			v = defaultValue;
+			v = defaultValue.get();
 		}
 		return v;
 	}
