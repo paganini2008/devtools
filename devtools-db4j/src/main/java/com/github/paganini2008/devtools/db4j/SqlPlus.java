@@ -10,7 +10,6 @@ import com.github.paganini2008.devtools.collection.Tuple;
 import com.github.paganini2008.devtools.db4j.mapper.RowMapper;
 import com.github.paganini2008.devtools.jdbc.ConnectionFactory;
 import com.github.paganini2008.devtools.jdbc.Cursor;
-import com.github.paganini2008.devtools.jdbc.JdbcUtils;
 import com.github.paganini2008.devtools.jdbc.PageableQuery;
 import com.github.paganini2008.devtools.jdbc.PageableSql;
 import com.github.paganini2008.devtools.jdbc.PooledConnectionFactory;
@@ -52,7 +51,7 @@ public class SqlPlus implements JdbcOperations {
 		try {
 			return sqlRunner.update(connection, sql, sqlParameter);
 		} finally {
-			JdbcUtils.closeQuietly(connection);
+			connectionFactory.close(connection);
 		}
 	}
 
@@ -62,7 +61,7 @@ public class SqlPlus implements JdbcOperations {
 		try {
 			return sqlRunner.update(connection, sql, sqlParameter, generatedKey);
 		} finally {
-			JdbcUtils.closeQuietly(connection);
+			connectionFactory.close(connection);
 		}
 	}
 
@@ -72,7 +71,7 @@ public class SqlPlus implements JdbcOperations {
 		try {
 			return sqlRunner.batchUpdate(connection, sql, sqlParameters);
 		} finally {
-			JdbcUtils.closeQuietly(connection);
+			connectionFactory.close(connection);
 		}
 	}
 
@@ -82,7 +81,7 @@ public class SqlPlus implements JdbcOperations {
 		try {
 			return sqlRunner.query(connection, sql, sqlParameter, extractor);
 		} finally {
-			JdbcUtils.closeQuietly(connection);
+			connectionFactory.close(connection);
 		}
 	}
 
@@ -92,7 +91,7 @@ public class SqlPlus implements JdbcOperations {
 		try {
 			return sqlRunner.queryForList(connection, sql, sqlParameter);
 		} finally {
-			JdbcUtils.closeQuietly(connection);
+			connectionFactory.close(connection);
 		}
 	}
 
@@ -102,7 +101,7 @@ public class SqlPlus implements JdbcOperations {
 		try {
 			return sqlRunner.queryForObject(connection, sql, sqlParameter, rowMapper);
 		} finally {
-			JdbcUtils.closeQuietly(connection);
+			connectionFactory.close(connection);
 		}
 	}
 
@@ -112,7 +111,7 @@ public class SqlPlus implements JdbcOperations {
 		try {
 			return sqlRunner.queryForList(connection, sql, sqlParameter, rowMapper);
 		} finally {
-			JdbcUtils.closeQuietly(connection);
+			connectionFactory.close(connection);
 		}
 	}
 
@@ -122,7 +121,7 @@ public class SqlPlus implements JdbcOperations {
 		try {
 			return sqlRunner.queryForCursor(connection, sql, sqlParameter, rowMapper);
 		} finally {
-			JdbcUtils.closeQuietly(connection);
+			connectionFactory.close(connection);
 		}
 	}
 
@@ -132,7 +131,7 @@ public class SqlPlus implements JdbcOperations {
 		try {
 			return sqlRunner.queryForCachedCursor(connection, sql, sqlParameter, rowMapper);
 		} finally {
-			JdbcUtils.closeQuietly(connection);
+			connectionFactory.close(connection);
 		}
 	}
 
@@ -152,7 +151,7 @@ public class SqlPlus implements JdbcOperations {
 		try {
 			return customizable.customize(connection, sqlRunner);
 		} finally {
-			JdbcUtils.closeQuietly(connection);
+			connectionFactory.close(connection);
 		}
 	}
 

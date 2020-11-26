@@ -14,7 +14,8 @@ public interface ConnectionFactory {
 
 	Connection getConnection() throws SQLException;
 
-	default void close() {
+	default void close(Connection connection) {
+		JdbcUtils.closeQuietly(connection);
 	}
 
 }
