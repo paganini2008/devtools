@@ -6,6 +6,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.MapUtils;
@@ -227,30 +228,22 @@ public abstract class ObjectUtils {
 		return hash;
 	}
 
-	public static boolean accept(Acceptable acceptable) {
-		int retrying = 0;
-		boolean success = false;
-		do {
-			try {
-				success = acceptable.accept();
-			} catch (Throwable e) {
-				acceptable.exceptionCaught(e, retrying);
-			}
-			ThreadUtils.sleep(acceptable.retryingInterval());
-		} while (!success && retrying++ < acceptable.retries());
-		return success;
+	public static <T> T polling(Retryable<T> retryable) {
+		return polling(retryable, () -> null);
 	}
 
-	public static <T> T obtain(Obtainable<T> obtainable) {
-		int retrying = 0;
+	public static <T> T polling(Retryable<T> retryable, Supplier<T> defaultValue) {
+		int retryCount = 1;
 		do {
 			try {
-				return obtainable.obtain();
+				if (retryable.tryAccept()) {
+					return retryable.accept();
+				}
 			} catch (Throwable e) {
-				obtainable.exceptionCaught(e, retrying);
+				retryable.exceptionCaught(e, retryCount);
 			}
-			ThreadUtils.sleep(obtainable.retryingInterval());
-		} while (retrying++ < obtainable.retries());
-		return obtainable.defaultValue();
+			ThreadUtils.sleep(retryable.retryInterval());
+		} while (!retryable.tryAccept() && retryCount++ <= retryable.maxAttempts());
+		return defaultValue.get();
 	}
 }
