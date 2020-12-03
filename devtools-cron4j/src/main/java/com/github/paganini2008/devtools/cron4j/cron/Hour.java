@@ -7,7 +7,7 @@ import java.util.function.Function;
  * 
  * Hour
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * 
  * 
  * @version 1.0

@@ -7,7 +7,7 @@ import com.github.paganini2008.devtools.io.PathUtils;
 /**
  * MatchNameFileFilter
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class MatchNameFileFilter extends LogicalFileFilter {

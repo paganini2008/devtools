@@ -15,7 +15,7 @@ import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
  * 
  * ThreadPoolTaskExecutor
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class ThreadPoolTaskExecutor implements TaskExecutor {
@@ -124,7 +124,7 @@ public class ThreadPoolTaskExecutor implements TaskExecutor {
 	 * 
 	 * TaskFutureImpl
 	 *
-	 * @author Fred Feng
+	 * @author Jimmy Hoff
 	 * @version 1.0
 	 */
 	static class TaskFutureImpl implements TaskFuture {
@@ -172,7 +172,7 @@ public class ThreadPoolTaskExecutor implements TaskExecutor {
 	 * 
 	 * CronTask
 	 *
-	 * @author Fred Feng
+	 * @author Jimmy Hoff
 	 * @version 1.0
 	 */
 	class CronTask implements Runnable {
@@ -233,7 +233,7 @@ public class ThreadPoolTaskExecutor implements TaskExecutor {
 	 * 
 	 * SimpleTask
 	 *
-	 * @author Fred Feng
+	 * @author Jimmy Hoff
 	 * @version 1.0
 	 */
 	class SimpleTask implements Runnable {

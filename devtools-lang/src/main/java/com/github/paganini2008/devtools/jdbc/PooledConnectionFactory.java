@@ -9,7 +9,7 @@ import javax.sql.DataSource;
  * 
  * PooledConnectionFactory
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class PooledConnectionFactory implements ConnectionFactory {

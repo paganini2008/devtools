@@ -17,7 +17,7 @@ import com.github.paganini2008.devtools.event.EventSubscriber;
  * 
  * Clock
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public final class Clock implements Executable {
@@ -29,7 +29,11 @@ public final class Clock implements Executable {
 	private final EventBus<ClockEvent, String> eventBus;
 
 	public Clock() {
-		this(Executors.newCachedThreadPool(), true);
+		this(Runtime.getRuntime().availableProcessors() * 2);
+	}
+
+	public Clock(int nThreads) {
+		this(Executors.newFixedThreadPool(nThreads), true);
 	}
 
 	public Clock(Executor executor, boolean autoShutdownExecutor) {
@@ -176,7 +180,7 @@ public final class Clock implements Executable {
 	 * 
 	 * ClockEvent
 	 * 
-	 * @author Fred Feng
+	 * @author Jimmy Hoff
 	 *
 	 * @since 1.0
 	 */
@@ -204,7 +208,7 @@ public final class Clock implements Executable {
 
 	public static void main(String[] args) throws Throwable {
 		final AtomicInteger counter = new AtomicInteger();
-		Clock clock = new Clock(Executors.newFixedThreadPool(8),true);
+		Clock clock = new Clock(Executors.newFixedThreadPool(8), true);
 		ClockTask task = new ClockTask() {
 			protected void runTask() {
 				System.out.println("Test1: " + DateUtils.format(System.currentTimeMillis()));
@@ -213,7 +217,7 @@ public final class Clock implements Executable {
 				}
 			}
 		};
-		clock.schedule(task, 3, 5, TimeUnit.SECONDS);
+		clock.schedule(task, 1, 1, TimeUnit.SECONDS);
 		System.in.read();
 		clock.stop();
 		// clock.scheduleAtFixedRate(new ClockTask() {

@@ -5,7 +5,7 @@ import java.io.File;
 /**
  * LastModifiedFileFilter
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class LastModifiedFileFilter extends LogicalFileFilter {

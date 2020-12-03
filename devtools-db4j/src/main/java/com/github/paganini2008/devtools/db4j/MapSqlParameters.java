@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * MapSqlParameters
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class MapSqlParameters extends AbstractSqlParameter implements SqlParameters {

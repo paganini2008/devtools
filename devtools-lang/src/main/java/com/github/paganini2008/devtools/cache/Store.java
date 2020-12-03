@@ -5,7 +5,7 @@ import java.util.Set;
 /**
  * Store
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * 
  * @version 1.0
  */

@@ -10,7 +10,7 @@ import com.github.paganini2008.devtools.db4j.JdbcType;
 /**
  * EnumTypeHandler
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class EnumTypeHandler<E extends Enum<E>> extends BasicTypeHandler {

@@ -6,7 +6,7 @@ import java.util.logging.Logger;
  * 
  * LoggerFactory
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public interface LoggerFactory {

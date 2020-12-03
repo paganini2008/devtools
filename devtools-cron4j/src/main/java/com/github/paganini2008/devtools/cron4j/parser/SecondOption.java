@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.cron4j.cron.TheSecond;
  * 
  * SecondClause
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  *
  * @since 1.0
  */

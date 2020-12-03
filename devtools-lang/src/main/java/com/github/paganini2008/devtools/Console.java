@@ -8,7 +8,7 @@ import java.util.Map;
  * 
  * Console
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  *
  * @since 1.0
  */

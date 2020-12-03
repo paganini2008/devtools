@@ -12,7 +12,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 /**
  * LruSet
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * 
  * @version 1.0
  */

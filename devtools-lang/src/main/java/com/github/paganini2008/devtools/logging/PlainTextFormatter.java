@@ -6,7 +6,7 @@ import java.util.logging.LogRecord;
 /**
  * PlainTextFormatter
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class PlainTextFormatter extends Formatter {

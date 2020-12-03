@@ -4,7 +4,7 @@ package com.github.paganini2008.devtools.cron4j.cron;
  * 
  * TheWeek
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public interface TheWeek extends Week {

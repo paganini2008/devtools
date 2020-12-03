@@ -5,7 +5,7 @@ import java.io.File;
 /**
  * NotFileFilter
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class NotFileFilter extends LogicalFileFilter {

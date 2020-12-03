@@ -4,7 +4,7 @@ package com.github.paganini2008.devtools.jdbc;
  * 
  * PageableSlice
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public abstract class PageableSlice<T> implements ResultSetSlice<T> {

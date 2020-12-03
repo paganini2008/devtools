@@ -9,7 +9,7 @@ import com.github.paganini2008.devtools.multithreads.latch.Latch;
  * 
  * ThreadPoolBuilder
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * 
  * 
  */

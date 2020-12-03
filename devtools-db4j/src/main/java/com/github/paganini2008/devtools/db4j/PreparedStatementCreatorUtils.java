@@ -8,7 +8,7 @@ import java.sql.Statement;
 /**
  * PreparedStatementCreators
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public abstract class PreparedStatementCreatorUtils {
@@ -36,7 +36,7 @@ public abstract class PreparedStatementCreatorUtils {
 	/**
 	 * Default PreparedStatement
 	 * 
-	 * @author Fred Feng
+	 * @author Jimmy Hoff
 	 * @version 1.0
 	 */
 	private static class DefaultPreparedStatementCreator implements PreparedStatementCreator {
@@ -56,7 +56,7 @@ public abstract class PreparedStatementCreatorUtils {
 	/**
 	 * PreparedStatement for columnNames
 	 * 
-	 * @author Fred Feng
+	 * @author Jimmy Hoff
 	 * @version 1.0
 	 */
 	private static class ColumnNamesPreparedStatementCreator implements PreparedStatementCreator {
@@ -79,7 +79,7 @@ public abstract class PreparedStatementCreatorUtils {
 	/**
 	 * PreparedStatement for columnIndexes
 	 * 
-	 * @author Fred Feng
+	 * @author Jimmy Hoff
 	 * @version 1.0
 	 */
 	private static class ColumnIndexesPreparedStatementCreator implements PreparedStatementCreator {
@@ -102,7 +102,7 @@ public abstract class PreparedStatementCreatorUtils {
 	/**
 	 * PreparedStatement for GeneratedKeys
 	 * 
-	 * @author Fred Feng
+	 * @author Jimmy Hoff
 	 * @version 1.0
 	 */
 	private static class GeneratedKeyPreparedStatementCreator implements PreparedStatementCreator {
@@ -122,7 +122,7 @@ public abstract class PreparedStatementCreatorUtils {
 	/**
 	 * PreparedStatement for ResultSet
 	 * 
-	 * @author Fred Feng
+	 * @author Jimmy Hoff
 	 * @version 1.0
 	 */
 	private static class ResultSetPreparedStatementCreator implements PreparedStatementCreator {

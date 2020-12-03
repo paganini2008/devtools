@@ -6,7 +6,7 @@ import com.github.paganini2008.devtools.cron4j.TaskExecutor.TaskDetail;
  * 
  * CancellationException
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class CancellationException extends SchedulingException {

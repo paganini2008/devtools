@@ -15,7 +15,7 @@ import java.util.function.Supplier;
  * 
  * MultiDequeMap
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @since 1.0
  */
 public class MultiDequeMap<K, V> extends AbstractMap<K, Deque<V>> implements Map<K, Deque<V>>, Serializable {

@@ -22,7 +22,7 @@ import com.github.paganini2008.devtools.date.DateUtils;
  * 
  * TestBeanStreaming
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * 
  * @version 1.0
  */

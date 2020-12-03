@@ -10,7 +10,7 @@ import java.util.Set;
  * 
  * KeyConversionMap
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * 
  * 
  * @version 1.0

@@ -5,7 +5,7 @@ import java.io.InputStream;
 /**
  * BasicNameValuePair
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class BasicNameValuePair implements NameValuePair {

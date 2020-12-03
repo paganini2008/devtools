@@ -7,7 +7,7 @@ import java.util.Date;
 /**
  * StdoutLog
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class StdoutLog implements Log {

@@ -20,7 +20,7 @@ import com.github.paganini2008.devtools.jdbc.UnpooledDataSource;
  * 
  * SqlPlus
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class SqlPlus implements JdbcOperations {

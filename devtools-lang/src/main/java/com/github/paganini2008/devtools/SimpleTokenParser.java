@@ -6,7 +6,7 @@ import java.util.function.Function;
  * 
  * SimpleTokenParser
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class SimpleTokenParser implements TokenParser<Integer, String> {

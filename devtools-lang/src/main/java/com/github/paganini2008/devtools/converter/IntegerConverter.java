@@ -5,7 +5,7 @@ import com.github.paganini2008.devtools.primitives.Ints;
 /**
  * IntegerConverter
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class IntegerConverter extends BasicConverter<Integer> {

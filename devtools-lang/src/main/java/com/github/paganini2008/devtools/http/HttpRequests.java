@@ -4,7 +4,7 @@ package com.github.paganini2008.devtools.http;
  * 
  * HttpRequests
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * 
  * 
  * @version 1.0

@@ -6,7 +6,7 @@ import com.github.paganini2008.devtools.cron4j.TaskExecutor.TaskDetail;
  * 
  * Condition for cancelling current task
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 @FunctionalInterface

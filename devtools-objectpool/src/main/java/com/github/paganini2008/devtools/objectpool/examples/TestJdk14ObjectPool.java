@@ -14,7 +14,7 @@ import com.github.paganini2008.devtools.objectpool.ObjectFactory;
  * 
  * TestJdk14ObjectPool
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class TestJdk14ObjectPool {

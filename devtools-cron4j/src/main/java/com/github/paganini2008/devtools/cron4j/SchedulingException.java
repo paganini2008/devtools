@@ -4,7 +4,7 @@ package com.github.paganini2008.devtools.cron4j;
  * 
  * SchedulingException
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class SchedulingException extends RuntimeException {

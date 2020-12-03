@@ -4,7 +4,7 @@ package com.github.paganini2008.devtools.io.monitor;
  * 
  * FileChangeListener
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * 
  * 
  * @version 1.0

@@ -15,7 +15,7 @@ import com.github.paganini2008.devtools.logging.LogFactory;
 /**
  * SerializableStore
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class SerializableStore implements Store {

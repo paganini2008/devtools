@@ -13,7 +13,7 @@ import com.github.paganini2008.devtools.date.DateUtils;
  * 
  * ThisYear
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class ThisYear implements TheYear, Serializable {

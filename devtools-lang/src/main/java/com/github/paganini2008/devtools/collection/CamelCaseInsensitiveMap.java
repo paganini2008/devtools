@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.CaseFormats;
  * 
  * CamelCaseInsensitiveMap
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class CamelCaseInsensitiveMap<V> extends KeyConversionMap<String, String, V> {

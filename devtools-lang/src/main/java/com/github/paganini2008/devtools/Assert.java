@@ -4,7 +4,7 @@ package com.github.paganini2008.devtools;
  * 
  * Assert
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public abstract class Assert {

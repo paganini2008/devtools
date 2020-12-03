@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 
  * AtomicIntegerSequence
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  *
  * @since 1.0
  */

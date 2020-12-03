@@ -4,7 +4,7 @@ package com.github.paganini2008.devtools.enums;
  * 
  * EnumConstant
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * 
  * 
  * @version 1.0

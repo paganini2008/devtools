@@ -17,7 +17,7 @@ import com.github.paganini2008.devtools.ObjectUtils;
 /**
  * ListUtils
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 @SuppressWarnings("all")

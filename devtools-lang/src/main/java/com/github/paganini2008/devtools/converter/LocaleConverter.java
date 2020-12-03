@@ -7,7 +7,7 @@ import com.github.paganini2008.devtools.LocaleUtils;
 /**
  * LocaleConverter
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class LocaleConverter extends BasicConverter<Locale> {

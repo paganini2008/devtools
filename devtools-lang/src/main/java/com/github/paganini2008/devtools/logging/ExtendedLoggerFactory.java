@@ -8,7 +8,7 @@ import java.util.logging.Logger;
  * 
  * ExtendedLoggerFactory
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class ExtendedLoggerFactory extends DefaultLoggerFactory {

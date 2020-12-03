@@ -16,7 +16,7 @@ import com.github.paganini2008.devtools.io.FileUtils;
  * 
  * FileWatcher
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * 
  * 
  * @version 1.0

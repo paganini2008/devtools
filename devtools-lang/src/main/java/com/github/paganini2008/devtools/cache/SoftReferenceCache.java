@@ -9,7 +9,7 @@ import com.github.paganini2008.devtools.collection.SoftReferenceMap;
  * 
  * SoftReferenceCache
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * 
  * @version 1.0
  */

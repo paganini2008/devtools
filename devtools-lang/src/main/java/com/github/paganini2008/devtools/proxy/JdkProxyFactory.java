@@ -9,7 +9,7 @@ import java.lang.reflect.Proxy;
  * 
  * JdkProxyFactory
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  *
  * @since 1.0
  */
@@ -27,7 +27,7 @@ public class JdkProxyFactory implements ProxyFactory {
 	 * 
 	 * JdkProxyInterceptor
 	 * 
-	 * @author Fred Feng
+	 * @author Jimmy Hoff
 	 *
 	 * @since 1.0
 	 */

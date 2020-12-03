@@ -6,7 +6,7 @@ import java.util.EventObject;
  * 
  * PropertyChangeEvent
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @create 2019-03
  */
 public class PropertyChangeEvent<T> extends EventObject {

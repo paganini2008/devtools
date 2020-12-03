@@ -12,7 +12,7 @@ import com.github.paganini2008.devtools.db4j.JdbcType;
 /**
  * DateTypeHandler
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class DateTypeHandler extends BasicTypeHandler {

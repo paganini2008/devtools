@@ -6,7 +6,7 @@ import java.util.Calendar;
  * 
  * TheMonth
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public interface TheMonth extends Month {

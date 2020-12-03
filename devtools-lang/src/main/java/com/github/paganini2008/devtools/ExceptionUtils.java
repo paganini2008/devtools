@@ -12,7 +12,7 @@ import com.github.paganini2008.devtools.io.StringArrayWriter;
  * 
  * ExceptionUtils
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public abstract class ExceptionUtils {

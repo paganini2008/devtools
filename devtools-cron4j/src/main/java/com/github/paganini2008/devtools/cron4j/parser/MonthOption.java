@@ -11,7 +11,7 @@ import com.github.paganini2008.devtools.cron4j.cron.Year;
  * 
  * MonthOption
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  *
  * @since 1.0
  */

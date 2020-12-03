@@ -7,7 +7,7 @@ import com.github.paganini2008.devtools.StringUtils;
 /**
  * CharsetConverter
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class CharsetConverter extends BasicConverter<Charset> {

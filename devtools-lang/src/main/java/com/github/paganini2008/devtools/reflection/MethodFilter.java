@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
  * 
  * MethodFilter
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * 
  * 
  * @version 1.0

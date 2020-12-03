@@ -4,7 +4,7 @@ package com.github.paganini2008.devtools.multithreads;
  * 
  * ThreadLocalLong
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class ThreadLocalLong extends Number {

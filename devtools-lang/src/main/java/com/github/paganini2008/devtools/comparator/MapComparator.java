@@ -9,7 +9,7 @@ import com.github.paganini2008.devtools.collection.MapUtils;
 /**
  * MapComparator
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public abstract class MapComparator<K, V> implements Comparator<Map.Entry<K, V>> {

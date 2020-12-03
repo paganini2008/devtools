@@ -34,7 +34,7 @@ import com.github.paganini2008.devtools.math.BigDecimalUtils;
 /**
  * FileUtils
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public abstract class FileUtils {

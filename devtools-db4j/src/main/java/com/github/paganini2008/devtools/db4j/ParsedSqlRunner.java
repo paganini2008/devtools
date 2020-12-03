@@ -22,7 +22,7 @@ import com.github.paganini2008.devtools.jdbc.PageableSql;
  * 
  * ParsedSqlRunner
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class ParsedSqlRunner {
@@ -226,7 +226,7 @@ public class ParsedSqlRunner {
 	 * 
 	 * PageableQueryImpl
 	 *
-	 * @author Fred Feng
+	 * @author Jimmy Hoff
 	 * @version 1.0
 	 */
 	private static class PageableQueryImpl<T> extends PageableSlice<T> implements PageableQuery<T> {

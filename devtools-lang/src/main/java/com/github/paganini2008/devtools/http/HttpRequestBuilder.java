@@ -12,7 +12,7 @@ import com.github.paganini2008.devtools.net.UrlUtils;
  * 
  * HttpRequestBuilder
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * 
  * 
  * @version 1.0

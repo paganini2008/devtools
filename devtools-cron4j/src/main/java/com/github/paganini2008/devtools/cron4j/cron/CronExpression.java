@@ -15,7 +15,7 @@ import com.github.paganini2008.devtools.io.SerializationUtils;
  * 
  * CronExpression
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public interface CronExpression extends CronStringBuilder {

@@ -7,7 +7,7 @@ import java.util.List;
  * 
  * TableView
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  *
  * @since 1.0
  */

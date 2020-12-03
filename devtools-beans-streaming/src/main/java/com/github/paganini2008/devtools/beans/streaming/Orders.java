@@ -6,7 +6,7 @@ import java.util.function.Function;
  * 
  * Orders
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * 
  * @version 1.0
  */

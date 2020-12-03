@@ -11,7 +11,7 @@ import com.github.paganini2008.devtools.comparator.ReverseComparator;
 /**
  * MapComparator
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 @SuppressWarnings("all")

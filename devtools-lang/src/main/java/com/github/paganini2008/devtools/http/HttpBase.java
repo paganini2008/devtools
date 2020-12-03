@@ -7,7 +7,7 @@ import java.util.Map;
  * 
  * HttpBase
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * 
  * 
  * @version 1.0

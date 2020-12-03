@@ -13,7 +13,7 @@ import com.github.paganini2008.devtools.comparator.ReverseComparator;
  * 
  * BeanSort
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 @SuppressWarnings("all")
@@ -23,7 +23,7 @@ public class BeanSort<E> extends AbstractComparator<E> implements Sort<E> {
 	 * 
 	 * ComparatorChain
 	 * 
-	 * @author Fred Feng
+	 * @author Jimmy Hoff
 	 * 
 	 * @version 1.0
 	 */

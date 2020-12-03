@@ -11,7 +11,7 @@ import java.util.logging.Logger;
  * 
  * DefaultLoggerFactory
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class DefaultLoggerFactory implements LoggerFactory {

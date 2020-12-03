@@ -32,7 +32,7 @@ import com.github.paganini2008.devtools.date.DateUtils;
  * 
  * CRON
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  *
  * @since 1.0
  */

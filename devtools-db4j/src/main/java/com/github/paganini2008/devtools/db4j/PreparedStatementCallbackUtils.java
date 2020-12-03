@@ -11,7 +11,7 @@ import com.github.paganini2008.devtools.jdbc.PreparedStatementCallback;
  * 
  * PreparedStatementCallbackUtils
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public abstract class PreparedStatementCallbackUtils {
@@ -37,7 +37,7 @@ public abstract class PreparedStatementCallbackUtils {
 	 * 
 	 * BatchArgumentJdbcTypePreparedStatementCallback
 	 *
-	 * @author Fred Feng
+	 * @author Jimmy Hoff
 	 * @version 1.0
 	 */
 	private static class BatchArgumentJdbcTypePreparedStatementCallback implements PreparedStatementCallback {
@@ -79,7 +79,7 @@ public abstract class PreparedStatementCallbackUtils {
 	/**
 	 * BatchArgumentPreparedStatementCallback
 	 * 
-	 * @author Fred Feng
+	 * @author Jimmy Hoff
 	 * @version 1.0
 	 */
 	private static class BatchArgumentPreparedStatementCallback implements PreparedStatementCallback {
@@ -115,7 +115,7 @@ public abstract class PreparedStatementCallbackUtils {
 	/**
 	 * ArgumentJdbcTypePreparedStatementCallback
 	 * 
-	 * @author Fred Feng
+	 * @author Jimmy Hoff
 	 * @version 1.0
 	 */
 	private static class ArgumentJdbcTypePreparedStatementCallback implements PreparedStatementCallback {
@@ -150,7 +150,7 @@ public abstract class PreparedStatementCallbackUtils {
 	/**
 	 * ArgumentPreparedStatementCallback
 	 * 
-	 * @author Fred Feng
+	 * @author Jimmy Hoff
 	 * @version 1.0
 	 */
 	private static class ArgumentPreparedStatementCallback implements PreparedStatementCallback {

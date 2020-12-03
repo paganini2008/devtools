@@ -6,7 +6,7 @@ import java.util.List;
  * 
  * ArraySqlParameters
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class ArraySqlParameters extends AbstractSqlParameter implements SqlParameters {

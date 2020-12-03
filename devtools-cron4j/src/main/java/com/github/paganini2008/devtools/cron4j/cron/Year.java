@@ -9,7 +9,7 @@ import java.util.function.Function;
  * 
  * Year
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * 
  * 
  * @version 1.0

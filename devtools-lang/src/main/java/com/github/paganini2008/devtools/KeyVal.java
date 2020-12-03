@@ -6,7 +6,7 @@ import java.io.Serializable;
  * 
  * KeyVal
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class KeyVal<K, V> implements Serializable {

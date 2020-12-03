@@ -10,7 +10,7 @@ import java.util.concurrent.Executors;
  * 
  * Reactor
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @since 1.0
  */
 public class Reactor<X, R> extends ForEach<X> {
@@ -55,7 +55,7 @@ public class Reactor<X, R> extends ForEach<X> {
 	 * 
 	 * Consumer
 	 *
-	 * @author Fred Feng
+	 * @author Jimmy Hoff
 	 * @since 1.0
 	 */
 	public static interface Consumer<X, R> {

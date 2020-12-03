@@ -7,7 +7,7 @@ import com.github.paganini2008.devtools.comparator.ComparatorHelper;
 /**
  * FileLengthComparator
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class FileLengthComparator extends FileComparator {

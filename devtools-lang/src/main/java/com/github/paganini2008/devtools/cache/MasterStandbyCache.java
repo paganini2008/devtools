@@ -6,7 +6,7 @@ import java.util.Set;
  * 
  * MasterStandbyCache
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * 
  * @version 1.0
  */

@@ -10,7 +10,7 @@ import com.github.paganini2008.devtools.collection.LruMap;
 /**
  * ParsedSql
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public final class ParsedSql implements Serializable {

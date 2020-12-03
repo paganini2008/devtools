@@ -8,7 +8,7 @@ import java.util.Stack;
  * 
  * LifoCache
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class LifoCache extends LimitedCache {

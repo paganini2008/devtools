@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.reflection.ConstructorUtils;
  * 
  * BeanPropertyRowMapper
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class BeanPropertyRowMapper<T> extends AbstractRowMapper<T> {

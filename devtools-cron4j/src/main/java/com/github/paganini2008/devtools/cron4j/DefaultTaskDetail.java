@@ -10,7 +10,7 @@ import com.github.paganini2008.devtools.date.DateUtils;
  * 
  * DefaultTaskDetail
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class DefaultTaskDetail implements TaskDetail {

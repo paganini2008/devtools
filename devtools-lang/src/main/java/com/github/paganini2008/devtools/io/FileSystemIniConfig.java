@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * FileSystemIniResource
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class FileSystemIniConfig extends RefreshingIniConfig {

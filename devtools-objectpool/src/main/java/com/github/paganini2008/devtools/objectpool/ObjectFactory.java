@@ -3,7 +3,7 @@ package com.github.paganini2008.devtools.objectpool;
 /**
  * Customized ObjectFactory interface to manage some reused objects.
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public interface ObjectFactory {

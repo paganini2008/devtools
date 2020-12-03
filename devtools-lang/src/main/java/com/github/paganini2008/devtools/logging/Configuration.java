@@ -14,7 +14,7 @@ import java.util.logging.Level;
  * 
  * Configuration
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class Configuration {

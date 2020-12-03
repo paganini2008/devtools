@@ -12,7 +12,7 @@ import com.github.paganini2008.devtools.collection.MapUtils;
  * 
  * Observable
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class Observable {

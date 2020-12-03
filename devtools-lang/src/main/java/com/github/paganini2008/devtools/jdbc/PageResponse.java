@@ -6,7 +6,7 @@ import java.util.List;
  * 
  * PageResponse
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * 
  * 
  */

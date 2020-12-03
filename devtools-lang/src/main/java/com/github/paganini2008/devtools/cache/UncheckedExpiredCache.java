@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * UncheckedExpiredCache
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * 
  * @version 1.0
  */

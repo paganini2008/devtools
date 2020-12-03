@@ -7,7 +7,7 @@ import java.io.IOException;
  * 
  * DirectoryWalkerHandler
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @since 1.0
  */
 public interface DirectoryWalkerHandler {

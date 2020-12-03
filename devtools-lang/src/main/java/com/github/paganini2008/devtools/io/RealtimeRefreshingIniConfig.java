@@ -16,7 +16,7 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
  * 
  * RealtimeRefreshingIniConfig
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class RealtimeRefreshingIniConfig implements IniConfig, Executable, Serializable {

@@ -10,7 +10,7 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * 
  * Cursor
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public interface Cursor<T> extends Iterator<T> {

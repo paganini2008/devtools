@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.primitives.Floats;
 /**
  * FloatArrayConverter
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class FloatArrayConverter extends BasicConverter<float[]> {

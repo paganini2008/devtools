@@ -3,7 +3,7 @@ package com.github.paganini2008.devtools.db4j;
 /**
  * SqlParameter
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public interface SqlParameter extends SqlType {

@@ -7,7 +7,7 @@ import java.util.List;
  * 
  * EnumUtils
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public abstract class EnumUtils {

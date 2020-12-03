@@ -6,7 +6,7 @@ import java.math.BigInteger;
 /**
  * ComparableComparator
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class ComparableComparator<T extends Comparable<T>> extends AbstractComparator<T> {

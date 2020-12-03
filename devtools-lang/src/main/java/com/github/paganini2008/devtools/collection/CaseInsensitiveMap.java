@@ -7,7 +7,7 @@ import java.util.Locale;
  * 
  * CaseInsensitiveMap
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class CaseInsensitiveMap<V> extends KeyConversionMap<String, String, V> {

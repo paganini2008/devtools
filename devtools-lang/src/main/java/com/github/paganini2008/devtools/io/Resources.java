@@ -7,7 +7,7 @@ import java.util.Locale;
  * 
  * Resources
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class Resources {

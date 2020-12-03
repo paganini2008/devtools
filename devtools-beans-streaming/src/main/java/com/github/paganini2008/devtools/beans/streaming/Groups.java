@@ -15,7 +15,7 @@ import com.github.paganini2008.devtools.jdbc.ResultSetSlice;
  * 
  * Groups
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * 
  * 
  * @version 1.0
@@ -67,7 +67,7 @@ public class Groups<E> implements Groupable<E> {
 	 * 
 	 * GroupImpl
 	 * 
-	 * @author Fred Feng
+	 * @author Jimmy Hoff
 	 * 
 	 * @version 1.0
 	 */

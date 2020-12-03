@@ -5,7 +5,7 @@ import java.io.File;
 /**
  * DirectoryFileFilter
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class DirectoryFileFilter extends LogicalFileFilter {

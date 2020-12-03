@@ -11,7 +11,7 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * 
  * EveryMinute
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class EveryMinute implements Minute, Serializable {

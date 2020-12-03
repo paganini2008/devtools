@@ -13,7 +13,7 @@ import com.github.paganini2008.devtools.primitives.Floats;
  * 
  * QuerySpanImpl
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class QuerySpanImpl implements QuerySpan, Serializable {

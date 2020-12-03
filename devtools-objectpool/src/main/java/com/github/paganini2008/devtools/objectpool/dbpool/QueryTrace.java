@@ -3,7 +3,7 @@ package com.github.paganini2008.devtools.objectpool.dbpool;
 /**
  * Record each query info(Sql,SqlParameters,StartTime and EndTime)
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * 
  * 
  * @version 1.0

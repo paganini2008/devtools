@@ -16,7 +16,7 @@ import com.github.paganini2008.devtools.primitives.Bytes;
 /**
  * ByteArrayConverter
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 public class ByteArrayConverter extends BasicConverter<byte[]> {

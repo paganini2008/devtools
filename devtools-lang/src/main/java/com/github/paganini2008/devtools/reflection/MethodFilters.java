@@ -10,7 +10,7 @@ import com.github.paganini2008.devtools.MatchMode;
  * 
  * MethodFilters
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * 
  * 
  * @version 1.0

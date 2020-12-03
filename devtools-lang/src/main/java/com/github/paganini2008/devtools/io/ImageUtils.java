@@ -25,7 +25,7 @@ import sun.misc.BASE64Encoder;
  * 
  * ImageUtils 
  *
- * @author Fred Feng
+ * @author Jimmy Hoff
  * @version 1.0
  */
 @SuppressWarnings("all")

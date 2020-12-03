@@ -9,7 +9,7 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 /**
  * CheckedExpiredCache
  * 
- * @author Fred Feng
+ * @author Jimmy Hoff
  * 
  * @version 1.0
  */
