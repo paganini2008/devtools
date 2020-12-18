@@ -2,6 +2,7 @@ package com.github.paganini2008.devtools.collection;
 
 import java.io.Serializable;
 import java.util.AbstractMap;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -9,9 +10,8 @@ import java.util.Set;
 /**
  * 
  * KeyConversionMap
- * 
+ *
  * @author Jimmy Hoff
- * 
  * 
  * @version 1.0
  */
@@ -20,7 +20,7 @@ public abstract class KeyConversionMap<T, K, V> extends AbstractMap<K, V> implem
 	private static final long serialVersionUID = 1L;
 
 	private final Map<K, V> delegate;
-	private final Map<T, K> keys = new HashMap<T, K>();
+	private final Map<T, K> keys = Collections.unmodifiableMap(new HashMap<T, K>());
 
 	protected KeyConversionMap(Map<K, V> delegate) {
 		this.delegate = delegate;

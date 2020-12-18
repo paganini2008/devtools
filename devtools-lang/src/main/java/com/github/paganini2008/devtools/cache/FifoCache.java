@@ -28,7 +28,7 @@ public class FifoCache extends LimitedCache {
 		this.maxSize = maxSize;
 		this.keys = new ConcurrentLinkedQueue<Object>();
 	}
-	
+
 	public void setStore(Store store) {
 		this.store = store;
 	}
@@ -37,8 +37,8 @@ public class FifoCache extends LimitedCache {
 		return delegate.getSize() + (store != null ? store.getSize() : 0);
 	}
 
-	public void putObject(Object key, Object value) {
-		delegate.putObject(key, value);
+	public void putObject(Object key, Object value, boolean ifAbsent) {
+		delegate.putObject(key, value, ifAbsent);
 		control(key);
 	}
 

@@ -21,8 +21,12 @@ public class SoftReferenceCache extends AbstractCache {
 		cache = new SoftReferenceMap<Object, Object>();
 	}
 
-	public void putObject(Object key, Object value) {
-		cache.put(key, value);
+	public void putObject(Object key, Object value, boolean ifAbsent) {
+		if (ifAbsent) {
+			cache.putIfAbsent(key, value);
+		} else {
+			cache.put(key, value);
+		}
 	}
 
 	public boolean hasKey(Object key) {

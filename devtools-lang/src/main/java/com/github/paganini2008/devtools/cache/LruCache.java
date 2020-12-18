@@ -41,9 +41,9 @@ public class LruCache extends LimitedCache {
 		this.store = store;
 	}
 
-	public void putObject(Object key, Object value) {
+	public void putObject(Object key, Object value, boolean ifAbsent) {
 		keys.add(key);
-		delegate.putObject(key, value);
+		delegate.putObject(key, value, ifAbsent);
 	}
 
 	public Object getObject(Object key) {

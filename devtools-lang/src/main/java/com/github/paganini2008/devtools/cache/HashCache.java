@@ -19,8 +19,12 @@ public class HashCache extends AbstractCache {
 		this.cache = new ConcurrentHashMap<Object, Object>();
 	}
 
-	public void putObject(Object key, Object value) {
-		cache.put(key, value);
+	public void putObject(Object key, Object value, boolean ifAbsent) {
+		if (ifAbsent) {
+			cache.putIfAbsent(key, value);
+		} else {
+			cache.put(key, value);
+		}
 	}
 
 	public Object getObject(Object key) {

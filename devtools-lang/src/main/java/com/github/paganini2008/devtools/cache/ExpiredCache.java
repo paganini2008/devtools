@@ -9,7 +9,7 @@ package com.github.paganini2008.devtools.cache;
  */
 public interface ExpiredCache extends Cache {
 
-	void putObject(Object key, Object value, int expired);
+	void putObject(Object key, Object value, boolean ifAbsent, int expired);
 
 	void setExpired(Object key, int expired);
 

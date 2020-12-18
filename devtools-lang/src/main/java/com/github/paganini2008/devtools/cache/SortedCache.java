@@ -40,8 +40,8 @@ public class SortedCache extends LimitedCache {
 		this.store = store;
 	}
 
-	public void putObject(Object key, Object value) {
-		delegate.putObject(key, value);
+	public void putObject(Object key, Object value, boolean ifAbsent) {
+		delegate.putObject(key, value, ifAbsent);
 		control(key);
 	}
 

@@ -27,7 +27,7 @@ public class LifoCache extends LimitedCache {
 		this.maxSize = maxSize;
 		this.keys = new Stack<Object>();
 	}
-	
+
 	public void setStore(Store store) {
 		this.store = store;
 	}
@@ -36,8 +36,8 @@ public class LifoCache extends LimitedCache {
 		return delegate.getSize() + (store != null ? store.getSize() : 0);
 	}
 
-	public void putObject(Object key, Object value) {
-		delegate.putObject(key, value);
+	public void putObject(Object key, Object value, boolean ifAbsent) {
+		delegate.putObject(key, value, ifAbsent);
 		control(key);
 	}
 

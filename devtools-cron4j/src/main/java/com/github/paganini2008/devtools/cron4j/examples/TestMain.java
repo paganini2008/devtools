@@ -1,6 +1,9 @@
 package com.github.paganini2008.devtools.cron4j.examples;
 
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
+import com.github.paganini2008.devtools.date.DateUtils;
 
 public class TestMain {
 
@@ -11,7 +14,8 @@ public class TestMain {
 //		time.forEach(date -> {
 //			System.out.println(DateUtils.format(date));
 //		}, 10);
-		System.out.println(UUID.randomUUID().toString().replace("-", ""));
+		System.out.println(DateUtils.convertToMillis(20, TimeUnit.MINUTES));
+		
 	}
 
 }

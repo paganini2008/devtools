@@ -57,8 +57,12 @@ public class CheckedExpiredCache extends AbstractCache implements ExpiredCache {
 		return delegate.keys();
 	}
 
-	public void putObject(Object key, Object value, int expired) {
-		delegate.putObject(key, value, expired);
+	public void putObject(Object key, Object value, boolean ifAbsent) {
+		putObject(key, value, ifAbsent, -1);
+	}
+
+	public void putObject(Object key, Object value, boolean ifAbsent, int expired) {
+		delegate.putObject(key, value, ifAbsent, expired);
 	}
 
 	public void setExpired(Object key, int expired) {

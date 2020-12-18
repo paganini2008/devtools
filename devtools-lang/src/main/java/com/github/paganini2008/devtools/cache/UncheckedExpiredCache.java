@@ -48,13 +48,13 @@ public class UncheckedExpiredCache extends AbstractCache implements ExpiredCache
 		this.delegate = delegate;
 	}
 
-	public void putObject(Object key, Object value) {
-		putObject(key, value, 3 * 60);
+	public void putObject(Object key, Object value, boolean ifAbsent) {
+		putObject(key, value, ifAbsent, -1);
 	}
 
-	public void putObject(Object key, Object value, int expired) {
+	public void putObject(Object key, Object value, boolean ifAbsent, int expired) {
 		DefaultCachedObject cachedObject = new DefaultCachedObject(value, System.currentTimeMillis(), expired);
-		delegate.putObject(key, cachedObject);
+		delegate.putObject(key, cachedObject, ifAbsent);
 	}
 
 	public void setExpired(Object key, int expired) {

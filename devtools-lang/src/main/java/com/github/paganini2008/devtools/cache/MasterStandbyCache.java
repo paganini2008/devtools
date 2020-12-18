@@ -20,9 +20,9 @@ public class MasterStandbyCache extends AbstractCache {
 		this.backup = backup;
 	}
 
-	public void putObject(Object key, Object value) {
-		backup.putObject(key, value);
-		master.putObject(key, value);
+	public void putObject(Object key, Object value, boolean ifAbsent) {
+		backup.putObject(key, value, ifAbsent);
+		master.putObject(key, value, ifAbsent);
 	}
 
 	public boolean hasKey(Object key) {
