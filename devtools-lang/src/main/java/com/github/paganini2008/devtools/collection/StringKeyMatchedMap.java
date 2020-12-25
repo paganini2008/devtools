@@ -17,7 +17,11 @@ public class StringKeyMatchedMap<V> extends KeyMatchedMap<String, V> {
 	private static final long serialVersionUID = 7256088542898472026L;
 
 	public StringKeyMatchedMap(MatchMode matchMode) {
-		super(new HashMap<String, V>());
+		this(matchMode, true);
+	}
+
+	public StringKeyMatchedMap(MatchMode matchMode, boolean matchFirst) {
+		super(new HashMap<String, V>(), matchFirst);
 		this.matchMode = matchMode;
 	}
 

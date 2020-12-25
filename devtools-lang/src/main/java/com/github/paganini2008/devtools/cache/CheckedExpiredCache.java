@@ -18,12 +18,20 @@ public class CheckedExpiredCache extends AbstractCache implements ExpiredCache {
 	private final ExpiredCache delegate;
 	private Timer timer;
 
-	public CheckedExpiredCache(Cache delegate, int interval) {
-		this.delegate = delegate instanceof ExpiredCache ? (ExpiredCache) delegate : new UncheckedExpiredCache(delegate);
+	public CheckedExpiredCache() {
+		this(new HashCache());
+	}
+
+	public CheckedExpiredCache(Cache delegate) {
+		this(delegate, 1);
+	}
+
+	public CheckedExpiredCache(Cache delegate, int checkInterval) {
+		this.delegate = delegate instanceof UncheckedExpiredCache ? (UncheckedExpiredCache) delegate : new UncheckedExpiredCache(delegate);
 		timer = ThreadUtils.scheduleAtFixedRate(() -> {
 			refresh();
 			return true;
-		}, 1, TimeUnit.SECONDS);
+		}, checkInterval, TimeUnit.SECONDS);
 	}
 
 	public void refresh() {

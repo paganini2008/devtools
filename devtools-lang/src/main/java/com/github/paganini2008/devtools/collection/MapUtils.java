@@ -37,11 +37,7 @@ public abstract class MapUtils {
 		return !isMap(obj);
 	}
 
-	public static <K, V> V get(Map<K, V> map, K key) {
-		return getOrDefault(map, key, (V) null);
-	}
-
-	public static <K, V> V getOrThrown(Map<K, V> map, K key, RuntimeException e) {
+	public static <K, V> V getIfRequired(Map<K, V> map, K key, RuntimeException e) {
 		V value = null;
 		if (map != null) {
 			value = map.get(key);
@@ -50,6 +46,10 @@ public abstract class MapUtils {
 			throw e;
 		}
 		return value;
+	}
+
+	public static <K, V> V get(Map<K, V> map, K key) {
+		return getOrDefault(map, key, (V) null);
 	}
 
 	public static <K, V> V getOrDefault(Map<K, V> map, K key, V defaultValue) {
