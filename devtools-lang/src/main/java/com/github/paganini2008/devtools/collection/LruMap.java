@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version 1.0
  * @see LinkedHashMap
  */
-public class LruMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Serializable {
+public class LruMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Serializable{
 
 	private static final long serialVersionUID = -1958272189245104075L;
 
