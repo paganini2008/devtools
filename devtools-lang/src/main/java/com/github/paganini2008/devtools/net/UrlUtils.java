@@ -119,10 +119,6 @@ public abstract class UrlUtils {
 		return MapUtils.join(kwargs, "=", "&");
 	}
 
-	public static void main(String[] args) throws Exception {
-		System.out.println(testConnection("https://video-out.coalchinajy.com/livestream/stream-NMHAe2.m3u8?auth_key=1570851499-0-0-53b7af334c3472c93b5aa05dd7cd4147"));
-	}
-
 	public static String toString(String url, String charset) throws IOException {
 		return toString(toURL(url), charset);
 	}
@@ -305,12 +301,6 @@ public abstract class UrlUtils {
 		}
 	}
 
-	/**
-	 * 获取Cookie字符串
-	 * 
-	 * @param connection
-	 * @return
-	 */
 	public static String getCookieString(HttpURLConnection connection) {
 		Assert.isNull(connection);
 		String name, value, cookie = "";

@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.util.Comparator;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Function;
 
 import com.github.paganini2008.devtools.primitives.Chars;
 import com.github.paganini2008.devtools.primitives.Doubles;
@@ -689,6 +690,14 @@ public abstract class ArrayUtils {
 
 	public static int indexOf(short[] a, short b, int start, int end) {
 		return Shorts.indexOf(a, b, start, end);
+	}
+
+	public static <E, T> T[] map(E[] array, Function<E, T> f) {
+		T[] result = (T[]) Array.newInstance(array.getClass().getComponentType(), array.length);
+		for (int i = 0; i < array.length; i++) {
+			result[i] = f.apply(array[i]);
+		}
+		return result;
 	}
 
 	public static <T> T[] cast(Object[] array, Class<T> requiredType) {
