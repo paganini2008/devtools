@@ -12,7 +12,7 @@ import com.github.paganini2008.devtools.collection.Tuple;
  * @author Jimmy Hoff
  * @version 1.0
  */
-public class PageableQueryImpl extends PageableSlice<Tuple> implements PageableQuery<Tuple> {
+public class PageableQueryImpl extends PageableResultSetSlice<Tuple> implements PageableQuery<Tuple> {
 
 	private final ConnectionFactory connectionFactory;
 	private final PageableSql pageableSql;

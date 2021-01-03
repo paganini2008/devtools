@@ -22,7 +22,7 @@ import com.github.paganini2008.devtools.jdbc.DefaultPageableSql;
 import com.github.paganini2008.devtools.jdbc.JdbcUtils;
 import com.github.paganini2008.devtools.jdbc.PageableException;
 import com.github.paganini2008.devtools.jdbc.PageableQuery;
-import com.github.paganini2008.devtools.jdbc.PageableSlice;
+import com.github.paganini2008.devtools.jdbc.PageableResultSetSlice;
 import com.github.paganini2008.devtools.jdbc.PageableSql;
 import com.github.paganini2008.devtools.jdbc.PreparedStatementCallback;
 
@@ -551,7 +551,7 @@ public class SqlRunner {
 	 * @author Jimmy Hoff
 	 * @version 1.0
 	 */
-	private static class PageableQueryImpl<T> extends PageableSlice<T> implements PageableQuery<T> {
+	private static class PageableQueryImpl<T> extends PageableResultSetSlice<T> implements PageableQuery<T> {
 
 		private final ConnectionFactory connectionFactory;
 		private final PageableSql pageableSql;
