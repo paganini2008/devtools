@@ -463,10 +463,13 @@ public abstract class ArrayUtils {
 	}
 
 	public static int deepHashCode(Object[] args) {
-		Assert.isNull(args, "Source array must not be null.");
-		int hash = 0;
+		if (isEmpty(args)) {
+			return 0;
+		}
+		int prime = 31;
+		int hash = 1;
 		for (int i = 0; i < args.length; i++) {
-			hash += ObjectUtils.hashCode(args[i]);
+			hash = prime * hash + ObjectUtils.hashCode(args[i]);
 		}
 		return hash;
 	}
@@ -690,6 +693,28 @@ public abstract class ArrayUtils {
 
 	public static int indexOf(short[] a, short b, int start, int end) {
 		return Shorts.indexOf(a, b, start, end);
+	}
+
+	public static Object getFirst(Object[] array) {
+		return getFirst(array, null);
+	}
+
+	public static Object getFirst(Object[] array, Object defaultValue) {
+		if (isEmpty(array)) {
+			return defaultValue;
+		}
+		return array[0];
+	}
+
+	public static Object getLast(Object[] array) {
+		return getLast(array, null);
+	}
+
+	public static Object getLast(Object[] array, Object defaultValue) {
+		if (isEmpty(array)) {
+			return defaultValue;
+		}
+		return array[array.length - 1];
 	}
 
 	public static <E, T> T[] map(E[] array, Function<E, T> f) {

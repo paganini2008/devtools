@@ -2,6 +2,7 @@ package com.github.paganini2008.devtools.collection;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -93,21 +94,10 @@ public abstract class MapUtils {
 	}
 
 	public static <K, V> List<Map.Entry<K, V>> toEntries(Map<K, V> map) {
-		if (map != null) {
-			return new ArrayList<Map.Entry<K, V>>(map.entrySet());
+		if (isEmpty(map)) {
+			return Collections.EMPTY_LIST;
 		}
-		return null;
-	}
-
-	private static <K, V> int indexFor(Map<K, V> map, int index) {
-		int size = map.size();
-		if (index > size - 1) {
-			throw new IllegalArgumentException("Index out of bound: " + index);
-		}
-		if (index < 0) {
-			index = size - Math.abs(index);
-		}
-		return Math.min(size - 1, index);
+		return new ArrayList<Map.Entry<K, V>>(map.entrySet());
 	}
 
 	public static <K, V> Entry<K, V> getFirstEntry(Map<K, V> map) {
@@ -123,19 +113,15 @@ public abstract class MapUtils {
 		map.put("a", "123");
 		map.put("b", "234");
 		map.put("c", "345");
-		System.out.println(getFirstEntry(map));
+		System.out.println(getLastEntry(map));
 	}
 
-	public static <K, V> Entry<K, V> getEntry(Map<K, V> map, int index) {
+	public static <K, V> Map.Entry<K, V> getEntry(Map<K, V> map, int index) {
 		if (isEmpty(map)) {
 			return null;
 		}
-		index = indexFor(map, index);
-		Iterator<Entry<K, V>> it = map.entrySet().iterator();
-		for (int i = 0; it.hasNext() && i < index; i++) {
-			it.next();
-		}
-		return it.hasNext() ? it.next() : null;
+		List<Map.Entry<K, V>> list = toEntries(map);
+		return ListUtils.get(list, index);
 	}
 
 	public static <T> T get(Map<String, ?> map, String key, Class<T> requiredType, T defaultValue) {
@@ -279,12 +265,16 @@ public abstract class MapUtils {
 	}
 
 	public static <T> Map<T, T> toMap(Collection<T> c) {
-		Assert.isNull(c, "Collection must not be null.");
+		if (CollectionUtils.isEmpty(c)) {
+			return Collections.EMPTY_MAP;
+		}
 		return toMap(c.iterator());
 	}
 
 	public static <T> Map<T, T> toMap(Iterator<T> it) {
-		Assert.isNull(it, "Iterator must not be null.");
+		if (it == null) {
+			return Collections.EMPTY_MAP;
+		}
 		LinkedHashMap<T, T> results = new LinkedHashMap<T, T>();
 		T prev = null, item = null;
 		while (it.hasNext()) {
@@ -303,7 +293,9 @@ public abstract class MapUtils {
 	}
 
 	public static <T> Map<T, T> toMap(Enumeration<T> en) {
-		Assert.isNull(en, "Enumeration must not be null.");
+		if (en == null) {
+			return Collections.EMPTY_MAP;
+		}
 		LinkedHashMap<T, T> results = new LinkedHashMap<T, T>();
 		T prev = null, item = null;
 		while (en.hasMoreElements()) {
@@ -322,7 +314,9 @@ public abstract class MapUtils {
 	}
 
 	public static <K, V> Map<V, K> reverse(Map<K, V> map) {
-		Assert.isNull(map, "Source map must not be null.");
+		if (isEmpty(map)) {
+			return Collections.EMPTY_MAP;
+		}
 		Map<V, K> results = new LinkedHashMap<V, K>();
 		for (Map.Entry<K, V> entry : map.entrySet()) {
 			results.put(entry.getValue(), entry.getKey());
@@ -479,16 +473,20 @@ public abstract class MapUtils {
 	}
 
 	public static <K, V> int deepHashCode(Map<K, V> map) {
-		Assert.isNull(map, "Source map must not be null.");
-		int hash = 37;
+		if (isEmpty(map)) {
+			return 0;
+		}
+		int prime = 31;
+		int result = 1;
 		K key;
 		V value;
 		for (Map.Entry<K, V> entry : map.entrySet()) {
 			key = entry.getKey();
 			value = entry.getValue();
-			hash *= (ObjectUtils.hashCode(key) + ObjectUtils.hashCode(value));
+			result = prime * result + ObjectUtils.hashCode(key);
+			result = prime * result + ObjectUtils.hashCode(value);
 		}
-		return hash;
+		return result;
 	}
 
 	public static <K, V> Map<K, String> formats(Map<K, V> map, String format) {
@@ -527,7 +525,9 @@ public abstract class MapUtils {
 	}
 
 	public static Map<String, String> toMap(Properties src) {
-		Assert.isNull(src, "Properties must not be null.");
+		if (isEmpty(src)) {
+			return Collections.EMPTY_MAP;
+		}
 		Map<String, String> result = new LinkedHashMap<String, String>();
 		Enumeration<?> en = src.propertyNames();
 		String name, value;
@@ -667,6 +667,17 @@ public abstract class MapUtils {
 			map.put(ObjectUtils.toString(kwargs[i - 1]), null);
 		}
 		return map;
+	}
+
+	public static <K, V> Map<K, V> toSingleValueMap(Map<K, V[]> multiValueMap) {
+		if (MapUtils.isEmpty(multiValueMap)) {
+			return Collections.EMPTY_MAP;
+		}
+		Map<K, V> data = new LinkedHashMap<K, V>();
+		for (Map.Entry<K, V[]> entry : multiValueMap.entrySet()) {
+			data.put(entry.getKey(), (V) ArrayUtils.getFirst(entry.getValue()));
+		}
+		return data;
 	}
 
 }

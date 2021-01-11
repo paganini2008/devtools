@@ -538,7 +538,7 @@ public abstract class Floats {
 	}
 
 	public static int hashCode(float arg) {
-		return ((Float) arg).hashCode();
+		return Float.hashCode(arg);
 	}
 
 	public static boolean deepEquals(float[] left, float[] right) {
@@ -847,10 +847,13 @@ public abstract class Floats {
 	}
 
 	public static int deepHashCode(float[] args) {
-		Assert.isNull(args, "Source array must not be null.");
-		int hash = 0;
+		if (isEmpty(args)) {
+			return 0;
+		}
+		int prime = 31;
+		int hash = 1;
 		for (int i = 0; i < args.length; i++) {
-			hash += hashCode(args[i]);
+			hash = prime * hash + hashCode(args[i]);
 		}
 		return hash;
 	}
@@ -1014,6 +1017,7 @@ public abstract class Floats {
 
 	private static enum LexicographicalComparator implements Comparator<float[]> {
 		INSTANCE;
+
 		public int compare(float[] left, float[] right) {
 			int minLength = Math.min(left.length, right.length);
 			for (int i = 0; i < minLength; i++) {

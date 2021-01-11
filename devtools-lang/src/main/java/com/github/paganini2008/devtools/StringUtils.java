@@ -264,7 +264,7 @@ public abstract class StringUtils {
 
 	public static List<String> split(CharSequence source, String example, boolean returnDelims, boolean returnEmpty) {
 		Assert.hasNoText(source);
-		if (isBlank(example)) {
+		if (isEmpty(example)) {
 			example = BLANK_CHARACTER;
 		}
 		StringTokenizer tokenizer = new StringTokenizer(source.toString(), example, returnDelims);

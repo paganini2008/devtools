@@ -556,7 +556,7 @@ public abstract class Doubles {
 	}
 
 	public static int hashCode(double arg) {
-		return ((Double) arg).hashCode();
+		return Double.hashCode(arg);
 	}
 
 	public static boolean deepEquals(double[] left, double[] right) {
@@ -866,10 +866,13 @@ public abstract class Doubles {
 	}
 
 	public static int deepHashCode(double[] args) {
-		Assert.isNull(args, "Source array must not be null.");
-		int hash = 0;
+		if (isEmpty(args)) {
+			return 0;
+		}
+		int prime = 31;
+		int hash = 1;
 		for (int i = 0; i < args.length; i++) {
-			hash += hashCode(args[i]);
+			hash = prime * hash + hashCode(args[i]);
 		}
 		return hash;
 	}

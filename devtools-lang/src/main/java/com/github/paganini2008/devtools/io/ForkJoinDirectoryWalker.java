@@ -123,7 +123,9 @@ public class ForkJoinDirectoryWalker extends AbstractDirectoryWalker {
 		ForkJoinDirectoryWalker walker = new ForkJoinDirectoryWalker(directory, new DirectoryWalkerHandler() {
 			@Override
 			public void handleFile(File file, int depth) throws Exception {
-
+				if(file.getName().endsWith(".jar")) {
+					System.out.println(file);
+				}
 			}
 		});
 		walker.setProgressable(new Progressable() {

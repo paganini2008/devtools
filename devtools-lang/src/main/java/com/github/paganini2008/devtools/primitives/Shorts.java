@@ -485,7 +485,7 @@ public abstract class Shorts {
 	}
 
 	public static int hashCode(short arg) {
-		return arg;
+		return Short.hashCode(arg);
 	}
 
 	public static boolean deepEquals(short[] left, short[] right) {
@@ -831,10 +831,13 @@ public abstract class Shorts {
 	}
 
 	public static int deepHashCode(short[] args) {
-		Assert.isNull(args, "Source array must not be null.");
-		int hash = 0;
+		if (args == null) {
+			return 0;
+		}
+		int prime = 31;
+		int hash = 1;
 		for (int i = 0; i < args.length; i++) {
-			hash += hashCode(args[i]);
+			hash = prime * hash + hashCode(args[i]);
 		}
 		return hash;
 	}

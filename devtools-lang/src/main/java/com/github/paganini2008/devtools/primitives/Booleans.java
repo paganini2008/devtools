@@ -301,7 +301,7 @@ public abstract class Booleans {
 	}
 
 	public static int hashCode(boolean arg) {
-		return arg ? 1231 : 1237;
+		return Boolean.hashCode(arg);
 	}
 
 	public static boolean deepEquals(boolean[] left, boolean[] right) {
@@ -326,9 +326,13 @@ public abstract class Booleans {
 	}
 
 	public static int deepHashCode(boolean[] args) {
-		int hash = 0;
+		if (isEmpty(args)) {
+			return 0;
+		}
+		int prime = 31;
+		int hash = 1;
 		for (int i = 0; i < args.length; i++) {
-			hash += hashCode(args[i]);
+			hash = prime * hash + hashCode(args[i]);
 		}
 		return hash;
 	}

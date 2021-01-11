@@ -527,8 +527,8 @@ public abstract class CollectionUtils {
 		a.add("1");
 		a.add("2");
 
-		// b.add("2");
 		b.add("1");
+		b.add("2");
 
 		System.out.println(deepEquals(a, b));
 	}
@@ -591,31 +591,39 @@ public abstract class CollectionUtils {
 	}
 
 	public static int deepHashCode(Iterable<?> it) {
-		Assert.isNull(it, "Source collection must not be null.");
+		if (it == null) {
+			return 0;
+		}
 		return deepHashCode(it.iterator());
 	}
 
 	public static int deepHashCode(Iterator<?> it) {
-		Assert.isNull(it, "Source iterator must not be null.");
+		if (it == null) {
+			return 0;
+		}
 		Object o;
-		int hash = 0;
+		int prime = 31;
+		int hash = 1;
 		while (it.hasNext()) {
 			o = it.next();
 			if (o != null) {
-				hash += ObjectUtils.hashCode(o);
+				hash = prime * hash + ObjectUtils.hashCode(o);
 			}
 		}
 		return hash;
 	}
 
 	public static int deepHashCode(Enumeration<?> en) {
-		Assert.isNull(en, "Source enumeration must not be null.");
+		if (en == null) {
+			return 0;
+		}
 		Object o;
-		int hash = 0;
+		int prime = 31;
+		int hash = 1;
 		while (en.hasMoreElements()) {
 			o = en.nextElement();
 			if (o != null) {
-				hash += ObjectUtils.hashCode(o);
+				hash = prime * hash + ObjectUtils.hashCode(o);
 			}
 		}
 		return hash;

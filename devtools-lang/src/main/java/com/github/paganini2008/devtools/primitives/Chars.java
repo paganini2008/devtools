@@ -23,7 +23,7 @@ import com.github.paganini2008.devtools.StringUtils;
 public abstract class Chars {
 
 	public static final char CR = '\r';
-	
+
 	public static final char LF = '\n';
 
 	private static final int MERGE_SORT_THRESHOLD = 10;
@@ -538,7 +538,7 @@ public abstract class Chars {
 	}
 
 	public static int hashCode(char arg) {
-		return (int) arg;
+		return Character.hashCode(arg);
 	}
 
 	public static boolean deepEquals(char[] left, char[] right) {
@@ -563,9 +563,13 @@ public abstract class Chars {
 	}
 
 	public static int deepHashCode(char[] args) {
-		int hash = 0;
+		if (isEmpty(args)) {
+			return 0;
+		}
+		int prime = 31;
+		int hash = 1;
 		for (int i = 0; i < args.length; i++) {
-			hash += hashCode(args[i]);
+			hash = prime * hash + hashCode(args[i]);
 		}
 		return hash;
 	}

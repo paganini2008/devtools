@@ -88,12 +88,16 @@ public abstract class UrlUtils {
 		return toURL(baseUrl, path);
 	}
 
+	public static URL toHostUrl(String url) {
+		return toHostUrl(toURL(url));
+	}
+
 	public static URL toHostUrl(URL url) {
 		Assert.isNull(url, "Base url must not be null.");
 		try {
 			return new URL(url.getProtocol(), url.getHost(), url.getPort(), "");
 		} catch (MalformedURLException e) {
-			throw new IllegalArgumentException("Malformed URL: " + url, e);
+			throw new IllegalArgumentException("Malformed URL: " + url.toString(), e);
 		}
 	}
 
@@ -194,8 +198,8 @@ public abstract class UrlUtils {
 		}
 		return connection.getInputStream();
 	}
-	
-	public static int testConnection(String url) throws IOException{
+
+	public static int testConnection(String url) throws IOException {
 		return testConnection(new URL(url));
 	}
 

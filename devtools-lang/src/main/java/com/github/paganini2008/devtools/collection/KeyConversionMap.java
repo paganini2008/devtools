@@ -20,10 +20,11 @@ public abstract class KeyConversionMap<T, K, V> extends AbstractMap<K, V> implem
 	private static final long serialVersionUID = 1L;
 
 	private final Map<K, V> delegate;
-	private final Map<T, K> keys = Collections.unmodifiableMap(new HashMap<T, K>());
+	private final Map<T, K> keys;
 
 	protected KeyConversionMap(Map<K, V> delegate) {
 		this.delegate = delegate;
+		this.keys = Collections.synchronizedMap(new HashMap<T, K>());
 	}
 
 	public boolean containsKey(Object key) {
@@ -33,7 +34,7 @@ public abstract class KeyConversionMap<T, K, V> extends AbstractMap<K, V> implem
 
 	public V get(Object key) {
 		Object realKey = keys.get(convertKey(key));
-		return delegate.get(realKey);
+		return realKey != null ? delegate.get(realKey) : null;
 	}
 
 	public V put(K key, V value) {

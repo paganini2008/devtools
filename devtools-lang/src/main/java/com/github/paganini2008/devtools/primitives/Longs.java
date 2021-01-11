@@ -614,7 +614,7 @@ public abstract class Longs {
 	}
 
 	public static int hashCode(long arg) {
-		return (int) (arg ^ (arg >>> 32));
+		return Long.hashCode(arg);
 	}
 
 	public static boolean deepEquals(long[] left, long[] right) {
@@ -898,10 +898,13 @@ public abstract class Longs {
 	}
 
 	public static int deepHashCode(long[] args) {
-		Assert.isNull(args, "Source array must not be null.");
-		int hash = 0;
+		if (isEmpty(args)) {
+			return 0;
+		}
+		int prime = 31;
+		int hash = 1;
 		for (int i = 0; i < args.length; i++) {
-			hash += hashCode(args[i]);
+			hash = prime * hash + hashCode(args[i]);
 		}
 		return hash;
 	}
