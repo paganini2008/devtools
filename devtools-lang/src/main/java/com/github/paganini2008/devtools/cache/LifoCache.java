@@ -11,12 +11,12 @@ import java.util.Stack;
  * @author Jimmy Hoff
  * @version 1.0
  */
-public class LifoCache extends LimitedCache {
+public class LifoCache extends BoundedCache {
 
 	private final Cache delegate;
 	private final Stack<Object> keys;
 	private final int maxSize;
-	private Store store;
+	private CacheStore store;
 
 	public LifoCache(int maxSize) {
 		this(new HashCache(), maxSize);
@@ -28,7 +28,7 @@ public class LifoCache extends LimitedCache {
 		this.keys = new Stack<Object>();
 	}
 
-	public void setStore(Store store) {
+	public void setStore(CacheStore store) {
 		this.store = store;
 	}
 

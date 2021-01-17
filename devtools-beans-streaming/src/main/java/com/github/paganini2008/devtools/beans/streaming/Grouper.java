@@ -13,18 +13,16 @@ import com.github.paganini2008.devtools.jdbc.ResultSetSlice;
 
 /**
  * 
- * Groups
- * 
+ * Grouper
+ *
  * @author Jimmy Hoff
- * 
- * 
  * @version 1.0
  */
-public class Groups<E> implements Groupable<E> {
+public class Grouper<E> implements Groupable<E> {
 
 	private List<Group<E>> groups = new ArrayList<Group<E>>();
 
-	Groups(List<E> elements) {
+	Grouper(List<E> elements) {
 		groups.add(new GroupImpl<E>(new LinkedHashMap<>(), elements, null));
 	}
 
@@ -33,7 +31,7 @@ public class Groups<E> implements Groupable<E> {
 		return this;
 	}
 
-	public Groupable<E> orderBy(Sort<Group<E>> sort) {
+	public Groupable<E> orderBy(Sorter<Group<E>> sort) {
 		this.groups.sort(sort);
 		return this;
 	}

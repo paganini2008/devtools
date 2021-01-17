@@ -2,9 +2,7 @@ package com.github.paganini2008.devtools.collection;
 
 import java.io.Serializable;
 import java.util.AbstractList;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -18,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 
  * @version 1.0
  */
-public class LruList<E> extends AbstractList<E> implements List<E>, Serializable {
+public class LruList<E> extends AbstractList<E> implements List<E>, Serializable, BoundedCollection<E> {
 
 	private static final long serialVersionUID = -216068975490011223L;
 
@@ -26,24 +24,23 @@ public class LruList<E> extends AbstractList<E> implements List<E>, Serializable
 		this(128);
 	}
 
-	public LruList(int maxSize) {
+	public LruList(final int maxSize) {
 		this(new CopyOnWriteArrayList<E>(), maxSize);
 	}
 
+	public LruList(final int maxSize, final BoundedMapSupplier<Integer, E> supplier) {
+		this(new CopyOnWriteArrayList<E>(), maxSize, supplier);
+	}
+
 	public LruList(final List<E> delegate, final int maxSize) {
+		this(delegate, maxSize, new LruBoundedMapSupplier<Integer, E>());
+	}
+
+	public LruList(final List<E> delegate, final int maxSize, final BoundedMapSupplier<Integer, E> supplier) {
 		this.delegate = delegate;
-		this.keys = Collections.synchronizedMap(new LinkedHashMap<Integer, E>(16, 0.75F, true) {
-
-			private static final long serialVersionUID = -3128504588768026293L;
-
-			protected boolean removeEldestEntry(Map.Entry<Integer, E> eldest) {
-				boolean result = size() > maxSize;
-				if (result) {
-					delegate.remove(eldest.getValue());
-					onEviction(eldest.getValue());
-				}
-				return result;
-			}
+		this.keys = supplier.get(maxSize, (key, value) -> {
+			delegate.remove(value);
+			onEviction(value);
 		});
 	}
 
@@ -100,9 +97,6 @@ public class LruList<E> extends AbstractList<E> implements List<E>, Serializable
 
 	public String toString() {
 		return delegate.toString();
-	}
-
-	protected void onEviction(E e) {
 	}
 
 }

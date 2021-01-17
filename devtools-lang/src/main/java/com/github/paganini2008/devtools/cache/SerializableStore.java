@@ -18,7 +18,7 @@ import com.github.paganini2008.devtools.logging.LogFactory;
  * @author Jimmy Hoff
  * @version 1.0
  */
-public class SerializableStore implements Store {
+public class SerializableStore implements CacheStore {
 
 	private static final Log logger = LogFactory.getLog(SerializableStore.class);
 

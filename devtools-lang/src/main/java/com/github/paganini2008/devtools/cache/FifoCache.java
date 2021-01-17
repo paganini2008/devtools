@@ -12,12 +12,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @author Jimmy Hoff
  * @version 1.0
  */
-public class FifoCache extends LimitedCache {
+public class FifoCache extends BoundedCache {
 
 	private final Cache delegate;
 	private final Queue<Object> keys;
 	private final int maxSize;
-	private Store store;
+	private CacheStore store;
 
 	public FifoCache(int maxSize) {
 		this(new HashCache(), maxSize);
@@ -29,7 +29,7 @@ public class FifoCache extends LimitedCache {
 		this.keys = new ConcurrentLinkedQueue<Object>();
 	}
 
-	public void setStore(Store store) {
+	public void setStore(CacheStore store) {
 		this.store = store;
 	}
 

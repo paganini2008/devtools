@@ -12,11 +12,11 @@ import com.github.paganini2008.devtools.collection.LruList;
  * 
  * @version 1.0
  */
-public class LruCache extends LimitedCache {
+public class LruCache extends BoundedCache {
 
 	private final Cache delegate;
 	private final LruList<Object> keys;
-	private Store store;
+	private CacheStore store;
 
 	public LruCache(int maxSize) {
 		this(new HashCache(), maxSize);
@@ -37,7 +37,7 @@ public class LruCache extends LimitedCache {
 		};
 	}
 
-	public void setStore(Store store) {
+	public void setStore(CacheStore store) {
 		this.store = store;
 	}
 

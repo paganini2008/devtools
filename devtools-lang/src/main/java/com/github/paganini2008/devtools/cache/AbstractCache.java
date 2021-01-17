@@ -12,26 +12,26 @@ import java.util.Iterator;
  */
 public abstract class AbstractCache implements Cache {
 
-	public LimitedCache fifoCache(int maxSize, Store store) {
-		LimitedCache cache = new FifoCache(this, maxSize);
+	public BoundedCache fifoCache(int maxSize, CacheStore store) {
+		BoundedCache cache = new FifoCache(this, maxSize);
 		cache.setStore(store);
 		return cache;
 	}
 
-	public LimitedCache lifoCache(int maxSize, Store store) {
-		LimitedCache cache = new LifoCache(this, maxSize);
+	public BoundedCache lifoCache(int maxSize, CacheStore store) {
+		BoundedCache cache = new LifoCache(this, maxSize);
 		cache.setStore(store);
 		return cache;
 	}
 
-	public LimitedCache lruCache(int maxSize, Store store) {
-		LimitedCache cache = new LruCache(this, maxSize);
+	public BoundedCache lruCache(int maxSize, CacheStore store) {
+		BoundedCache cache = new LruCache(this, maxSize);
 		cache.setStore(store);
 		return cache;
 	}
 
-	public LimitedCache sortedCache(int maxSize, boolean asc, Store store) {
-		LimitedCache cache = new SortedCache(this, maxSize, asc);
+	public BoundedCache sortedCache(int maxSize, boolean asc, CacheStore store) {
+		BoundedCache cache = new SortedCache(this, maxSize, asc);
 		cache.setStore(store);
 		return cache;
 	}
@@ -52,6 +52,13 @@ public abstract class AbstractCache implements Cache {
 		return new CacheIterator(this);
 	}
 
+	/**
+	 * 
+	 * CacheIterator
+	 *
+	 * @author Jimmy Hoff
+	 * @version 1.0
+	 */
 	static class CacheIterator implements Iterator<Object> {
 
 		private final Cache delegate;

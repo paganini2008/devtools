@@ -2,9 +2,7 @@ package com.github.paganini2008.devtools.collection;
 
 import java.io.Serializable;
 import java.util.AbstractSet;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -16,7 +14,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * 
  * @version 1.0
  */
-public class LruSet<E> extends AbstractSet<E> implements Set<E>, Serializable {
+public class LruSet<E> extends AbstractSet<E> implements Set<E>, Serializable, BoundedCollection<E> {
 
 	private static final long serialVersionUID = 1472051002956521109L;
 
@@ -24,25 +22,23 @@ public class LruSet<E> extends AbstractSet<E> implements Set<E>, Serializable {
 		this(128);
 	}
 
-	public LruSet(int maxSize) {
+	public LruSet(final int maxSize) {
 		this(new CopyOnWriteArraySet<E>(), maxSize);
 	}
 
+	public LruSet(final int maxSize, final BoundedMapSupplier<E, Object> supplier) {
+		this(new CopyOnWriteArraySet<E>(), maxSize, supplier);
+	}
+
 	public LruSet(final Set<E> delegate, final int maxSize) {
+		this(delegate, maxSize, new LruBoundedMapSupplier<E, Object>());
+	}
+
+	public LruSet(final Set<E> delegate, final int maxSize, final BoundedMapSupplier<E, Object> supplier) {
 		this.delegate = delegate;
-		this.keys = Collections.synchronizedMap(new LinkedHashMap<E, Object>(16, 0.75F, true) {
-
-			private static final long serialVersionUID = -1535588414267472317L;
-
-			protected boolean removeEldestEntry(Map.Entry<E, Object> eldest) {
-				boolean result = size() > maxSize;
-				if (result) {
-					E eldestValue = eldest.getKey();
-					delegate.remove(eldestValue);
-					onEviction(eldestValue);
-				}
-				return result;
-			}
+		this.keys = supplier.get(maxSize, (key, value) -> {
+			delegate.remove(key);
+			onEviction(key);
 		});
 	}
 
@@ -79,9 +75,6 @@ public class LruSet<E> extends AbstractSet<E> implements Set<E>, Serializable {
 
 	public String toString() {
 		return delegate.toString();
-	}
-
-	protected void onEviction(E e) {
 	}
 
 }

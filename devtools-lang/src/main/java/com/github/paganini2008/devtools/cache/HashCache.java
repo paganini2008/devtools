@@ -16,7 +16,11 @@ public class HashCache extends AbstractCache {
 	private final Map<Object, Object> cache;
 
 	public HashCache() {
-		this.cache = new ConcurrentHashMap<Object, Object>();
+		this(new ConcurrentHashMap<Object, Object>());
+	}
+
+	public HashCache(Map<Object, Object> cache) {
+		this.cache = cache;
 	}
 
 	public void putObject(Object key, Object value, boolean ifAbsent) {

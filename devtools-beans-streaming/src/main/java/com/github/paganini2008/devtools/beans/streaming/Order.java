@@ -10,6 +10,6 @@ package com.github.paganini2008.devtools.beans.streaming;
  */
 public interface Order<E> {
 
-	Sort<E> toSort();
+	Sorter<E> toSort();
 
 }

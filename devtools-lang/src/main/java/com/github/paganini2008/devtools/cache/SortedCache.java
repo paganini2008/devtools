@@ -13,13 +13,13 @@ import java.util.concurrent.ConcurrentSkipListSet;
  * 
  * @version 1.0
  */
-public class SortedCache extends LimitedCache {
+public class SortedCache extends BoundedCache {
 
 	private final Cache delegate;
 	private final NavigableSet<Object> keys;
 	private final int maxSize;
 	private final boolean asc;
-	private Store store;
+	private CacheStore store;
 
 	public SortedCache(int maxSize) {
 		this(maxSize, true);
@@ -36,7 +36,7 @@ public class SortedCache extends LimitedCache {
 		this.keys = new ConcurrentSkipListSet<Object>();
 	}
 
-	public void setStore(Store store) {
+	public void setStore(CacheStore store) {
 		this.store = store;
 	}
 

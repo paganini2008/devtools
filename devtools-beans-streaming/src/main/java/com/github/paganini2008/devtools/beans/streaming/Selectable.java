@@ -17,7 +17,7 @@ public interface Selectable<E> extends ResultSetSlice<E> {
 
 	Selectable<E> filter(Predicate<E> predicate);
 
-	Selectable<E> orderBy(Sort<E> sort);
+	Selectable<E> orderBy(Sorter<E> sort);
 
 	Selectable<E> distinct();
 

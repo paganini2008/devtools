@@ -38,7 +38,10 @@ public abstract class BeanUtils {
 	}
 
 	public static void setProperty(Object bean, String propertyName, Object value) {
-		PropertyUtils.setProperty(bean, propertyName, value);
+		try {
+			PropertyUtils.setProperty(bean, propertyName, value);
+		} catch (RuntimeException ignored) {
+		}
 	}
 
 	public static <T> T getProperty(Object bean, String propertyName, Class<T> requiredType) {

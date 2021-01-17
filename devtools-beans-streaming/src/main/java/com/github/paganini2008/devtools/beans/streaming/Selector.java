@@ -12,21 +12,21 @@ import com.github.paganini2008.devtools.jdbc.ResultSetSlice;
 
 /**
  * 
- * Select
- * 
+ * Selector
+ *
  * @author Jimmy Hoff
  * @version 1.0
  */
-public class Select<E> implements Selectable<E> {
+public class Selector<E> implements Selectable<E> {
 
 	private List<E> content;
 
-	Select(List<E> content) {
+	Selector(List<E> content) {
 		this.content = content;
 	}
 
-	public static <E> Select<E> from(Collection<E> content) {
-		return new Select<E>(content instanceof List ? (List<E>) content : new ArrayList<E>(content));
+	public static <E> Selector<E> from(Collection<E> content) {
+		return new Selector<E>(content instanceof List ? (List<E>) content : new ArrayList<E>(content));
 	}
 
 	public Selectable<E> filter(Predicate<E> predicate) {
@@ -39,13 +39,13 @@ public class Select<E> implements Selectable<E> {
 		return this;
 	}
 
-	public Selectable<E> orderBy(Sort<E> sort) {
+	public Selectable<E> orderBy(Sorter<E> sort) {
 		content.sort(sort);
 		return this;
 	}
 
 	public <T> Groupable<E> groupBy(Function<E, T> function, String attributeName) {
-		return new Groups<E>(content).groupBy(function, attributeName);
+		return new Grouper<E>(content).groupBy(function, attributeName);
 	}
 
 	public List<E> list(int maxResults, int firstResult) {

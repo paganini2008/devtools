@@ -12,7 +12,7 @@ import com.github.paganini2008.devtools.RandomUtils;
 import com.github.paganini2008.devtools.beans.streaming.Group;
 import com.github.paganini2008.devtools.beans.streaming.Orders;
 import com.github.paganini2008.devtools.beans.streaming.Restrictions;
-import com.github.paganini2008.devtools.beans.streaming.Select;
+import com.github.paganini2008.devtools.beans.streaming.Selector;
 import com.github.paganini2008.devtools.beans.streaming.View;
 import com.github.paganini2008.devtools.beans.streaming.examples.Product.Style;
 import com.github.paganini2008.devtools.collection.Tuple;
@@ -59,7 +59,7 @@ public class TestBeanStreaming {
 	public static void test1() {
 		Predicate<Product> predicate = Restrictions.lte("created", new Date());
 		predicate = predicate.and(Restrictions.eq("salesman.name", "Petter"));
-		Select.from(products).filter(predicate).list().forEach(product -> {
+		Selector.from(products).filter(predicate).list().forEach(product -> {
 			System.out.println(product);
 		});
 	}
@@ -70,7 +70,7 @@ public class TestBeanStreaming {
 	 * </pre>
 	 */
 	public static void test2() {
-		Select.from(products).groupBy("location", String.class).setTransformer(new View<Product>() {
+		Selector.from(products).groupBy("location", String.class).setTransformer(new View<Product>() {
 			protected void setAttributes(Tuple tuple, Group<Product> group) {
 				tuple.set("maxPrice", group.max("price", Float.class));
 				tuple.set("minPrice", group.min("price", Float.class));
@@ -88,7 +88,7 @@ public class TestBeanStreaming {
 	 * </pre>
 	 */
 	public static void test3() {
-		Select.from(products).groupBy("location", String.class).groupBy("style", Product.Style.class).having(group -> {
+		Selector.from(products).groupBy("location", String.class).groupBy("style", Product.Style.class).having(group -> {
 			return group.avg("freight").compareTo(BigDecimal.valueOf(55)) > 0;
 		}).setTransformer(new View<Product>() {
 			protected void setAttributes(Tuple tuple, Group<Product> group) {
@@ -108,7 +108,7 @@ public class TestBeanStreaming {
 	 * </pre>
 	 */
 	public static void test4() {
-		Select.from(products).orderBy(Orders.descending("price", Float.class)).list(100).forEach(product -> {
+		Selector.from(products).orderBy(Orders.descending("price", Float.class)).list(100).forEach(product -> {
 			System.out.println("Name: " + product.getName() + ", Price: " + product.getPrice());
 		});
 	}

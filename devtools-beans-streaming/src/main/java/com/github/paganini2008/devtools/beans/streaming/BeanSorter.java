@@ -11,13 +11,13 @@ import com.github.paganini2008.devtools.comparator.ReverseComparator;
 
 /**
  * 
- * BeanSort
+ * BeanSorter
  * 
  * @author Jimmy Hoff
  * @version 1.0
  */
 @SuppressWarnings("all")
-public class BeanSort<E> extends AbstractComparator<E> implements Sort<E> {
+public class BeanSorter<E> extends AbstractComparator<E> implements Sorter<E> {
 
 	/**
 	 * 
@@ -49,17 +49,17 @@ public class BeanSort<E> extends AbstractComparator<E> implements Sort<E> {
 
 	private final List<Comparator<E>> comparatorChains = new ArrayList<Comparator<E>>();
 
-	public BeanSort<E> reset() {
+	public BeanSorter<E> reset() {
 		comparatorChains.clear();
 		return this;
 	}
 
-	public <T extends Comparable<T>> BeanSort<E> ascending(Function<E, T> function) {
+	public <T extends Comparable<T>> BeanSorter<E> ascending(Function<E, T> function) {
 		comparatorChains.add(new ComparatorChain(function));
 		return this;
 	}
 
-	public <T extends Comparable<T>> BeanSort<E> descending(Function<E, T> function) {
+	public <T extends Comparable<T>> BeanSorter<E> descending(Function<E, T> function) {
 		comparatorChains.add(new ComparatorChain(function).reverse());
 		return this;
 	}

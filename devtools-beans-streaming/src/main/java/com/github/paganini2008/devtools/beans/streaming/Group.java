@@ -6,10 +6,8 @@ import java.util.Map;
 /**
  * 
  * Group
- * 
+ *
  * @author Jimmy Hoff
- * 
- * 
  * @version 1.0
  */
 public interface Group<E> extends Summary<E> {

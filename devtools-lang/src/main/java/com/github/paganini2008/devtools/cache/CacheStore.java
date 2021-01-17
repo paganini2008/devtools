@@ -3,13 +3,13 @@ package com.github.paganini2008.devtools.cache;
 import java.util.Set;
 
 /**
- * Store
+ * CacheStore
  * 
  * @author Jimmy Hoff
  * 
  * @version 1.0
  */
-public interface Store {
+public interface CacheStore {
 
 	void writeObject(Object name, Object o);
 

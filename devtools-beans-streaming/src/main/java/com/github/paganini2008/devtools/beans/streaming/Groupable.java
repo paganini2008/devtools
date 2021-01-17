@@ -23,7 +23,7 @@ public interface Groupable<E> {
 
 	Groupable<E> having(Predicate<Group<E>> predicate);
 
-	Groupable<E> orderBy(Sort<Group<E>> sort);
+	Groupable<E> orderBy(Sorter<Group<E>> sort);
 
 	<T> ResultSetSlice<T> setTransformer(Transformer<Group<E>, T> transformer);
 
