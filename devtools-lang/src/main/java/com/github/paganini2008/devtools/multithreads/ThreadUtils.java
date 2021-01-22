@@ -283,6 +283,17 @@ public abstract class ThreadUtils {
 		return timer;
 	}
 
+	public static <T> ThreadLocal<T> newThreadLocal(final Supplier<T> supplier) {
+		return new ThreadLocal<T>() {
+
+			@Override
+			protected T initialValue() {
+				return supplier.get();
+			}
+
+		};
+	}
+
 	/**
 	 * 
 	 * SerialExecutable

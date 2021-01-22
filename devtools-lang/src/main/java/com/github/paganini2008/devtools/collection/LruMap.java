@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * LruMap
@@ -25,11 +26,15 @@ public class LruMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Serial
 	}
 
 	public LruMap(final int maxSize) {
-		this(new ConcurrentHashMap<K, V>(), maxSize);
+		this(false, maxSize);
 	}
 
-	public LruMap(final int maxSize, final BoundedMapSupplier<K, Object> supplier) {
-		this(new ConcurrentHashMap<K, V>(), maxSize, supplier);
+	public LruMap(final boolean sorted, final int maxSize) {
+		this(sorted, maxSize, new LruBoundedMapSupplier<K, Object>());
+	}
+
+	public LruMap(final boolean sorted, final int maxSize, final BoundedMapSupplier<K, Object> supplier) {
+		this(sorted ? new ConcurrentSkipListMap<K, V>() : new ConcurrentHashMap<K, V>(), maxSize, supplier);
 	}
 
 	public LruMap(final Map<K, V> delegate, final int maxSize) {

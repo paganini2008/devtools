@@ -24,19 +24,19 @@ public class MultiMappedMap<K, N, V> extends AbstractMap<K, Map<N, V>> implement
 	private final Supplier<Map<N, V>> supplier;
 
 	public MultiMappedMap() {
-		this(new ConcurrentHashMap<K, Map<N, V>>(), () -> {
-			return new ConcurrentHashMap<N, V>();
-		});
+		this(new ConcurrentHashMap<K, Map<N, V>>(), () -> new ConcurrentHashMap<N, V>());
 	}
 
 	public MultiMappedMap(Comparator<N> c) {
-		this(new ConcurrentHashMap<K, Map<N, V>>(), () -> {
-			return new ConcurrentSkipListMap<N, V>(c);
-		});
+		this(new ConcurrentHashMap<K, Map<N, V>>(), () -> new ConcurrentSkipListMap<N, V>(c));
 	}
 
 	public MultiMappedMap(Supplier<Map<N, V>> supplier) {
 		this(new ConcurrentHashMap<K, Map<N, V>>(), supplier);
+	}
+
+	public MultiMappedMap(Map<K, Map<N, V>> delegate) {
+		this(delegate, () -> new ConcurrentHashMap<N, V>());
 	}
 
 	public MultiMappedMap(Map<K, Map<N, V>> delegate, Supplier<Map<N, V>> supplier) {

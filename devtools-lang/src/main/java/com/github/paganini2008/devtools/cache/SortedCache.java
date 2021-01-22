@@ -1,6 +1,6 @@
 package com.github.paganini2008.devtools.cache;
 
-import java.util.LinkedHashSet;
+import java.util.Collections;
 import java.util.NavigableSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -42,7 +42,7 @@ public class SortedCache extends BoundedCache {
 
 	public void putObject(Object key, Object value, boolean ifAbsent) {
 		delegate.putObject(key, value, ifAbsent);
-		control(key);
+		rebalance(key);
 	}
 
 	public Object getObject(Object key) {
@@ -80,19 +80,14 @@ public class SortedCache extends BoundedCache {
 	}
 
 	public Set<Object> keys() {
-		final Set<Object> names = new LinkedHashSet<Object>();
-		names.addAll(keys);
-		if (store != null) {
-			names.addAll(store.keys());
-		}
-		return names;
+		return Collections.unmodifiableNavigableSet(keys);
 	}
 
 	public boolean hasKey(Object key) {
 		return delegate.hasKey(key);
 	}
 
-	private void control(Object key) {
+	private synchronized void rebalance(Object key) {
 		keys.add(key);
 		if (keys.size() > maxSize) {
 			Object oldestKey = asc ? keys.pollFirst() : keys.pollLast();
@@ -108,8 +103,8 @@ public class SortedCache extends BoundedCache {
 	}
 
 	public static void main(String[] args) {
-		SortedCache cache = new SortedCache(20);
-		for (int i = 0; i < 30000; i++) {
+		SortedCache cache = new SortedCache(10);
+		for (int i = 0; i < 11; i++) {
 			cache.putObject("Key_" + i, i);
 		}
 		System.out.println(cache);

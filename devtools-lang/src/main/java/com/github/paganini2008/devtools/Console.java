@@ -51,6 +51,14 @@ public abstract class Console {
 		}
 	}
 
+	public static <T> void log(T[] array) {
+		if (array != null) {
+			for (T t : array) {
+				System.out.println(t);
+			}
+		}
+	}
+
 	public static <K, V> void log(Map<K, V> map) {
 		if (map != null) {
 			for (Map.Entry<K, V> en : map.entrySet()) {
