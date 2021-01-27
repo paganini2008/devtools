@@ -1,5 +1,7 @@
 package com.github.paganini2008.devtools.collection;
 
+import java.util.Map;
+
 /**
  * 
  * MetricsCollector
@@ -15,6 +17,6 @@ public interface MetricsCollector {
 	
 	String[] metrics();
 	
-	MetricUnit[] values();
+	Map<String, MetricUnit> fetch();
 
 }

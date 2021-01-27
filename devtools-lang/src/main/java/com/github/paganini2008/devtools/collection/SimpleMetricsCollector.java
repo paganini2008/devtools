@@ -1,6 +1,8 @@
 package com.github.paganini2008.devtools.collection;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * 
@@ -14,15 +16,15 @@ public class SimpleMetricsCollector implements MetricsCollector {
 	private final Map<String, MetricUnit> store;
 
 	public SimpleMetricsCollector() {
-		this(-1);
+		this(-1, null);
 	}
 
-	public SimpleMetricsCollector(int maxSize) {
-		this(maxSize, true);
+	public SimpleMetricsCollector(int bufferSize, HistoricalMetricsHandler historicalMetricsHandler) {
+		this(bufferSize, true, historicalMetricsHandler);
 	}
 
-	public SimpleMetricsCollector(int maxSize, boolean ordered) {
-		this.store = maxSize > 0 ? new LruMap<String, MetricUnit>(new MetricsCollectorMap(ordered), maxSize)
+	public SimpleMetricsCollector(int bufferSize, boolean ordered, HistoricalMetricsHandler historicalMetricsHandler) {
+		this.store = bufferSize > 0 ? new BufferedMetricsCollectorMap(ordered, bufferSize, historicalMetricsHandler)
 				: new MetricsCollectorMap(ordered);
 	}
 
@@ -42,8 +44,35 @@ public class SimpleMetricsCollector implements MetricsCollector {
 	}
 
 	@Override
-	public MetricUnit[] values() {
-		return store.values().toArray(new MetricUnit[0]);
+	public Map<String, MetricUnit> fetch() {
+		return Collections.unmodifiableMap(new TreeMap<String, MetricUnit>(store));
+	}
+
+	/**
+	 * 
+	 * BufferedMetricsCollectorMap
+	 *
+	 * @author Jimmy Hoff
+	 * @version 1.0
+	 */
+	private static class BufferedMetricsCollectorMap extends LruMap<String, MetricUnit> {
+
+		private static final long serialVersionUID = 1L;
+
+		private final HistoricalMetricsHandler historicalMetricsHandler;
+
+		BufferedMetricsCollectorMap(boolean ordered, int bufferSize, HistoricalMetricsHandler historicalMetricsHandler) {
+			super(new MetricsCollectorMap(ordered), bufferSize);
+			this.historicalMetricsHandler = historicalMetricsHandler;
+		}
+
+		@Override
+		public void onEviction(String metric, MetricUnit metricUnit) {
+			if (historicalMetricsHandler != null) {
+				historicalMetricsHandler.handleHistoricalMetrics(metric, metricUnit);
+			}
+		}
+
 	}
 
 	/**
@@ -62,11 +91,12 @@ public class SimpleMetricsCollector implements MetricsCollector {
 		}
 
 		@Override
-		protected MetricUnit merge(String metric, MetricUnit current, MetricUnit update) {
+		protected MetricUnit merge(String metric, MetricUnit current, MetricUnit value) {
 			if (current != null) {
-				update.update(current);
+				return current.merge(value);
+			} else {
+				return value;
 			}
-			return update;
 		}
 	}
 

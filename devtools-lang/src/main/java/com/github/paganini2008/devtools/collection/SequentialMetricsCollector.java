@@ -1,6 +1,7 @@
 package com.github.paganini2008.devtools.collection;
 
-import com.github.paganini2008.devtools.ArrayUtils;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * 
@@ -17,20 +18,20 @@ public interface SequentialMetricsCollector extends MetricsCollector {
 
 	MetricUnit set(String metric, long timestamp, MetricUnit metricUnit);
 
-	default MetricUnit get(String metrics) {
-		return (MetricUnit) ArrayUtils.getLast(values(metrics));
+	default MetricUnit get(String metric) {
+		Map<String, MetricUnit> data = sequence(metric);
+		Map.Entry<String, MetricUnit> lastEntry = MapUtils.getLastEntry(data);
+		return lastEntry != null ? lastEntry.getValue() : null;
 	}
 
-	default MetricUnit[] values() {
-		String[] metrics = metrics();
-		MetricUnit[] metricUnits = new MetricUnit[metrics.length];
-		for (int i = 0; i < metricUnits.length; i++) {
-			MetricUnit[] units = values(metrics[i]);
-			metricUnits[i] = (MetricUnit) ArrayUtils.getLast(units);
+	default Map<String, MetricUnit> fetch() {
+		Map<String, MetricUnit> data = new LinkedHashMap<String, MetricUnit>();
+		for (String metric : metrics()) {
+			data.put(metric, get(metric));
 		}
-		return metricUnits;
+		return data;
 	}
 
-	MetricUnit[] values(String metric);
+	Map<String, MetricUnit> sequence(String metric);
 
 }

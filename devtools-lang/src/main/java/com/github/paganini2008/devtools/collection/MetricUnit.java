@@ -17,14 +17,10 @@ public interface MetricUnit {
 
 	int getCount();
 
-	default Number getMiddleValue() {
-		return getMiddleValue(4);
-	}
-
 	Number getMiddleValue(int scale);
 
 	long getTimestamp();
 
-	void update(MetricUnit anotherUnit);
+	MetricUnit merge(MetricUnit anotherUnit);
 
 }

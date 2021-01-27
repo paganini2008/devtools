@@ -47,16 +47,16 @@ public class AtomicReferenceMap<K, V> extends AbstractMap<K, V> implements Map<K
 			ref = real.get(key);
 		}
 		V current;
-		V update = value;
+		V update;
 		do {
 			current = ref.getReference();
-			update = merge(key, current, update);
+			update = merge(key, current, value);
 		} while (!ref.compareAndSet(current, update, ref.getStamp(), ref.getStamp() + 1));
 		return update;
 	}
 
-	protected V merge(K key, V current, V update) {
-		return update;
+	protected V merge(K key, V current, V value) {
+		return value;
 	}
 
 	@Override

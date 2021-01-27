@@ -125,7 +125,7 @@ public class StandardTypeConverter implements TypeConverter {
 		}
 		try {
 			return requiredType.cast(value);
-		} catch (ClassCastException e) {
+		} catch (ClassCastException ignored) {
 		}
 		BasicConverter<T> converter = (BasicConverter<T>) lookupType(requiredType);
 		if (converter != null) {

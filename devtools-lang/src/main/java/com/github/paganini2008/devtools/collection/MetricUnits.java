@@ -37,6 +37,14 @@ public abstract class MetricUnits {
 			this.timestamp = System.currentTimeMillis();
 		}
 
+		DoubleMetricUnit(double highestValue, double lowestValue, double totalValue, int count, long timestamp) {
+			this.highestValue = highestValue;
+			this.lowestValue = lowestValue;
+			this.totalValue = totalValue;
+			this.count = count;
+			this.timestamp = timestamp;
+		}
+
 		private double highestValue;
 		private double lowestValue;
 		private double totalValue;
@@ -73,12 +81,13 @@ public abstract class MetricUnits {
 		}
 
 		@Override
-		public void update(MetricUnit anotherUnit) {
-			this.highestValue = Double.max(this.highestValue, anotherUnit.getHighestValue().doubleValue());
-			this.lowestValue = Double.min(this.lowestValue, anotherUnit.getLowestValue().doubleValue());
-			this.totalValue += anotherUnit.getTotalValue().doubleValue();
-			this.count += anotherUnit.getCount();
-			this.timestamp = anotherUnit.getTimestamp();
+		public MetricUnit merge(MetricUnit anotherUnit) {
+			double highestValue = Double.max(this.highestValue, anotherUnit.getHighestValue().doubleValue());
+			double lowestValue = Double.min(this.lowestValue, anotherUnit.getLowestValue().doubleValue());
+			double totalValue = this.totalValue + anotherUnit.getTotalValue().doubleValue();
+			int count = this.count + anotherUnit.getCount();
+			long timestamp = anotherUnit.getTimestamp();
+			return new DoubleMetricUnit(highestValue, lowestValue, totalValue, count, timestamp);
 		}
 
 		public String toString() {
@@ -95,6 +104,14 @@ public abstract class MetricUnits {
 			this.totalValue = value;
 			this.count = 1;
 			this.timestamp = System.currentTimeMillis();
+		}
+
+		LongMetricUnit(long highestValue, long lowestValue, long totalValue, int count, long timestamp) {
+			this.highestValue = highestValue;
+			this.lowestValue = lowestValue;
+			this.totalValue = totalValue;
+			this.count = count;
+			this.timestamp = timestamp;
 		}
 
 		private long highestValue;
@@ -125,7 +142,7 @@ public abstract class MetricUnits {
 
 		@Override
 		public Double getMiddleValue(int scale) {
-			return count > 0 ? Doubles.toFixed((double) totalValue / count, scale) : 0;
+			return count > 0 ? scale > 0 ? Doubles.toFixed((double) totalValue / count, scale) : totalValue / count : 0;
 		}
 
 		public long getTimestamp() {
@@ -133,12 +150,13 @@ public abstract class MetricUnits {
 		}
 
 		@Override
-		public void update(MetricUnit anotherUnit) {
-			this.highestValue = Long.max(this.highestValue, anotherUnit.getHighestValue().longValue());
-			this.lowestValue = Long.min(this.lowestValue, anotherUnit.getLowestValue().longValue());
-			this.totalValue += anotherUnit.getTotalValue().longValue();
-			this.count += anotherUnit.getCount();
-			this.timestamp = anotherUnit.getTimestamp();
+		public MetricUnit merge(MetricUnit anotherUnit) {
+			long highestValue = Long.max(this.highestValue, anotherUnit.getHighestValue().longValue());
+			long lowestValue = Long.min(this.lowestValue, anotherUnit.getLowestValue().longValue());
+			long totalValue = this.totalValue + anotherUnit.getTotalValue().longValue();
+			int count = this.count + anotherUnit.getCount();
+			long timestamp = anotherUnit.getTimestamp();
+			return new LongMetricUnit(highestValue, lowestValue, totalValue, count, timestamp);
 		}
 
 		public String toString() {
@@ -155,6 +173,14 @@ public abstract class MetricUnits {
 			this.totalValue = value;
 			this.count = 1;
 			this.timestamp = System.currentTimeMillis();
+		}
+
+		BigDecimalMetricUnit(BigDecimal highestValue, BigDecimal lowestValue, BigDecimal totalValue, int count, long timestamp) {
+			this.highestValue = highestValue;
+			this.lowestValue = lowestValue;
+			this.totalValue = totalValue;
+			this.count = count;
+			this.timestamp = timestamp;
 		}
 
 		private BigDecimal highestValue;
@@ -185,7 +211,10 @@ public abstract class MetricUnits {
 
 		@Override
 		public BigDecimal getMiddleValue(int scale) {
-			return count > 0 ? totalValue.divide(BigDecimal.valueOf(count), scale, RoundingMode.HALF_UP) : BigDecimal.ZERO;
+			return count > 0
+					? scale > 0 ? totalValue.divide(BigDecimal.valueOf(count), scale, RoundingMode.HALF_UP)
+							: totalValue.divide(BigDecimal.valueOf(count))
+					: BigDecimal.ZERO;
 		}
 
 		@Override
@@ -194,12 +223,13 @@ public abstract class MetricUnits {
 		}
 
 		@Override
-		public void update(MetricUnit anotherUnit) {
-			this.highestValue = this.highestValue.max((BigDecimal) anotherUnit.getHighestValue());
-			this.lowestValue = this.lowestValue.min((BigDecimal) anotherUnit.getLowestValue());
-			this.totalValue = this.totalValue.add((BigDecimal) anotherUnit.getTotalValue());
-			this.count += anotherUnit.getCount();
-			this.timestamp = anotherUnit.getTimestamp();
+		public MetricUnit merge(MetricUnit anotherUnit) {
+			BigDecimal highestValue = this.highestValue.max((BigDecimal) anotherUnit.getHighestValue());
+			BigDecimal lowestValue = this.lowestValue.min((BigDecimal) anotherUnit.getLowestValue());
+			BigDecimal totalValue = this.totalValue.add((BigDecimal) anotherUnit.getTotalValue());
+			int count = this.count + anotherUnit.getCount();
+			long timestamp = anotherUnit.getTimestamp();
+			return new BigDecimalMetricUnit(highestValue, lowestValue, totalValue, count, timestamp);
 		}
 
 		public String toString() {
