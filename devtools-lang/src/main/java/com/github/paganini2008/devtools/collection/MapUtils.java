@@ -313,7 +313,18 @@ public abstract class MapUtils {
 		return results;
 	}
 
-	public static <K, V> Map<V, K> reverse(Map<K, V> map) {
+	public static <K, V> Map<K, V> reverse(Map<K, V> map) {
+		if (isEmpty(map)) {
+			return Collections.EMPTY_MAP;
+		}
+		List<Map.Entry<K, V>> entries = new ArrayList<Map.Entry<K, V>>(map.entrySet());
+		Collections.reverse(entries);
+		Map<K, V> results = new LinkedHashMap<K, V>();
+		putAll(results, entries);
+		return results;
+	}
+
+	public static <K, V> Map<V, K> exchange(Map<K, V> map) {
 		if (isEmpty(map)) {
 			return Collections.EMPTY_MAP;
 		}

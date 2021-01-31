@@ -9,6 +9,8 @@ package com.github.paganini2008.devtools.collection;
  */
 public interface BoundedMap<K, V> {
 
+	int getMaxSize();
+
 	default void onEviction(K eldestKey, V eldestValue) {
 	}
 

@@ -34,7 +34,7 @@ public abstract class ClassUtils {
 		primitiveWrapperMapper.put(Character.TYPE, Character.class);
 	}
 
-	private static final Map<Class<?>, Class<?>> wrapperPrimitiveMapper = MapUtils.reverse(primitiveWrapperMapper);
+	private static final Map<Class<?>, Class<?>> wrapperPrimitiveMapper = MapUtils.exchange(primitiveWrapperMapper);
 
 	private static final Map<String, Object> primitiveDefaultValueMap = new LinkedHashMap<String, Object>();
 
@@ -75,7 +75,7 @@ public abstract class ClassUtils {
 		abbreviationMap.put("char", "C");
 	}
 
-	private static final Map<String, String> reverseAbbreviationMap = MapUtils.reverse(abbreviationMap);
+	private static final Map<String, String> reverseAbbreviationMap = MapUtils.exchange(abbreviationMap);
 
 	private static final Map<String, Class<?>> primitiveArrayClassMap = new LinkedHashMap<String, Class<?>>();
 

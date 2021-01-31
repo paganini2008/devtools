@@ -43,6 +43,7 @@ public class LruMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Serial
 
 	public LruMap(final Map<K, V> delegate, final int maxSize, final BoundedMapSupplier<K, Object> supplier) {
 		this.delegate = delegate;
+		this.maxSize = maxSize;
 		this.keys = supplier.get(maxSize, (key, value) -> {
 			V eldestValue = delegate.remove(key);
 			onEviction(key, eldestValue);
@@ -51,6 +52,7 @@ public class LruMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Serial
 
 	private final Map<K, V> delegate;
 	private final Map<K, Object> keys;
+	private final int maxSize;
 
 	@Override
 	public V get(Object key) {
@@ -73,6 +75,11 @@ public class LruMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Serial
 	@Override
 	public int size() {
 		return delegate.size();
+	}
+
+	@Override
+	public int getMaxSize() {
+		return maxSize;
 	}
 
 	@Override

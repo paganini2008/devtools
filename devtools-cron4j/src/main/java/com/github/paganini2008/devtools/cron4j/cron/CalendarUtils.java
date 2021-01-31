@@ -39,7 +39,7 @@ public abstract class CalendarUtils {
 		dayOfWeekValues.put("FRI", Calendar.FRIDAY);
 		dayOfWeekValues.put("SAT", Calendar.SATURDAY);
 
-		dayOfWeekNames = MapUtils.reverse(dayOfWeekValues);
+		dayOfWeekNames = MapUtils.exchange(dayOfWeekValues);
 
 		monthValues.put("JAN", Calendar.JANUARY);
 		monthValues.put("FEB", Calendar.FEBRUARY);
@@ -54,7 +54,7 @@ public abstract class CalendarUtils {
 		monthValues.put("NOV", Calendar.NOVEMBER);
 		monthValues.put("DEC", Calendar.DECEMBER);
 
-		monthNames = MapUtils.reverse(monthValues);
+		monthNames = MapUtils.exchange(monthValues);
 	}
 
 	public static int getDayOfWeekValue(String repr) {

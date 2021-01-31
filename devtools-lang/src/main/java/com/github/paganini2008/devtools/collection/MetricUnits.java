@@ -29,7 +29,7 @@ public abstract class MetricUnits {
 
 	public static class DoubleMetricUnit implements MetricUnit {
 
-		DoubleMetricUnit(double value) {
+		protected DoubleMetricUnit(double value) {
 			this.highestValue = value;
 			this.lowestValue = value;
 			this.totalValue = value;
@@ -37,7 +37,7 @@ public abstract class MetricUnits {
 			this.timestamp = System.currentTimeMillis();
 		}
 
-		DoubleMetricUnit(double highestValue, double lowestValue, double totalValue, int count, long timestamp) {
+		protected DoubleMetricUnit(double highestValue, double lowestValue, double totalValue, int count, long timestamp) {
 			this.highestValue = highestValue;
 			this.lowestValue = lowestValue;
 			this.totalValue = totalValue;
@@ -98,7 +98,7 @@ public abstract class MetricUnits {
 
 	public static class LongMetricUnit implements MetricUnit {
 
-		LongMetricUnit(long value) {
+		protected LongMetricUnit(long value) {
 			this.highestValue = value;
 			this.lowestValue = value;
 			this.totalValue = value;
@@ -106,7 +106,7 @@ public abstract class MetricUnits {
 			this.timestamp = System.currentTimeMillis();
 		}
 
-		LongMetricUnit(long highestValue, long lowestValue, long totalValue, int count, long timestamp) {
+		protected LongMetricUnit(long highestValue, long lowestValue, long totalValue, int count, long timestamp) {
 			this.highestValue = highestValue;
 			this.lowestValue = lowestValue;
 			this.totalValue = totalValue;
@@ -167,7 +167,7 @@ public abstract class MetricUnits {
 
 	public static class BigDecimalMetricUnit implements MetricUnit {
 
-		BigDecimalMetricUnit(BigDecimal value) {
+		protected BigDecimalMetricUnit(BigDecimal value) {
 			this.highestValue = value;
 			this.lowestValue = value;
 			this.totalValue = value;
@@ -175,7 +175,7 @@ public abstract class MetricUnits {
 			this.timestamp = System.currentTimeMillis();
 		}
 
-		BigDecimalMetricUnit(BigDecimal highestValue, BigDecimal lowestValue, BigDecimal totalValue, int count, long timestamp) {
+		protected BigDecimalMetricUnit(BigDecimal highestValue, BigDecimal lowestValue, BigDecimal totalValue, int count, long timestamp) {
 			this.highestValue = highestValue;
 			this.lowestValue = lowestValue;
 			this.totalValue = totalValue;

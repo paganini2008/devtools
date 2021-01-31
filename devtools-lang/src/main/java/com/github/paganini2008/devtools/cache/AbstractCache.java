@@ -1,6 +1,8 @@
 package com.github.paganini2008.devtools.cache;
 
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * 
@@ -50,6 +52,14 @@ public abstract class AbstractCache implements Cache {
 
 	public Iterator<Object> iterator() {
 		return new CacheIterator(this);
+	}
+
+	public Map<Object, Object> toEntries() {
+		Map<Object, Object> map = new LinkedHashMap<Object, Object>();
+		for (Object key : keys()) {
+			map.put(key, getObject(key));
+		}
+		return map;
 	}
 
 	/**

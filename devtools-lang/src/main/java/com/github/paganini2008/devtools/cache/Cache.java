@@ -1,5 +1,6 @@
 package com.github.paganini2008.devtools.cache;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -38,6 +39,8 @@ public interface Cache extends Iterable<Object> {
 	Object removeObject(Object key);
 
 	Set<Object> keys();
+
+	Map<Object, Object> toEntries();
 
 	void clear();
 
