@@ -67,6 +67,12 @@ public class LruMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Serial
 	}
 
 	@Override
+	public V putIfAbsent(K key, V value) {
+		keys.putIfAbsent(key, key);
+		return delegate.putIfAbsent(key, value);
+	}
+
+	@Override
 	public V remove(Object key) {
 		keys.remove(key);
 		return delegate.remove(key);
@@ -112,6 +118,10 @@ public class LruMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Serial
 	@Override
 	public Set<Entry<K, V>> entrySet() {
 		return delegate.entrySet();
+	}
+
+	protected Map<K, V> getDelegate() {
+		return delegate;
 	}
 
 	@Override

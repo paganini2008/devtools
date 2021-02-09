@@ -16,6 +16,10 @@ import java.util.Set;
 @SuppressWarnings("all")
 public abstract class SetUtils {
 
+	public static <T> Set<T> emptySet() {
+		return Collections.EMPTY_SET;
+	}
+
 	public static <T> Set<T> unmodifiableSet(T... args) {
 		return Collections.unmodifiableSet(create(args));
 	}

@@ -40,7 +40,7 @@ public class AtomicReferenceMap<K, V> extends AbstractMap<K, V> implements Map<K
 	}
 
 	@Override
-	public V put(K key, V value) {
+	public V putIfAbsent(K key, V value) {
 		AtomicStampedReference<V> ref = real.get(key);
 		if (ref == null) {
 			real.putIfAbsent(key, new AtomicStampedReference<V>(null, 0));
@@ -53,6 +53,12 @@ public class AtomicReferenceMap<K, V> extends AbstractMap<K, V> implements Map<K
 			update = merge(key, current, value);
 		} while (!ref.compareAndSet(current, update, ref.getStamp(), ref.getStamp() + 1));
 		return update;
+	}
+
+	@Override
+	public V put(K key, V value) {
+		AtomicStampedReference<V> eldest = real.put(key, new AtomicStampedReference<V>(value, 0));
+		return eldest != null ? eldest.getReference() : null;
 	}
 
 	protected V merge(K key, V current, V value) {

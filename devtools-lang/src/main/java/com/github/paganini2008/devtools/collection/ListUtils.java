@@ -23,6 +23,10 @@ import com.github.paganini2008.devtools.ObjectUtils;
 @SuppressWarnings("all")
 public abstract class ListUtils {
 
+	public static <E> List<E> emptyList() {
+		return Collections.EMPTY_LIST;
+	}
+
 	public static boolean isList(Object obj) {
 		return obj == null ? false : obj instanceof List;
 	}

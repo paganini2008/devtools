@@ -30,6 +30,10 @@ import com.github.paganini2008.devtools.converter.ConvertUtils;
 @SuppressWarnings("all")
 public abstract class MapUtils {
 
+	public static <K, V> Map<K, V> emptyMap() {
+		return Collections.EMPTY_MAP;
+	}
+
 	public static boolean isMap(Object obj) {
 		return obj == null ? false : obj instanceof Map;
 	}

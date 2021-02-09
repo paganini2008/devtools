@@ -68,12 +68,12 @@ public abstract class KeyMatchedMap<K extends Comparable<K>, V> extends Abstract
 
 	private K matches(Object inputKey) {
 		for (K key : keys) {
-			if (apply(key, inputKey)) {
+			if (match(key, inputKey)) {
 				return key;
 			}
 		}
 		return null;
 	}
 
-	protected abstract boolean apply(K key, Object inputKey);
+	protected abstract boolean match(K key, Object inputKey);
 }

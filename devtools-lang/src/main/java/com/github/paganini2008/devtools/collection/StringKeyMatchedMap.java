@@ -28,7 +28,7 @@ public class StringKeyMatchedMap<V> extends KeyMatchedMap<String, V> {
 	private final MatchMode matchMode;
 
 	@Override
-	protected boolean apply(String key, Object inputKey) {
+	protected boolean match(String key, Object inputKey) {
 		return matchMode.matches(key, (String) inputKey);
 	}
 
