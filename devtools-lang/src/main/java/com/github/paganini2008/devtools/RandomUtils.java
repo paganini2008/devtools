@@ -170,10 +170,7 @@ public abstract class RandomUtils {
 	}
 
 	public static boolean randomBoolean() {
-		return randomInt(0, 2) == 1;
-	}
-
-	public static void main(String[] args) throws Exception {
+		return ThreadLocalRandom.current().nextBoolean();
 	}
 
 }

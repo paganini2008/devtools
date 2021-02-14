@@ -717,8 +717,8 @@ public abstract class ArrayUtils {
 		return array[array.length - 1];
 	}
 
-	public static <E, T> T[] map(E[] array, Function<E, T> f) {
-		T[] result = (T[]) Array.newInstance(array.getClass().getComponentType(), array.length);
+	public static <E, T> T[] map(E[] array, Class<T> requiredType, Function<E, T> f) {
+		T[] result = (T[]) Array.newInstance(requiredType, array.length);
 		for (int i = 0; i < array.length; i++) {
 			result[i] = f.apply(array[i]);
 		}
