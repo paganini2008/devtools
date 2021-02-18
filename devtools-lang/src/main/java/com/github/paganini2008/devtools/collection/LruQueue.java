@@ -2,6 +2,7 @@ package com.github.paganini2008.devtools.collection;
 
 import java.io.Serializable;
 import java.util.AbstractQueue;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
@@ -30,15 +31,16 @@ public class LruQueue<E> extends AbstractQueue<E> implements Queue<E>, Serializa
 		this(new ConcurrentLinkedQueue<E>(), maxSize);
 	}
 
-	public LruQueue(final int maxSize, final BoundedMapSupplier<Integer, E> supplier) {
+	public LruQueue(final int maxSize, final LruMapSupplier<Integer, E> supplier) {
 		this(new ConcurrentLinkedQueue<E>(), maxSize, supplier);
 	}
 
 	public LruQueue(final Queue<E> delegate, final int maxSize) {
-		this(delegate, maxSize, new LruBoundedMapSupplier<Integer, E>());
+		this(delegate, maxSize,
+				(size, listener) -> Collections.synchronizedMap(MapUtils.newLruMap(16, size, listener)));
 	}
 
-	public LruQueue(final Queue<E> delegate, final int maxSize, final BoundedMapSupplier<Integer, E> supplier) {
+	public LruQueue(final Queue<E> delegate, final int maxSize, final LruMapSupplier<Integer, E> supplier) {
 		this.delegate = delegate;
 		this.maxSize = maxSize;
 		this.keys = supplier.get(maxSize, (key, value) -> {

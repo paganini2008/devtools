@@ -2,7 +2,7 @@ package com.github.paganini2008.devtools.cache;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
 
@@ -13,21 +13,21 @@ import com.github.paganini2008.devtools.logging.Log;
 import com.github.paganini2008.devtools.logging.LogFactory;
 
 /**
- * SerializableStore
+ * SerializableCacheStore
  * 
  * @author Jimmy Hoff
  * @version 1.0
  */
-public class SerializableStore implements CacheStore {
+public class SerializableCacheStore implements CacheStore {
 
-	private static final Log logger = LogFactory.getLog(SerializableStore.class);
+	private static final Log logger = LogFactory.getLog(SerializableCacheStore.class);
 
 	public static final String fileExtension = ".cache";
 
-	public SerializableStore(int maxSize) {
+	public SerializableCacheStore(int maxSize) {
 		cache = new LruMap<Object, File>(maxSize) {
 
-			private static final long serialVersionUID = 8262093056909008093L;
+			private static final long serialVersionUID = 1L;
 
 			public void onEviction(Object element, File file) {
 				try {
@@ -94,7 +94,12 @@ public class SerializableStore implements CacheStore {
 	}
 
 	public Set<Object> keys() {
-		return new HashSet<Object>(cache.keySet());
+		return Collections.unmodifiableSet(cache.keySet());
+	}
+
+	@Override
+	public boolean hasKey(Object key) {
+		return cache.containsKey(key);
 	}
 
 }

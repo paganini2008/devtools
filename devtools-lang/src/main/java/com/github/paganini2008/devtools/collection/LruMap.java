@@ -3,6 +3,7 @@ package com.github.paganini2008.devtools.collection;
 import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -30,18 +31,19 @@ public class LruMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Serial
 	}
 
 	public LruMap(final boolean sorted, final int maxSize) {
-		this(sorted, maxSize, new LruBoundedMapSupplier<K, Object>());
+		this(sorted, maxSize, (size, listener) -> Collections.synchronizedMap(MapUtils.newLruMap(16, size, listener)));
 	}
 
-	public LruMap(final boolean sorted, final int maxSize, final BoundedMapSupplier<K, Object> supplier) {
+	public LruMap(final boolean sorted, final int maxSize, final LruMapSupplier<K, Object> supplier) {
 		this(sorted ? new ConcurrentSkipListMap<K, V>() : new ConcurrentHashMap<K, V>(), maxSize, supplier);
 	}
 
 	public LruMap(final Map<K, V> delegate, final int maxSize) {
-		this(delegate, maxSize, new LruBoundedMapSupplier<K, Object>());
+		this(delegate, maxSize,
+				(size, listener) -> Collections.synchronizedMap(MapUtils.newLruMap(16, size, listener)));
 	}
 
-	public LruMap(final Map<K, V> delegate, final int maxSize, final BoundedMapSupplier<K, Object> supplier) {
+	public LruMap(final Map<K, V> delegate, final int maxSize, final LruMapSupplier<K, Object> supplier) {
 		this.delegate = delegate;
 		this.maxSize = maxSize;
 		this.keys = supplier.get(maxSize, (key, value) -> {

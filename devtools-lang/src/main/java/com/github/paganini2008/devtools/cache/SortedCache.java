@@ -1,9 +1,11 @@
 package com.github.paganini2008.devtools.cache;
 
 import java.util.Collections;
-import java.util.NavigableSet;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.ConcurrentHashMap;
+
+import com.github.paganini2008.devtools.collection.SortedBoundedMap;
 
 /**
  * 
@@ -15,25 +17,26 @@ import java.util.concurrent.ConcurrentSkipListSet;
  */
 public class SortedCache extends BoundedCache {
 
-	private final Cache delegate;
-	private final NavigableSet<Object> keys;
-	private final int maxSize;
-	private final boolean asc;
+	private final SortedBoundedMap<Object, Object> boundedMap;
 	private CacheStore store;
 
 	public SortedCache(int maxSize) {
-		this(maxSize, true);
+		this.boundedMap = new SortedBoundedMap<Object, Object>(new ConcurrentHashMap<Object, Object>(), maxSize) {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onEviction(Object eldestKey, Object eldestValue) {
+				if (store != null) {
+					store.writeObject(eldestKey, eldestValue);
+				}
+			}
+
+		};
 	}
 
-	public SortedCache(int maxSize, boolean asc) {
-		this(new HashCache(), maxSize, asc);
-	}
-
-	public SortedCache(Cache delegate, int maxSize, boolean asc) {
-		this.delegate = delegate;
-		this.maxSize = maxSize;
-		this.asc = asc;
-		this.keys = new ConcurrentSkipListSet<Object>();
+	public void setAsc(boolean asc) {
+		this.boundedMap.setAsc(asc);
 	}
 
 	public void setStore(CacheStore store) {
@@ -41,12 +44,15 @@ public class SortedCache extends BoundedCache {
 	}
 
 	public void putObject(Object key, Object value, boolean ifAbsent) {
-		delegate.putObject(key, value, ifAbsent);
-		rebalance(key);
+		if (ifAbsent) {
+			boundedMap.putIfAbsent(key, value);
+		} else {
+			boundedMap.put(key, value);
+		}
 	}
 
 	public Object getObject(Object key) {
-		Object result = delegate.getObject(key);
+		Object result = boundedMap.get(key);
 		if (result == null) {
 			if (store != null) {
 				result = store.readObject(key);
@@ -60,8 +66,7 @@ public class SortedCache extends BoundedCache {
 	}
 
 	public Object removeObject(Object key) {
-		keys.remove(key);
-		Object result = delegate.removeObject(key);
+		Object result = boundedMap.remove(key);
 		if (result == null) {
 			if (store != null) {
 				result = store.removeObject(key);
@@ -71,40 +76,33 @@ public class SortedCache extends BoundedCache {
 	}
 
 	public int getSize() {
-		return delegate.getSize() + (store != null ? store.getSize() : 0);
+		return boundedMap.size() + (store != null ? store.getSize() : 0);
 	}
 
 	public void clear() {
-		keys.clear();
-		delegate.clear();
+		boundedMap.clear();
 	}
 
 	public Set<Object> keys() {
-		return Collections.unmodifiableNavigableSet(keys);
+		Set<Object> keys = new HashSet<Object>();
+		keys.addAll(boundedMap.keySet());
+		if (store != null) {
+			keys.addAll(store.keys());
+		}
+		return Collections.unmodifiableSet(keys);
 	}
 
 	public boolean hasKey(Object key) {
-		return delegate.hasKey(key);
-	}
-
-	private synchronized void rebalance(Object key) {
-		keys.add(key);
-		if (keys.size() > maxSize) {
-			Object oldestKey = asc ? keys.pollFirst() : keys.pollLast();
-			Object oldestValue = delegate.removeObject(oldestKey);
-			if (store != null) {
-				store.writeObject(oldestKey, oldestValue);
-			}
-		}
+		return (boundedMap.containsKey(key)) || (store != null && store.hasKey(key));
 	}
 
 	public String toString() {
-		return delegate.toString();
+		return boundedMap.toString();
 	}
 
 	public static void main(String[] args) {
 		SortedCache cache = new SortedCache(10);
-		for (int i = 0; i < 11; i++) {
+		for (int i = 0; i < 50; i++) {
 			cache.putObject("Key_" + i, i);
 		}
 		System.out.println(cache);

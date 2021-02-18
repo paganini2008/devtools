@@ -1,9 +1,11 @@
 package com.github.paganini2008.devtools.cache;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
-import com.github.paganini2008.devtools.collection.LruList;
+import com.github.paganini2008.devtools.collection.LruMap;
 
 /**
  * LruCache
@@ -14,27 +16,26 @@ import com.github.paganini2008.devtools.collection.LruList;
  */
 public class LruCache extends BoundedCache {
 
-	private final Cache delegate;
-	private final LruList<Object> keys;
+	private final LruMap<Object, Object> lruMap;
 	private CacheStore store;
 
 	public LruCache(int maxSize) {
-		this(new HashCache(), maxSize);
-	}
+		this.lruMap = new LruMap<Object, Object>(new ConcurrentHashMap<Object, Object>(), maxSize) {
 
-	public LruCache(final Cache delegate, int maxSize) {
-		this.delegate = delegate;
-		this.keys = new LruList<Object>(maxSize) {
+			private static final long serialVersionUID = 1L;
 
-			private static final long serialVersionUID = -7375790466218025547L;
-
-			public void onEviction(Object oldestKey) {
-				Object oldestValue = delegate.removeObject(oldestKey);
+			@Override
+			public void onEviction(Object eldestKey, Object eldestValue) {
 				if (store != null) {
-					store.writeObject(oldestKey, oldestValue);
+					store.writeObject(eldestKey, eldestValue);
 				}
 			}
+
 		};
+	}
+
+	protected LruCache(LruMap<Object, Object> lruMap) {
+		this.lruMap = lruMap;
 	}
 
 	public void setStore(CacheStore store) {
@@ -42,12 +43,15 @@ public class LruCache extends BoundedCache {
 	}
 
 	public void putObject(Object key, Object value, boolean ifAbsent) {
-		keys.add(key);
-		delegate.putObject(key, value, ifAbsent);
+		if (ifAbsent) {
+			lruMap.putIfAbsent(key, value);
+		} else {
+			lruMap.put(key, value);
+		}
 	}
 
 	public Object getObject(Object key) {
-		Object result = delegate.getObject(key);
+		Object result = lruMap.get(key);
 		if (result == null) {
 			if (store != null) {
 				result = store.readObject(key);
@@ -57,15 +61,12 @@ public class LruCache extends BoundedCache {
 					}
 				}
 			}
-		} else {
-			keys.contains(key);
 		}
 		return result;
 	}
 
 	public Object removeObject(Object key) {
-		keys.remove(key);
-		Object result = delegate.removeObject(key);
+		Object result = lruMap.remove(key);
 		if (result == null) {
 			if (store != null) {
 				result = store.removeObject(key);
@@ -75,29 +76,28 @@ public class LruCache extends BoundedCache {
 	}
 
 	public int getSize() {
-		return delegate.getSize() + (store != null ? store.getSize() : 0);
+		return lruMap.size() + (store != null ? store.getSize() : 0);
 	}
 
 	public Set<Object> keys() {
-		final Set<Object> names = new HashSet<Object>();
-		names.addAll(keys);
+		final Set<Object> keys = new HashSet<Object>();
+		keys.addAll(lruMap.keySet());
 		if (store != null) {
-			names.addAll(store.keys());
+			keys.addAll(store.keys());
 		}
-		return names;
+		return Collections.unmodifiableSet(keys);
 	}
 
 	public void clear() {
-		keys.clear();
-		delegate.clear();
+		lruMap.clear();
 	}
 
 	public boolean hasKey(Object key) {
-		return delegate.hasKey(key);
+		return (lruMap.containsKey(key)) || (store != null && store.hasKey(key));
 	}
 
 	public String toString() {
-		return delegate.toString();
+		return lruMap.toString();
 	}
 
 }

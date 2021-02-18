@@ -253,7 +253,7 @@ public abstract class DateUtils {
 		return addField(date, Calendar.SECOND, amount);
 	}
 
-	private static Date addField(Date date, int calendarField, int amount) {
+	public static Date addField(Date date, int calendarField, int amount) {
 		if (date == null) {
 			throw new IllegalArgumentException("The date must not be null.");
 		}

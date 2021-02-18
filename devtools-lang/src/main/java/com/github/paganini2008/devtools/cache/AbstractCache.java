@@ -14,30 +14,6 @@ import java.util.Map;
  */
 public abstract class AbstractCache implements Cache {
 
-	public BoundedCache fifoCache(int maxSize, CacheStore store) {
-		BoundedCache cache = new FifoCache(this, maxSize);
-		cache.setStore(store);
-		return cache;
-	}
-
-	public BoundedCache lifoCache(int maxSize, CacheStore store) {
-		BoundedCache cache = new LifoCache(this, maxSize);
-		cache.setStore(store);
-		return cache;
-	}
-
-	public BoundedCache lruCache(int maxSize, CacheStore store) {
-		BoundedCache cache = new LruCache(this, maxSize);
-		cache.setStore(store);
-		return cache;
-	}
-
-	public BoundedCache sortedCache(int maxSize, boolean asc, CacheStore store) {
-		BoundedCache cache = new SortedCache(this, maxSize, asc);
-		cache.setStore(store);
-		return cache;
-	}
-
 	public Cache masterStandbyCache(Cache backup) {
 		return new MasterStandbyCache(this, backup);
 	}
@@ -69,7 +45,7 @@ public abstract class AbstractCache implements Cache {
 	 * @author Jimmy Hoff
 	 * @version 1.0
 	 */
-	static class CacheIterator implements Iterator<Object> {
+	private static class CacheIterator implements Iterator<Object> {
 
 		private final Cache delegate;
 		private final Iterator<Object> it;

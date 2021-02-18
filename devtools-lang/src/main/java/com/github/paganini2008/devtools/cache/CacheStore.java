@@ -11,14 +11,16 @@ import java.util.Set;
  */
 public interface CacheStore {
 
-	void writeObject(Object name, Object o);
+	void writeObject(Object key, Object eldestObject);
 
-	Object readObject(Object name);
+	Object readObject(Object key);
 
-	Object removeObject(Object name);
+	Object removeObject(Object key);
 
 	int getSize();
 
 	Set<Object> keys();
+
+	boolean hasKey(Object key);
 
 }

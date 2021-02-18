@@ -1,9 +1,11 @@
 package com.github.paganini2008.devtools.cache;
 
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentHashMap;
+
+import com.github.paganini2008.devtools.collection.SimpleBoundedMap;
 
 /**
  * 
@@ -14,19 +16,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class FifoCache extends BoundedCache {
 
-	private final Cache delegate;
-	private final Queue<Object> keys;
-	private final int maxSize;
+	private final SimpleBoundedMap<Object, Object> boundedMap;
 	private CacheStore store;
 
 	public FifoCache(int maxSize) {
-		this(new HashCache(), maxSize);
-	}
-
-	public FifoCache(Cache delegate, int maxSize) {
-		this.delegate = delegate;
-		this.maxSize = maxSize;
-		this.keys = new ConcurrentLinkedQueue<Object>();
+		this.boundedMap = new SimpleBoundedMap<Object, Object>(new ConcurrentHashMap<Object, Object>(), maxSize);
 	}
 
 	public void setStore(CacheStore store) {
@@ -34,16 +28,19 @@ public class FifoCache extends BoundedCache {
 	}
 
 	public int getSize() {
-		return delegate.getSize() + (store != null ? store.getSize() : 0);
+		return boundedMap.size() + (store != null ? store.getSize() : 0);
 	}
 
 	public void putObject(Object key, Object value, boolean ifAbsent) {
-		delegate.putObject(key, value, ifAbsent);
-		control(key);
+		if (ifAbsent) {
+			boundedMap.putIfAbsent(key, value);
+		} else {
+			boundedMap.put(key, value);
+		}
 	}
 
 	public Object getObject(Object key) {
-		Object result = delegate.getObject(key);
+		Object result = boundedMap.get(key);
 		if (result == null) {
 			if (store != null) {
 				result = store.readObject(key);
@@ -57,8 +54,7 @@ public class FifoCache extends BoundedCache {
 	}
 
 	public Object removeObject(Object key) {
-		keys.remove(key);
-		Object result = delegate.removeObject(key);
+		Object result = boundedMap.remove(key);
 		if (result == null) {
 			if (store != null) {
 				result = store.removeObject(key);
@@ -68,36 +64,24 @@ public class FifoCache extends BoundedCache {
 	}
 
 	public void clear() {
-		delegate.clear();
-		keys.clear();
-	}
-
-	private void control(Object key) {
-		keys.add(key);
-		if (keys.size() > maxSize) {
-			Object oldestKey = keys.poll();
-			Object oldestValue = delegate.removeObject(oldestKey);
-			if (store != null) {
-				store.writeObject(oldestKey, oldestValue);
-			}
-		}
+		boundedMap.clear();
 	}
 
 	public Set<Object> keys() {
-		final Set<Object> names = new HashSet<Object>();
-		names.addAll(keys);
+		Set<Object> keys = new HashSet<Object>();
+		keys.addAll(boundedMap.keySet());
 		if (store != null) {
-			names.addAll(store.keys());
+			keys.addAll(store.keys());
 		}
-		return names;
+		return Collections.unmodifiableSet(keys);
 	}
 
 	public boolean hasKey(Object key) {
-		return delegate.hasKey(key);
+		return (boundedMap.containsKey(key)) || (store != null && store.hasKey(key));
 	}
 
 	public String toString() {
-		return delegate.toString();
+		return boundedMap.toString();
 	}
 
 }

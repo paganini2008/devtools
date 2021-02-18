@@ -2,6 +2,7 @@ package com.github.paganini2008.devtools.collection;
 
 import java.io.Serializable;
 import java.util.AbstractSet;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -26,15 +27,16 @@ public class LruSet<E> extends AbstractSet<E> implements Set<E>, Serializable, B
 		this(new CopyOnWriteArraySet<E>(), maxSize);
 	}
 
-	public LruSet(final int maxSize, final BoundedMapSupplier<E, Object> supplier) {
+	public LruSet(final int maxSize, final LruMapSupplier<E, Object> supplier) {
 		this(new CopyOnWriteArraySet<E>(), maxSize, supplier);
 	}
 
 	public LruSet(final Set<E> delegate, final int maxSize) {
-		this(delegate, maxSize, new LruBoundedMapSupplier<E, Object>());
+		this(delegate, maxSize,
+				(size, listener) -> Collections.synchronizedMap(MapUtils.newLruMap(16, size, listener)));
 	}
 
-	public LruSet(final Set<E> delegate, final int maxSize, final BoundedMapSupplier<E, Object> supplier) {
+	public LruSet(final Set<E> delegate, final int maxSize, final LruMapSupplier<E, Object> supplier) {
 		this.delegate = delegate;
 		this.keys = supplier.get(maxSize, (key, value) -> {
 			delegate.remove(key);

@@ -695,4 +695,24 @@ public abstract class MapUtils {
 		return data;
 	}
 
+	public static <K, V> Map<K, V> newLruMap(final int initialSize, final int maxSize,
+			final EvictionListener<K, V> evictionListener) {
+		if (maxSize < 1) {
+			throw new IllegalArgumentException("MaxSize must greater than zero");
+		}
+		return new LinkedHashMap<K, V>(initialSize, 0.75F, true) {
+			private static final long serialVersionUID = 1L;
+
+			protected boolean removeEldestEntry(Map.Entry<K, V> eldestEntry) {
+				boolean result;
+				if (result = size() > maxSize) {
+					if (evictionListener != null) {
+						evictionListener.onEviction(eldestEntry.getKey(), eldestEntry.getValue());
+					}
+				}
+				return result;
+			}
+		};
+	}
+
 }

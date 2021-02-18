@@ -4,12 +4,13 @@ import java.util.Map;
 
 /**
  * 
- * BoundedMapSupplier
+ * LruMapSupplier
  *
  * @author Jimmy Hoff
  * @version 1.0
  */
-public interface BoundedMapSupplier<K, V> {
+@FunctionalInterface
+public interface LruMapSupplier<K, V> {
 
 	Map<K, V> get(int maxSize, EvictionListener<K, V> evictionListener);
 
