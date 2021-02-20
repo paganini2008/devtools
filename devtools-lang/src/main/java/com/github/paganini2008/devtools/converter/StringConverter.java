@@ -25,7 +25,7 @@ import com.github.paganini2008.devtools.collection.MapUtils;
 import com.github.paganini2008.devtools.date.CalendarUtils;
 import com.github.paganini2008.devtools.date.DateUtils;
 import com.github.paganini2008.devtools.io.IOUtils;
-import com.github.paganini2008.devtools.net.UrlUtils;
+import com.github.paganini2008.devtools.net.Urls;
 import com.github.paganini2008.devtools.primitives.Booleans;
 import com.github.paganini2008.devtools.primitives.Doubles;
 import com.github.paganini2008.devtools.primitives.Floats;
@@ -88,7 +88,7 @@ public class StringConverter extends BasicConverter<String> {
 			}
 			InputStream in = null;
 			try {
-				in = UrlUtils.openStream(source);
+				in = Urls.openStream(source);
 				return IOUtils.toString(in, charset);
 			} catch (IOException e) {
 				return defaultValue;

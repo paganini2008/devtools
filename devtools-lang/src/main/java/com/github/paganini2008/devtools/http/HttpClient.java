@@ -21,7 +21,7 @@ import java.util.zip.GZIPInputStream;
 
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.io.IOUtils;
-import com.github.paganini2008.devtools.net.UrlUtils;
+import com.github.paganini2008.devtools.net.Urls;
 
 /**
  * 
@@ -191,7 +191,7 @@ public class HttpClient {
 				}
 
 				String location = response.header(LOCATION);
-				URL target = UrlUtils.toURL(request.url(), location);
+				URL target = Urls.toURL(request.url(), location);
 				if (StringUtils.isNotBlank(request.baseUrl()) && !target.toString().startsWith(request.baseUrl())) {
 					throw new IllegalStateException("Unexpected redirection. RequestUrl: " + target + ", baseUrl:" + request.baseUrl());
 				}

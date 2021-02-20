@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.http.HttpRequest.Builder;
-import com.github.paganini2008.devtools.net.UrlUtils;
+import com.github.paganini2008.devtools.net.Urls;
 
 /**
  * 
@@ -22,7 +22,7 @@ public class HttpRequestBuilder implements Builder {
 	protected final HttpRequest request;
 
 	public HttpRequestBuilder(String method, String url) {
-		this(method, UrlUtils.toURL(url));
+		this(method, Urls.toURL(url));
 	}
 
 	public HttpRequestBuilder(String method, URL url) {

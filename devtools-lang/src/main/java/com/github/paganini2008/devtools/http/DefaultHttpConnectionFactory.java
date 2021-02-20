@@ -10,7 +10,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 
-import com.github.paganini2008.devtools.net.UrlUtils;
+import com.github.paganini2008.devtools.net.Urls;
 
 /**
  * 
@@ -56,7 +56,7 @@ public class DefaultHttpConnectionFactory implements HttpConnectionFactory {
 
 	private synchronized void initUnsecuredTSL() throws IOException {
 		if (sslSocketFactory == null) {
-			sslSocketFactory = UrlUtils.defaultSSLSocketFactory();
+			sslSocketFactory = Urls.defaultSSLSocketFactory();
 		}
 	}
 

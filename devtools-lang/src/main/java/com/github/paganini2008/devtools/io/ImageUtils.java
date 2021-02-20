@@ -16,7 +16,7 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 
 import com.github.paganini2008.devtools.Assert;
-import com.github.paganini2008.devtools.net.UrlUtils;
+import com.github.paganini2008.devtools.net.Urls;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
@@ -47,7 +47,7 @@ public abstract class ImageUtils {
 		Assert.isNull(src, "Undefined image source.");
 		InputStream in = null;
 		try {
-			in = UrlUtils.openStream(src);
+			in = Urls.openStream(src);
 			fade(in, format, output);
 		} finally {
 			IOUtils.closeQuietly(in);
@@ -137,7 +137,7 @@ public abstract class ImageUtils {
 	public static String encode(URL src, String type) throws IOException {
 		Assert.isNull(src, "Unspecified image source.");
 		try {
-			return encode(UrlUtils.openStream(src), type);
+			return encode(Urls.openStream(src), type);
 		} catch (IOException e) {
 			throw new IOException("Failed to encode.", e);
 		}

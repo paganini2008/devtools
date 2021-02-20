@@ -10,7 +10,7 @@ import java.sql.Blob;
 
 import com.github.paganini2008.devtools.CharsetUtils;
 import com.github.paganini2008.devtools.io.IOUtils;
-import com.github.paganini2008.devtools.net.UrlUtils;
+import com.github.paganini2008.devtools.net.Urls;
 import com.github.paganini2008.devtools.primitives.Bytes;
 
 /**
@@ -123,7 +123,7 @@ public class ByteArrayConverter extends BasicConverter<byte[]> {
 			}
 			InputStream in = null;
 			try {
-				in = UrlUtils.openStream(source);
+				in = Urls.openStream(source);
 				return IOUtils.toByteArray(in);
 			} catch (IOException e) {
 				return defaultValue;

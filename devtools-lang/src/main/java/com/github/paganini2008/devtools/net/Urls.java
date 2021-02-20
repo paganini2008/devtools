@@ -33,12 +33,12 @@ import com.github.paganini2008.devtools.io.FileUtils;
 import com.github.paganini2008.devtools.io.IOUtils;
 
 /**
- * UrlUtils
+ * Urls
  * 
  * @author Jimmy Hoff
  * @version 1.0
  */
-public abstract class UrlUtils {
+public abstract class Urls {
 
 	private static SSLSocketFactory sslSocketFactory;
 
