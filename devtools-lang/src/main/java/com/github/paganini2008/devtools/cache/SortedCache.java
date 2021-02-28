@@ -18,7 +18,6 @@ import com.github.paganini2008.devtools.collection.SortedBoundedMap;
 public class SortedCache extends BoundedCache {
 
 	private final SortedBoundedMap<Object, Object> boundedMap;
-	private CacheStore store;
 
 	public SortedCache(int maxSize) {
 		this.boundedMap = new SortedBoundedMap<Object, Object>(new ConcurrentHashMap<Object, Object>(), maxSize) {
@@ -29,18 +28,23 @@ public class SortedCache extends BoundedCache {
 			public void onEviction(Object eldestKey, Object eldestValue) {
 				if (store != null) {
 					store.writeObject(eldestKey, eldestValue);
+				} else {
+					dispose(eldestKey, eldestValue);
 				}
 			}
 
 		};
 	}
 
-	public void setAsc(boolean asc) {
-		this.boundedMap.setAsc(asc);
+	private CacheStore store;
+
+	@Override
+	public void setCacheStore(CacheStore store) {
+		this.store = store;
 	}
 
-	public void setStore(CacheStore store) {
-		this.store = store;
+	public void setAsc(boolean asc) {
+		this.boundedMap.setAsc(asc);
 	}
 
 	public void putObject(Object key, Object value, boolean ifAbsent) {
@@ -71,6 +75,9 @@ public class SortedCache extends BoundedCache {
 			if (store != null) {
 				result = store.removeObject(key);
 			}
+		}
+		if (result != null) {
+			dispose(key, result);
 		}
 		return result;
 	}

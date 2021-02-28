@@ -46,9 +46,9 @@ import com.github.paganini2008.devtools.StringUtils;
  */
 public abstract class IOUtils {
 
-	public static final int DEFAULT_BYTE_BUFFER_SIZE = 4 * 1024;
+	public static final int DEFAULT_BYTE_BUFFER_SIZE = 8 * 1024;
 
-	public static final int DEFAULT_CHAR_BUFFER_SIZE = 4 * 1024;
+	public static final int DEFAULT_CHAR_BUFFER_SIZE = 8 * 1024;
 
 	public static final int EOF = -1;
 

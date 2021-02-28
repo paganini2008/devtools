@@ -17,7 +17,6 @@ import com.github.paganini2008.devtools.collection.LruMap;
 public class LruCache extends BoundedCache {
 
 	private final LruMap<Object, Object> lruMap;
-	private CacheStore store;
 
 	public LruCache(int maxSize) {
 		this.lruMap = new LruMap<Object, Object>(new ConcurrentHashMap<Object, Object>(), maxSize) {
@@ -28,6 +27,8 @@ public class LruCache extends BoundedCache {
 			public void onEviction(Object eldestKey, Object eldestValue) {
 				if (store != null) {
 					store.writeObject(eldestKey, eldestValue);
+				} else {
+					dispose(eldestKey, eldestValue);
 				}
 			}
 
@@ -38,7 +39,10 @@ public class LruCache extends BoundedCache {
 		this.lruMap = lruMap;
 	}
 
-	public void setStore(CacheStore store) {
+	private CacheStore store;
+
+	@Override
+	public void setCacheStore(CacheStore store) {
 		this.store = store;
 	}
 
@@ -71,6 +75,9 @@ public class LruCache extends BoundedCache {
 			if (store != null) {
 				result = store.removeObject(key);
 			}
+		}
+		if (result != null) {
+			dispose(key, result);
 		}
 		return result;
 	}

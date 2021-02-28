@@ -109,10 +109,6 @@ public class UncheckedExpiredCache extends AbstractCache implements ExpiredCache
 		return delegate.toString();
 	}
 
-	public ExpiredCache checked(int interval) {
-		return new CheckedExpiredCache(this, interval);
-	}
-
 	public void close() {
 	}
 

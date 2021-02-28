@@ -9,6 +9,9 @@ package com.github.paganini2008.devtools.cache;
  */
 public abstract class BoundedCache extends AbstractCache implements Cache {
 
-	public abstract void setStore(CacheStore store);
+	public abstract void setCacheStore(CacheStore store);
+
+	protected void dispose(Object eldestKey, Object eldestObject) {
+	}
 
 }

@@ -3,6 +3,7 @@ package com.github.paganini2008.devtools.cache;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 
@@ -18,11 +19,17 @@ public abstract class AbstractCache implements Cache {
 		return new MasterStandbyCache(this, backup);
 	}
 
-	public ExpiredCache expiredCache(int interval) {
-		return new CheckedExpiredCache(this, interval);
+	public ExpiredCache expiredCache(int interval, TimeUnit timeUnit) {
+		if (this instanceof CheckedExpiredCache) {
+			throw new UnsupportedOperationException();
+		}
+		return new CheckedExpiredCache(this, interval, timeUnit);
 	}
 
 	public ExpiredCache expiredCache() {
+		if (this instanceof ExpiredCache) {
+			throw new UnsupportedOperationException();
+		}
 		return new UncheckedExpiredCache(this);
 	}
 

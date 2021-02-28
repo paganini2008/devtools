@@ -17,13 +17,27 @@ import com.github.paganini2008.devtools.collection.SimpleBoundedMap;
 public class FifoCache extends BoundedCache {
 
 	private final SimpleBoundedMap<Object, Object> boundedMap;
-	private CacheStore store;
 
 	public FifoCache(int maxSize) {
-		this.boundedMap = new SimpleBoundedMap<Object, Object>(new ConcurrentHashMap<Object, Object>(), maxSize);
+		this.boundedMap = new SimpleBoundedMap<Object, Object>(new ConcurrentHashMap<Object, Object>(), maxSize) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onEviction(Object eldestKey, Object eldestValue) {
+				if (store != null) {
+					store.writeObject(eldestKey, eldestValue);
+				} else {
+					dispose(eldestKey, eldestValue);
+				}
+			}
+
+		};
 	}
 
-	public void setStore(CacheStore store) {
+	private CacheStore store;
+
+	@Override
+	public void setCacheStore(CacheStore store) {
 		this.store = store;
 	}
 
@@ -59,6 +73,9 @@ public class FifoCache extends BoundedCache {
 			if (store != null) {
 				result = store.removeObject(key);
 			}
+		}
+		if (result != null) {
+			dispose(key, result);
 		}
 		return result;
 	}
