@@ -220,28 +220,41 @@ public abstract class IOUtils {
 		return copy(input, output, DEFAULT_BYTE_BUFFER_SIZE, maxSize);
 	}
 
-	public static long copy(InputStream input, OutputStream output, int bufferSize, int maxSize) throws IOException {
+	public static long copy(InputStream input, final OutputStream output, int bufferSize, int maxSize) throws IOException {
+		return copy(input, new StreamCopier() {
+
+			@Override
+			public void copy(byte[] bytes, int offset, int length) throws IOException {
+				output.write(bytes, offset, length);
+			}
+
+		}, bufferSize, maxSize);
+	}
+
+	public static long copy(InputStream input, StreamCopier streamCopier, int bufferSize, int maxSize) throws IOException {
 		Assert.isNull(input, "Input stream is null.");
-		Assert.isNull(output, "Output stream is null.");
+		Assert.isNull(streamCopier, "Undefined streamCopier");
 		final boolean capped = maxSize > 0;
 		int remaining = maxSize;
 		byte[] buffer = getByteBuffer(bufferSize);
 		long length = 0;
 		try {
+			streamCopier.onStart();
 			int read;
 			while (EOF != (read = input.read(buffer))) {
 				if (capped) {
 					if (read > remaining) {
-						output.write(buffer, 0, remaining);
+						streamCopier.copy(buffer, 0, remaining);
 						break;
 					}
 					remaining -= read;
 				}
-				output.write(buffer, 0, read);
+				streamCopier.copy(buffer, 0, read);
 				length += read;
+				streamCopier.onProgress(length);
 			}
 		} finally {
-			flushQuietly(output);
+			streamCopier.onEnd(length);
 		}
 		return length;
 	}
@@ -335,7 +348,6 @@ public abstract class IOUtils {
 		copy(reader, output, CharsetUtils.toCharset(charset));
 	}
 
-	// toCharArray
 	public static char[] toCharArray(InputStream input, Charset charset, int bufferSize, int maxSize) throws IOException {
 		CharArrayWriter output = null;
 		try {
@@ -896,6 +908,10 @@ public abstract class IOUtils {
 
 	public static ByteBuffer emptyByteBuffer() {
 		return ByteBuffer.allocate(0);
+	}
+
+	public static InputStream emptyInputStream() {
+		return new ByteArrayInputStream(new byte[0]);
 	}
 
 }

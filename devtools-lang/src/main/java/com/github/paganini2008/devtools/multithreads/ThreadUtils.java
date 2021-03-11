@@ -317,10 +317,10 @@ public abstract class ThreadUtils {
 			return result;
 		}
 
-		public static Executable create(Executable... executables) {
-			return new SerialExecutable(executables);
-		}
+	}
 
+	public static Executable createSerial(Executable... executables) {
+		return new SerialExecutable(executables);
 	}
 
 	public static <T> void loop(int nThreads, int loops, Consumer<Integer> consumer) {

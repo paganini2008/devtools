@@ -1,7 +1,9 @@
 package com.github.paganini2008.devtools.multithreads;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -14,6 +16,23 @@ import java.util.concurrent.TimeUnit;
 public abstract class ExecutorUtils {
 
 	public static final int processorCount = Runtime.getRuntime().availableProcessors();
+
+	public static <T> T callInBackground(ExecutorService executor, Callable<T> callable) throws Exception {
+		if (executor != null) {
+			Future<T> future = executor.submit(callable);
+			return future.get();
+		} else {
+			return callable.call();
+		}
+	}
+
+	public static void runInBackground(Executor executor, Runnable runnable) {
+		if (executor != null) {
+			executor.execute(runnable);
+		} else {
+			runnable.run();
+		}
+	}
 
 	public static boolean isTerminated(Executor executor) {
 		if (executor instanceof ExecutorService) {
