@@ -695,8 +695,7 @@ public abstract class MapUtils {
 		return data;
 	}
 
-	public static <K, V> Map<K, V> newLruMap(final int initialSize, final int maxSize,
-			final EvictionListener<K, V> evictionListener) {
+	public static <K, V> Map<K, V> newLruMap(final int initialSize, final int maxSize, final EvictionListener<K, V> evictionListener) {
 		if (maxSize < 1) {
 			throw new IllegalArgumentException("MaxSize must greater than zero");
 		}
@@ -713,6 +712,15 @@ public abstract class MapUtils {
 				return result;
 			}
 		};
+	}
+
+	public static <K, V> Map<K, V> singletonMap(Map<K, V> map, boolean isLast) {
+		Map.Entry<K, V> entry = isLast ? getLastEntry(map) : getFirstEntry(map);
+		return singletonMap(entry);
+	}
+
+	public static <K, V> Map<K, V> singletonMap(Map.Entry<K, V> entry) {
+		return Collections.singletonMap(entry.getKey(), entry.getValue());
 	}
 
 }
