@@ -7,8 +7,8 @@ import java.util.List;
  * PageResponse
  * 
  * @author Jimmy Hoff
- * 
- * 
+ *
+ * @version 1.0
  */
 public interface PageResponse<T> extends Iterable<PageResponse<T>> {
 
@@ -29,7 +29,7 @@ public interface PageResponse<T> extends Iterable<PageResponse<T>> {
 	int getOffset();
 
 	int getPageSize();
-	
+
 	int getPageNumber();
 
 	List<T> getContent();
