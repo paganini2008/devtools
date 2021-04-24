@@ -1,5 +1,8 @@
 package com.github.paganini2008.devtools.beans;
 
+import java.beans.PropertyDescriptor;
+import java.util.Map;
+
 import com.github.paganini2008.devtools.converter.ConvertUtils;
 import com.github.paganini2008.devtools.reflection.ConstructorUtils;
 
@@ -8,17 +11,16 @@ import com.github.paganini2008.devtools.reflection.ConstructorUtils;
  * BeanUtils
  * 
  * @author Jimmy Hoff
- * 
- * 
+ *
  * @version 1.0
  */
+@SuppressWarnings("all")
 public abstract class BeanUtils {
 
 	public static <T> T copy(Object original) {
 		return copy(original, (PropertyFilter) null);
 	}
 
-	@SuppressWarnings("unchecked")
 	public static <T> T copy(Object original, PropertyFilter propertyFilter) {
 		return (T) copy(original, original.getClass(), propertyFilter);
 	}
@@ -48,7 +50,6 @@ public abstract class BeanUtils {
 		return getProperty(bean, propertyName, requiredType, null);
 	}
 
-	@SuppressWarnings("unchecked")
 	public static <T> T getProperty(Object bean, String propertyName, Class<T> requiredType, T defaultValue) {
 		Object rawValue = PropertyUtils.getProperty(bean, propertyName);
 		if (requiredType != null) {
@@ -59,6 +60,19 @@ public abstract class BeanUtils {
 			}
 		}
 		return (T) rawValue;
+	}
+
+	public static <T> T convertAsBean(Map<String, ?> map, Class<T> requiredType) {
+		T object = BeanUtils.instantiate(requiredType);
+		Map<String, PropertyDescriptor> desc = PropertyUtils.getPropertyDescriptors(object.getClass());
+		Object value;
+		for (String key : desc.keySet()) {
+			value = map.get(key);
+			if (value != null) {
+				PropertyUtils.setProperty(object, key, value);
+			}
+		}
+		return object;
 	}
 
 	public static <T> T instantiate(String className) {
