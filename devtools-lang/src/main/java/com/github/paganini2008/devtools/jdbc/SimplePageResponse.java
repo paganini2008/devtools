@@ -55,14 +55,24 @@ public class SimplePageResponse<T> implements PageResponse<T>, Serializable {
 	}
 
 	public Iterator<PageResponse<T>> iterator() {
-		return new PageIterator();
+		return new PageIterator<T>(this);
 	}
 
-	class PageIterator implements Iterator<PageResponse<T>> {
+	/**
+	 * 
+	 * PageIterator
+	 * 
+	 * @author Jimmy Hoff
+	 *
+	 * @version 1.0
+	 */
+	static class PageIterator<T> implements Iterator<PageResponse<T>> {
 
+		private final PageResponse<T> pageResponse;
 		private PageResponse<T> current;
 
-		PageIterator() {
+		PageIterator(PageResponse<T> pageResponse) {
+			this.pageResponse = pageResponse;
 		}
 
 		public boolean hasNext() {
@@ -71,7 +81,7 @@ public class SimplePageResponse<T> implements PageResponse<T>, Serializable {
 
 		public PageResponse<T> next() {
 			if (current == null) {
-				current = SimplePageResponse.this;
+				current = pageResponse;
 			} else {
 				current = current.nextPage();
 			}

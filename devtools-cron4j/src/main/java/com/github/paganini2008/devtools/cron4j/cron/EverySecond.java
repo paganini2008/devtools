@@ -113,7 +113,7 @@ public class EverySecond implements Second, Serializable {
 	}
 
 	public static void main(String[] args) {
-		Year everyYear = CronExpressionBuilder.everyYear(2019, 2021, 1);
+		Year everyYear = CronExpressions.everyYear(2019, 2021, 1);
 		Month everyMonth = everyYear.everyMonth(5, 10, 2);
 		Day everyDay = everyMonth.everyDay(1, 15, 3);
 		Hour everyHour = everyDay.everyHour(4);

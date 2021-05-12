@@ -29,7 +29,7 @@ public final class Clock implements Executable {
 	private final EventBus<ClockEvent, String> eventBus;
 
 	public Clock() {
-		this(Runtime.getRuntime().availableProcessors() * 2);
+		this(Runtime.getRuntime().availableProcessors());
 	}
 
 	public Clock(int nThreads) {
@@ -184,7 +184,7 @@ public final class Clock implements Executable {
 	 *
 	 * @since 1.0
 	 */
-	public static class ClockEvent extends Event<String> implements Cloneable {
+	static class ClockEvent extends Event<String> implements Cloneable {
 
 		ClockEvent(Object source, String datetime) {
 			super(source, datetime);
@@ -218,6 +218,16 @@ public final class Clock implements Executable {
 			}
 		};
 		clock.schedule(task, 1, 1, TimeUnit.SECONDS);
+
+		ClockTask task2 = new ClockTask() {
+			protected void runTask() {
+				System.out.println("Test2: " + DateUtils.format(System.currentTimeMillis()));
+				if (counter.incrementAndGet() >= 100) {
+					cancel();
+				}
+			}
+		};
+		clock.schedule(task2, 1, 1, TimeUnit.SECONDS);
 		System.in.read();
 		clock.stop();
 		// clock.scheduleAtFixedRate(new ClockTask() {

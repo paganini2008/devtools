@@ -10,8 +10,7 @@ import java.lang.annotation.Target;
  * PropertyMapper
  * 
  * @author Jimmy Hoff
- * 
- * 
+ *
  * @version 1.0
  */
 @Retention(RetentionPolicy.RUNTIME)

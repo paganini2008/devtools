@@ -115,7 +115,7 @@ public class EveryDay implements Day, Serializable {
 	}
 
 	public static void main(String[] args) {
-		Second time = CronExpressionBuilder.everyYear(2020, 2030, 3).everyMonth(5, 11, 2).everyDay(1, 15, 3).at(12, 0, 0);
+		Second time = CronExpressions.everyYear(2020, 2030, 3).everyMonth(5, 11, 2).everyDay(1, 15, 3).at(12, 0, 0);
 		time.forEach(date -> {
 			System.out.println(DateUtils.format(date));
 		}, 100);
