@@ -11,7 +11,7 @@ import com.github.paganini2008.devtools.date.DateUtils;
  * @author Jimmy Hoff
  * @version 1.0
  */
-public abstract class CronExpressions {
+public abstract class CronExpressionBuilder {
 
 	public static TheYear year() {
 		return year(DateUtils.getYear());

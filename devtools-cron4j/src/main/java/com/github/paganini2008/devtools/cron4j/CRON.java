@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
-import com.github.paganini2008.devtools.cron4j.cron.CronExpressions;
+import com.github.paganini2008.devtools.cron4j.cron.CronExpressionBuilder;
 import com.github.paganini2008.devtools.cron4j.cron.Day;
 import com.github.paganini2008.devtools.cron4j.cron.EveryYear;
 import com.github.paganini2008.devtools.cron4j.cron.Hour;
@@ -151,7 +151,7 @@ public abstract class CRON {
 		cronExpression.forEach(date -> {
 			System.out.println(DateUtils.format(date));
 		}, 20);
-		System.out.println(CRON.toCronString(CronExpressions.everyYear()));
+		System.out.println(CRON.toCronString(CronExpressionBuilder.everyYear()));
 	}
 
 }
