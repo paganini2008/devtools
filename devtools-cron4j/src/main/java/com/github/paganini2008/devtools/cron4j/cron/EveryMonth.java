@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.function.Function;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
+import com.github.paganini2008.devtools.cron4j.CRON;
 
 /**
  * 
@@ -132,7 +133,12 @@ public class EveryMonth implements Month, Serializable {
 	}
 
 	public String toCronString() {
-		return interval > 1 ? "*/" + interval : "*";
+		String s = toMonth != 12 ? fromMonth + "-" + toMonth : fromMonth + "";
+		return interval > 1 ? s + "/" + interval : "*";
+	}
+
+	public String toString() {
+		return CRON.toCronString(this);
 	}
 
 }

@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
-import com.github.paganini2008.devtools.cron4j.cron.CronExpressionBuilder;
 import com.github.paganini2008.devtools.cron4j.cron.Day;
 import com.github.paganini2008.devtools.cron4j.cron.EveryYear;
 import com.github.paganini2008.devtools.cron4j.cron.Hour;
@@ -44,6 +43,8 @@ public abstract class CRON {
 			copy = ((Year) copy).Jan().day(1).at(0, 0, 0);
 		} else if (copy instanceof Month) {
 			copy = ((Month) copy).day(1).at(0, 0, 0);
+		} else if (copy instanceof Week) {
+			copy = ((Week) copy).Mon().at(0, 0, 0);
 		} else if (copy instanceof Day) {
 			copy = ((Day) copy).at(0, 0, 0);
 		} else if (copy instanceof Hour) {
@@ -147,11 +148,11 @@ public abstract class CRON {
 	}
 
 	public static void main(String[] args) {
-		CronExpression cronExpression = CRON.parse("0 10 23 ? * 6#3,5#2,6L");
+		CronExpression cronExpression = CRON.parse("0 10 23 ? * 5#2,6#3,6L");
 		cronExpression.forEach(date -> {
 			System.out.println(DateUtils.format(date));
-		}, 20);
-		System.out.println(CRON.toCronString(CronExpressionBuilder.everyYear()));
+		}, 10);
+		// System.out.println(CRON.toCronString(CronExpressionBuilder.everyYear()));
 	}
 
 }

@@ -23,10 +23,6 @@ public interface CronExpression extends CronStringBuilder {
 	Date getTime();
 
 	long getTimeInMillis();
-	
-	default String toCronString() {
-		throw new UnsupportedOperationException();
-	}
 
 	/**
 	 * copy this

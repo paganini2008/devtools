@@ -1,14 +1,17 @@
 package com.github.paganini2008.devtools.cron4j.cron;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.MapUtils;
+import com.github.paganini2008.devtools.cron4j.CRON;
 
 /**
  * 
@@ -25,7 +28,7 @@ public class ThisWeek implements TheWeek, Serializable {
 	private int index;
 	private Calendar week;
 	private int lastWeek;
-	private final StringBuilder cron = new StringBuilder();
+	private final StringBuilder cron;
 
 	ThisWeek(Month month, int week) {
 		CalendarAssert.checkWeekOfMonth(month, week);
@@ -34,21 +37,33 @@ public class ThisWeek implements TheWeek, Serializable {
 		this.siblings.put(week, calendar);
 		this.week = calendar;
 		this.lastWeek = week;
-		this.cron.append("#").append(week);
+		this.cron = new StringBuilder().append("%s#").append(week);
 	}
 
 	public ThisWeek andWeek(int week) {
+		return andWeek(week, true);
+	}
+
+	public ThisWeek andWeek(int week, boolean writeCron) {
 		CalendarAssert.checkWeekOfMonth(month, week);
 		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.WEEK_OF_MONTH, week);
 		this.siblings.put(week, calendar);
 		this.lastWeek = week;
+		if (writeCron) {
+			this.cron.append(",%s#").append(week);
+		}
 		return this;
 	}
 
 	public ThisWeek toWeek(int week, int interval) {
 		CalendarAssert.checkWeekOfMonth(month, week);
+		List<Integer> weeks = new ArrayList<Integer>();
 		for (int i = lastWeek + interval; i < week; i += interval) {
-			andWeek(i);
+			andWeek(i, false);
+			weeks.add(i);
+		}
+		for (int w : weeks) {
+			this.cron.append(",%s#").append(w);
 		}
 		return this;
 	}
@@ -112,8 +127,16 @@ public class ThisWeek implements TheWeek, Serializable {
 		return month;
 	}
 
+	public StringBuilder toCronString(int fieldValue) {
+		return new StringBuilder(cron.toString().replaceAll("%s", String.valueOf(fieldValue)));
+	}
+
 	public String toCronString() {
 		return this.cron.toString();
+	}
+
+	public String toString() {
+		return CRON.toCronString(this);
 	}
 
 }

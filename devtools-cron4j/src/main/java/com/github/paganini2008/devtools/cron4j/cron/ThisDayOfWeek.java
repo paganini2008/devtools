@@ -1,12 +1,15 @@
 package com.github.paganini2008.devtools.cron4j.cron;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.function.Function;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
+import com.github.paganini2008.devtools.cron4j.CRON;
 
 /**
  * 
@@ -22,16 +25,16 @@ public class ThisDayOfWeek implements TheDayOfWeek, Serializable {
 	private Week week;
 	private int index;
 	private Calendar day;
-	private int lastDay;
-	private final StringBuilder cron = new StringBuilder();
+	private int lastDayOfWeek;
+	private final StringBuilder cron;
 
-	ThisDayOfWeek(Week week, int day) {
-		CalendarAssert.checkDayOfWeek(day);
+	ThisDayOfWeek(Week week, int dayOfWeek) {
+		CalendarAssert.checkDayOfWeek(dayOfWeek);
 		this.week = week;
-		Calendar calendar = CalendarUtils.setField(week.getTime(), Calendar.DAY_OF_WEEK, day);
-		this.siblings.put(day, calendar);
-		this.lastDay = day;
-		this.cron.append(getDayOfWeekName(day));
+		Calendar calendar = CalendarUtils.setField(week.getTime(), Calendar.DAY_OF_WEEK, dayOfWeek);
+		this.siblings.put(dayOfWeek, calendar);
+		this.lastDayOfWeek = dayOfWeek;
+		this.cron = new StringBuilder().append(getDayOfWeekName(dayOfWeek));
 	}
 
 	public TheDayOfWeek andDay(int dayOfWeek) {
@@ -42,29 +45,31 @@ public class ThisDayOfWeek implements TheDayOfWeek, Serializable {
 		CalendarAssert.checkDayOfWeek(dayOfWeek);
 		Calendar calendar = CalendarUtils.setField(week.getTime(), Calendar.DAY_OF_WEEK, dayOfWeek);
 		this.siblings.put(dayOfWeek, calendar);
-		this.lastDay = dayOfWeek;
+		this.lastDayOfWeek = dayOfWeek;
 		if (writeCron) {
 			this.cron.append(",").append(getDayOfWeekName(dayOfWeek));
 		}
 		return this;
 	}
 
-	private String getDayOfWeekName(int day) {
-		if (week instanceof LastWeekOfMonth || week instanceof ThisWeek) {
-			return day + week.toCronString();
+	private String getDayOfWeekName(int dayOfWeek) {
+		if (week instanceof LastWeekOfMonth) {
+			return dayOfWeek + week.toCronString();
+		} else if (week instanceof ThisWeek) {
+			return week.toCronString().replaceAll("%s", String.valueOf(dayOfWeek));
 		}
-		return CalendarUtils.getDayOfWeekName(day);
+		return CalendarUtils.getDayOfWeekName(dayOfWeek);
 	}
 
-	public TheDayOfWeek toDay(int day, int interval) {
-		CalendarAssert.checkDayOfWeek(day);
-		for (int i = lastDay + interval; i <= day; i += interval) {
+	public TheDayOfWeek toDay(int dayOfWeek, int interval) {
+		CalendarAssert.checkDayOfWeek(dayOfWeek);
+		List<Integer> days = new ArrayList<Integer>();
+		for (int i = lastDayOfWeek + interval; i <= dayOfWeek; i += interval) {
 			andDay(i, false);
+			days.add(i);
 		}
-		if (interval > 1) {
-			this.cron.append("/").append(interval);
-		} else {
-			this.cron.append("-").append(getDayOfWeekName(day));
+		for (int day : days) {
+			this.cron.append(",").append(getDayOfWeekName(day));
 		}
 		return this;
 	}
@@ -133,6 +138,10 @@ public class ThisDayOfWeek implements TheDayOfWeek, Serializable {
 
 	public String toCronString() {
 		return this.cron.toString();
+	}
+
+	public String toString() {
+		return CRON.toCronString(this);
 	}
 
 }

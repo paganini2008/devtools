@@ -10,8 +10,16 @@ package com.github.paganini2008.devtools.cron4j.cron;
  */
 public interface CronStringBuilder {
 
+	default boolean supportCronString() {
+		return true;
+	}
+
 	CronExpression getParent();
 
-	String toCronString();
+	default String toCronString() {
+		throw new UnsupportedOperationException();
+	}
+
+	String toString();
 
 }

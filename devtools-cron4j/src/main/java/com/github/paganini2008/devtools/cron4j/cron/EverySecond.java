@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.function.Function;
 
-import com.github.paganini2008.devtools.date.DateUtils;
+import com.github.paganini2008.devtools.cron4j.CRON;
 
 /**
  * 
@@ -109,20 +109,21 @@ public class EverySecond implements Second, Serializable {
 	}
 
 	public String toCronString() {
-		return interval > 1 ? "*/" + interval : "0";
+		String s = toSecond != 60 ? fromSecond + "-" + toSecond : fromSecond + "";
+		return interval > 1 ? s + "/" + interval : "*";
+	}
+
+	public String toString() {
+		return CRON.toCronString(this);
 	}
 
 	public static void main(String[] args) {
-		Year everyYear = CronExpressionBuilder.everyYear(2019, 2021, 1);
+		Year everyYear = CronExpressionBuilder.everyYear(2);
 		Month everyMonth = everyYear.everyMonth(5, 10, 2);
 		Day everyDay = everyMonth.everyDay(1, 15, 3);
 		Hour everyHour = everyDay.everyHour(4);
-		Minute everyMinute = everyHour.everyMinute(20);
-		Second everySecond = everyMinute.everySecond(40, 52, 3);
-		while (everySecond.hasNext()) {
-			Second second = everySecond.next();
-			System.out.println(DateUtils.format(second.getTime()));
-		}
+		Second second = everyHour.at(12, 0);
+		System.out.println(second);
 	}
 
 }

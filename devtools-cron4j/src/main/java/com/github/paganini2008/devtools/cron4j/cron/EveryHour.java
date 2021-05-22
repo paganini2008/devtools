@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.function.Function;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
+import com.github.paganini2008.devtools.cron4j.CRON;
 
 /**
  * 
@@ -107,7 +108,12 @@ public class EveryHour implements Hour, Serializable {
 	}
 
 	public String toCronString() {
-		return interval > 1 ? "*/" + interval : "0";
+		String s = toHour != 23 ? fromHour + "-" + toHour : fromHour + "";
+		return interval > 1 ? s + "/" + interval : "*";
+	}
+
+	public String toString() {
+		return CRON.toCronString(this);
 	}
 
 }

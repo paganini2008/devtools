@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.TreeMap;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
+import com.github.paganini2008.devtools.cron4j.CRON;
 
 /**
  * 
@@ -22,7 +23,7 @@ public class ThisSecond implements TheSecond, Serializable {
 	private int index;
 	private Calendar second;
 	private int lastSecond;
-	private final StringBuilder cron = new StringBuilder();
+	private final StringBuilder cron;
 
 	ThisSecond(Minute minute, int second) {
 		CalendarAssert.checkSecond(second);
@@ -31,7 +32,7 @@ public class ThisSecond implements TheSecond, Serializable {
 		this.siblings.put(second, calendar);
 		this.second = calendar;
 		this.lastSecond = second;
-		this.cron.append(second);
+		this.cron = new StringBuilder().append(second);
 	}
 
 	public ThisSecond andSecond(int second) {
@@ -125,6 +126,10 @@ public class ThisSecond implements TheSecond, Serializable {
 
 	public String toCronString() {
 		return this.cron.toString();
+	}
+
+	public String toString() {
+		return CRON.toCronString(this);
 	}
 
 }

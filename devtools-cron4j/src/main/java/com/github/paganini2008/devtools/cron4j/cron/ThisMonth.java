@@ -7,7 +7,7 @@ import java.util.TreeMap;
 import java.util.function.Function;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
-import com.github.paganini2008.devtools.date.DateUtils;
+import com.github.paganini2008.devtools.cron4j.CRON;
 
 /**
  * 
@@ -26,7 +26,7 @@ public class ThisMonth implements TheMonth, Serializable {
 	private int index;
 	private Calendar month;
 	private int lastMonth;
-	private final StringBuilder cron = new StringBuilder();
+	private final StringBuilder cron;
 
 	ThisMonth(Year year, int month) {
 		CalendarAssert.checkMonth(month);
@@ -35,7 +35,7 @@ public class ThisMonth implements TheMonth, Serializable {
 		this.siblings.put(month, calendar);
 		this.month = calendar;
 		this.lastMonth = month;
-		this.cron.append(CalendarUtils.getMonthName(month));
+		this.cron = new StringBuilder().append(month);
 	}
 
 	public TheMonth andMonth(int month) {
@@ -151,15 +151,16 @@ public class ThisMonth implements TheMonth, Serializable {
 		return this.cron.toString();
 	}
 
+	public String toString() {
+		return CRON.toCronString(this);
+	}
+
 	public static void main(String[] args) {
-		TheYear singleYear = new ThisYear(2019);
+		TheYear singleYear = new ThisYear(2021);
 		singleYear = singleYear.andYear(2024).andYear(2028);
 		TheMonth singleMonth = singleYear.July().andAug().andMonth(11);
 		Day every = singleMonth.lastWeek().Fri().andSat();
-		while (every.hasNext()) {
-			Day time = every.next();
-			System.out.println(DateUtils.format(time.getTime()));
-		}
+		System.out.println(every);
 	}
 
 }

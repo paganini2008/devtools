@@ -10,6 +10,7 @@ import java.util.function.Function;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.MapUtils;
+import com.github.paganini2008.devtools.cron4j.CRON;
 
 /**
  * 
@@ -23,13 +24,13 @@ public class ThisDayOfWeekInMonth implements TheDayOfWeekInMonth, Serializable {
 
 	private static final long serialVersionUID = -5853750543470928852L;
 
-	private final TreeMap<String, Calendar> siblings = new TreeMap<String, Calendar>(new InnerCmp());
+	private final TreeMap<String, Calendar> siblings = new TreeMap<String, Calendar>(new InnerComparator());
 	private final StringBuilder cron = new StringBuilder();
 	private Month month;
 	private Calendar day;
 	private int index;
 
-	private static class InnerCmp implements Comparator<String>, Serializable {
+	private static class InnerComparator implements Comparator<String>, Serializable {
 
 		private static final long serialVersionUID = 1L;
 
@@ -153,6 +154,11 @@ public class ThisDayOfWeekInMonth implements TheDayOfWeekInMonth, Serializable {
 	@Override
 	public String toCronString() {
 		return this.cron.toString();
+	}
+
+	@Override
+	public String toString() {
+		return CRON.toCronString(this);
 	}
 
 }

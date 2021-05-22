@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.function.Function;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
+import com.github.paganini2008.devtools.cron4j.CRON;
 
 /**
  * 
@@ -112,7 +113,12 @@ public class EveryMinute implements Minute, Serializable {
 	}
 
 	public String toCronString() {
-		return interval > 1 ? "*/" + interval : "0";
+		String s = toMinute != 59 ? fromMinute + "-" + toMinute : fromMinute + "";
+		return interval > 1 ? s + "/" + interval : "*";
+	}
+
+	public String toString() {
+		return CRON.toCronString(this);
 	}
 
 }

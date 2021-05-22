@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.function.Function;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
-import com.github.paganini2008.devtools.date.DateUtils;
+import com.github.paganini2008.devtools.cron4j.CRON;
 
 /**
  * 
@@ -111,14 +111,12 @@ public class EveryDay implements Day, Serializable {
 	}
 
 	public String toCronString() {
-		return "*/" + interval;
+		String s = toDay != month.getLasyDay() ? fromDay + "-" + toDay : fromDay + "";
+		return interval > 1 ? s + "/" + interval : "*";
 	}
 
-	public static void main(String[] args) {
-		Second time = CronExpressionBuilder.everyYear(2020, 2030, 3).everyMonth(5, 11, 2).everyDay(1, 15, 3).at(12, 0, 0);
-		time.forEach(date -> {
-			System.out.println(DateUtils.format(date));
-		}, 100);
+	public String toString() {
+		return CRON.toCronString(this);
 	}
 
 }

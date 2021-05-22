@@ -22,6 +22,7 @@ public class ThisDayOfYear implements TheDay, Serializable {
 	private static final long serialVersionUID = -8235489088108418524L;
 	private final TreeMap<Integer, Calendar> siblings = new TreeMap<Integer, Calendar>();
 	private Year year;
+	private int month;
 	private int index;
 	private Calendar day;
 	private int lastDay;
@@ -30,6 +31,7 @@ public class ThisDayOfYear implements TheDay, Serializable {
 		CalendarAssert.checkDayOfYear(year, day);
 		this.year = year;
 		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.DAY_OF_YEAR, day);
+		this.month = calendar.get(Calendar.MONTH);
 		this.siblings.put(day, calendar);
 		this.lastDay = day;
 	}
@@ -72,18 +74,18 @@ public class ThisDayOfYear implements TheDay, Serializable {
 		return day.getTimeInMillis();
 	}
 
-	public TheDay andDay(int day) {
-		CalendarAssert.checkDayOfYear(year, day);
-		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.DAY_OF_YEAR, day);
-		this.siblings.put(day, calendar);
-		this.lastDay = day;
+	public TheDay andDay(int dayOfYear) {
+		CalendarAssert.checkDayOfYear(year, dayOfYear);
+		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.DAY_OF_YEAR, dayOfYear);
+		this.siblings.put(dayOfYear, calendar);
+		this.lastDay = dayOfYear;
 		return this;
 	}
 
 	public TheDay toDay(int day, int interval) {
 		CalendarAssert.checkDayOfYear(year, day);
-		for (int i = lastDay + interval; i < day; i += interval) {
-			andDay(i);
+		for (int dayOfYear = lastDay + interval; dayOfYear < day; dayOfYear += interval) {
+			andDay(dayOfYear);
 		}
 		return this;
 	}
@@ -109,7 +111,7 @@ public class ThisDayOfYear implements TheDay, Serializable {
 	}
 
 	public CronExpression getParent() {
-		return year;
+		return year.month(month);
 	}
 
 }

@@ -1,7 +1,5 @@
 package com.github.paganini2008.devtools.cron4j.examples;
 
-import com.github.paganini2008.devtools.StringUtils;
-import com.github.paganini2008.devtools.cron4j.CRON;
 import com.github.paganini2008.devtools.cron4j.Cancellable;
 import com.github.paganini2008.devtools.cron4j.Cancellables;
 import com.github.paganini2008.devtools.cron4j.CancellationException;
@@ -10,8 +8,8 @@ import com.github.paganini2008.devtools.cron4j.Task;
 import com.github.paganini2008.devtools.cron4j.TaskExecutor.TaskFuture;
 import com.github.paganini2008.devtools.cron4j.ThreadPoolTaskExecutor;
 import com.github.paganini2008.devtools.cron4j.TimerTaskExecutor;
-import com.github.paganini2008.devtools.cron4j.cron.CronExpressionBuilder;
 import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
+import com.github.paganini2008.devtools.cron4j.cron.CronExpressionBuilder;
 import com.github.paganini2008.devtools.date.DateUtils;
 
 /**
@@ -45,7 +43,7 @@ public abstract class Example {
 
 	// 0 0-10 15 * * ?
 	public static CronExpression getCron5() {
-		return CronExpressionBuilder.hour(15).minute(0).toMinute(10);
+		return CronExpressionBuilder.everyDay().hour(15).minute(0).toMinute(10);
 	}
 
 	// 0 0 23 * * ?
@@ -85,7 +83,7 @@ public abstract class Example {
 
 	// 0 10,20,30 12 ? 3,4 5L 2020-2025
 	public static CronExpression getCron13() {
-		return CronExpressionBuilder.year(2020).Aug().toDec().lastWeek().Fri().hour(12).minute(10).andMinute(20).andMinute(30);
+		return CronExpressionBuilder.year(2021).Aug().toDec().lastWeek().Fri().hour(12).minute(10).andMinute(20).andMinute(30);
 	}
 
 	// 0 10 23 ? * 6#3
@@ -219,13 +217,10 @@ public abstract class Example {
 	}
 
 	public static void main(String[] args) throws Exception {
-		//test5();
-		CronExpression expression= CronExpressionBuilder.month(2021, 4).everyWeek().Mon().toFri().at(12, 0);
-		System.out.println(CRON.toCronString(expression));
-		expression.forEach(date->{
-			System.out.println(DateUtils.format(date));
-		}, 100);
-		
+		// test5();
+		// getCron14();
+		// System.out.println(CronExpressionBuilder.everyMonth().week(3).Sat().andSun());
+		System.out.println(getCron13());
 	}
 
 }

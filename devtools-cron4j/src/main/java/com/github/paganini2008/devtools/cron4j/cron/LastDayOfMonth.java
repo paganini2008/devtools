@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.function.Function;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
+import com.github.paganini2008.devtools.cron4j.CRON;
 
 /**
  * 
@@ -95,6 +96,10 @@ public class LastDayOfMonth implements Day, Serializable {
 
 	public String toCronString() {
 		return "L";
+	}
+
+	public String toString() {
+		return CRON.toCronString(this);
 	}
 
 }

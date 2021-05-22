@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.function.Function;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
+import com.github.paganini2008.devtools.cron4j.CRON;
 
 /**
  * 
@@ -24,12 +25,14 @@ public class EveryYear implements Year, Serializable {
 			throw new IllegalArgumentException("Invalid interval: " + interval);
 		}
 		this.year = CalendarUtils.setField(new Date(), Calendar.YEAR, fromYear);
+		this.fromYear = fromYear;
 		this.interval = interval;
 		this.self = true;
 		this.toYear = to.apply(this);
 	}
 
 	private final Calendar year;
+	private final int fromYear;
 	private final int toYear;
 	private final int interval;
 	private boolean self;
@@ -97,6 +100,10 @@ public class EveryYear implements Year, Serializable {
 	}
 
 	public String toCronString() {
-		return interval > 1 ? "*/" + interval : "";
+		return interval > 1 ? fromYear + "-" + toYear + "/" + interval : "";
+	}
+
+	public String toString() {
+		return CRON.toCronString(this);
 	}
 }

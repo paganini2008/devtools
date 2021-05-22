@@ -16,7 +16,7 @@ import java.util.function.Function;
  */
 public interface Year extends Iterator<Year>, CronExpression {
 
-	static final int MAX_YEAR = 2099;
+	static final int MAX_YEAR = 9999;
 
 	int getYear();
 

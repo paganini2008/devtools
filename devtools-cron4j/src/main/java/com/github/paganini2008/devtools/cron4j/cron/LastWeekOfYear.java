@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.function.Function;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
+import com.github.paganini2008.devtools.cron4j.CRON;
 
 /**
  * 
@@ -84,6 +85,15 @@ public class LastWeekOfYear implements Week, Serializable {
 	}
 
 	public CronExpression getParent() {
-		return year;
+		return year.Dec();
 	}
+
+	public String toCronString() {
+		return "";
+	}
+
+	public String toString() {
+		return CRON.toCronString(this);
+	}
+
 }

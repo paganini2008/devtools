@@ -7,14 +7,14 @@ import java.util.TreeMap;
 import java.util.function.Function;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
+import com.github.paganini2008.devtools.cron4j.CRON;
 
 /**
  * 
  * ThisMinute
- *
+ * 
  * @author Jimmy Hoff
- * 
- * 
+ *
  * @version 1.0
  */
 public class ThisMinute implements TheMinute, Serializable {
@@ -25,7 +25,7 @@ public class ThisMinute implements TheMinute, Serializable {
 	private int index;
 	private Calendar minute;
 	private int lastMinute;
-	private final StringBuilder cron = new StringBuilder();
+	private final StringBuilder cron;
 
 	ThisMinute(Hour hour, int minute) {
 		CalendarAssert.checkMinute(minute);
@@ -34,7 +34,7 @@ public class ThisMinute implements TheMinute, Serializable {
 		this.siblings.put(minute, calendar);
 		this.minute = calendar;
 		this.lastMinute = minute;
-		this.cron.append(minute);
+		this.cron = new StringBuilder().append(minute);
 	}
 
 	public ThisMinute andMinute(int minute) {
@@ -133,6 +133,10 @@ public class ThisMinute implements TheMinute, Serializable {
 
 	public String toCronString() {
 		return this.cron.toString();
+	}
+
+	public String toString() {
+		return CRON.toCronString(this);
 	}
 
 }

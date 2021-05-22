@@ -9,6 +9,7 @@ import java.util.function.Function;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.MapUtils;
+import com.github.paganini2008.devtools.cron4j.CRON;
 
 /**
  * 
@@ -25,7 +26,7 @@ public class ThisDay implements TheDay, Serializable {
 	private int index;
 	private Calendar day;
 	private int lastDay;
-	private final StringBuilder cron = new StringBuilder();
+	private final StringBuilder cron;
 
 	ThisDay(Month month, int day) {
 		CalendarAssert.checkDayOfMonth(month, day);
@@ -34,7 +35,7 @@ public class ThisDay implements TheDay, Serializable {
 		this.siblings.put(day, calendar);
 		this.day = calendar;
 		this.lastDay = day;
-		this.cron.append(day);
+		this.cron = new StringBuilder().append(day);
 	}
 
 	public TheDay andDay(int day) {
@@ -133,6 +134,10 @@ public class ThisDay implements TheDay, Serializable {
 
 	public String toCronString() {
 		return this.cron.toString();
+	}
+
+	public String toString() {
+		return CRON.toCronString(this);
 	}
 
 }
