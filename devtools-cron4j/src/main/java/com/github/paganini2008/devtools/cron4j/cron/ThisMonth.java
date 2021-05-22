@@ -59,7 +59,7 @@ public class ThisMonth implements TheMonth, Serializable {
 			andMonth(i, false);
 		}
 		if (interval > 1) {
-			this.cron.append("/").append(interval);
+			this.cron.append("-").append(month).append("/").append(interval);
 		} else {
 			this.cron.append("-").append(month);
 		}

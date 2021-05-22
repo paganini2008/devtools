@@ -59,7 +59,7 @@ public class ThisSecond implements TheSecond, Serializable {
 			andSecond(i, false);
 		}
 		if (interval > 1) {
-			this.cron.append("/").append(interval);
+			this.cron.append("-").append(second).append("/").append(interval);
 		} else {
 			this.cron.append("-").append(second);
 		}

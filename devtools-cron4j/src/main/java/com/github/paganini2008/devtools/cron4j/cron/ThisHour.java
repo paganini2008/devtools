@@ -61,7 +61,7 @@ public class ThisHour implements TheHour, Serializable {
 			andHour(i, false);
 		}
 		if (interval > 1) {
-			cron.append("/").append(interval);
+			cron.append("-").append(hour).append("/").append(interval);
 		} else {
 			cron.append("-").append(hour);
 		}

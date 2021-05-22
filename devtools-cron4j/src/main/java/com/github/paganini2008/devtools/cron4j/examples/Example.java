@@ -219,8 +219,8 @@ public abstract class Example {
 	public static void main(String[] args) throws Exception {
 		// test5();
 		// getCron14();
-		// System.out.println(CronExpressionBuilder.everyMonth().week(3).Sat().andSun());
-		System.out.println(getCron13());
+		System.out.println(CronExpressionBuilder.everyYear().lastDay().at(12, 0));
+		//System.out.println(getCron13());
 	}
 
 }

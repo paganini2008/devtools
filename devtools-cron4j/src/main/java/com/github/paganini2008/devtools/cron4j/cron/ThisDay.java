@@ -62,7 +62,7 @@ public class ThisDay implements TheDay, Serializable {
 			andDay(i, false);
 		}
 		if (interval > 1) {
-			this.cron.append("/").append(interval);
+			this.cron.append("-").append(day).append("/").append(interval);
 		} else {
 			this.cron.append("-").append(day);
 		}

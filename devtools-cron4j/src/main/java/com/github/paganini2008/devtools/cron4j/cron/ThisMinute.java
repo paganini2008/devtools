@@ -61,7 +61,7 @@ public class ThisMinute implements TheMinute, Serializable {
 			andMinute(i, false);
 		}
 		if (interval > 1) {
-			this.cron.append("/").append(interval);
+			this.cron.append("-").append(minute).append("/").append(interval);
 		} else {
 			this.cron.append("-").append(minute);
 		}

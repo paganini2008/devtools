@@ -127,10 +127,6 @@ public class ThisWeek implements TheWeek, Serializable {
 		return month;
 	}
 
-	public StringBuilder toCronString(int fieldValue) {
-		return new StringBuilder(cron.toString().replaceAll("%s", String.valueOf(fieldValue)));
-	}
-
 	public String toCronString() {
 		return this.cron.toString();
 	}
