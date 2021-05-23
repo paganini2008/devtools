@@ -1,5 +1,6 @@
 package com.github.paganini2008.devtools.cron4j.examples;
 
+import com.github.paganini2008.devtools.cron4j.CRON;
 import com.github.paganini2008.devtools.cron4j.Cancellable;
 import com.github.paganini2008.devtools.cron4j.Cancellables;
 import com.github.paganini2008.devtools.cron4j.CancellationException;
@@ -33,12 +34,12 @@ public abstract class Example {
 
 	// 0 26,29,33 * * * ?
 	public static CronExpression getCron3() {
-		return CronExpressionBuilder.minute(26).andMinute(29).andMinute(33);
+		return CronExpressionBuilder.everyHour().minute(26).andMinute(29).andMinute(33);
 	}
 
 	// 0 * 14 * * ?
 	public static CronExpression getCron4() {
-		return CronExpressionBuilder.hour(14).everyMinute(1);
+		return CronExpressionBuilder.everyDay().hour(14).everyMinute();
 	}
 
 	// 0 0-10 15 * * ?
@@ -48,7 +49,7 @@ public abstract class Example {
 
 	// 0 0 23 * * ?
 	public static CronExpression getCron6() {
-		return CronExpressionBuilder.everyDay().hour(23);
+		return CronExpressionBuilder.everyDay().at(23, 0);
 	}
 
 	// 0 15 12 * * ?
@@ -73,7 +74,7 @@ public abstract class Example {
 
 	// 0 0/5 12,18 * * ?
 	public static CronExpression getCron11() {
-		return CronExpressionBuilder.hour(12).toHour(18).everyMinute(5);
+		return CronExpressionBuilder.hour(12).andHour(18).everyMinute(5);
 	}
 
 	// 0 30 23 L * ?
@@ -81,14 +82,19 @@ public abstract class Example {
 		return CronExpressionBuilder.everyMonth().lastDay().at(23, 30);
 	}
 
-	// 0 10,20,30 12 ? 3,4 5L 2020-2025
+	// 0 10,20,30 12 ? 7-11 6L 2021-2025
 	public static CronExpression getCron13() {
-		return CronExpressionBuilder.year(2021).Aug().toDec().lastWeek().Fri().hour(12).minute(10).andMinute(20).andMinute(30);
+		return CronExpressionBuilder.year(2021).toYear(2025).Aug().toDec().lastWeek().Fri().hour(12).minute(10).andMinute(20).andMinute(30);
 	}
 
 	// 0 10 23 ? * 6#3
 	public static CronExpression getCron14() {
 		return CronExpressionBuilder.everyMonth().week(3).Fri().at(23, 10);
+	}
+
+	// 0 15-50/2 0-6 10-28 * ?
+	public static CronExpression getCron15() {
+		return CronExpressionBuilder.everyMonth().day(10).toDay(28).hour(0).toHour(6).minute(15).toMinute(50, 2);
 	}
 
 	public static void test1() throws Exception {
@@ -98,7 +104,13 @@ public abstract class Example {
 
 		// System.out.println(StringUtils.repeat("-", 32));
 		//
-		getCron13().forEach(date -> {
+		CRON.parse("0 30 23 L * ?").forEach(date -> {
+			System.out.println(DateUtils.format(date));
+		}, 20);
+
+		System.out.println("-----------------------------------------");
+
+		CRON.parse("0 0 12 10-15 * ?").forEach(date -> {
 			System.out.println(DateUtils.format(date));
 		}, 20);
 
@@ -135,7 +147,7 @@ public abstract class Example {
 	}
 
 	public static void test3() throws Exception {
-		CronExpression expression = CronExpressionBuilder.everySecond();
+		CronExpression expression = CronExpressionBuilder.everySecond(5);
 		TimerTaskExecutor executor = new TimerTaskExecutor();
 		executor.schedule(new Task() {
 
@@ -162,7 +174,7 @@ public abstract class Example {
 	}
 
 	public static void test4() throws Exception {
-		CronExpression expression = CronExpressionBuilder.everySecond();
+		CronExpression expression = CronExpressionBuilder.everySecond(5);
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 		executor.schedule(new Task() {
 
@@ -216,11 +228,25 @@ public abstract class Example {
 		executor.close();
 	}
 
+	public static void test6() {
+		System.out.println(CRON.parse("*/5 * * * * ?"));
+		System.out.println(CRON.parse("0 */2 * * * ?"));
+		System.out.println(CRON.parse("0 15 10 LW * ?"));
+		System.out.println(CRON.parse("0 0 12 10W * ?"));
+		System.out.println(CRON.parse("0 15 10 ? * MON-FRI"));
+		System.out.println(CRON.parse("0 26,29,33 * * * ?"));
+		System.out.println(CRON.parse("0 15-50/2 0-6 10-28 * ?"));
+		System.out.println(CRON.parse("0 10 23 ? * 6#3"));
+		System.out.println(CRON.parse("0 10,20,30 12 ? 7-11 6L 2021-2025"));
+	}
+
 	public static void main(String[] args) throws Exception {
 		// test5();
 		// getCron14();
-		System.out.println(CronExpressionBuilder.everyYear().lastDay().at(12, 0));
-		//System.out.println(getCron13());
+		// System.out.println(CronExpressionBuilder.everyYear().lastDay().at(12, 0));
+		// System.out.println(getCron13());
+		// System.out.println(getCron10());
+		test1();
 	}
 
 }

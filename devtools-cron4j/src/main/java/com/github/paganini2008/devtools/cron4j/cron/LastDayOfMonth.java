@@ -27,7 +27,7 @@ public class LastDayOfMonth implements Day, Serializable {
 
 	LastDayOfMonth(Month month) {
 		this.month = month;
-		this.day = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH, month.getLasyDay());
+		this.day = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH, month.getLastDay());
 		this.self = true;
 	}
 
@@ -76,7 +76,7 @@ public class LastDayOfMonth implements Day, Serializable {
 				month = month.next();
 				day.set(Calendar.YEAR, month.getYear());
 				day.set(Calendar.MONTH, month.getMonth());
-				day.set(Calendar.DAY_OF_MONTH, month.getLasyDay());
+				day.set(Calendar.DAY_OF_MONTH, month.getLastDay());
 				next = true;
 			}
 		}

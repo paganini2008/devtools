@@ -58,7 +58,7 @@ public class ThisYear implements TheYear, Serializable {
 			andYear(i, false);
 		}
 		if (interval > 1) {
-			this.cron.append("/").append(interval);
+			this.cron.append("-").append(year).append("/").append(interval);
 		} else {
 			this.cron.append("-").append(year);
 		}

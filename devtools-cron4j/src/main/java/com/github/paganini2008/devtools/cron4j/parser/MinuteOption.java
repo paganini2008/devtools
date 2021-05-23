@@ -43,21 +43,15 @@ public class MinuteOption implements CronOption {
 	}
 
 	private TheMinute setMinute(String cron, TheMinute minute) {
-		if (cron.equals("-")) {
+		if (cron.contains("-") && cron.contains("/")) {
+			String[] args = cron.split("[\\-\\/]", 3);
+			return minute.andMinute(Integer.parseInt(args[0])).toMinute(Integer.parseInt(args[1]), Integer.parseInt(args[2]));
+		} else if (cron.contains("-") && !cron.contains("/")) {
 			String[] args = cron.split("-", 2);
 			return minute.andMinute(Integer.parseInt(args[0])).toMinute(Integer.parseInt(args[1]));
-		} else if (cron.contains("/")) {
+		} else if (!cron.contains("-") && cron.contains("/")) {
 			String[] args = cron.split("\\/", 2);
-			int start;
-			try {
-				start = Integer.parseInt(args[0]);
-			} catch (NumberFormatException e) {
-				if (args[0].equals("*")) {
-					start = 0;
-				} else {
-					throw new MalformedCronException(value, e);
-				}
-			}
+			int start = getStartValue(args[0]);
 			return minute.andMinute(start).toMinute(59, Integer.parseInt(args[1]));
 		} else {
 			return minute.andMinute(Integer.parseInt(cron));
@@ -65,24 +59,26 @@ public class MinuteOption implements CronOption {
 	}
 
 	private TheMinute setMinute(String cron, Hour hour) {
-		if (cron.equals("-")) {
+		if (cron.contains("-") && cron.contains("/")) {
+			String[] args = cron.split("[\\-\\/]", 3);
+			return hour.minute(Integer.parseInt(args[0])).toMinute(Integer.parseInt(args[1]), Integer.parseInt(args[2]));
+		} else if (cron.contains("-") && !cron.contains("/")) {
 			String[] args = cron.split("-", 2);
 			return hour.minute(Integer.parseInt(args[0])).toMinute(Integer.parseInt(args[1]));
-		} else if (cron.contains("/")) {
+		} else if (!cron.contains("-") && cron.contains("/")) {
 			String[] args = cron.split("\\/", 2);
-			int start;
-			try {
-				start = Integer.parseInt(args[0]);
-			} catch (NumberFormatException e) {
-				if (args[0].equals("*")) {
-					start = 0;
-				} else {
-					throw new MalformedCronException(value, e);
-				}
-			}
+			int start = getStartValue(args[0]);
 			return hour.minute(start).toMinute(59, Integer.parseInt(args[1]));
 		} else {
 			return hour.minute(Integer.parseInt(cron));
+		}
+	}
+
+	private int getStartValue(String cron) {
+		try {
+			return Integer.parseInt(cron);
+		} catch (RuntimeException e) {
+			return 0;
 		}
 	}
 

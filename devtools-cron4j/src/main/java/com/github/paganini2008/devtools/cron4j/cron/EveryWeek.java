@@ -59,7 +59,7 @@ public class EveryWeek implements Week, Serializable {
 
 	private boolean shoudNext() {
 		if (month.getMonth() == week.get(Calendar.MONTH)) {
-			boolean next = (week.get(Calendar.DAY_OF_MONTH) + 7 <= month.getLasyDay());
+			boolean next = (week.get(Calendar.DAY_OF_MONTH) + 7 <= month.getLastDay());
 			next &= (week.get(Calendar.WEEK_OF_MONTH) + interval <= toWeek);
 			return next;
 		}

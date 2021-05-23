@@ -113,7 +113,7 @@ public abstract class CronExpressionBuilder {
 
 	public static Day everyDay(int interval) {
 		return everyMonth().everyDay(m -> 1, m -> {
-			return m.getLasyDay();
+			return m.getLastDay();
 		}, interval);
 	}
 

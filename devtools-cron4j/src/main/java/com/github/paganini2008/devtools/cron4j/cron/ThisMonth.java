@@ -82,8 +82,23 @@ public class ThisMonth implements TheMonth, Serializable {
 		return month.get(Calendar.MONTH);
 	}
 
-	public int getLasyDay() {
+	public int getLastDay() {
 		return month.getActualMaximum(Calendar.DAY_OF_MONTH);
+	}
+
+	public int getWeekday(int dayOfMonth) {
+		Calendar c = (Calendar) month.clone();
+		c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+		int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+		while (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
+			if (dayOfWeek == Calendar.SATURDAY) {
+				c.set(Calendar.DAY_OF_WEEK, dayOfWeek - 1);
+			} else if (dayOfWeek == Calendar.SUNDAY) {
+				c.set(Calendar.DAY_OF_WEEK, dayOfWeek + 1);
+			}
+			dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+		}
+		return c.get(Calendar.DAY_OF_MONTH);
 	}
 
 	public int getWeekCount() {

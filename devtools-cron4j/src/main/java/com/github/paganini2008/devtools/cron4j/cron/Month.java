@@ -18,7 +18,9 @@ public interface Month extends Iterator<Month>, CronExpression {
 
 	int getMonth();
 
-	int getLasyDay();
+	int getLastDay();
+
+	int getWeekday(int dayOfMonth);
 
 	int getWeekCount();
 
@@ -28,7 +30,7 @@ public interface Month extends Iterator<Month>, CronExpression {
 
 	default Day everyDay(int interval) {
 		return everyDay(m -> 1, m -> {
-			return m.getLasyDay();
+			return m.getLastDay();
 		}, interval);
 	}
 

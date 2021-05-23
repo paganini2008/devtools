@@ -33,6 +33,10 @@ public class DayOption implements CronOption {
 			return month.lastDay();
 		} else if (value.equals("LW")) {
 			return month.lastWeek().Fri();
+		} else if (value.endsWith("W")) {
+			int dayOfMonth = Integer.parseInt(value.substring(0, value.lastIndexOf('W')));
+			dayOfMonth = month.getWeekday(dayOfMonth);
+			return month.day(dayOfMonth);
 		}
 		String[] args = value.split(",");
 		TheDay day = null;
@@ -47,46 +51,42 @@ public class DayOption implements CronOption {
 	}
 
 	private TheDay setDay(String cron, TheDay day, Month month) {
-		if (cron.contains("-")) {
+		if (cron.contains("-") && cron.contains("/")) {
+			String[] args = cron.split("[\\-\\/]", 3);
+			return day.andDay(Integer.parseInt(args[0])).toDay(Integer.parseInt(args[1]), Integer.parseInt(args[2]));
+		} else if (cron.contains("-") && !cron.contains("/")) {
 			String[] args = cron.split("-", 2);
 			return day.andDay(Integer.parseInt(args[0])).toDay(Integer.parseInt(args[1]));
-		} else if (cron.contains("/")) {
+		} else if (!cron.contains("-") && cron.contains("/")) {
 			String[] args = cron.split("\\/", 2);
-			int start;
-			try {
-				start = Integer.parseInt(args[0]);
-			} catch (NumberFormatException e) {
-				if (args[0].equals("*")) {
-					start = 1;
-				} else {
-					throw new MalformedCronException(value, e);
-				}
-			}
-			return day.andDay(start).toDay(month.getLasyDay(), Integer.parseInt(args[1]));
+			int start = getStartValue(args[0]);
+			return day.andDay(start).toDay(month.getLastDay(), Integer.parseInt(args[1]));
 		} else {
 			return day.andDay(Integer.parseInt(cron));
 		}
 	}
 
 	private TheDay setDay(String cron, Month month) {
-		if (cron.contains("-")) {
+		if (cron.contains("-") && cron.contains("/")) {
+			String[] args = cron.split("[\\-\\/]", 3);
+			return month.day(Integer.parseInt(args[0])).toDay(Integer.parseInt(args[1]), Integer.parseInt(args[2]));
+		} else if (cron.contains("-") && !cron.contains("/")) {
 			String[] args = cron.split("-", 2);
 			return month.day(Integer.parseInt(args[0])).toDay(Integer.parseInt(args[1]));
-		} else if (cron.contains("/")) {
+		} else if (!cron.contains("-") && cron.contains("/")) {
 			String[] args = cron.split("\\/", 2);
-			int start;
-			try {
-				start = Integer.parseInt(args[0]);
-			} catch (NumberFormatException e) {
-				if (args[0].equals("*")) {
-					start = 1;
-				} else {
-					throw new MalformedCronException(value, e);
-				}
-			}
-			return month.day(start).toDay(month.getLasyDay(), Integer.parseInt(args[1]));
+			int start = getStartValue(args[0]);
+			return month.day(start).toDay(month.getLastDay(), Integer.parseInt(args[1]));
 		} else {
 			return month.day(Integer.parseInt(cron));
+		}
+	}
+
+	private int getStartValue(String cron) {
+		try {
+			return Integer.parseInt(cron);
+		} catch (RuntimeException e) {
+			return 0;
 		}
 	}
 

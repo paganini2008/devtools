@@ -124,7 +124,7 @@ public class ThisDay implements TheDay, Serializable {
 		day = entry.getValue();
 		day.set(Calendar.YEAR, month.getYear());
 		day.set(Calendar.MONTH, month.getMonth());
-		day.set(Calendar.DAY_OF_MONTH, Math.min(entry.getKey(), month.getLasyDay()));
+		day.set(Calendar.DAY_OF_MONTH, Math.min(entry.getKey(), month.getLastDay()));
 		return this;
 	}
 

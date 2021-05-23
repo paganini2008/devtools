@@ -6,7 +6,7 @@ import com.github.paganini2008.devtools.cron4j.cron.TheSecond;
 
 /**
  * 
- * SecondClause
+ * SecondOption
  *
  * @author Jimmy Hoff
  *
@@ -44,21 +44,15 @@ public class SecondOption implements CronOption {
 	}
 
 	private TheSecond setSecond(String cron, TheSecond oneSecond) {
-		if (cron.contains("-")) {
+		if (cron.contains("-") && cron.contains("/")) {
+			String[] args = value.split("[\\-\\/]", 3);
+			return oneSecond.andSecond(Integer.parseInt(args[0])).toSecond(Integer.parseInt(args[1], Integer.parseInt(args[2])));
+		} else if (cron.contains("-") && !cron.contains("/")) {
 			String[] args = value.split("-", 2);
 			return oneSecond.andSecond(Integer.parseInt(args[0])).toSecond(Integer.parseInt(args[1]));
-		} else if (cron.contains("/")) {
+		} else if (!cron.contains("-") && cron.contains("/")) {
 			String[] args = value.split("\\/", 2);
-			int start;
-			try {
-				start = Integer.parseInt(args[0]);
-			} catch (NumberFormatException e) {
-				if (args[0].equals("*")) {
-					start = 0;
-				} else {
-					throw new MalformedCronException(value, e);
-				}
-			}
+			int start = getStartValue(args[0]);
 			return oneSecond.andSecond(start).toSecond(59, Integer.parseInt(args[1]));
 		} else {
 			return oneSecond.andSecond(Integer.parseInt(cron));
@@ -66,20 +60,26 @@ public class SecondOption implements CronOption {
 	}
 
 	private TheSecond setSecond(String cron, Minute minute) {
-		if (cron.contains("-")) {
+		if (cron.contains("-") && cron.contains("/")) {
+			String[] args = value.split("[\\-\\/]", 3);
+			return minute.second(Integer.parseInt(args[0])).toSecond(Integer.parseInt(args[1]), Integer.parseInt(args[2]));
+		} else if (cron.contains("-") && !cron.contains("/")) {
 			String[] args = value.split("-", 2);
 			return minute.second(Integer.parseInt(args[0])).toSecond(Integer.parseInt(args[1]));
-		} else if (cron.contains("/")) {
+		} else if (!cron.contains("-") && cron.contains("/")) {
 			String[] args = value.split("\\/", 2);
-			int start;
-			try {
-				start = Integer.parseInt(args[0]);
-			} catch (NumberFormatException e) {
-				start = 0;
-			}
+			int start = getStartValue(args[0]);
 			return minute.second(start).toSecond(59, Integer.parseInt(args[1]));
 		} else {
 			return minute.second(Integer.parseInt(cron));
+		}
+	}
+
+	private int getStartValue(String cron) {
+		try {
+			return Integer.parseInt(cron);
+		} catch (RuntimeException e) {
+			return 0;
 		}
 	}
 

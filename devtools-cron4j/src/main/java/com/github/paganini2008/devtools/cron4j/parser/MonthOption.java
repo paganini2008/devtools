@@ -50,44 +50,30 @@ public class MonthOption implements CronOption {
 	}
 
 	private TheMonth setMonth(String cron, TheMonth month) {
-		if (cron.contains("-")) {
+		if (cron.contains("-") && cron.contains("/")) {
+			String[] args = cron.split("[\\/\\-]", 3);
+			return month.andMonth(Integer.parseInt(args[0])).toMonth(Integer.parseInt(args[1]), Integer.parseInt(args[2]));
+		} else if (cron.contains("-") && !cron.contains("/")) {
 			String[] args = cron.split("-", 2);
 			return month.andMonth(Integer.parseInt(args[0])).toMonth(Integer.parseInt(args[1]));
-		} else if (cron.contains("/")) {
+		} else if (!cron.contains("-") && cron.contains("/")) {
 			String[] args = cron.split("\\/", 2);
-			int start;
-			try {
-				start = Integer.parseInt(args[0]);
-			} catch (NumberFormatException e) {
-				if (args[0].equals("*")) {
-					start = Calendar.JANUARY;
-				} else {
-					throw new MalformedCronException(value, e);
-				}
-			}
-			return month.andMonth(start).toMonth(Calendar.DECEMBER, Integer.parseInt(args[1]));
+			return month.andMonth(Integer.parseInt(args[0])).toMonth(Calendar.DECEMBER, Integer.parseInt(args[1]));
 		} else {
 			return month.andMonth(Integer.parseInt(cron));
 		}
 	}
 
 	private TheMonth setMonth(String cron, Year year) {
-		if (cron.contains("-")) {
+		if (cron.contains("-") && cron.contains("/")) {
+			String[] args = cron.split("[\\-\\/]", 3);
+			return year.month(Integer.parseInt(args[0])).toMonth(Integer.parseInt(args[1]), Integer.parseInt(args[2]));
+		} else if (cron.contains("-") && !cron.contains("/")) {
 			String[] args = cron.split("-", 2);
 			return year.month(Integer.parseInt(args[0])).toMonth(Integer.parseInt(args[1]));
-		} else if (cron.contains("/")) {
+		} else if (!cron.contains("-") && cron.contains("/")) {
 			String[] args = cron.split("\\/", 2);
-			int start;
-			try {
-				start = Integer.parseInt(args[0]);
-			} catch (NumberFormatException e) {
-				if (args[0].equals("*")) {
-					start = Calendar.JANUARY;
-				} else {
-					throw new MalformedCronException(value, e);
-				}
-			}
-			return year.month(start).toMonth(Calendar.DECEMBER, Integer.parseInt(args[1]));
+			return year.month(Integer.parseInt(args[0])).toMonth(Calendar.DECEMBER, Integer.parseInt(args[1]));
 		} else {
 			return year.month(Integer.parseInt(cron));
 		}

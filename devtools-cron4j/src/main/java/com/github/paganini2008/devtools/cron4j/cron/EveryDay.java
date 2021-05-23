@@ -111,7 +111,7 @@ public class EveryDay implements Day, Serializable {
 	}
 
 	public String toCronString() {
-		String s = toDay != month.getLasyDay() ? fromDay + "-" + toDay : fromDay + "";
+		String s = toDay != month.getLastDay() ? fromDay + "-" + toDay : fromDay + "";
 		return interval > 1 ? s + "/" + interval : "*";
 	}
 
