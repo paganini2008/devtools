@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.io.FileUtils;
 /**
  * FileExtensionComparator
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class FileExtensionComparator extends FileComparator {

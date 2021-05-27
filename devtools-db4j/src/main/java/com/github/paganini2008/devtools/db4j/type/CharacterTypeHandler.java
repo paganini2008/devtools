@@ -10,7 +10,7 @@ import com.github.paganini2008.devtools.db4j.JdbcType;
 /**
  * CharacterTypeHandler
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class CharacterTypeHandler extends BasicTypeHandler {

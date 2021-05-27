@@ -27,7 +27,7 @@ import com.github.paganini2008.devtools.primitives.Shorts;
 /**
  * StringArrayConverter
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class StringArrayConverter extends BasicConverter<String[]> {

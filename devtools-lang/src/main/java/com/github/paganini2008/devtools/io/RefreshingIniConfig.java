@@ -13,7 +13,7 @@ import com.github.paganini2008.devtools.collection.MapUtils;
  * 
  * RefreshingIniConfig
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public abstract class RefreshingIniConfig implements IniConfig, Serializable {

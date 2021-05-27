@@ -7,7 +7,7 @@ import java.io.FileFilter;
  * 
  * DirectoryFilter
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * @version 1.0
  */

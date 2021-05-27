@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * KeyHolder
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public interface GeneratedKey {

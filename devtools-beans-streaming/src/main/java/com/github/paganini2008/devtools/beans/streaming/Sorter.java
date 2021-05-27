@@ -7,7 +7,7 @@ import java.util.function.Function;
  * 
  * Sorter
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public interface Sorter<E> extends Comparator<E> {

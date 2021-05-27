@@ -6,7 +6,7 @@ import java.sql.SQLException;
 /**
  * PreparedStatementExecutor
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public interface PreparedStatementExecutor<T> {

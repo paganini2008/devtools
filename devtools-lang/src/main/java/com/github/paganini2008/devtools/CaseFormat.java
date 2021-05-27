@@ -4,7 +4,7 @@ package com.github.paganini2008.devtools;
  * 
  * CaseFormat
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public interface CaseFormat {

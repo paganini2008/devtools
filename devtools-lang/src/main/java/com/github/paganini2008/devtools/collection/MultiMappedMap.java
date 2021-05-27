@@ -13,7 +13,7 @@ import java.util.function.Supplier;
  * 
  * MultiMappedMap
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class MultiMappedMap<K, N, V> extends AbstractMap<K, Map<N, V>> implements Map<K, Map<N, V>>, Serializable {

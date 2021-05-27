@@ -8,10 +8,10 @@ import com.github.paganini2008.devtools.primitives.Chars;
 /**
  * RandomStringUtils
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
-public class RandomStringUtils {
+public abstract class RandomStringUtils {
 
 	private final static char[] LETTERS_LOWER;
 	private final static char[] LETTERS_UPPER;
@@ -158,9 +158,6 @@ public class RandomStringUtils {
 			ch = LETTERS_UPPER;
 		}
 		return ch.clone();
-	}
-
-	private RandomStringUtils() {
 	}
 
 }

@@ -5,7 +5,7 @@ import com.github.paganini2008.devtools.StringUtils;
 /**
  * Duration
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public enum Duration {

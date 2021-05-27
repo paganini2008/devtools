@@ -5,7 +5,7 @@ import java.io.IOException;
 /**
  * HttpStatusException
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class HttpStatusException extends IOException {

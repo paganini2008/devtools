@@ -7,7 +7,7 @@ import java.net.HttpURLConnection;
  * 
  * HttpConnectionFactory
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * 
  * @version 1.0

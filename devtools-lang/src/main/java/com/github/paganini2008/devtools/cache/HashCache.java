@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 
  * HashCache
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class HashCache extends AbstractCache {

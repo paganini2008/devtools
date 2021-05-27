@@ -8,7 +8,7 @@ import java.util.Map;
  * 
  * FileEntry
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * 
  * @version 1.0

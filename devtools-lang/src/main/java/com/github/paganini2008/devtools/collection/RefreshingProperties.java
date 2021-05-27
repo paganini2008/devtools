@@ -24,7 +24,7 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
  * 
  * RefreshingProperties
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public abstract class RefreshingProperties extends ReadonlyProperties implements Executable {

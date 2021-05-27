@@ -12,7 +12,7 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * 
  * ToStringStyles
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  *
  * @since 1.0
  */

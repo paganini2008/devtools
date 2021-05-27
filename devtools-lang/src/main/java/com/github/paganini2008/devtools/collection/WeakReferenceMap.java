@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 
  * WeakReferenceMap
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class WeakReferenceMap<K, V> extends ReferenceMap<K, V> implements Map<K, V> {

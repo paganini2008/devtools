@@ -9,7 +9,7 @@ import com.github.paganini2008.devtools.math.BigDecimalUtils;
  * 
  * Numeric
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class Numeric extends Number {

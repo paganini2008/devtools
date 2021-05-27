@@ -6,7 +6,7 @@ import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
  * 
  * CronOption
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  *
  * @since 1.0
  */

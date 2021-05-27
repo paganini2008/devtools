@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.beans.BeanUtils;
  * 
  * Property
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * 
  * @version 1.0

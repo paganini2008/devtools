@@ -4,7 +4,7 @@ package com.github.paganini2008.devtools.jdbc;
  * 
  * PageRequest
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * 
  */

@@ -6,7 +6,7 @@ import java.util.Calendar;
  * 
  * TheDayOfWeekInMonth
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  *
  * @since 1.0
  */

@@ -7,7 +7,7 @@ import java.sql.SQLException;
  * 
  * PreparedStatementCallback
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * 
  * @version 1.0

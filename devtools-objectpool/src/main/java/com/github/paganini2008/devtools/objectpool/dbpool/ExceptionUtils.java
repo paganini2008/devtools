@@ -6,7 +6,7 @@ import java.lang.reflect.UndeclaredThrowableException;
 /**
  * ExceptionUtils
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public abstract class ExceptionUtils {

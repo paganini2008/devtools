@@ -6,7 +6,7 @@ import java.util.Map;
  * 
  * LruMapSupplier
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 @FunctionalInterface

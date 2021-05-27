@@ -21,7 +21,7 @@ import com.github.paganini2008.devtools.primitives.Floats;
  * 
  * AbstractDirectoryWalker
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @since 1.0
  */
 public abstract class AbstractDirectoryWalker implements DirectoryWalker {
@@ -71,7 +71,7 @@ public abstract class AbstractDirectoryWalker implements DirectoryWalker {
 	 * 
 	 * ProgressBarImpl
 	 *
-	 * @author Jimmy Hoff
+	 * @author Fred Feng
 	 * @since 1.0
 	 */
 	static class ProgressBarImpl implements ProgressBar, Executable {
@@ -207,7 +207,7 @@ public abstract class AbstractDirectoryWalker implements DirectoryWalker {
 	 * 
 	 * FileInfoImpl
 	 *
-	 * @author Jimmy Hoff
+	 * @author Fred Feng
 	 * @since 1.0
 	 */
 	static class FileInfoImpl implements FileInfo {

@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.MatchMode;
  * 
  * StringKeyMatchedMap
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * @version 1.0
  */

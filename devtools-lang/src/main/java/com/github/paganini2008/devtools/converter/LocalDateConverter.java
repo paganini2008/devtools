@@ -12,7 +12,7 @@ import com.github.paganini2008.devtools.date.LocalDateUtils;
  * 
  * LocalDateConverter
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class LocalDateConverter extends BasicConverter<LocalDate> {

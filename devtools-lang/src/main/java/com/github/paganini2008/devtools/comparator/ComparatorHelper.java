@@ -3,7 +3,7 @@ package com.github.paganini2008.devtools.comparator;
 /**
  * ComparatorHelper
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public abstract class ComparatorHelper {

@@ -17,7 +17,7 @@ import com.github.paganini2008.devtools.event.EventSubscriber;
  * 
  * Clock
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public final class Clock implements Executable {
@@ -180,7 +180,7 @@ public final class Clock implements Executable {
 	 * 
 	 * ClockEvent
 	 * 
-	 * @author Jimmy Hoff
+	 * @author Fred Feng
 	 *
 	 * @since 1.0
 	 */

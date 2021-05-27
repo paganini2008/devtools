@@ -18,7 +18,7 @@ import com.github.paganini2008.devtools.StringUtils;
 /**
  * Find classes under inputed package name
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class ClassFinder {

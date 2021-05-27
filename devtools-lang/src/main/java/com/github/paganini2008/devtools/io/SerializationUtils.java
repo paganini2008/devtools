@@ -20,7 +20,7 @@ import com.github.paganini2008.devtools.Assert;
  * 
  * SerializationUtils
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 @SuppressWarnings("all")

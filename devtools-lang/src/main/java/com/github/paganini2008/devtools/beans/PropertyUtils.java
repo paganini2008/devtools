@@ -23,7 +23,7 @@ import com.github.paganini2008.devtools.reflection.MethodUtils;
  * 
  * PropertyUtils
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public abstract class PropertyUtils {

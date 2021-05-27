@@ -36,7 +36,7 @@ import com.github.paganini2008.devtools.primitives.Shorts;
 /**
  * StringConverter
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 @SuppressWarnings("all")

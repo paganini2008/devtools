@@ -4,7 +4,7 @@ package com.github.paganini2008.devtools.collection;
  * 
  * BoundedMap
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public interface BoundedMap<K, V> {

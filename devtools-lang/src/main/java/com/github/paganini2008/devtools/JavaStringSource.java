@@ -8,7 +8,7 @@ import javax.tools.SimpleJavaFileObject;
  * 
  * JavaStringSource
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class JavaStringSource extends SimpleJavaFileObject {

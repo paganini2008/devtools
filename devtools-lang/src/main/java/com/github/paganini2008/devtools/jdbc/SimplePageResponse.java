@@ -8,7 +8,7 @@ import java.util.List;
  * 
  * SimplePageResponse
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class SimplePageResponse<T> implements PageResponse<T>, Serializable {
@@ -62,7 +62,7 @@ public class SimplePageResponse<T> implements PageResponse<T>, Serializable {
 	 * 
 	 * PageIterator
 	 * 
-	 * @author Jimmy Hoff
+	 * @author Fred Feng
 	 *
 	 * @version 1.0
 	 */

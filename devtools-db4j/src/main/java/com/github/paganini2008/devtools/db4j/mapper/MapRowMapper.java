@@ -9,7 +9,7 @@ import com.github.paganini2008.devtools.db4j.JdbcType;
  * 
  * MapRowMapper
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class MapRowMapper extends AbstractRowMapper<Map<String, Object>> {

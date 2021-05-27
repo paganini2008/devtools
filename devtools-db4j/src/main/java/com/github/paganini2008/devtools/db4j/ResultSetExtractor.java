@@ -6,7 +6,7 @@ import java.sql.SQLException;
 /**
  * ResultSetExtractor
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public interface ResultSetExtractor<T> {

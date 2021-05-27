@@ -14,7 +14,7 @@ import com.github.paganini2008.devtools.logging.LogFactory;
 /**
  * AbstractDataSource
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public abstract class AbstractDataSource implements DriverManagerDataSource {

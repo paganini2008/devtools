@@ -7,7 +7,7 @@ import com.github.paganini2008.devtools.math.BigDecimalUtils;
 /**
  * BigDecimalArrayConverter
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class BigDecimalArrayConverter extends BasicConverter<BigDecimal[]> {

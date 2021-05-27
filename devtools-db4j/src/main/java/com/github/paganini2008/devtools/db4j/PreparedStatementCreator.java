@@ -7,7 +7,7 @@ import java.sql.SQLException;
 /**
  * PreparedStatementCreator
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public interface PreparedStatementCreator {

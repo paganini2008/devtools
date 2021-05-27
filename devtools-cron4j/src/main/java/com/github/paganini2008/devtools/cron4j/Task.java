@@ -6,7 +6,7 @@ import com.github.paganini2008.devtools.multithreads.Executable;
  * 
  * Task
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public interface Task extends Executable {

@@ -6,7 +6,7 @@ import java.util.List;
  * 
  * QuerySpan 
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public interface QuerySpan {

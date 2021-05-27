@@ -21,7 +21,7 @@ import com.github.paganini2008.devtools.multithreads.ForEach;
  * 
  * EventBus
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @since 1.0
  */
 public class EventBus<E extends Event<T>, T> {
@@ -58,7 +58,7 @@ public class EventBus<E extends Event<T>, T> {
 	 * 
 	 * EventHandler
 	 *
-	 * @author Jimmy Hoff
+	 * @author Fred Feng
 	 * @since 1.0
 	 */
 	static class EventHandler<E extends Event<T>, T> extends ForEach<Runnable> {
@@ -109,7 +109,7 @@ public class EventBus<E extends Event<T>, T> {
 	 * 
 	 * QueueGroup
 	 *
-	 * @author Jimmy Hoff
+	 * @author Fred Feng
 	 * @since 1.0
 	 */
 	static class QueueGroup<E extends Event<T>, T> implements EventGroup<E, T> {
@@ -162,7 +162,7 @@ public class EventBus<E extends Event<T>, T> {
 	 * 
 	 * PubSubGroup
 	 * 
-	 * @author Jimmy Hoff
+	 * @author Fred Feng
 	 * 
 	 * @version 1.0
 	 */

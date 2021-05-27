@@ -5,7 +5,7 @@ import java.io.IOException;
 /**
  * UnsupportedMimeTypeException
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class UnsupportedMimeTypeException extends IOException {

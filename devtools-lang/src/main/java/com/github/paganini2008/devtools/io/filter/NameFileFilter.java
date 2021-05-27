@@ -7,7 +7,7 @@ import com.github.paganini2008.devtools.io.PathUtils;
 /**
  * NameFileFilter
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class NameFileFilter extends LogicalFileFilter {

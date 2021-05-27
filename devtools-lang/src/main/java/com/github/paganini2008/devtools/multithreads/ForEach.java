@@ -14,7 +14,7 @@ import com.github.paganini2008.devtools.multithreads.latch.Latch;
  * 
  * ForEach
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @since 1.0
  */
 public abstract class ForEach<E> {

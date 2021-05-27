@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.primitives.Ints;
 /**
  * IntegerObjectArrayConverter
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class IntegerObjectArrayConverter extends BasicConverter<Integer[]> {

@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * TransactionIsolationLevel
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public enum TransactionIsolationLevel {

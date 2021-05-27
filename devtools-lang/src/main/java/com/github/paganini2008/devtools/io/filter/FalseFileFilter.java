@@ -5,7 +5,7 @@ import java.io.File;
 /**
  * FalseFileFilter
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class FalseFileFilter extends LogicalFileFilter {

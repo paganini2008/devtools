@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * LruList
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * @version 1.0
  */

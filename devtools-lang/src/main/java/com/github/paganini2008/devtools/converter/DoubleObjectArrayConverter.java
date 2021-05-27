@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.primitives.Doubles;
 /**
  * DoubleObjectArrayConverter
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class DoubleObjectArrayConverter extends BasicConverter<Double[]> {

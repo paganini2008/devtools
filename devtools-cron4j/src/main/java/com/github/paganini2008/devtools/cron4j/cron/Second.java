@@ -6,7 +6,7 @@ import java.util.Iterator;
  * 
  * Second
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * 
  * @version 1.0

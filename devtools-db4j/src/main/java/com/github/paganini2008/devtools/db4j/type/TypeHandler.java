@@ -11,7 +11,7 @@ import com.github.paganini2008.devtools.db4j.JdbcType;
  * 
  * TypeHandler
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * 
  * @version 1.0

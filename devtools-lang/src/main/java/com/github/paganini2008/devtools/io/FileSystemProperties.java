@@ -9,7 +9,7 @@ import com.github.paganini2008.devtools.collection.RefreshingProperties;
  * 
  * FileSystemProperties
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class FileSystemProperties extends RefreshingProperties {

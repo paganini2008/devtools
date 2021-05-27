@@ -6,7 +6,7 @@ import java.util.concurrent.Executor;
  * 
  * ThreadPool
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public interface ThreadPool extends Executor {

@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * 
  * ExcludedProperty
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * 
  * @version 1.0

@@ -6,7 +6,7 @@ import java.io.Serializable;
  * 
  * SimplePageRequest
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  */
 public class SimplePageRequest implements PageRequest, Serializable {

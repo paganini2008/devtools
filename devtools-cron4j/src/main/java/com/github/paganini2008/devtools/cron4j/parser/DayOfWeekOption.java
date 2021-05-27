@@ -13,7 +13,7 @@ import com.github.paganini2008.devtools.cron4j.cron.ThisDayOfWeekInMonth;
  * 
  * DayOfWeekOption
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  *
  * @since 1.0
  */

@@ -5,7 +5,7 @@ import com.github.paganini2008.devtools.StringUtils;
 /**
  * VarsTokenParser
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class VarsTokenParser implements TokenParser {

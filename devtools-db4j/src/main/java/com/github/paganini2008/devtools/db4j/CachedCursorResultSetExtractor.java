@@ -16,7 +16,7 @@ import com.sun.rowset.CachedRowSetImpl;
 /**
  * CachedCursorResultSetExtractor
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 @SuppressWarnings("restriction")

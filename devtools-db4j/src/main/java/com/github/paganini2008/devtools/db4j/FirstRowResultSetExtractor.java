@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.db4j.mapper.RowMapper;
 /**
  * FirstRowResultSetExtractor
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class FirstRowResultSetExtractor<T> implements ResultSetExtractor<T> {

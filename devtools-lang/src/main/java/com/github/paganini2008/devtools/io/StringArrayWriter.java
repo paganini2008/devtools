@@ -9,7 +9,7 @@ import java.util.List;
  * 
  * StringArrayWriter
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * 
  * @version 1.0

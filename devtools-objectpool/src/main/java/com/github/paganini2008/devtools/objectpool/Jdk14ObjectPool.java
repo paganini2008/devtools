@@ -15,7 +15,7 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
  * 
  * Jdk14ObjectPool
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class Jdk14ObjectPool implements ObjectPool {
@@ -50,7 +50,7 @@ public class Jdk14ObjectPool implements ObjectPool {
 	 * 
 	 * PooledObject
 	 * 
-	 * @author Jimmy Hoff
+	 * @author Fred Feng
 	 * @version 1.0
 	 */
 	static class PooledObject implements ObjectDetail {

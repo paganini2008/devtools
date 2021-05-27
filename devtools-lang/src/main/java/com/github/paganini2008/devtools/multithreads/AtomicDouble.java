@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicLongFieldUpdater;
  * 
  * AtomicDouble
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  *
  * @since 1.0
  */

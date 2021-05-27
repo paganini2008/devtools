@@ -6,7 +6,7 @@ import java.util.function.Function;
  * 
  * PrefixationTokenParser
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class PrefixationTokenParser implements TokenParser<String, String> {

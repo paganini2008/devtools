@@ -16,7 +16,7 @@ import com.github.paganini2008.devtools.jdbc.PageableSql;
  * 
  * TranscationImpl
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class TransactionImpl implements Transaction {

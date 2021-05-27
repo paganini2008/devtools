@@ -4,7 +4,7 @@ package com.github.paganini2008.devtools;
  * 
  * Comparables
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  *
  * @since 1.0
  */

@@ -24,7 +24,7 @@ import com.github.paganini2008.devtools.collection.LruMap;
  * 
  * Shorts
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public abstract class Shorts {

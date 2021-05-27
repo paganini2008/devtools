@@ -10,7 +10,7 @@ import com.github.paganini2008.devtools.db4j.JdbcType;
 /**
  * IntegerTypeHandler
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class IntegerTypeHandler extends BasicTypeHandler {

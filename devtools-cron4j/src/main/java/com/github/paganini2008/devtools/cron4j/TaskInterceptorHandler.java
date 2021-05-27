@@ -6,7 +6,7 @@ import com.github.paganini2008.devtools.cron4j.TaskExecutor.TaskFuture;
  * 
  * TaskInterceptorHandler
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public interface TaskInterceptorHandler {

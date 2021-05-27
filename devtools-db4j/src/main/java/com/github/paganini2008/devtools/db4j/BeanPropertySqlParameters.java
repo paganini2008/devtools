@@ -7,7 +7,7 @@ import com.github.paganini2008.devtools.beans.PropertyUtils;
 /**
  * BeanPropertySqlParameters
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class BeanPropertySqlParameters extends AbstractSqlParameter implements SqlParameters {

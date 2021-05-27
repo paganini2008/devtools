@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  * FileAssert
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class FileAssert {

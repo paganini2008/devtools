@@ -11,7 +11,7 @@ import com.github.paganini2008.devtools.beans.BeanUtils;
  * 
  * Functions
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * @version 1.0
  */

@@ -11,7 +11,7 @@ import java.util.Set;
  * 
  * KeyConversionMap
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * @version 1.0
  */

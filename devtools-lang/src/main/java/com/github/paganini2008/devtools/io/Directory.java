@@ -6,7 +6,7 @@ import java.io.File;
  * 
  * Directory
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @since 1.0
  */
 public interface Directory {

@@ -4,7 +4,7 @@ package com.github.paganini2008.devtools;
  * 
  * Obtainable
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @since 1.0
  */
 public interface Obtainable<T> {

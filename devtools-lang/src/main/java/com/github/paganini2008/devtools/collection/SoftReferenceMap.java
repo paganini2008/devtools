@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 
  * SoftReferenceMap
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class SoftReferenceMap<K, V> extends ReferenceMap<K, V> implements Map<K, V> {

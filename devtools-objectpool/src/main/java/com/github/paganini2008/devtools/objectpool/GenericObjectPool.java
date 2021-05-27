@@ -25,7 +25,7 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
  * 
  * GenericObjectPool
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class GenericObjectPool implements ObjectPool {
@@ -63,7 +63,7 @@ public class GenericObjectPool implements ObjectPool {
 	 * 
 	 * PooledObject
 	 * 
-	 * @author Jimmy Hoff
+	 * @author Fred Feng
 	 * @version 1.0
 	 */
 	static class PooledObject implements ObjectDetail {

@@ -13,7 +13,7 @@ import com.github.paganini2008.devtools.beans.PropertyUtils;
  * Restrictions</br>
  * A filter tools for where clause
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * @version 1.0
  */

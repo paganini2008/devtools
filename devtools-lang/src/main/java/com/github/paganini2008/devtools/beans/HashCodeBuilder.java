@@ -14,7 +14,7 @@ import com.github.paganini2008.devtools.reflection.MethodUtils;
  * 
  * HashCodeBuilder
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.1
  */
 public abstract class HashCodeBuilder {

@@ -10,7 +10,7 @@ import java.util.logging.LogRecord;
 /**
  * SimpleFormatter
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class SimpleFormatter extends Formatter {

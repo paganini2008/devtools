@@ -13,7 +13,7 @@ import com.github.paganini2008.devtools.cron4j.CRON;
  * 
  * ThisMinute
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  *
  * @version 1.0
  */

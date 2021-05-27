@@ -9,7 +9,7 @@ import com.github.paganini2008.devtools.Observer;
  * 
  * EventBasedRefreshingProperties
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  *
  * @since 1.0
  */

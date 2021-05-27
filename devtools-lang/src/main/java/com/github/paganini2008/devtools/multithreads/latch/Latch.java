@@ -8,7 +8,7 @@ import java.util.function.Consumer;
  * 
  * Latch
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public interface Latch {

@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.MatchMode;
  * 
  * Resource
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public interface Resource {

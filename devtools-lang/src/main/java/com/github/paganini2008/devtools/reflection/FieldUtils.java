@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.AbstractAction;
-
 import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.ClassUtils;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
@@ -16,9 +14,7 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * 
  * FieldUtils
  * 
- * @author Jimmy Hoff
- * 
- * 
+ * @author Fred Feng
  * @version 1.0
  */
 public abstract class FieldUtils {
@@ -181,20 +177,11 @@ public abstract class FieldUtils {
 		return fields;
 	}
 
-	public static void main(String[] args) {
-		Iterator<Field> iterator = new FieldIterator(AbstractAction.class);
-		while (iterator.hasNext()) {
-			System.out.println(iterator.next());
-		}
-	}
-
 	/**
 	 * 
 	 * DeclaredFieldIterator
 	 * 
-	 * @author Jimmy Hoff
-	 * 
-	 * 
+	 * @author Fred Feng
 	 * @version 1.0
 	 */
 	public static class DeclaredFieldIterator implements Iterator<Field> {
@@ -229,9 +216,7 @@ public abstract class FieldUtils {
 	 * 
 	 * FieldIterator
 	 * 
-	 * @author Jimmy Hoff
-	 * 
-	 * 
+	 * @author Fred Feng
 	 * @version 1.0
 	 */
 	public static class FieldIterator implements Iterator<Field> {
@@ -247,9 +232,7 @@ public abstract class FieldUtils {
 		public boolean hasNext() {
 			boolean next;
 			if (!(next = canContinue())) {
-				fields = superClassesAndInterfaces.hasNext()
-						? new DeclaredFieldIterator(superClassesAndInterfaces.next())
-						: null;
+				fields = superClassesAndInterfaces.hasNext() ? new DeclaredFieldIterator(superClassesAndInterfaces.next()) : null;
 				next = canContinue();
 			}
 			return next;

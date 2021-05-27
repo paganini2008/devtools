@@ -10,7 +10,7 @@ import com.github.paganini2008.devtools.collection.LruMap;
 /**
  * LruCache
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * @version 1.0
  */

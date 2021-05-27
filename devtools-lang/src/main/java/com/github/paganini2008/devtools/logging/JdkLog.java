@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  * 
  * JdkLog
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class JdkLog implements Log {

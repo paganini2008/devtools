@@ -6,7 +6,7 @@ import java.math.RoundingMode;
 /**
  * SizeUnit
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public enum SizeUnit {

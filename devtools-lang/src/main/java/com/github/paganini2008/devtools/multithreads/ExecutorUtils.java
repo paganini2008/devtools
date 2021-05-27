@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
  * 
  * ExecutorUtils
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public abstract class ExecutorUtils {

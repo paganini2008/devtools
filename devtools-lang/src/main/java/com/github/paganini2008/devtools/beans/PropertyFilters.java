@@ -12,7 +12,7 @@ import com.github.paganini2008.devtools.reflection.FieldUtils;
  * 
  * PropertyFilters
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public abstract class PropertyFilters {

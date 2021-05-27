@@ -16,7 +16,7 @@ import com.github.paganini2008.devtools.multithreads.latch.RecursiveLatch;
  * 
  * RecursiveDirectoryWalker
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @since 1.0
  */
 public class RecursiveDirectoryWalker extends AbstractDirectoryWalker {

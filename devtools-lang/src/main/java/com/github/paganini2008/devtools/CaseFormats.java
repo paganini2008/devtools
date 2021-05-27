@@ -6,7 +6,7 @@ import java.util.function.Function;
  * 
  * CaseFormats
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public abstract class CaseFormats {

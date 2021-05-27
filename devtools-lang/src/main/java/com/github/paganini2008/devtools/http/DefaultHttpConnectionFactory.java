@@ -16,7 +16,7 @@ import com.github.paganini2008.devtools.net.Urls;
  * 
  * DefaultHttpConnectionFactory
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * 
  * @version 1.0

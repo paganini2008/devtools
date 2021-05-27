@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * 
  * Sequence
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public abstract class Sequence {

@@ -11,7 +11,7 @@ import java.util.Properties;
  * 
  * ReadonlyProperties
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public abstract class ReadonlyProperties extends Properties {

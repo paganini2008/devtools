@@ -15,7 +15,7 @@ import java.util.function.Supplier;
  * 
  * MultiListMap
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class MultiListMap<K, V> extends AbstractMap<K, List<V>> implements Map<K, List<V>>, Serializable {

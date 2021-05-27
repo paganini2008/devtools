@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * AbstractSqlParameter
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public abstract class AbstractSqlParameter implements SqlType {

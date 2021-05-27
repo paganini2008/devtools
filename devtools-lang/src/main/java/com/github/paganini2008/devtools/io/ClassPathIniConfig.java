@@ -6,7 +6,7 @@ import java.io.IOException;
  * 
  * ClassPathIniConfig
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class ClassPathIniConfig extends RefreshingIniConfig {

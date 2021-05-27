@@ -10,7 +10,7 @@ import java.util.Map;
  * 
  * HttpRequest
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * 
  * @version 1.0

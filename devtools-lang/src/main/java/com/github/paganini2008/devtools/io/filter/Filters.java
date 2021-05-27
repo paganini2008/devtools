@@ -7,7 +7,7 @@ import com.github.paganini2008.devtools.io.filter.MatchNameFileFilter.MatchMode;
  * 
  * Filters
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * @version 1.0
  */

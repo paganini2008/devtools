@@ -5,7 +5,7 @@ import com.github.paganini2008.devtools.primitives.Floats;
 /**
  * FloatConverter
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class FloatConverter extends BasicConverter<Float> {

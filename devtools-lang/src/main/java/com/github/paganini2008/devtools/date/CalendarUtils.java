@@ -13,7 +13,7 @@ import com.github.paganini2008.devtools.StringUtils;
 /**
  * CalendarUtils
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public abstract class CalendarUtils {

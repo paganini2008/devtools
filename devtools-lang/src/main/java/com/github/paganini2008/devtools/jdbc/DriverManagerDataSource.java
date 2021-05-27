@@ -7,7 +7,7 @@ import javax.sql.DataSource;
 /**
  * DriverManagerDataSource
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public interface DriverManagerDataSource extends DataSource {

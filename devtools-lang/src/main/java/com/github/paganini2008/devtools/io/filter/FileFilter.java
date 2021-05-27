@@ -6,7 +6,7 @@ import java.io.FilenameFilter;
  * 
  * FileFilter
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * @version 1.0
  */

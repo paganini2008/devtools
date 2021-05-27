@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * TypeConverter
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 @SuppressWarnings("unchecked")

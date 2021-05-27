@@ -7,7 +7,7 @@ import com.github.paganini2008.devtools.comparator.ComparatorHelper;
 /**
  * FileChildrenComparator
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class FileChildrenComparator extends FileComparator {

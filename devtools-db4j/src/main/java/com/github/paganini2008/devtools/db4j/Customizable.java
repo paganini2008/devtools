@@ -6,7 +6,7 @@ import java.sql.Connection;
  * 
  * Customizable
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public interface Customizable<T> {

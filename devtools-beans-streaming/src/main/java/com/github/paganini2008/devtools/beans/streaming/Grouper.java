@@ -15,7 +15,7 @@ import com.github.paganini2008.devtools.jdbc.ResultSetSlice;
  * 
  * Grouper
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class Grouper<E> implements Groupable<E> {
@@ -65,7 +65,7 @@ public class Grouper<E> implements Groupable<E> {
 	 * 
 	 * GroupImpl
 	 * 
-	 * @author Jimmy Hoff
+	 * @author Fred Feng
 	 * 
 	 * @version 1.0
 	 */

@@ -13,7 +13,7 @@ import java.util.Set;
  * 
  * SimpleBoundedMap
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  *
  * @version 1.0
  */

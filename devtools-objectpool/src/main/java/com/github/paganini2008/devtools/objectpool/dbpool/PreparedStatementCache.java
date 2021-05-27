@@ -12,7 +12,7 @@ import com.github.paganini2008.devtools.collection.LruMap;
 /**
  * Build a PreparedStatementCache for each connection.
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class PreparedStatementCache {

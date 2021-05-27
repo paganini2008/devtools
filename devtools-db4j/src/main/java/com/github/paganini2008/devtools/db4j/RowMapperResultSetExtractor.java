@@ -10,7 +10,7 @@ import com.github.paganini2008.devtools.db4j.mapper.RowMapper;
 /**
  * RowMapperResultSetExtractor
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class RowMapperResultSetExtractor<T> implements ResultSetExtractor<List<T>> {

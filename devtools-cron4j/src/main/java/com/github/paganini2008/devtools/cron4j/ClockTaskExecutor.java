@@ -13,7 +13,7 @@ import com.github.paganini2008.devtools.multithreads.ClockTask;
  * 
  * ClockTaskExecutor
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class ClockTaskExecutor implements TaskExecutor {
@@ -122,7 +122,7 @@ public class ClockTaskExecutor implements TaskExecutor {
 	 * 
 	 * TaskFutureImpl
 	 *
-	 * @author Jimmy Hoff
+	 * @author Fred Feng
 	 * @version 1.0
 	 */
 	static class TaskFutureImpl implements TaskFuture {
@@ -172,7 +172,7 @@ public class ClockTaskExecutor implements TaskExecutor {
 	 * 
 	 * CronTask
 	 *
-	 * @author Jimmy Hoff
+	 * @author Fred Feng
 	 * @version 1.0
 	 */
 	class CronTask extends ClockTask {
@@ -237,7 +237,7 @@ public class ClockTaskExecutor implements TaskExecutor {
 	 * 
 	 * SimpleTask
 	 *
-	 * @author Jimmy Hoff
+	 * @author Fred Feng
 	 * @version 1.0
 	 */
 	class SimpleTask extends ClockTask {

@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * FileTracker
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class FileTracker implements FileWatcher {

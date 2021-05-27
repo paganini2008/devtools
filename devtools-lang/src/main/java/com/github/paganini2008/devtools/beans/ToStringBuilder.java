@@ -16,7 +16,7 @@ import com.github.paganini2008.devtools.collection.MapUtils;
  * 
  * ToStringBuilder
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public abstract class ToStringBuilder {
@@ -100,7 +100,7 @@ public abstract class ToStringBuilder {
 	 * 
 	 * PublicPropertyFilter
 	 * 
-	 * @author Jimmy Hoff
+	 * @author Fred Feng
 	 * 
 	 * @version 1.0
 	 */

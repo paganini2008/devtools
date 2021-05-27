@@ -9,7 +9,7 @@ import com.github.paganini2008.devtools.collection.Tuple;
  * 
  * PageableQueryImpl
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class PageableQueryImpl extends PageableResultSetSlice<Tuple> implements PageableQuery<Tuple> {

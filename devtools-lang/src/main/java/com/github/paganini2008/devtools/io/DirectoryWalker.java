@@ -7,7 +7,7 @@ import java.io.IOException;
  * 
  * DirectoryWalker
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @since 1.0
  */
 public interface DirectoryWalker {
@@ -22,7 +22,7 @@ public interface DirectoryWalker {
 	 * 
 	 * FileInfo
 	 *
-	 * @author Jimmy Hoff
+	 * @author Fred Feng
 	 * @since 1.0
 	 */
 	interface FileInfo extends Directory {
@@ -42,7 +42,7 @@ public interface DirectoryWalker {
 	 * 
 	 * Progressable
 	 *
-	 * @author Jimmy Hoff
+	 * @author Fred Feng
 	 * @since 1.0
 	 */
 	interface Progressable {
@@ -59,7 +59,7 @@ public interface DirectoryWalker {
 	 * 
 	 * ProgressBar
 	 *
-	 * @author Jimmy Hoff
+	 * @author Fred Feng
 	 * @since 1.0
 	 */
 	interface ProgressBar {

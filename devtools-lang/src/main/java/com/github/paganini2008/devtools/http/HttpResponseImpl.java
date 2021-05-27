@@ -25,7 +25,7 @@ import com.github.paganini2008.devtools.io.IOUtils;
 /**
  * HttpResponseImpl
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class HttpResponseImpl extends HttpBaseImpl<HttpResponse> implements HttpResponse, HttpReponseBody {

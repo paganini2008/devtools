@@ -16,7 +16,7 @@ import com.github.paganini2008.devtools.cron4j.CRON;
  * 
  * ThisDayOfWeekInMonth
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  *
  * @since 1.0
  */

@@ -11,7 +11,7 @@ import com.github.paganini2008.devtools.beans.PropertyUtils;
  * 
  * Transformers
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  *
  * @version 1.0
  */

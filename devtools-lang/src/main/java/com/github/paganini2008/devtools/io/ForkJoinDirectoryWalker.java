@@ -15,7 +15,7 @@ import com.github.paganini2008.devtools.NumberUtils;
  * 
  * ForkJoinDirectoryWalker
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @since 1.0
  */
 public class ForkJoinDirectoryWalker extends AbstractDirectoryWalker {
@@ -41,7 +41,7 @@ public class ForkJoinDirectoryWalker extends AbstractDirectoryWalker {
 	 * 
 	 * DirectoryWalkTask
 	 * 
-	 * @author Jimmy Hoff
+	 * @author Fred Feng
 	 * @version 1.0
 	 */
 	private class DirectoryWalkTask extends RecursiveTask<FileInfo> {

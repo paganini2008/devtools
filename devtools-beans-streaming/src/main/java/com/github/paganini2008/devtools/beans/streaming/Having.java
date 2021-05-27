@@ -8,7 +8,7 @@ import com.github.paganini2008.devtools.Comparables;
  * 
  * Having
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * @version 1.0
  */

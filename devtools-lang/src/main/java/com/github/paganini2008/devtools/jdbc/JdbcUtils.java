@@ -26,7 +26,7 @@ import com.github.paganini2008.devtools.converter.ConvertUtils;
 /**
  * JdbcUtils
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public abstract class JdbcUtils {
@@ -400,7 +400,7 @@ public abstract class JdbcUtils {
 	 * 
 	 * CursorImpl
 	 *
-	 * @author Jimmy Hoff
+	 * @author Fred Feng
 	 * @version 1.0
 	 */
 	private static class CursorImpl implements Cursor<Tuple> {

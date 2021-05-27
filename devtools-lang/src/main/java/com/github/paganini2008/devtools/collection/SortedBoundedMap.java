@@ -13,7 +13,7 @@ import java.util.TreeSet;
  * 
  * SortedBoundedMap
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  *
  * @version 1.0
  */

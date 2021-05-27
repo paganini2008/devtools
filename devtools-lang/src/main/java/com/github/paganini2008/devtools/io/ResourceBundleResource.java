@@ -11,7 +11,7 @@ import java.util.ResourceBundle;
  * 
  * ResourceBundleResource
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class ResourceBundleResource extends RefreshingResource {

@@ -23,7 +23,7 @@ import com.github.paganini2008.devtools.multithreads.latch.Latch;
  * 
  * GenericThreadPool
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class GenericThreadPool extends ThreadPoolExecutor implements ThreadPool {

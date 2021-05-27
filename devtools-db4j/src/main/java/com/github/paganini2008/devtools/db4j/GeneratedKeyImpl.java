@@ -10,7 +10,7 @@ import com.github.paganini2008.devtools.collection.MapUtils;
 /**
  * GeneratedKeyImpl
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class GeneratedKeyImpl implements GeneratedKey {

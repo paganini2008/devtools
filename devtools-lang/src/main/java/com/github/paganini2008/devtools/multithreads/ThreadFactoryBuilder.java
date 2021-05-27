@@ -9,7 +9,7 @@ import com.github.paganini2008.devtools.Assert;
  * 
  * ThreadFactoryBuilder
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * @version 1.0
  */

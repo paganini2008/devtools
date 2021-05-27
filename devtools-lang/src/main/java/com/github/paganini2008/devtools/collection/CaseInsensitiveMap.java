@@ -8,7 +8,7 @@ import java.util.Map;
  * 
  * CaseInsensitiveMap
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class CaseInsensitiveMap<V> extends KeyConversionMap<String, String, V> {

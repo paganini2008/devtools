@@ -9,7 +9,7 @@ import java.util.logging.SocketHandler;
  * 
  * Handlers
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class Handlers {

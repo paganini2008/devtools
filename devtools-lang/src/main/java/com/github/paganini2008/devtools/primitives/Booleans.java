@@ -16,7 +16,7 @@ import com.github.paganini2008.devtools.collection.ListUtils;
  * 
  * Booleans
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 @SuppressWarnings("all")

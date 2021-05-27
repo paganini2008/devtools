@@ -6,7 +6,7 @@ import java.util.UUID;
  * 
  * ClockTask
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @since 1.0
  */
 public abstract class ClockTask implements Runnable {

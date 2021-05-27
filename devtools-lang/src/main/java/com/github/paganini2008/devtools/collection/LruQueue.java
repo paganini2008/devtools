@@ -15,7 +15,7 @@ import com.github.paganini2008.devtools.ObjectUtils;
  * 
  * LruQueue
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * @version 1.0
  */

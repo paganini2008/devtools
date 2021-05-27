@@ -10,7 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * FileWatchdog
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class FileWatchdog extends TimerTask {
@@ -35,7 +35,7 @@ public class FileWatchdog extends TimerTask {
 	/**
 	 * FileEntry
 	 * 
-	 * @author Jimmy Hoff
+	 * @author Fred Feng
 	 * @version 1.0
 	 */
 	static class FileEntry {

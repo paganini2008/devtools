@@ -8,7 +8,7 @@ import java.util.function.Consumer;
  * 
  * NoopLatch
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @since 1.0
  */
 public class NoopLatch implements Latch {

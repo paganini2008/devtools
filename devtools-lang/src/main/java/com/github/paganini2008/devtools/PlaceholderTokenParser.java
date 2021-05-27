@@ -6,7 +6,7 @@ import java.util.function.Function;
  * 
  * PlaceholderTokenParser
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class PlaceholderTokenParser implements TokenParser<String, String> {

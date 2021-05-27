@@ -6,7 +6,7 @@ import java.beans.PropertyDescriptor;
  * 
  * PropertyFilter
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public interface PropertyFilter {

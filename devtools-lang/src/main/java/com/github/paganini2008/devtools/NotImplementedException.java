@@ -4,7 +4,7 @@ package com.github.paganini2008.devtools;
  * 
  * NotImplementedException
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class NotImplementedException extends UnsupportedOperationException {

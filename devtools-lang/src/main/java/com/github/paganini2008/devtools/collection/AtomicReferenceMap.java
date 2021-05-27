@@ -18,7 +18,7 @@ import com.github.paganini2008.devtools.ObjectUtils;
  * 
  * AtomicReferenceMap
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class AtomicReferenceMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Serializable {

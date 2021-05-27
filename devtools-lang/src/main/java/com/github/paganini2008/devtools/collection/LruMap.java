@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 /**
  * LruMap
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * @version 1.0
  * @see LinkedHashMap

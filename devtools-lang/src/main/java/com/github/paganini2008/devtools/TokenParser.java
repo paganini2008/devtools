@@ -6,7 +6,7 @@ import java.util.function.Function;
  * 
  * TokenParser
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public interface TokenParser<T, R> {

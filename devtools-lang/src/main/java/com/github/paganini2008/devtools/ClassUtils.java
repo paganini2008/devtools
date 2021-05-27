@@ -13,7 +13,7 @@ import com.github.paganini2008.devtools.collection.MapUtils;
  * 
  * ClassUtils
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 @SuppressWarnings("all")

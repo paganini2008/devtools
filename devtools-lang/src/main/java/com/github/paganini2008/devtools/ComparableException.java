@@ -3,7 +3,7 @@ package com.github.paganini2008.devtools;
 /**
  * ComparableException
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class ComparableException extends RuntimeException {

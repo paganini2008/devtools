@@ -11,13 +11,10 @@ import com.github.paganini2008.devtools.primitives.Shorts;
 /**
  * SystemPropertyUtils
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
-public class SystemPropertyUtils {
-
-	private SystemPropertyUtils() {
-	}
+public abstract class SystemPropertyUtils {
 
 	public static Boolean getBoolean(String key) {
 		return getBoolean(key, null);

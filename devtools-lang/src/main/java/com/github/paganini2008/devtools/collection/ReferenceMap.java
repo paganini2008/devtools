@@ -9,7 +9,7 @@ import java.util.Set;
  * 
  * ReferenceMap
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public abstract class ReferenceMap<K, V> implements Map<K, V> {

@@ -4,7 +4,7 @@ package com.github.paganini2008.devtools.cron4j.cron;
  * 
  * TheMinute
  *
- * @author Jimmy Hoff 
+ * @author Fred Feng 
  * @version 1.0
  */
 public interface TheMinute extends Minute {

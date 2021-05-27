@@ -24,7 +24,7 @@ import com.github.paganini2008.devtools.collection.MultiMappedMap;
  * 
  * BasicIniConfig
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class BasicIniConfig implements IniConfig, Serializable {

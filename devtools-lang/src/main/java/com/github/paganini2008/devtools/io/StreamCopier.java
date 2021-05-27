@@ -6,7 +6,7 @@ import java.io.IOException;
  * 
  * StreamCopier
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  *
  * @version 1.0
  */

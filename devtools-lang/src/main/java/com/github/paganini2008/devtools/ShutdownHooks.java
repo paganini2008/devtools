@@ -6,7 +6,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 /**
  * ShutdownHooks
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public final class ShutdownHooks {

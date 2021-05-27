@@ -12,7 +12,7 @@ import com.github.paganini2008.devtools.cron4j.CRON;
  * 
  * EveryHour
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class EveryHour implements Hour, Serializable {

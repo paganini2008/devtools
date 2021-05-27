@@ -7,7 +7,7 @@ import java.sql.SQLException;
  * 
  * ConnectionFactory
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public interface ConnectionFactory {

@@ -6,7 +6,7 @@ import java.util.function.Function;
  * 
  * GroupFunction
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * @version 1.0
  */

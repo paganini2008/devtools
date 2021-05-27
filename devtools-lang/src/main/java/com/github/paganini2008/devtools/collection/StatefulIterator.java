@@ -5,7 +5,7 @@ import java.util.Iterator;
 /**
  * StatefulIterator
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public abstract class StatefulIterator<T> implements Iterator<T> {

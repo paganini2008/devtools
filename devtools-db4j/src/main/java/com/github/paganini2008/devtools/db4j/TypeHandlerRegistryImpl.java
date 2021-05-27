@@ -34,7 +34,7 @@ import com.github.paganini2008.devtools.db4j.type.UndefinedTypeHandler;
 /**
  * TypeHandlerRegistryImpl
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 @SuppressWarnings("all")

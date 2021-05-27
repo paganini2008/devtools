@@ -7,7 +7,7 @@ import java.lang.management.RuntimeMXBean;
  * 
  * Env
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public abstract class Env {

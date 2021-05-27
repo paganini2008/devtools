@@ -7,7 +7,7 @@ import java.math.RoundingMode;
  * 
  * Summary
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  *
  * @version 1.0
  */

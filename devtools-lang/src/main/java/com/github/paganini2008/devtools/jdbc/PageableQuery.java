@@ -9,7 +9,7 @@ import com.github.paganini2008.devtools.collection.CollectionUtils;
  * 
  * PageableQuery
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public interface PageableQuery<T> extends ResultSetSlice<T> {

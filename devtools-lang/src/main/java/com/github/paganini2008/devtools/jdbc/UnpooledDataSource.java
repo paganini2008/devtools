@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Build a DataSource that contains unpooled connection.
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class UnpooledDataSource extends AbstractDataSource {

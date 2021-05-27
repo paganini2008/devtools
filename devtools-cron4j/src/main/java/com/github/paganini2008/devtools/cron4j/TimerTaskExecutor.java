@@ -11,7 +11,7 @@ import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
  * 
  * TimerTaskExecutor
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public class TimerTaskExecutor implements TaskExecutor {
@@ -126,7 +126,7 @@ public class TimerTaskExecutor implements TaskExecutor {
 	 * 
 	 * TaskFutureImpl
 	 *
-	 * @author Jimmy Hoff
+	 * @author Fred Feng
 	 * @version 1.0
 	 */
 	static class TaskFutureImpl implements TaskFuture {
@@ -176,7 +176,7 @@ public class TimerTaskExecutor implements TaskExecutor {
 	 * 
 	 * CronTask
 	 *
-	 * @author Jimmy Hoff
+	 * @author Fred Feng
 	 * @version 1.0
 	 */
 	class CronTask extends TimerTask {
@@ -242,7 +242,7 @@ public class TimerTaskExecutor implements TaskExecutor {
 	 * 
 	 * SimpleTask
 	 *
-	 * @author Jimmy Hoff
+	 * @author Fred Feng
 	 * @version 1.0
 	 */
 	class SimpleTask extends TimerTask {

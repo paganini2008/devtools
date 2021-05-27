@@ -6,7 +6,7 @@ import java.lang.reflect.Field;
  * 
  * FieldFilter
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * @version 1.0
  */

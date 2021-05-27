@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
  * 
  * AbstractCache
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * @version 1.0
  */
@@ -49,7 +49,7 @@ public abstract class AbstractCache implements Cache {
 	 * 
 	 * CacheIterator
 	 *
-	 * @author Jimmy Hoff
+	 * @author Fred Feng
 	 * @version 1.0
 	 */
 	private static class CacheIterator implements Iterator<Object> {

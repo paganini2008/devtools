@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * SetUtils
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 @SuppressWarnings("all")

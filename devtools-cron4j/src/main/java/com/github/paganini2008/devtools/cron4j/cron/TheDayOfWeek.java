@@ -6,7 +6,7 @@ import java.util.Calendar;
  * 
  * TheDayOfWeek
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * 
  * 
  * @version 1.0

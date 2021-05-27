@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 
  * Cancellables
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @version 1.0
  */
 public abstract class Cancellables {

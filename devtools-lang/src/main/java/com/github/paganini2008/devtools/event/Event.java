@@ -6,7 +6,7 @@ import java.util.EventObject;
  * 
  * Event
  * 
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @since 1.0
  */
 public abstract class Event<T> extends EventObject {

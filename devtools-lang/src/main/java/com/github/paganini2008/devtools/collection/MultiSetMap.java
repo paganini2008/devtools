@@ -16,7 +16,7 @@ import java.util.function.Supplier;
  * 
  * MultiSetMap
  *
- * @author Jimmy Hoff
+ * @author Fred Feng
  * @since 1.0
  */
 public class MultiSetMap<K, V> extends AbstractMap<K, NavigableSet<V>> implements Map<K, NavigableSet<V>>, Serializable {
