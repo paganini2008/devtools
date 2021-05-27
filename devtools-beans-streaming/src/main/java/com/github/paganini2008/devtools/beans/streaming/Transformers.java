@@ -12,8 +12,7 @@ import com.github.paganini2008.devtools.beans.PropertyUtils;
  * Transformers
  * 
  * @author Jimmy Hoff
- * 
- * 
+ *
  * @version 1.0
  */
 public abstract class Transformers {

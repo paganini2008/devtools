@@ -13,6 +13,7 @@ import com.github.paganini2008.devtools.beans.streaming.Group;
 import com.github.paganini2008.devtools.beans.streaming.Orders;
 import com.github.paganini2008.devtools.beans.streaming.Restrictions;
 import com.github.paganini2008.devtools.beans.streaming.Selector;
+import com.github.paganini2008.devtools.beans.streaming.Sorter;
 import com.github.paganini2008.devtools.beans.streaming.View;
 import com.github.paganini2008.devtools.beans.streaming.examples.Product.Style;
 import com.github.paganini2008.devtools.collection.Tuple;
@@ -26,7 +27,7 @@ import com.github.paganini2008.devtools.date.DateUtils;
  * 
  * @version 1.0
  */
-public class TestBeanStreaming {
+public abstract class Examples {
 
 	private static final List<Product> products = new ArrayList<Product>();
 
@@ -53,7 +54,19 @@ public class TestBeanStreaming {
 
 	/**
 	 * <pre>
-	 * 	 select * from Product where created<= now() and salesman.name='Petter'
+	 * Equivalent to: select * from Product where location='London'
+	 * </pre>
+	 */
+	public static void test() {
+		Predicate<Product> predicate = Restrictions.eq("location", "London");
+		Selector.from(products).filter(predicate).list().forEach(product -> {
+			System.out.println(product);
+		});
+	}
+
+	/**
+	 * <pre>
+	 *Equivalent to: select * from Product where created<= now() and salesman.name='Petter'
 	 * </pre>
 	 */
 	public static void test1() {
@@ -66,7 +79,7 @@ public class TestBeanStreaming {
 
 	/**
 	 * <pre>
-	 * 	  select location,max(price) as maxPrice, min(price) as minPrice,avg(freight) as avgFreight,sum(sales) as sumSales from Product group by location
+	 *Equivalent to: select location,max(price) as maxPrice, min(price) as minPrice,avg(freight) as avgFreight,sum(sales) as sumSales from Product group by location
 	 * </pre>
 	 */
 	public static void test2() {
@@ -84,7 +97,7 @@ public class TestBeanStreaming {
 
 	/**
 	 * <pre>
-	 * 	 select location,style,max(price) as maxPrice, min(price) as minPrice,avg(freight) as avgFreight,sum(sales) as sumSales from Product group by location,style having avg(freight) > 55
+	 *Equivalent to: select location,style,max(price) as maxPrice, min(price) as minPrice,avg(freight) as avgFreight,sum(sales) as sumSales from Product group by location,style having avg(freight) > 55
 	 * </pre>
 	 */
 	public static void test3() {
@@ -104,12 +117,13 @@ public class TestBeanStreaming {
 
 	/**
 	 * <pre>
-	 * 	 select name,price from Product order by price desc limit 100
+	 *Equivalent to: select name,price from Product order by price desc limit 100
 	 * </pre>
 	 */
 	public static void test4() {
-		Selector.from(products).orderBy(Orders.descending("price", Float.class)).list(100).forEach(product -> {
-			System.out.println("Name: " + product.getName() + ", Price: " + product.getPrice());
+		Sorter<Product> sorter = Orders.descending("price", BigDecimal.class);
+		Selector.from(products).orderBy(sorter).list(100).forEach(product -> {
+			System.out.println("Name: " + product.getName() + ", Price: " + product.getPrice() + ", Freight: " + product.getFreight());
 		});
 	}
 

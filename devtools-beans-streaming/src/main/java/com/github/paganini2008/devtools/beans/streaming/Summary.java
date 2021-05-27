@@ -8,8 +8,7 @@ import java.math.RoundingMode;
  * Summary
  * 
  * @author Jimmy Hoff
- * 
- * 
+ *
  * @version 1.0
  */
 public interface Summary<E> {

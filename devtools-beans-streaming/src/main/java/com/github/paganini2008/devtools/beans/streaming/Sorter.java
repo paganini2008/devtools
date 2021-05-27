@@ -12,7 +12,15 @@ import java.util.function.Function;
  */
 public interface Sorter<E> extends Comparator<E> {
 
+	default <T extends Comparable<T>> Sorter<E> ascending(String attributeName, Class<T> requiredType) {
+		return ascending(Property.forName(attributeName, requiredType));
+	}
+
 	<T extends Comparable<T>> Sorter<E> ascending(Function<E, T> function);
+
+	default <T extends Comparable<T>> Sorter<E> descending(String attributeName, Class<T> requiredType) {
+		return descending(Property.forName(attributeName, requiredType));
+	}
 
 	<T extends Comparable<T>> Sorter<E> descending(Function<E, T> function);
 }
