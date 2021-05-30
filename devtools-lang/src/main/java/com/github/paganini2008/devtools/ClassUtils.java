@@ -370,19 +370,27 @@ public abstract class ClassUtils {
 	}
 
 	public static boolean isPresent(String className) {
+		return isPresent(className, Thread.currentThread().getContextClassLoader());
+	}
+
+	public static boolean isPresent(String className, ClassLoader loader) {
 		Assert.hasNoText(className, "Nullable className");
 		try {
-			Class.forName(className);
+			Class.forName(className, false, loader);
+			return true;
 		} catch (ClassNotFoundException e) {
 			return false;
 		}
-		return true;
 	}
 
 	public static Class<?> forName(String className) {
+		return forName(className, Thread.currentThread().getContextClassLoader());
+	}
+
+	public static Class<?> forName(String className, ClassLoader loader) {
 		Assert.hasNoText(className, "Nullable className");
 		try {
-			return Class.forName(className);
+			return Class.forName(className, true, loader);
 		} catch (ClassNotFoundException e) {
 			throw new IllegalArgumentException(e.getMessage(), e);
 		}

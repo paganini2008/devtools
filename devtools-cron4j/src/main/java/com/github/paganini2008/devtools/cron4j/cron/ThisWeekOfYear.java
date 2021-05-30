@@ -35,6 +35,7 @@ public class ThisWeekOfYear implements TheWeek, Serializable {
 		this.lastWeek = week;
 	}
 
+	@Override
 	public TheWeek andWeek(int week) {
 		CalendarAssert.checkWeekOfYear(year, week);
 		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.WEEK_OF_YEAR, week);
@@ -43,6 +44,7 @@ public class ThisWeekOfYear implements TheWeek, Serializable {
 		return this;
 	}
 
+	@Override
 	public TheWeek toWeek(int week, int interval) {
 		CalendarAssert.checkWeekOfYear(year, week);
 		for (int i = lastWeek + interval; i < week; i += interval) {
@@ -51,40 +53,49 @@ public class ThisWeekOfYear implements TheWeek, Serializable {
 		return this;
 	}
 
+	@Override
 	public Date getTime() {
 		return week.getTime();
 	}
 
+	@Override
 	public long getTimeInMillis() {
 		return week.getTimeInMillis();
 	}
 
+	@Override
 	public int getYear() {
 		return week.get(Calendar.YEAR);
 	}
 
+	@Override
 	public int getMonth() {
 		return week.get(Calendar.MONTH);
 	}
 
+	@Override
 	public int getWeek() {
 		return week.get(Calendar.WEEK_OF_MONTH);
 	}
 
+	@Override
 	public int getWeekOfYear() {
 		return week.get(Calendar.WEEK_OF_YEAR);
 	}
 
+	@Override
 	public TheDayOfWeek day(int day) {
 		final Week copy = (Week) this;
 		return new ThisDayOfWeek(CollectionUtils.getFirst(copy), day);
 	}
 
+	@Override
 	public Day everyDay(Function<Week, Integer> from, Function<Week, Integer> to, int interval) {
 		final Week copy = (Week) this;
 		return new EveryDayOfWeek(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
+	@Override
 	public boolean hasNext() {
 		boolean next = index < siblings.size();
 		if (!next) {
@@ -97,6 +108,7 @@ public class ThisWeekOfYear implements TheWeek, Serializable {
 		return next;
 	}
 
+	@Override
 	public Week next() {
 		Map.Entry<Integer, Calendar> entry = MapUtils.getEntry(siblings, index++);
 		week = entry.getValue();
@@ -105,6 +117,7 @@ public class ThisWeekOfYear implements TheWeek, Serializable {
 		return this;
 	}
 
+	@Override
 	public CronExpression getParent() {
 		return year;
 	}

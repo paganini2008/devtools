@@ -42,6 +42,7 @@ public class EveryMonth implements Month, Serializable {
 		CalendarAssert.checkMonth(toMonth);
 	}
 
+	@Override
 	public boolean hasNext() {
 		boolean next = self || month.get(Calendar.MONTH) + interval <= toMonth;
 		if (!next) {
@@ -56,6 +57,7 @@ public class EveryMonth implements Month, Serializable {
 		return next;
 	}
 
+	@Override
 	public Month next() {
 		if (self) {
 			self = false;
@@ -69,89 +71,101 @@ public class EveryMonth implements Month, Serializable {
 		return this;
 	}
 
+	@Override
 	public int getYear() {
 		return month.get(Calendar.YEAR);
 	}
 
+	@Override
 	public int getMonth() {
 		return month.get(Calendar.MONTH);
 	}
 
+	@Override
 	public int getLastDay() {
 		return month.getActualMaximum(Calendar.DAY_OF_MONTH);
 	}
 
-	public int getWeekday(int dayOfMonth) {
-		Calendar c = (Calendar) month.clone();
-		c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-		int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-		while (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
-			if (dayOfWeek == Calendar.SATURDAY) {
-				c.set(Calendar.DAY_OF_WEEK, dayOfWeek - 1);
-			} else if (dayOfWeek == Calendar.SUNDAY) {
-				c.set(Calendar.DAY_OF_WEEK, dayOfWeek + 1);
-			}
-			dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-		}
-		return c.get(Calendar.DAY_OF_MONTH);
+	@Override
+	public Day latestWeekday(int dayOfMonth) {
+		return new LatestWeekdayOfMonth(this, dayOfMonth);
 	}
 
+	@Override
+	public int getLatestWeekday(int dayOfMonth) {
+		CalendarAssert.checkDayOfMonth(this, dayOfMonth);
+		return CalendarUtils.getLatestWeekday(month, dayOfMonth);
+	}
+
+	@Override
 	public int getWeekCount() {
 		return month.getActualMaximum(Calendar.WEEK_OF_MONTH);
 	}
 
+	@Override
 	public Date getTime() {
 		return month.getTime();
 	}
 
+	@Override
 	public long getTimeInMillis() {
 		return month.getTimeInMillis();
 	}
 
+	@Override
 	public TheDay day(int day) {
 		final Month copy = (Month) this.copy();
 		return new ThisDay(CollectionUtils.getFirst(copy), day);
 	}
 
+	@Override
 	public Day lastDay() {
 		final Month copy = (Month) this.copy();
 		return new LastDayOfMonth(CollectionUtils.getFirst(copy));
 	}
 
+	@Override
 	public Day everyDay(Function<Month, Integer> from, Function<Month, Integer> to, int interval) {
 		final Month copy = (Month) this.copy();
 		return new EveryDay(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
+	@Override
 	public TheWeek week(int week) {
 		final Month copy = (Month) this.copy();
 		return new ThisWeek(CollectionUtils.getFirst(copy), week);
 	}
 
+	@Override
 	public TheDayOfWeekInMonth dayOfWeek(int week, int dayOfWeek) {
 		final Month copy = (Month) this.copy();
 		return new ThisDayOfWeekInMonth(CollectionUtils.getFirst(copy), week, dayOfWeek);
 	}
 
+	@Override
 	public Week lastWeek() {
 		final Month copy = (Month) this.copy();
 		return new LastWeekOfMonth(CollectionUtils.getFirst(copy));
 	}
 
+	@Override
 	public Week everyWeek(Function<Month, Integer> from, Function<Month, Integer> to, int interval) {
 		final Month copy = (Month) this.copy();
 		return new EveryWeek(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
+	@Override
 	public CronExpression getParent() {
 		return year;
 	}
 
+	@Override
 	public String toCronString() {
 		String s = toMonth != 12 ? fromMonth + "-" + toMonth : fromMonth + "";
 		return interval > 1 ? s + "/" + interval : "*";
 	}
 
+	@Override
 	public String toString() {
 		return CRON.toCronString(this);
 	}

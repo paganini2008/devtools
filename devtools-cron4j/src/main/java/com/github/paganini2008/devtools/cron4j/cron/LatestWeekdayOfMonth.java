@@ -10,23 +10,50 @@ import com.github.paganini2008.devtools.cron4j.CRON;
 
 /**
  * 
- * LastDayOfMonth
- *
+ * LatestWeekdayOfMonth
+ * 
  * @author Fred Feng
+ *
  * @version 1.0
  */
-public class LastDayOfMonth implements Day, Serializable {
+public class LatestWeekdayOfMonth implements Day, Serializable {
 
-	private static final long serialVersionUID = 3379984313144390130L;
+	private static final long serialVersionUID = -1745938729702028629L;
 
 	private Month month;
 	private Calendar day;
 	private boolean self;
+	private final int dayOfMonth;
 
-	LastDayOfMonth(Month month) {
+	LatestWeekdayOfMonth(Month month, int dayOfMonth) {
 		this.month = month;
-		this.day = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH, month.getLastDay());
+		this.day = CalendarUtils.setField(month.getTime(), Calendar.DAY_OF_MONTH,
+				month.getLatestWeekday(Math.min(dayOfMonth, month.getLastDay())));
+		this.dayOfMonth = dayOfMonth;
 		this.self = true;
+	}
+
+	@Override
+	public boolean hasNext() {
+		boolean next = self;
+		if (!next) {
+			if (month.hasNext()) {
+				month = month.next();
+				day.set(Calendar.YEAR, month.getYear());
+				day.set(Calendar.MONTH, month.getMonth());
+				day.set(Calendar.DAY_OF_MONTH, month.getLatestWeekday(Math.min(dayOfMonth, month.getLastDay())));
+				next = true;
+			}
+		}
+		return next;
+	}
+
+	@Override
+	public Day next() {
+		if (self) {
+			self = false;
+		}
+		return this;
 	}
 
 	@Override
@@ -37,6 +64,11 @@ public class LastDayOfMonth implements Day, Serializable {
 	@Override
 	public long getTimeInMillis() {
 		return day.getTimeInMillis();
+	}
+
+	@Override
+	public CronExpression getParent() {
+		return month;
 	}
 
 	@Override
@@ -65,9 +97,9 @@ public class LastDayOfMonth implements Day, Serializable {
 	}
 
 	@Override
-	public TheHour hour(int hour) {
+	public TheHour hour(int hourOfDay) {
 		final Day copy = (Day) this.copy();
-		return new ThisHour(CollectionUtils.getFirst(copy), hour);
+		return new ThisHour(CollectionUtils.getFirst(copy), hourOfDay);
 	}
 
 	@Override
@@ -77,36 +109,8 @@ public class LastDayOfMonth implements Day, Serializable {
 	}
 
 	@Override
-	public boolean hasNext() {
-		boolean next = self;
-		if (!next) {
-			if (month.hasNext()) {
-				month = month.next();
-				day.set(Calendar.YEAR, month.getYear());
-				day.set(Calendar.MONTH, month.getMonth());
-				day.set(Calendar.DAY_OF_MONTH, month.getLastDay());
-				next = true;
-			}
-		}
-		return next;
-	}
-
-	@Override
-	public Day next() {
-		if (self) {
-			self = false;
-		}
-		return this;
-	}
-
-	@Override
-	public CronExpression getParent() {
-		return month;
-	}
-
-	@Override
 	public String toCronString() {
-		return "L";
+		return dayOfMonth + "W";
 	}
 
 	@Override

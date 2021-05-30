@@ -40,11 +40,12 @@ public class ThisWeek implements TheWeek, Serializable {
 		this.cron = new StringBuilder().append("%s#").append(week);
 	}
 
+	@Override
 	public ThisWeek andWeek(int week) {
 		return andWeek(week, true);
 	}
 
-	public ThisWeek andWeek(int week, boolean writeCron) {
+	private ThisWeek andWeek(int week, boolean writeCron) {
 		CalendarAssert.checkWeekOfMonth(month, week);
 		Calendar calendar = CalendarUtils.setField(month.getTime(), Calendar.WEEK_OF_MONTH, week);
 		this.siblings.put(week, calendar);
@@ -55,6 +56,7 @@ public class ThisWeek implements TheWeek, Serializable {
 		return this;
 	}
 
+	@Override
 	public ThisWeek toWeek(int week, int interval) {
 		CalendarAssert.checkWeekOfMonth(month, week);
 		List<Integer> weeks = new ArrayList<Integer>();
@@ -68,40 +70,49 @@ public class ThisWeek implements TheWeek, Serializable {
 		return this;
 	}
 
+	@Override
 	public Date getTime() {
 		return week.getTime();
 	}
 
+	@Override
 	public long getTimeInMillis() {
 		return week.getTimeInMillis();
 	}
 
+	@Override
 	public int getYear() {
 		return week.get(Calendar.YEAR);
 	}
 
+	@Override
 	public int getMonth() {
 		return week.get(Calendar.MONTH);
 	}
 
+	@Override
 	public int getWeek() {
 		return week.get(Calendar.WEEK_OF_MONTH);
 	}
 
+	@Override
 	public int getWeekOfYear() {
 		return week.get(Calendar.WEEK_OF_YEAR);
 	}
 
+	@Override
 	public TheDayOfWeek day(int day) {
 		final Week copy = (Week) this.copy();
 		return new ThisDayOfWeek(CollectionUtils.getFirst(copy), day);
 	}
 
+	@Override
 	public Day everyDay(Function<Week, Integer> from, Function<Week, Integer> to, int interval) {
 		final Week copy = (Week) this.copy();
 		return new EveryDayOfWeek(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
+	@Override
 	public boolean hasNext() {
 		boolean next = index < siblings.size();
 		if (!next) {
@@ -114,6 +125,7 @@ public class ThisWeek implements TheWeek, Serializable {
 		return next;
 	}
 
+	@Override
 	public Week next() {
 		Map.Entry<Integer, Calendar> entry = MapUtils.getEntry(siblings, index++);
 		week = entry.getValue();
@@ -123,14 +135,17 @@ public class ThisWeek implements TheWeek, Serializable {
 		return this;
 	}
 
+	@Override
 	public CronExpression getParent() {
 		return month;
 	}
 
+	@Override
 	public String toCronString() {
 		return this.cron.toString();
 	}
 
+	@Override
 	public String toString() {
 		return CRON.toCronString(this);
 	}

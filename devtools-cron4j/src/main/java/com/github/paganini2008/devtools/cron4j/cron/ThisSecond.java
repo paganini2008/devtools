@@ -35,6 +35,7 @@ public class ThisSecond implements TheSecond, Serializable {
 		this.cron = new StringBuilder().append(second);
 	}
 
+	@Override
 	public ThisSecond andSecond(int second) {
 		return andSecond(second, true);
 	}
@@ -50,6 +51,7 @@ public class ThisSecond implements TheSecond, Serializable {
 		return this;
 	}
 
+	@Override
 	public TheSecond toSecond(int second, int interval) {
 		CalendarAssert.checkSecond(second);
 		if (interval < 0) {
@@ -66,38 +68,47 @@ public class ThisSecond implements TheSecond, Serializable {
 		return this;
 	}
 
+	@Override
 	public Date getTime() {
 		return second.getTime();
 	}
 
+	@Override
 	public long getTimeInMillis() {
 		return second.getTimeInMillis();
 	}
 
+	@Override
 	public int getYear() {
 		return second.get(Calendar.YEAR);
 	}
 
+	@Override
 	public int getMonth() {
 		return second.get(Calendar.MONTH);
 	}
 
+	@Override
 	public int getDay() {
 		return second.get(Calendar.DAY_OF_MONTH);
 	}
 
+	@Override
 	public int getHour() {
 		return second.get(Calendar.HOUR_OF_DAY);
 	}
 
+	@Override
 	public int getMinute() {
 		return second.get(Calendar.MINUTE);
 	}
 
+	@Override
 	public int getSecond() {
 		return second.get(Calendar.SECOND);
 	}
 
+	@Override
 	public boolean hasNext() {
 		boolean next = index < siblings.size();
 		if (!next) {
@@ -110,6 +121,7 @@ public class ThisSecond implements TheSecond, Serializable {
 		return next;
 	}
 
+	@Override
 	public Second next() {
 		second = CollectionUtils.get(siblings.values().iterator(), index++);
 		second.set(Calendar.YEAR, minute.getYear());
@@ -120,14 +132,17 @@ public class ThisSecond implements TheSecond, Serializable {
 		return this;
 	}
 
+	@Override
 	public CronExpression getParent() {
 		return minute;
 	}
 
+	@Override
 	public String toCronString() {
 		return this.cron.toString();
 	}
 
+	@Override
 	public String toString() {
 		return CRON.toCronString(this);
 	}

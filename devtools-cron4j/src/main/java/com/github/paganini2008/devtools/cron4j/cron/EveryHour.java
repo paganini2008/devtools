@@ -40,6 +40,7 @@ public class EveryHour implements Hour, Serializable {
 		CalendarAssert.checkHourOfDay(toHour);
 	}
 
+	@Override
 	public boolean hasNext() {
 		boolean next = self || hour.get(Calendar.HOUR_OF_DAY) + interval <= toHour;
 		if (!next) {
@@ -56,6 +57,7 @@ public class EveryHour implements Hour, Serializable {
 		return next;
 	}
 
+	@Override
 	public Hour next() {
 		if (self) {
 			self = false;
@@ -69,49 +71,60 @@ public class EveryHour implements Hour, Serializable {
 		return this;
 	}
 
+	@Override
 	public int getYear() {
 		return hour.get(Calendar.YEAR);
 	}
 
+	@Override
 	public int getMonth() {
 		return hour.get(Calendar.MONTH);
 	}
 
+	@Override
 	public int getDay() {
 		return hour.get(Calendar.DAY_OF_MONTH);
 	}
 
+	@Override
 	public int getHour() {
 		return hour.get(Calendar.HOUR_OF_DAY);
 	}
 
+	@Override
 	public Date getTime() {
 		return hour.getTime();
 	}
 
+	@Override
 	public long getTimeInMillis() {
 		return hour.getTimeInMillis();
 	}
 
+	@Override
 	public TheMinute minute(int minute) {
 		final Hour copy = (Hour) this.copy();
 		return new ThisMinute(CollectionUtils.getFirst(copy), minute);
 	}
 
+	@Override
 	public Minute everyMinute(Function<Hour, Integer> from, Function<Hour, Integer> to, int interval) {
 		final Hour copy = (Hour) this.copy();
 		return new EveryMinute(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
+	@Override
 	public CronExpression getParent() {
 		return day;
 	}
 
+	@Override
 	public String toCronString() {
 		String s = toHour != 23 ? fromHour + "-" + toHour : fromHour + "";
 		return interval > 1 ? s + "/" + interval : "*";
 	}
 
+	@Override
 	public String toString() {
 		return CRON.toCronString(this);
 	}

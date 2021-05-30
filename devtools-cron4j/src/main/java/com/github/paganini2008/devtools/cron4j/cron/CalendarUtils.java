@@ -130,6 +130,21 @@ public abstract class CalendarUtils {
 		return calendar;
 	}
 
+	public static int getLatestWeekday(Calendar value, int dayOfMonth) {
+		Calendar c = (Calendar) value.clone();
+		c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+		int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+		while (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
+			if (dayOfWeek == Calendar.SATURDAY) {
+				c.set(Calendar.DAY_OF_WEEK, dayOfWeek - 1);
+			} else if (dayOfWeek == Calendar.SUNDAY) {
+				c.set(Calendar.DAY_OF_WEEK, dayOfWeek + 1);
+			}
+			dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+		}
+		return c.get(Calendar.DAY_OF_MONTH);
+	}
+
 	public static void main(String[] args) {
 		Calendar calendar = setField(new Date(), Calendar.WEEK_OF_MONTH, 1);
 		System.out.println(calendar.getActualMaximum(Calendar.WEEK_OF_YEAR));

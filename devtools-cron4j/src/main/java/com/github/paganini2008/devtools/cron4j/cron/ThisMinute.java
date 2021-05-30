@@ -37,6 +37,7 @@ public class ThisMinute implements TheMinute, Serializable {
 		this.cron = new StringBuilder().append(minute);
 	}
 
+	@Override
 	public ThisMinute andMinute(int minute) {
 		return andMinute(minute, true);
 	}
@@ -52,6 +53,7 @@ public class ThisMinute implements TheMinute, Serializable {
 		return this;
 	}
 
+	@Override
 	public TheMinute toMinute(int minute, int interval) {
 		CalendarAssert.checkMinute(minute);
 		if (interval < 0) {
@@ -68,44 +70,54 @@ public class ThisMinute implements TheMinute, Serializable {
 		return this;
 	}
 
+	@Override
 	public Date getTime() {
 		return minute.getTime();
 	}
 
+	@Override
 	public long getTimeInMillis() {
 		return minute.getTimeInMillis();
 	}
 
+	@Override
 	public int getYear() {
 		return minute.get(Calendar.YEAR);
 	}
 
+	@Override
 	public int getMonth() {
 		return minute.get(Calendar.MONTH);
 	}
 
+	@Override
 	public int getDay() {
 		return minute.get(Calendar.DAY_OF_MONTH);
 	}
 
+	@Override
 	public int getHour() {
 		return minute.get(Calendar.HOUR_OF_DAY);
 	}
 
+	@Override
 	public int getMinute() {
 		return minute.get(Calendar.MINUTE);
 	}
 
+	@Override
 	public TheSecond second(int second) {
 		final Minute copy = (Minute) this.copy();
 		return new ThisSecond(CollectionUtils.getFirst(copy), second);
 	}
 
+	@Override
 	public Second everySecond(Function<Minute, Integer> from, Function<Minute, Integer> to, int interval) {
 		final Minute copy = (Minute) this.copy();
 		return new EverySecond(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
+	@Override
 	public boolean hasNext() {
 		boolean next = index < siblings.size();
 		if (!next) {
@@ -118,6 +130,7 @@ public class ThisMinute implements TheMinute, Serializable {
 		return next;
 	}
 
+	@Override
 	public Minute next() {
 		minute = CollectionUtils.get(siblings.values().iterator(), index++);
 		minute.set(Calendar.YEAR, hour.getYear());
@@ -127,14 +140,17 @@ public class ThisMinute implements TheMinute, Serializable {
 		return this;
 	}
 
+	@Override
 	public CronExpression getParent() {
 		return hour;
 	}
 
+	@Override
 	public String toCronString() {
 		return this.cron.toString();
 	}
 
+	@Override
 	public String toString() {
 		return CRON.toCronString(this);
 	}

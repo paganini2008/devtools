@@ -22,7 +22,6 @@ public class ThisDayOfYear implements TheDay, Serializable {
 	private static final long serialVersionUID = -8235489088108418524L;
 	private final TreeMap<Integer, Calendar> siblings = new TreeMap<Integer, Calendar>();
 	private Year year;
-	private int month;
 	private int index;
 	private Calendar day;
 	private int lastDay;
@@ -31,49 +30,58 @@ public class ThisDayOfYear implements TheDay, Serializable {
 		CalendarAssert.checkDayOfYear(year, day);
 		this.year = year;
 		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.DAY_OF_YEAR, day);
-		this.month = calendar.get(Calendar.MONTH);
 		this.siblings.put(day, calendar);
 		this.lastDay = day;
 	}
 
+	@Override
 	public int getYear() {
 		return day.get(Calendar.YEAR);
 	}
 
+	@Override
 	public int getMonth() {
 		return day.get(Calendar.MONTH);
 	}
 
+	@Override
 	public int getDay() {
 		return day.get(Calendar.DAY_OF_MONTH);
 	}
 
+	@Override
 	public int getDayOfWeek() {
 		return day.get(Calendar.DAY_OF_WEEK);
 	}
 
+	@Override
 	public int getDayOfYear() {
 		return day.get(Calendar.DAY_OF_YEAR);
 	}
 
+	@Override
 	public TheHour hour(int hour) {
 		final Day copy = (Day) this.copy();
 		return new ThisHour(CollectionUtils.getFirst(copy), hour);
 	}
 
+	@Override
 	public Hour everyHour(Function<Day, Integer> from, Function<Day, Integer> to, int interval) {
 		final Day copy = (Day) this.copy();
 		return new EveryHour(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
+	@Override
 	public Date getTime() {
 		return day.getTime();
 	}
 
+	@Override
 	public long getTimeInMillis() {
 		return day.getTimeInMillis();
 	}
 
+	@Override
 	public TheDay andDay(int dayOfYear) {
 		CalendarAssert.checkDayOfYear(year, dayOfYear);
 		Calendar calendar = CalendarUtils.setField(year.getTime(), Calendar.DAY_OF_YEAR, dayOfYear);
@@ -82,6 +90,7 @@ public class ThisDayOfYear implements TheDay, Serializable {
 		return this;
 	}
 
+	@Override
 	public TheDay toDay(int day, int interval) {
 		CalendarAssert.checkDayOfYear(year, day);
 		for (int dayOfYear = lastDay + interval; dayOfYear < day; dayOfYear += interval) {
@@ -90,6 +99,7 @@ public class ThisDayOfYear implements TheDay, Serializable {
 		return this;
 	}
 
+	@Override
 	public boolean hasNext() {
 		boolean next = index < siblings.size();
 		if (!next) {
@@ -102,6 +112,7 @@ public class ThisDayOfYear implements TheDay, Serializable {
 		return next;
 	}
 
+	@Override
 	public Day next() {
 		Map.Entry<Integer, Calendar> entry = MapUtils.getEntry(siblings, index++);
 		day = entry.getValue();
@@ -110,8 +121,9 @@ public class ThisDayOfYear implements TheDay, Serializable {
 		return this;
 	}
 
+	@Override
 	public CronExpression getParent() {
-		return year.month(month);
+		return null;
 	}
 
 }

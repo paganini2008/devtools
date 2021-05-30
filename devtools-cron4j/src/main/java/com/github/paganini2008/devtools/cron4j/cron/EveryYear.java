@@ -37,30 +37,37 @@ public class EveryYear implements Year, Serializable {
 	private final int interval;
 	private boolean self;
 
+	@Override
 	public int getYear() {
 		return year.get(Calendar.YEAR);
 	}
 
+	@Override
 	public int getWeekCount() {
 		return year.getActualMaximum(Calendar.WEEK_OF_YEAR);
 	}
 
+	@Override
 	public int getLastDay() {
 		return year.getActualMaximum(Calendar.DAY_OF_YEAR);
 	}
 
+	@Override
 	public Date getTime() {
 		return year.getTime();
 	}
 
+	@Override
 	public long getTimeInMillis() {
 		return year.getTimeInMillis();
 	}
 
+	@Override
 	public boolean hasNext() {
 		return self || year.get(Calendar.YEAR) + interval <= toYear;
 	}
 
+	@Override
 	public Year next() {
 		if (self) {
 			self = false;
@@ -70,39 +77,47 @@ public class EveryYear implements Year, Serializable {
 		return this;
 	}
 
+	@Override
 	public Month everyMonth(Function<Year, Integer> from, Function<Year, Integer> to, int interval) {
 		final Year copy = (Year) this.copy();
 		return new EveryMonth(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
+	@Override
 	public TheDay day(int day) {
 		final Year copy = (Year) this.copy();
 		return new ThisDayOfYear(CollectionUtils.getFirst(copy), day);
 	}
 
+	@Override
 	public TheWeek week(int week) {
 		final Year copy = (Year) this.copy();
 		return new ThisWeekOfYear(CollectionUtils.getFirst(copy), week);
 	}
 
+	@Override
 	public TheMonth month(int month) {
 		final Year copy = (Year) this.copy();
 		return new ThisMonth(CollectionUtils.getFirst(copy), month);
 	}
 
+	@Override
 	public Week lastWeek() {
 		final Year copy = (Year) this.copy();
 		return new LastWeekOfYear(CollectionUtils.getFirst(copy));
 	}
 
+	@Override
 	public CronExpression getParent() {
 		return null;
 	}
 
+	@Override
 	public String toCronString() {
 		return interval > 1 ? fromYear + "-" + toYear + "/" + interval : "";
 	}
 
+	@Override
 	public String toString() {
 		return CRON.toCronString(this);
 	}

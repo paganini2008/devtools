@@ -42,6 +42,7 @@ public class EveryWeek implements Week, Serializable {
 		CalendarAssert.checkWeekOfMonth(month, toWeek);
 	}
 
+	@Override
 	public boolean hasNext() {
 		boolean next = self || shoudNext();
 		if (!next) {
@@ -66,6 +67,7 @@ public class EveryWeek implements Week, Serializable {
 		return true;
 	}
 
+	@Override
 	public Week next() {
 		if (self) {
 			self = false;
@@ -80,48 +82,59 @@ public class EveryWeek implements Week, Serializable {
 		return this;
 	}
 
+	@Override
 	public int getYear() {
 		return week.get(Calendar.YEAR);
 	}
 
+	@Override
 	public int getMonth() {
 		return week.get(Calendar.MONTH);
 	}
 
+	@Override
 	public int getWeek() {
 		return week.get(Calendar.WEEK_OF_MONTH);
 	}
 
+	@Override
 	public int getWeekOfYear() {
 		return week.get(Calendar.WEEK_OF_YEAR);
 	}
 
+	@Override
 	public Date getTime() {
 		return week.getTime();
 	}
 
+	@Override
 	public long getTimeInMillis() {
 		return week.getTimeInMillis();
 	}
 
+	@Override
 	public TheDayOfWeek day(int day) {
 		final Week copy = (Week) this.copy();
 		return new ThisDayOfWeek(CollectionUtils.getFirst(copy), day);
 	}
 
+	@Override
 	public Day everyDay(Function<Week, Integer> from, Function<Week, Integer> to, int interval) {
 		final Week copy = (Week) this.copy();
 		return new EveryDayOfWeek(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
+	@Override
 	public CronExpression getParent() {
 		return month;
 	}
 
+	@Override
 	public String toCronString() {
 		return "";
 	}
 
+	@Override
 	public String toString() {
 		return CRON.toCronString(this);
 	}

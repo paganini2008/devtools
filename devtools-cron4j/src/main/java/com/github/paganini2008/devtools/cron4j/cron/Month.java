@@ -6,10 +6,9 @@ import java.util.function.Function;
 /**
  * 
  * Month
- *
+ * 
  * @author Fred Feng
- * 
- * 
+ *
  * @version 1.0
  */
 public interface Month extends Iterator<Month>, CronExpression {
@@ -20,7 +19,7 @@ public interface Month extends Iterator<Month>, CronExpression {
 
 	int getLastDay();
 
-	int getWeekday(int dayOfMonth);
+	int getLatestWeekday(int dayOfMonth);
 
 	int getWeekCount();
 
@@ -41,6 +40,8 @@ public interface Month extends Iterator<Month>, CronExpression {
 	TheDay day(int day);
 
 	Day lastDay();
+
+	Day latestWeekday(int dayOfMonth);
 
 	Day everyDay(Function<Month, Integer> from, Function<Month, Integer> to, int interval);
 

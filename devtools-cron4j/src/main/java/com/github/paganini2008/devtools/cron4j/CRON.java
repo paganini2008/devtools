@@ -25,7 +25,6 @@ import com.github.paganini2008.devtools.cron4j.parser.MinuteOption;
 import com.github.paganini2008.devtools.cron4j.parser.MonthOption;
 import com.github.paganini2008.devtools.cron4j.parser.SecondOption;
 import com.github.paganini2008.devtools.cron4j.parser.YearOption;
-import com.github.paganini2008.devtools.date.DateUtils;
 
 /**
  * 
@@ -145,14 +144,6 @@ public abstract class CRON {
 			}
 			throw new MalformedCronException(cronString, e);
 		}
-	}
-
-	public static void main(String[] args) {
-		CronExpression cronExpression = CRON.parse("0 10 23 ? * 5#2,6#3,6L");
-		cronExpression.forEach(date -> {
-			System.out.println(DateUtils.format(date));
-		}, 10);
-		// System.out.println(CRON.toCronString(CronExpressionBuilder.everyYear()));
 	}
 
 }

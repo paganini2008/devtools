@@ -37,6 +37,7 @@ public class ThisHour implements TheHour, Serializable {
 		this.cron = new StringBuilder().append(hour);
 	}
 
+	@Override
 	public ThisHour andHour(int hour) {
 		return andHour(hour, true);
 	}
@@ -52,6 +53,7 @@ public class ThisHour implements TheHour, Serializable {
 		return this;
 	}
 
+	@Override
 	public TheHour toHour(int hour, int interval) {
 		CalendarAssert.checkHourOfDay(hour);
 		if (interval < 0) {
@@ -68,40 +70,49 @@ public class ThisHour implements TheHour, Serializable {
 		return this;
 	}
 
+	@Override
 	public Date getTime() {
 		return hour.getTime();
 	}
 
+	@Override
 	public long getTimeInMillis() {
 		return hour.getTimeInMillis();
 	}
 
+	@Override
 	public int getYear() {
 		return hour.get(Calendar.YEAR);
 	}
 
+	@Override
 	public int getMonth() {
 		return hour.get(Calendar.MONTH);
 	}
 
+	@Override
 	public int getDay() {
 		return hour.get(Calendar.DAY_OF_MONTH);
 	}
 
+	@Override
 	public int getHour() {
 		return hour.get(Calendar.HOUR_OF_DAY);
 	}
 
+	@Override
 	public TheMinute minute(int minute) {
 		final Hour copy = (Hour) this.copy();
 		return new ThisMinute(CollectionUtils.getFirst(copy), minute);
 	}
 
+	@Override
 	public Minute everyMinute(Function<Hour, Integer> from, Function<Hour, Integer> to, int interval) {
 		final Hour copy = (Hour) this.copy();
 		return new EveryMinute(CollectionUtils.getFirst(copy), from, to, interval);
 	}
 
+	@Override
 	public boolean hasNext() {
 		boolean next = index < siblings.size();
 		if (!next) {
@@ -114,6 +125,7 @@ public class ThisHour implements TheHour, Serializable {
 		return next;
 	}
 
+	@Override
 	public Hour next() {
 		hour = CollectionUtils.get(siblings.values().iterator(), index++);
 		hour.set(Calendar.YEAR, day.getYear());
@@ -122,14 +134,17 @@ public class ThisHour implements TheHour, Serializable {
 		return this;
 	}
 
+	@Override
 	public CronExpression getParent() {
 		return day;
 	}
 
+	@Override
 	public String toCronString() {
 		return this.cron.toString();
 	}
 
+	@Override
 	public String toString() {
 		return CRON.toCronString(this);
 	}

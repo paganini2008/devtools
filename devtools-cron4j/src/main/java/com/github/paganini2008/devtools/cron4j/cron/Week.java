@@ -37,6 +37,10 @@ public interface Week extends Iterator<Week>, CronExpression {
 
 	TheDayOfWeek day(int dayOfWeek);
 
+	default TheDayOfWeek everyWeekday() {
+		return Mon().toFri();
+	}
+
 	default TheDayOfWeek Sun() {
 		return day(Calendar.SUNDAY);
 	}

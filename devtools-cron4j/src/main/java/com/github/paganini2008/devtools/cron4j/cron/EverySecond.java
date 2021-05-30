@@ -10,10 +10,9 @@ import com.github.paganini2008.devtools.cron4j.CRON;
 /**
  * 
  * EverySecond
- *
+ * 
  * @author Fred Feng
- * 
- * 
+ *
  * @version 1.0
  */
 public class EverySecond implements Second, Serializable {
@@ -41,6 +40,7 @@ public class EverySecond implements Second, Serializable {
 		CalendarAssert.checkSecond(toSecond);
 	}
 
+	@Override
 	public boolean hasNext() {
 		boolean next = self || second.get(Calendar.SECOND) + interval <= toSecond;
 		if (!next) {
@@ -59,6 +59,7 @@ public class EverySecond implements Second, Serializable {
 		return next;
 	}
 
+	@Override
 	public Second next() {
 		if (self) {
 			self = false;
@@ -72,47 +73,58 @@ public class EverySecond implements Second, Serializable {
 		return this;
 	}
 
+	@Override
 	public int getYear() {
 		return second.get(Calendar.YEAR);
 	}
 
+	@Override
 	public int getMonth() {
 		return second.get(Calendar.MONTH);
 	}
 
+	@Override
 	public int getDay() {
 		return second.get(Calendar.DAY_OF_MONTH);
 	}
 
+	@Override
 	public int getHour() {
 		return second.get(Calendar.HOUR_OF_DAY);
 	}
 
+	@Override
 	public int getMinute() {
 		return second.get(Calendar.MINUTE);
 	}
 
+	@Override
 	public int getSecond() {
 		return second.get(Calendar.SECOND);
 	}
 
+	@Override
 	public Date getTime() {
 		return second.getTime();
 	}
 
+	@Override
 	public long getTimeInMillis() {
 		return second.getTimeInMillis();
 	}
 
+	@Override
 	public CronExpression getParent() {
 		return minute;
 	}
 
+	@Override
 	public String toCronString() {
 		String s = toSecond != 60 ? fromSecond + "-" + toSecond : fromSecond + "";
 		return interval > 1 ? s + "/" + interval : "*";
 	}
 
+	@Override
 	public String toString() {
 		return CRON.toCronString(this);
 	}

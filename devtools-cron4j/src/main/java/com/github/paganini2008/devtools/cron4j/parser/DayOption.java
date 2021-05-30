@@ -35,8 +35,7 @@ public class DayOption implements CronOption {
 			return month.lastWeek().Fri();
 		} else if (value.endsWith("W")) {
 			int dayOfMonth = Integer.parseInt(value.substring(0, value.lastIndexOf('W')));
-			dayOfMonth = month.getWeekday(dayOfMonth);
-			return month.day(dayOfMonth);
+			return month.latestWeekday(dayOfMonth);
 		}
 		String[] args = value.split(",");
 		TheDay day = null;
