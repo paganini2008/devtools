@@ -68,22 +68,50 @@ public abstract class MapUtils {
 		return defaultValue;
 	}
 
-	public static <K, V> V get(Map<K, V> map, K key, Supplier<V> supplier) {
-		V value = map.get(key);
-		if (value == null) {
-			map.putIfAbsent(key, supplier.get());
-			value = map.get(key);
+	public static <K, V> V getOrDefault(Map<K, V> map, K key, Supplier<V> supplier) {
+		if (map != null) {
+			V value;
+			if ((value = map.get(key)) == null) {
+				value = supplier.get();
+			}
+			return value;
 		}
-		return value;
+		return supplier.get();
+	}
+
+	public static <K, V> V getOrDefault(Map<K, V> map, K key, Function<K, V> function) {
+		if (map != null) {
+			V value;
+			if ((value = map.get(key)) == null) {
+				value = function.apply(key);
+			}
+			return value;
+		}
+		return function.apply(key);
+	}
+
+	public static <K, V> V get(Map<K, V> map, K key, Supplier<V> supplier) {
+		if (map != null) {
+			V value = map.get(key);
+			if (value == null) {
+				map.putIfAbsent(key, supplier.get());
+				value = map.get(key);
+			}
+			return value;
+		}
+		return null;
 	}
 
 	public static <K, V> V get(Map<K, V> map, K key, Function<K, V> function) {
-		V value = map.get(key);
-		if (value == null) {
-			map.putIfAbsent(key, function.apply(key));
-			value = map.get(key);
+		if (map != null) {
+			V value = map.get(key);
+			if (value == null) {
+				map.putIfAbsent(key, function.apply(key));
+				value = map.get(key);
+			}
+			return value;
 		}
-		return value;
+		return null;
 	}
 
 	public static <E> List<E> toList(Map<E, E> map) {
@@ -99,7 +127,7 @@ public abstract class MapUtils {
 
 	public static <K, V> List<Map.Entry<K, V>> toEntries(Map<K, V> map) {
 		if (isEmpty(map)) {
-			return Collections.EMPTY_LIST;
+			return ListUtils.emptyList();
 		}
 		return new ArrayList<Map.Entry<K, V>>(map.entrySet());
 	}
@@ -225,8 +253,8 @@ public abstract class MapUtils {
 
 	public static <K, V> Map<K, V> toMap(K[] left, V[] right) {
 		LinkedHashMap<K, V> results = new LinkedHashMap<K, V>();
-		int leftLen = left.length;
-		int rightLen = right.length;
+		int leftLen = left != null ? left.length : 0;
+		int rightLen = right != null ? right.length : 0;
 		if (leftLen > rightLen) {
 			int i = 0;
 			for (; i < rightLen; i++) {
@@ -270,14 +298,14 @@ public abstract class MapUtils {
 
 	public static <T> Map<T, T> toMap(Collection<T> c) {
 		if (CollectionUtils.isEmpty(c)) {
-			return Collections.EMPTY_MAP;
+			return emptyMap();
 		}
 		return toMap(c.iterator());
 	}
 
 	public static <T> Map<T, T> toMap(Iterator<T> it) {
 		if (it == null) {
-			return Collections.EMPTY_MAP;
+			return emptyMap();
 		}
 		LinkedHashMap<T, T> results = new LinkedHashMap<T, T>();
 		T prev = null, item = null;
@@ -298,7 +326,7 @@ public abstract class MapUtils {
 
 	public static <T> Map<T, T> toMap(Enumeration<T> en) {
 		if (en == null) {
-			return Collections.EMPTY_MAP;
+			return emptyMap();
 		}
 		LinkedHashMap<T, T> results = new LinkedHashMap<T, T>();
 		T prev = null, item = null;
@@ -319,7 +347,7 @@ public abstract class MapUtils {
 
 	public static <K, V> Map<K, V> reverse(Map<K, V> map) {
 		if (isEmpty(map)) {
-			return Collections.EMPTY_MAP;
+			return emptyMap();
 		}
 		List<Map.Entry<K, V>> entries = new ArrayList<Map.Entry<K, V>>(map.entrySet());
 		Collections.reverse(entries);
@@ -330,7 +358,7 @@ public abstract class MapUtils {
 
 	public static <K, V> Map<V, K> exchange(Map<K, V> map) {
 		if (isEmpty(map)) {
-			return Collections.EMPTY_MAP;
+			return emptyMap();
 		}
 		Map<V, K> results = new LinkedHashMap<V, K>();
 		for (Map.Entry<K, V> entry : map.entrySet()) {

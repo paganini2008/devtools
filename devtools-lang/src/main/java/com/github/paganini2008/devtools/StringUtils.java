@@ -33,6 +33,14 @@ public abstract class StringUtils {
 
 	public static final int INDEX_NOT_FOUND = -1;
 
+	public static String toString(CharSequence str) {
+		return toString(str, EMPTY);
+	}
+
+	public static String toString(CharSequence str, String defaultValue) {
+		return isNotBlank(str) ? str.toString() : defaultValue;
+	}
+
 	public static String toLetter(int value) {
 		StringBuilder str = new StringBuilder();
 		while (value >= 0) {
@@ -467,9 +475,6 @@ public abstract class StringUtils {
 
 	public static boolean hasContent(String left, String right) {
 		return isBlank(left) ? isNotBlank(right) : isBlank(right);
-	}
-
-	public static void main(String[] args) throws Exception {
 	}
 
 	public static String parseText(String text, String prefix, String suffix, Object... args) {

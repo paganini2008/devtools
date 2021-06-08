@@ -520,19 +520,6 @@ public abstract class CollectionUtils {
 		return !isQueue(obj);
 	}
 
-	public static void main(String[] args) {
-		List<String> a = new ArrayList<String>();
-		List<String> b = new ArrayList<String>();
-
-		a.add("1");
-		a.add("2");
-
-		b.add("1");
-		b.add("2");
-
-		System.out.println(deepEquals(a, b));
-	}
-
 	public static boolean deepEquals(Iterable<?> left, Iterable<?> right) {
 		if (left == right) {
 			return true;
