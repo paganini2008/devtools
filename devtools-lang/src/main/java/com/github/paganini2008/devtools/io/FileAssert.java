@@ -13,57 +13,70 @@ import java.io.IOException;
  * @author Fred Feng
  * @version 1.0
  */
-public class FileAssert {
-
-	private FileAssert() {
-	}
+public abstract class FileAssert {
 
 	public static void isFile(File arg) throws IOException {
 		isFile(arg, "File '" + arg + "' is existed but is a file.");
 	}
 
-	public static void isFile(File arg, String msg) throws IOException {
-		isTrue(arg != null && arg.exists() && arg.isFile(), new IOException(msg));
+	public static void isFile(File file, String msg) throws IOException {
+		isTrue(file != null && file.exists() && file.isFile(), new IOException(msg));
 	}
 
-	public static void isDirectory(File arg) throws IOException {
-		isDirectory(arg, "File '" + arg + "' is existed but is a directory.");
+	public static void isNotFile(File file) throws IOException {
+		isNotFile(file, "File '" + file + "' dosen't exists or it's not a file.");
 	}
 
-	public static void isDirectory(File arg, String msg) throws IOException {
-		isTrue(arg != null && arg.exists() && arg.isDirectory(), new IOException(msg));
+	public static void isNotFile(File file, String msg) throws IOException {
+		isFalse(file != null && file.exists() && file.isFile(), new IOException(msg));
 	}
 
-	public static void existed(File arg) throws IOException {
-		existed(arg, "File '" + arg + "' is already existed.");
+	public static void isDirectory(File file) throws IOException {
+		isDirectory(file, "File '" + file + "' is existed but is a directory.");
 	}
 
-	public static void existed(File arg, String msg) throws IOException {
-		isTrue(arg != null && arg.exists(), new IOException(msg));
+	public static void isDirectory(File file, String msg) throws IOException {
+		isTrue(file != null && file.exists() && file.isDirectory(), new IOException(msg));
 	}
 
-	public static void notExisted(File arg) throws FileNotFoundException {
-		notExisted(arg, "File '" + arg + "' is not existed.");
+	public static void isNotDirectory(File file) throws IOException {
+		isNotDirectory(file, "File '" + file + "' doesn't exists or it's not a directory.");
 	}
 
-	public static void notExisted(File arg, String msg) throws FileNotFoundException {
-		isFalse(arg != null && arg.exists(), new FileNotFoundException(msg));
+	public static void isNotDirectory(File file, String msg) throws IOException {
+		isFalse(file != null && file.exists() && file.isDirectory(), new IOException(msg));
 	}
 
-	public static void cannotWrite(File arg) throws IOException {
-		cannotWrite(arg, "File '" + arg + "' can not write.");
+	public static void existed(File file) throws IOException {
+		existed(file, "File '" + file + "' is already existed.");
 	}
 
-	public static void cannotWrite(File arg, String msg) throws IOException {
-		isFalse(arg != null && arg.exists() && arg.canWrite(), new IOException(msg));
+	public static void existed(File file, String msg) throws IOException {
+		isTrue(file != null && file.exists(), new IOException(msg));
 	}
 
-	public static void cannotRead(File arg) throws IOException {
-		cannotRead(arg, "File '" + arg + "' can not read.");
+	public static void notExisted(File file) throws FileNotFoundException {
+		notExisted(file, "File '" + file + "' is not existed.");
 	}
 
-	public static void cannotRead(File arg, String msg) throws IOException {
-		isFalse(arg != null && arg.exists() && arg.canRead(), new IOException(msg));
+	public static void notExisted(File file, String msg) throws FileNotFoundException {
+		isFalse(file != null && file.exists(), new FileNotFoundException(msg));
+	}
+
+	public static void cannotWrite(File file) throws IOException {
+		cannotWrite(file, "File '" + file + "' can not be writen.");
+	}
+
+	public static void cannotWrite(File file, String msg) throws IOException {
+		isFalse(file != null && file.exists() && file.canWrite(), new IOException(msg));
+	}
+
+	public static void cannotRead(File file) throws IOException {
+		cannotRead(file, "File '" + file + "' can not be read.");
+	}
+
+	public static void cannotRead(File file, String msg) throws IOException {
+		isFalse(file != null && file.exists() && file.canRead(), new IOException(msg));
 	}
 
 }

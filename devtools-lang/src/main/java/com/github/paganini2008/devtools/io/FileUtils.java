@@ -25,7 +25,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
+import com.github.paganini2008.devtools.ArrayUtils;
 import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.CharsetUtils;
 import com.github.paganini2008.devtools.StringUtils;
@@ -285,29 +287,21 @@ public abstract class FileUtils {
 		Assert.isNull(size, "Size must not be null.");
 		BigDecimal tmp;
 		String displaySize;
-		if ((tmp = BigDecimalUtils.divide(size, YB, scale, RoundingMode.HALF_UP)).toBigInteger()
-				.compareTo(BigInteger.ZERO) > 0) {
+		if ((tmp = BigDecimalUtils.divide(size, YB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
 			displaySize = String.valueOf(tmp) + " YB";
-		} else if ((tmp = BigDecimalUtils.divide(size, ZB, scale, RoundingMode.HALF_UP)).toBigInteger()
-				.compareTo(BigInteger.ZERO) > 0) {
+		} else if ((tmp = BigDecimalUtils.divide(size, ZB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
 			displaySize = String.valueOf(tmp) + " ZB";
-		} else if ((tmp = BigDecimalUtils.divide(size, EB, scale, RoundingMode.HALF_UP)).toBigInteger()
-				.compareTo(BigInteger.ZERO) > 0) {
+		} else if ((tmp = BigDecimalUtils.divide(size, EB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
 			displaySize = String.valueOf(tmp) + " EB";
-		} else if ((tmp = BigDecimalUtils.divide(size, PB, scale, RoundingMode.HALF_UP)).toBigInteger()
-				.compareTo(BigInteger.ZERO) > 0) {
+		} else if ((tmp = BigDecimalUtils.divide(size, PB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
 			displaySize = String.valueOf(tmp) + " PB";
-		} else if ((tmp = BigDecimalUtils.divide(size, TB, scale, RoundingMode.HALF_UP)).toBigInteger()
-				.compareTo(BigInteger.ZERO) > 0) {
+		} else if ((tmp = BigDecimalUtils.divide(size, TB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
 			displaySize = String.valueOf(tmp) + " TB";
-		} else if ((tmp = BigDecimalUtils.divide(size, GB, scale, RoundingMode.HALF_UP)).toBigInteger()
-				.compareTo(BigInteger.ZERO) > 0) {
+		} else if ((tmp = BigDecimalUtils.divide(size, GB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
 			displaySize = String.valueOf(tmp) + " GB";
-		} else if ((tmp = BigDecimalUtils.divide(size, MB, scale, RoundingMode.HALF_UP)).toBigInteger()
-				.compareTo(BigInteger.ZERO) > 0) {
+		} else if ((tmp = BigDecimalUtils.divide(size, MB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
 			displaySize = String.valueOf(tmp) + " MB";
-		} else if ((tmp = BigDecimalUtils.divide(size, KB, scale, RoundingMode.HALF_UP)).toBigInteger()
-				.compareTo(BigInteger.ZERO) > 0) {
+		} else if ((tmp = BigDecimalUtils.divide(size, KB, scale, RoundingMode.HALF_UP)).toBigInteger().compareTo(BigInteger.ZERO) > 0) {
 			displaySize = String.valueOf(tmp) + " KB";
 		} else {
 			tmp = BigDecimalUtils.setScale(size, scale, RoundingMode.HALF_UP);
@@ -423,15 +417,15 @@ public abstract class FileUtils {
 		}
 	}
 
-	public static String toString(File file, Charset charset) throws IOException {
+	public static String readFileToString(File file, Charset charset) throws IOException {
 		Assert.isNull(file, "File must not be null.");
 		StringBuilder str = new StringBuilder();
 		copyFile(file, str, charset);
 		return str.toString();
 	}
 
-	public static String toString(String filePath, Charset charset) throws IOException {
-		return toString(new File(filePath), charset);
+	public static String readFileToString(String filePath, Charset charset) throws IOException {
+		return readFileToString(new File(filePath), charset);
 	}
 
 	public static boolean exists(File file) {
@@ -518,8 +512,8 @@ public abstract class FileUtils {
 
 	public static void mergeTo(File[] files, File outputFile, Charset charset) throws IOException {
 		StringBuilder content = new StringBuilder(256);
-		for (int i = 0, l = files.length; i < l; i++) {
-			content.append(toString(files[i], charset));
+		for (int i = 0, l = (files != null ? files.length : 0); i < l; i++) {
+			content.append(readFileToString(files[i], charset));
 			if (i != l - 1) {
 				content.append(IOUtils.NEWLINE);
 			}
@@ -527,7 +521,7 @@ public abstract class FileUtils {
 		writeFile(content, outputFile, false, charset);
 	}
 
-	public static byte[] toByteArray(File file) throws IOException {
+	public static byte[] readFileToByteArray(File file) throws IOException {
 		FileInputStream in = openInputStream(file);
 		try {
 			return IOUtils.toByteArray(in);
@@ -536,7 +530,7 @@ public abstract class FileUtils {
 		}
 	}
 
-	public static char[] toCharArray(File file, String charset) throws IOException {
+	public static char[] readFileToCharArray(File file, String charset) throws IOException {
 		Assert.isNull(file, "File must not be null.");
 		InputStream in = null;
 		try {
@@ -607,8 +601,7 @@ public abstract class FileUtils {
 		}
 	}
 
-	public static void writeFile(Collection<String> collection, File file, boolean append, Charset charset)
-			throws IOException {
+	public static void writeFile(Collection<String> collection, File file, boolean append, Charset charset) throws IOException {
 		Assert.isNull(collection, "Content must not be null.");
 		Assert.isNull(file, "Destination file must not be null.");
 		FileOutputStream fos = openOutputStream(file, append);
@@ -646,8 +639,7 @@ public abstract class FileUtils {
 			copyDirectory(srcDir, destDir);
 			deleteDirectory(srcDir);
 			if (srcDir.exists()) {
-				throw new IOException(
-						"Failed to delete original directory '" + srcDir + "' after copy to '" + destDir + "'");
+				throw new IOException("Failed to delete original directory '" + srcDir + "' after copy to '" + destDir + "'");
 			}
 		}
 	}
@@ -665,8 +657,7 @@ public abstract class FileUtils {
 			doCopyFile(srcFile, destFile);
 			if (!srcFile.delete()) {
 				deleteFile(destFile);
-				throw new IOException(
-						"Failed to delete original file '" + srcFile + "' after copy to '" + destFile + "'");
+				throw new IOException("Failed to delete original file '" + srcFile + "' after copy to '" + destFile + "'");
 			}
 		}
 	}
@@ -682,8 +673,7 @@ public abstract class FileUtils {
 		canRead(srcFile);
 		canWrite(destFile);
 		if (srcFile.getCanonicalPath().equals(destFile.getCanonicalPath())) {
-			throw new IOException(
-					"Source file '" + srcFile + "' and destination file '" + destFile + "' are the same.");
+			throw new IOException("Source file '" + srcFile + "' and destination file '" + destFile + "' are the same.");
 		}
 		doCopyFile(srcFile, destFile);
 	}
@@ -733,8 +723,7 @@ public abstract class FileUtils {
 		canScan(srcDir);
 		canChange(destDir);
 		if (srcDir.getCanonicalPath().equals(destDir.getCanonicalPath())) {
-			throw new IOException(
-					"Source directory '" + srcDir + "' and destination directory '" + destDir + "' are the same.");
+			throw new IOException("Source directory '" + srcDir + "' and destination directory '" + destDir + "' are the same.");
 		}
 		List<String> exclusionList = null;
 		if (destDir.getCanonicalPath().startsWith(srcDir.getCanonicalPath())) {
@@ -750,8 +739,7 @@ public abstract class FileUtils {
 		doCopyDirectory(srcDir, destDir, filter, exclusionList);
 	}
 
-	private static void doCopyDirectory(File srcDir, File destDir, FileFilter filter, List<String> exclusionList)
-			throws IOException {
+	private static void doCopyDirectory(File srcDir, File destDir, FileFilter filter, List<String> exclusionList) throws IOException {
 		File[] srcFiles = filter == null ? srcDir.listFiles() : srcDir.listFiles(filter);
 		if (srcFiles == null) {
 			return;
@@ -870,33 +858,28 @@ public abstract class FileUtils {
 		return directories;
 	}
 
-	public static long sizeOf(File file, FileFilter filter) throws IOException {
-		FileAssert.notExisted(file);
-		if (file.isDirectory()) {
-			return sizeOfDirectory(file, filter);
-		} else {
-			return file.length();
+	public static long sizeOfDirectory(File directory, FileFilter filter) throws IOException {
+		final AtomicLong total = new AtomicLong();
+		scan(directory, filter, (dir, file) -> {
+			total.addAndGet(file.length());
+		});
+		return total.get();
+	}
+
+	public static void scan(File directory, FileFilter filter, ScanHandler handler) throws IOException {
+		FileAssert.isNotDirectory(directory);
+		File[] files = filter != null ? directory.listFiles(filter) : directory.listFiles();
+		if (ArrayUtils.isNotEmpty(files)) {
+			for (File file : files) {
+				if (!isSymlink(file)) {
+					if (file.isDirectory()) {
+						scan(file, filter, handler);
+					} else {
+						handler.handleFile(directory, file);
+					}
+				}
+			}
 		}
 	}
 
-	public static long sizeOfDirectory(File directory, FileFilter filter) throws IOException {
-		FileAssert.isFile(directory);
-		final File[] files = filter != null ? directory.listFiles(filter) : directory.listFiles();
-		if (files == null) {
-			return 0L;
-		}
-		long size = 0;
-		for (final File file : files) {
-			try {
-				if (!isSymlink(file)) {
-					size += sizeOf(file, filter);
-					if (size < 0) {
-						break;
-					}
-				}
-			} catch (IOException ioe) {
-			}
-		}
-		return size;
-	}
 }
