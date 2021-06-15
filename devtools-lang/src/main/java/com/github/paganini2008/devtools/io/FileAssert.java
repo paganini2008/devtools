@@ -64,7 +64,7 @@ public abstract class FileAssert {
 	}
 
 	public static void cannotWrite(File file) throws IOException {
-		cannotWrite(file, "File '" + file + "' can not be writen.");
+		cannotWrite(file, "File '" + file + "' doesn't exists or can not be writen.");
 	}
 
 	public static void cannotWrite(File file, String msg) throws IOException {
@@ -72,7 +72,7 @@ public abstract class FileAssert {
 	}
 
 	public static void cannotRead(File file) throws IOException {
-		cannotRead(file, "File '" + file + "' can not be read.");
+		cannotRead(file, "File '" + file + "' doesn't exists or can not be read.");
 	}
 
 	public static void cannotRead(File file, String msg) throws IOException {

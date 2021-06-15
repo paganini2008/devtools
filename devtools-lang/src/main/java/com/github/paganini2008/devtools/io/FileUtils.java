@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 import com.github.paganini2008.devtools.ArrayUtils;
 import com.github.paganini2008.devtools.Assert;
@@ -511,7 +512,7 @@ public abstract class FileUtils {
 	}
 
 	public static void mergeTo(File[] files, File outputFile, Charset charset) throws IOException {
-		StringBuilder content = new StringBuilder(256);
+		StringBuilder content = new StringBuilder();
 		for (int i = 0, l = (files != null ? files.length : 0); i < l; i++) {
 			content.append(readFileToString(files[i], charset));
 			if (i != l - 1) {
@@ -530,7 +531,7 @@ public abstract class FileUtils {
 		}
 	}
 
-	public static char[] readFileToCharArray(File file, String charset) throws IOException {
+	public static char[] readFileToCharArray(File file, Charset charset) throws IOException {
 		Assert.isNull(file, "File must not be null.");
 		InputStream in = null;
 		try {
@@ -816,45 +817,26 @@ public abstract class FileUtils {
 		writeFile("", file, false, charset);
 	}
 
-	public static List<String> list(File base, FileFilter filter) {
-		if (base == null || !base.isDirectory()) {
-			return new ArrayList<String>();
-		}
-		File[] array = filter != null ? base.listFiles(filter) : base.listFiles();
-		if (array == null) {
-			return new ArrayList<String>();
-		}
-		List<String> directories = new ArrayList<String>();
-		List<String> files = new ArrayList<String>();
-		for (File file : array) {
-			if (file.isDirectory()) {
-				directories.add(file.getAbsolutePath());
-			} else if (file.isFile()) {
-				files.add(file.getAbsolutePath());
-			}
-		}
-		directories.addAll(files);
-		return directories;
+	public static List<String> list(File directory, FileFilter filter) throws IOException {
+		List<File> files = listFiles(directory, filter);
+		return files.stream().map(file -> file.getAbsolutePath()).collect(Collectors.toList());
 	}
 
-	public static List<File> listFiles(File base, FileFilter filter) {
-		if (base == null || !base.isDirectory()) {
-			return new ArrayList<File>();
-		}
-		File[] array = filter != null ? base.listFiles(filter) : base.listFiles();
-		if (array == null) {
-			return new ArrayList<File>();
-		}
+	public static List<File> listFiles(File directory, FileFilter filter) throws IOException {
+		FileAssert.isNotDirectory(directory);
+		File[] fileArray = filter != null ? directory.listFiles(filter) : directory.listFiles();
 		List<File> directories = new ArrayList<File>();
-		List<File> files = new ArrayList<File>();
-		for (File file : array) {
-			if (file.isDirectory()) {
-				directories.add(file);
-			} else if (file.isFile()) {
-				files.add(file);
+		if (ArrayUtils.isNotEmpty(fileArray)) {
+			List<File> files = new ArrayList<File>();
+			for (File file : fileArray) {
+				if (file.isDirectory()) {
+					directories.add(file);
+				} else if (file.isFile()) {
+					files.add(file);
+				}
 			}
+			directories.addAll(files);
 		}
-		directories.addAll(files);
 		return directories;
 	}
 
@@ -879,6 +861,19 @@ public abstract class FileUtils {
 					}
 				}
 			}
+		}
+	}
+
+	public static void insert(File file, int position, CharSequence content, Charset charset) throws IOException {
+		FileAssert.cannotRead(file);
+		RandomAccessFile raf = new RandomAccessFile(file, "rw");
+		try {
+			raf.seek(position);
+			byte[] store = IOUtils.toByteArray(raf);
+			raf.write(content.toString().getBytes(CharsetUtils.toCharset(charset)));
+			raf.write(store);
+		} finally {
+			IOUtils.closeQuietly(raf);
 		}
 	}
 

@@ -19,6 +19,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -348,6 +349,49 @@ public abstract class IOUtils {
 		copy(reader, output, CharsetUtils.toCharset(charset));
 	}
 
+	public static long copy(RandomAccessFile input, OutputStream output) throws IOException {
+		return copy(input, output, DEFAULT_BYTE_BUFFER_SIZE, -1);
+	}
+
+	public static long copy(RandomAccessFile input, OutputStream output, int maxSize) throws IOException {
+		return copy(input, output, DEFAULT_BYTE_BUFFER_SIZE, maxSize);
+	}
+
+	public static long copy(final RandomAccessFile raf, final OutputStream output, int bufferSize, int maxSize) throws IOException {
+		return copy(raf, new StreamCopier() {
+			@Override
+			public void copy(byte[] bytes, int offset, int length) throws IOException {
+				output.write(bytes, offset, length);
+			}
+		}, bufferSize, maxSize);
+	}
+
+	public static long copy(RandomAccessFile raf, StreamCopier streamCopier, int bufferSize, int maxSize) throws IOException {
+		final boolean capped = maxSize > 0;
+		int remaining = maxSize;
+		byte[] buffer = getByteBuffer(bufferSize);
+		long length = 0;
+		try {
+			streamCopier.onStart();
+			int read;
+			while (EOF != (read = raf.read(buffer))) {
+				if (capped) {
+					if (read > remaining) {
+						streamCopier.copy(buffer, 0, remaining);
+						break;
+					}
+					remaining -= read;
+				}
+				streamCopier.copy(buffer, 0, read);
+				length += read;
+				streamCopier.onProgress(length);
+			}
+		} finally {
+			streamCopier.onEnd(length);
+		}
+		return length;
+	}
+
 	public static char[] toCharArray(InputStream input, Charset charset, int bufferSize, int maxSize) throws IOException {
 		CharArrayWriter output = null;
 		try {
@@ -407,6 +451,25 @@ public abstract class IOUtils {
 		}
 	}
 
+	public static byte[] toByteArray(RandomAccessFile input) throws IOException {
+		return toByteArray(input, -1);
+	}
+
+	public static byte[] toByteArray(RandomAccessFile input, int maxSize) throws IOException {
+		return toByteArray(input, DEFAULT_BYTE_BUFFER_SIZE, maxSize);
+	}
+
+	public static byte[] toByteArray(RandomAccessFile input, int bufferSize, int maxSize) throws IOException {
+		ByteArrayOutputStream output = null;
+		try {
+			output = new ByteArrayOutputStream(bufferSize);
+			copy(input, output, bufferSize, maxSize);
+			return output.toByteArray();
+		} finally {
+			closeQuietly(output);
+		}
+	}
+
 	public static ByteBuffer toByteBuffer(InputStream input) throws IOException {
 		return toByteBuffer(input, -1);
 	}
@@ -416,6 +479,19 @@ public abstract class IOUtils {
 	}
 
 	public static ByteBuffer toByteBuffer(InputStream input, int bufferSize, int maxSize) throws IOException {
+		byte[] bytes = toByteArray(input, bufferSize, maxSize);
+		return ByteBuffer.wrap(bytes);
+	}
+
+	public static ByteBuffer toByteBuffer(RandomAccessFile input) throws IOException {
+		return toByteBuffer(input, -1);
+	}
+
+	public static ByteBuffer toByteBuffer(RandomAccessFile input, int maxSize) throws IOException {
+		return toByteBuffer(input, DEFAULT_BYTE_BUFFER_SIZE, maxSize);
+	}
+
+	public static ByteBuffer toByteBuffer(RandomAccessFile input, int bufferSize, int maxSize) throws IOException {
 		byte[] bytes = toByteArray(input, bufferSize, maxSize);
 		return ByteBuffer.wrap(bytes);
 	}

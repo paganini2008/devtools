@@ -2,6 +2,7 @@ package com.github.paganini2008.devtools.io.monitor;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -215,7 +216,11 @@ public class FileWatcher {
 	}
 
 	protected List<File> listFiles(File directory) {
-		return FileUtils.listFiles(directory, fileFilter);
+		try {
+			return FileUtils.listFiles(directory, fileFilter);
+		} catch (IOException e) {
+			return ListUtils.emptyList();
+		}
 	}
 
 	public FileEntry getRootEntry() {
