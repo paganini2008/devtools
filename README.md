@@ -1,4 +1,4 @@
-## <code>devtools</code> series
+# <code>devtools</code> series
 ### Install
 ``` xml
 		<dependency>
