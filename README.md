@@ -1,8 +1,5 @@
-<<<<<<< HEAD
-## Java Tools Series -- <code>devtools</code>
-=======
-# <code>devtools</code> series
->>>>>>> 256027299d6a608192ae0adee840ffd1dc770894
+# Java Tools Series -- <code>devtools</code>
+
 ### Install
 ``` xml
 		<dependency>
