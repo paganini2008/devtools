@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ## Java Tools Series -- <code>devtools</code>
+=======
+# <code>devtools</code> series
+>>>>>>> 256027299d6a608192ae0adee840ffd1dc770894
 ### Install
 ``` xml
 		<dependency>
@@ -19,7 +23,6 @@ Jdk1.8(or later)
 5. <code>devtools-db4j</code>
 
 
-
 ### Short Description
 
 **<code>devtools-lang</code>**
@@ -28,7 +31,7 @@ Jdk1.8(or later)
 
 **Install**:
 ``` xml
-<dependency>
+                 <dependency>
 			<groupId>com.github.paganini2008</groupId>
 			<artifactId>devtools-lang</artifactId>
 			<version>2.0.1</version>
@@ -40,7 +43,7 @@ Jdk1.8(or later)
 
 **Install**
 ``` xml
-        <dependency>
+                <dependency>
 			<groupId>com.github.paganini2008</groupId>
 			<artifactId>devtools-objectpool</artifactId>
 			<version>2.0.1</version>
@@ -57,7 +60,7 @@ Jdk1.8(or later)
 
 **Install:** 
 ``` xml
-        <dependency>
+                <dependency>
 			<groupId>com.github.paganini2008</groupId>
 			<artifactId>devtools-cron4j</artifactId>
 			<version>2.0.1</version>
@@ -65,6 +68,7 @@ Jdk1.8(or later)
 ```
 
 **<code>devtools-beans-streaming</code>**
+
 <code>devtools-beans-streaming</code> is a solution to query or aggregate object list (<code>pojo</code> list) similar to LINQ function in C#
 
 **Install:** 
@@ -78,11 +82,12 @@ Jdk1.8(or later)
 
 
 **<code>devtools-db4j</code>**
+
 <code>devtools-db4j</code> is a simple and practical JDBC operation encapsulation toolkit, which can be applied to any project and greatly improves the development efficiency based on JDBC
 
 **Install:**
 ``` xml
-        <dependency>
+                <dependency>
 			<groupId>com.github.paganini2008</groupId>
 			<artifactId>devtools-db4j</artifactId>
 			<version>2.0.1</version>
