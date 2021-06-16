@@ -19,7 +19,6 @@ Jdk1.8(or later)
 5. <code>devtools-db4j</code>
 
 
-
 ### Short Description
 
 **<code>devtools-lang</code>**
@@ -65,6 +64,7 @@ Jdk1.8(or later)
 ```
 
 **<code>devtools-beans-streaming</code>**
+
 <code>devtools-beans-streaming</code> is a solution to query or aggregate object list (<code>pojo</code> list) similar to LINQ function in C#
 
 **Install:** 
@@ -78,6 +78,7 @@ Jdk1.8(or later)
 
 
 **<code>devtools-db4j</code>**
+
 <code>devtools-db4j</code> is a simple and practical JDBC operation encapsulation toolkit, which can be applied to any project and greatly improves the development efficiency based on JDBC
 
 **Install:**
