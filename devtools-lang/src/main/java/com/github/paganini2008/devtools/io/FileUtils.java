@@ -864,7 +864,7 @@ public abstract class FileUtils {
 		}
 	}
 
-	public static void insert(File file, int position, CharSequence content, Charset charset) throws IOException {
+	public static void insertContent(File file, int position, CharSequence content, Charset charset) throws IOException {
 		FileAssert.cannotRead(file);
 		RandomAccessFile raf = new RandomAccessFile(file, "rw");
 		try {

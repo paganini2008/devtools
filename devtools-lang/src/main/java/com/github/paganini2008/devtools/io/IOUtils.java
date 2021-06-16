@@ -367,6 +367,7 @@ public abstract class IOUtils {
 	}
 
 	public static long copy(RandomAccessFile raf, StreamCopier streamCopier, int bufferSize, int maxSize) throws IOException {
+		final long filePointer = raf.getFilePointer();
 		final boolean capped = maxSize > 0;
 		int remaining = maxSize;
 		byte[] buffer = getByteBuffer(bufferSize);
@@ -387,6 +388,7 @@ public abstract class IOUtils {
 				streamCopier.onProgress(length);
 			}
 		} finally {
+			raf.seek(filePointer);
 			streamCopier.onEnd(length);
 		}
 		return length;
