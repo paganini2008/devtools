@@ -28,7 +28,7 @@ Jdk1.8(or later)
 
 **Install**:
 ``` xml
-<dependency>
+                 <dependency>
 			<groupId>com.github.paganini2008</groupId>
 			<artifactId>devtools-lang</artifactId>
 			<version>2.0.1</version>
@@ -40,7 +40,7 @@ Jdk1.8(or later)
 
 **Install**
 ``` xml
-        <dependency>
+                <dependency>
 			<groupId>com.github.paganini2008</groupId>
 			<artifactId>devtools-objectpool</artifactId>
 			<version>2.0.1</version>
@@ -57,7 +57,7 @@ Jdk1.8(or later)
 
 **Install:** 
 ``` xml
-        <dependency>
+                <dependency>
 			<groupId>com.github.paganini2008</groupId>
 			<artifactId>devtools-cron4j</artifactId>
 			<version>2.0.1</version>
@@ -82,7 +82,7 @@ Jdk1.8(or later)
 
 **Install:**
 ``` xml
-        <dependency>
+                <dependency>
 			<groupId>com.github.paganini2008</groupId>
 			<artifactId>devtools-db4j</artifactId>
 			<version>2.0.1</version>
