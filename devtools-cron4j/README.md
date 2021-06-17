@@ -1,4 +1,4 @@
-## <code>devtools-cron4j</code>
+# devtools-cron4j
 
 <code>devtools-cron4j</code> is a small and practical Java scheduling toolkit from the <code>devtools</code> series, which provides:
 
@@ -11,11 +11,11 @@
 
 ### Install
 ``` xml
-		<dependency>
-			<groupId>com.github.paganini2008</groupId>
-			<artifactId>devtools-cron4j</artifactId>
-			<version>2.0.1</version>
-		</dependency>
+<dependency>
+	<groupId>com.github.paganini2008</groupId>
+	<artifactId>devtools-cron4j</artifactId>
+	<version>2.0.1</version>
+</dependency>
 ```
 
 ### How to generate cron expression?
