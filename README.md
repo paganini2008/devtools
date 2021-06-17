@@ -1,12 +1,13 @@
-# Java Tools Series -- <code>devtools</code>
+## Java Tools Series
+# <code>devtools</code>
 
 ### Install
 ``` xml
-		<dependency>
-			<groupId>com.github.paganini2008</groupId>
-			<artifactId>devtools</artifactId>
-			<version>2.0.1</version>
-		</dependency>
+<dependency>
+	 <groupId>com.github.paganini2008</groupId>
+	 <artifactId>devtools</artifactId>
+	 <version>2.0.1</version>
+</dependency>
 ```
 
 ### Compatibility
