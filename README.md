@@ -1,5 +1,5 @@
-## Java Tools Series
-# <code>devtools</code>
+## An Useful Java Tools Series for all developers
+# devtools
 
 ### Install
 ``` xml
