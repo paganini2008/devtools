@@ -1,14 +1,14 @@
-# Java LINQ Tool -- <code>devtools-beans-streaming</code>
-
+# devtools-beans-streaming
+### A simple Java LINQ Tool
 <code>devtools-beans-streaming</code> package is one of <code>devtools</code> series toolkits. It is a solution to query or aggregate object list (or <code>pojo</code> list). It provides LINQ function similar to C#
 
 ### Install：
 ``` xml
-		<dependency>
-			<groupId>com.github.paganini2008</groupId>
-			<artifactId>devtools-beans-streaming</artifactId>
-			<version>2.0.1</version>
-		</dependency>
+<dependency>
+	<groupId>com.github.paganini2008</groupId>
+	<artifactId>devtools-beans-streaming</artifactId>
+	<version>2.0.1</version>
+</dependency>
 ```
 ### Compatibility
 jdk1.8 (or later)
