@@ -1,4 +1,4 @@
-# <code>devtools-lang</code>
+# devtools-lang
 <code>devtools-lang</code> is a basic toolkit in <code>devtools series</code>. It encapsulates the basic data type, collection, date, IO, multithreading, JDBC, log and other common class libraries in JDK. <code>devtools-lang</code> toolkit provides utility methods and APIs with a higher level of encapsulation, which aims to significantly improve the development efficiency of developers, optimize the code style and maintainability.
 
 ### Install
