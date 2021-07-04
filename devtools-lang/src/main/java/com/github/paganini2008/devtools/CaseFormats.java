@@ -25,30 +25,55 @@ import java.util.function.Function;
  * @version 1.0
  */
 public abstract class CaseFormats {
-	
+
+	public static final char UNDERSCORE_CHAR = '_';
+
+	public static final char HYPHEN_CHAR = '-';
+
 	public static final CaseFormat LOWER_HYPHEN = new CaseFormats.LowerHyphenCase(ch -> {
 		return Character.isUpperCase(ch);
-	}, '-');
+	}, HYPHEN_CHAR);
 
 	public static final CaseFormat UPPER_HYPHEN = new CaseFormats.UpperHyphenCase(ch -> {
 		return Character.isUpperCase(ch);
-	}, '-');
+	}, HYPHEN_CHAR);
 
 	public static final CaseFormat LOWER_UNDERSCORE = new CaseFormats.LowerHyphenCase(ch -> {
 		return Character.isUpperCase(ch);
-	}, '_');
+	}, UNDERSCORE_CHAR);
 
 	public static final CaseFormat UPPER_UNDERSCORE = new CaseFormats.UpperHyphenCase(ch -> {
 		return Character.isUpperCase(ch);
-	}, '_');
+	}, UNDERSCORE_CHAR);
 
 	public static final CaseFormat LOWER_CAMEL = new CaseFormats.LowerCamelCase(ch -> {
-		return ch == '-' || ch == '_';
+		return ch == HYPHEN_CHAR || ch == UNDERSCORE_CHAR;
 	});
 
 	public static final CaseFormat UPPER_CAMEL = new CaseFormats.UpperCamelCase(ch -> {
-		return ch == '-' || ch == '_';
+		return ch == HYPHEN_CHAR || ch == UNDERSCORE_CHAR;
 	});
+
+	public static boolean isWellFormatedStartWith(char firstChar) {
+		return Character.isAlphabetic(firstChar) || firstChar == HYPHEN_CHAR || firstChar == '$';
+	}
+
+	public static boolean isWellFormatedNaming(CharSequence varName, String[] excludedKeywords) {
+		if (StringUtils.isBlank(varName)) {
+			return false;
+		}
+		if (!isWellFormatedStartWith(varName.charAt(0))) {
+			return false;
+		}
+		char c;
+		for (int i = 1; i < varName.length(); i++) {
+			c = varName.charAt(i);
+			if (!((Character.isAlphabetic(c)) || (Character.isDigit(c)) || (c == '_'))) {
+				return false;
+			}
+		}
+		return !ArrayUtils.contains(excludedKeywords, varName.toString());
+	}
 
 	public static class UpperHyphenCase implements CaseFormat {
 
@@ -64,18 +89,12 @@ public abstract class CaseFormats {
 			Assert.hasNoText(str);
 			StringBuilder content = new StringBuilder();
 			char c;
-			boolean start = false;
 			for (int i = 0, l = str.length(); i < l; i++) {
 				c = str.charAt(i);
-				if (!start && Character.isAlphabetic(c)) {
-					start = true;
+				if (f.apply(c) && i != 0) {
+					content.append(hyphen);
 				}
-				if (start) {
-					if (f.apply(c)) {
-						content.append(hyphen);
-					}
-					content.append(Character.toUpperCase(c));
-				}
+				content.append(Character.toUpperCase(c));
 			}
 			if (content.length() == 0) {
 				content.append(str);
@@ -99,18 +118,12 @@ public abstract class CaseFormats {
 			Assert.hasNoText(str);
 			StringBuilder content = new StringBuilder();
 			char c;
-			boolean start = false;
 			for (int i = 0, l = str.length(); i < l; i++) {
 				c = str.charAt(i);
-				if (!start && Character.isAlphabetic(c)) {
-					start = true;
+				if (f.apply(c) && i != 0) {
+					content.append(hyphen);
 				}
-				if (start) {
-					if (f.apply(c)) {
-						content.append(hyphen);
-					}
-					content.append(Character.toLowerCase(c));
-				}
+				content.append(Character.toLowerCase(c));
 			}
 			if (content.length() == 0) {
 				content.append(str);
@@ -130,26 +143,32 @@ public abstract class CaseFormats {
 
 		public String toCase(CharSequence str) {
 			Assert.hasNoText(str);
+			if (!isWellFormatedNaming(str, null)) {
+				throw new IllegalArgumentException("Bad Formated naming: " + str);
+			}
+			String copy = str.toString().toLowerCase();
 			StringBuilder content = new StringBuilder();
-			boolean start = false, upperCase = false;
+			boolean upperCase = false, changed = false;
 			char c;
-			for (int i = 0, l = str.length(); i < l; i++) {
-				c = str.charAt(i);
-				if (!start && Character.isAlphabetic(c)) {
-					start = true;
+			for (int i = 0, l = copy.length(); i < l; i++) {
+				c = copy.charAt(i);
+				if (f.apply(c)) {
 					upperCase = true;
-				}
-				if (start) {
-					if (f.apply(c)) {
-						upperCase = true;
-					} else {
-						if (upperCase) {
-							c = Character.toUpperCase(c);
-							upperCase = false;
-						}
-						content.append(c);
+				} else {
+					if (upperCase) {
+						c = Character.toUpperCase(c);
+						changed = true;
+						upperCase = false;
 					}
+					content.append(c);
 				}
+			}
+			if (!changed) {
+				return str.toString();
+			}
+			char firstChar = content.charAt(0);
+			if (!Character.isUpperCase(firstChar)) {
+				content.setCharAt(0, Character.toUpperCase(firstChar));
 			}
 			return content.toString();
 		}
@@ -166,25 +185,28 @@ public abstract class CaseFormats {
 
 		public String toCase(CharSequence str) {
 			Assert.hasNoText(str);
+			if (!isWellFormatedNaming(str, null)) {
+				throw new IllegalArgumentException("Bad Formated naming: " + str);
+			}
+			String copy = str.toString().toLowerCase();
 			StringBuilder content = new StringBuilder();
-			boolean start = false, upperCase = false;
+			boolean upperCase = false, changed = false;
 			char c;
-			for (int i = 0, l = str.length(); i < l; i++) {
-				c = str.charAt(i);
-				if (!start && Character.isAlphabetic(c)) {
-					start = true;
-				}
-				if (start) {
-					if (f.apply(c)) {
-						upperCase = true;
-					} else {
-						if (upperCase) {
-							c = Character.toUpperCase(c);
-							upperCase = false;
-						}
-						content.append(c);
+			for (int i = 0, l = copy.length(); i < l; i++) {
+				c = copy.charAt(i);
+				if (f.apply(c)) {
+					upperCase = true;
+				} else {
+					if (upperCase) {
+						c = Character.toUpperCase(c);
+						changed = true;
+						upperCase = false;
 					}
+					content.append(c);
 				}
+			}
+			if (!changed) {
+				return str.toString();
 			}
 			char firstChar = content.charAt(0);
 			if (!Character.isLowerCase(firstChar)) {
@@ -192,6 +214,11 @@ public abstract class CaseFormats {
 			}
 			return content.toString();
 		}
+	}
+
+	public static void main(String[] args) {
+		System.out.println(isWellFormatedNaming("COLUMN_NAME", null));
+		System.out.println(UPPER_UNDERSCORE.toCase("columnName"));
 	}
 
 }

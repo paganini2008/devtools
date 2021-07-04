@@ -16,10 +16,13 @@
 package com.github.paganini2008.devtools;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.github.paganini2008.devtools.primitives.Chars;
 import com.github.paganini2008.devtools.primitives.Doubles;
@@ -175,7 +178,7 @@ public abstract class ArrayUtils {
 	}
 
 	public static int indexOf(Object[] a, Object b) {
-		return indexOf(a, b, 0, a.length);
+		return indexOf(a, b, 0, a != null ? a.length : 0);
 	}
 
 	public static int indexOf(Object[] a, Object b, int start, int end) {
@@ -207,12 +210,6 @@ public abstract class ArrayUtils {
 			}
 		}
 		return INDEX_NOT_FOUND;
-	}
-
-	public static void main(String[] args) {
-		String[] arr = { "a", "b", "c", "d", "e", null, null };
-		arr = expandCapacity(arr, 3);
-		System.out.println(toString(arr));
 	}
 
 	public static <T> T[] ensureCapacity(T[] array, int index) {
@@ -732,12 +729,9 @@ public abstract class ArrayUtils {
 		return array[array.length - 1];
 	}
 
-	public static <E, T> T[] map(E[] array, Class<T> requiredType, Function<E, T> f) {
-		T[] result = (T[]) Array.newInstance(requiredType, array.length);
-		for (int i = 0; i < array.length; i++) {
-			result[i] = f.apply(array[i]);
-		}
-		return result;
+	public static <E, T> T[] map(E[] array, Function<E, T> f, Class<T> requiredType) {
+		List<T> list = Arrays.stream(array).map(f).collect(Collectors.toList());
+		return cast(list.toArray(), requiredType);
 	}
 
 	public static <T> T[] cast(Object[] array, Class<T> requiredType) {
@@ -746,6 +740,12 @@ public abstract class ArrayUtils {
 			result[i] = requiredType.cast(array[i]);
 		}
 		return result;
+	}
+
+	public static void main(String[] args) {
+		Class<?>[] array = new Class[] { String.class, Integer.class };
+		String[] names = map(array, cls -> cls.getName(), String.class);
+		System.out.println(ArrayUtils.toString(names));
 	}
 
 }

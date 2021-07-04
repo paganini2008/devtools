@@ -112,7 +112,7 @@ public abstract class Floats {
 	}
 
 	public static int indexOf(float[] a, float b) {
-		return indexOf(a, b, 0, a.length);
+		return indexOf(a, b, 0, a != null ? a.length : 0);
 	}
 
 	public static int indexOf(float[] a, float b, int start, int end) {

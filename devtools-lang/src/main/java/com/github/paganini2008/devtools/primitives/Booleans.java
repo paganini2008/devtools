@@ -110,7 +110,7 @@ public abstract class Booleans {
 	}
 
 	public static int indexOf(boolean[] a, boolean b) {
-		return indexOf(a, b, 0, a.length);
+		return indexOf(a, b, 0, a != null ? a.length : 0);
 	}
 
 	public static int indexOf(boolean[] a, boolean b, int start, int end) {

@@ -15,7 +15,7 @@
 */
 package com.github.paganini2008.devtools.collection;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import com.github.paganini2008.devtools.CaseFormats;
 
@@ -31,7 +31,7 @@ public class CamelCaseInsensitiveMap<V> extends KeyConversionMap<String, String,
 	private static final long serialVersionUID = 9123521793974589929L;
 
 	public CamelCaseInsensitiveMap() {
-		super(new HashMap<String, V>());
+		super(new LinkedHashMap<String, V>());
 	}
 
 	@Override

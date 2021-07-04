@@ -90,7 +90,7 @@ public abstract class Chars {
 	}
 
 	public static int indexOf(char[] a, int b) {
-		return indexOf(a, b, 0, a.length);
+		return indexOf(a, b, 0, a != null ? a.length : 0);
 	}
 
 	public static int indexOf(char[] a, int b, int start, int end) {

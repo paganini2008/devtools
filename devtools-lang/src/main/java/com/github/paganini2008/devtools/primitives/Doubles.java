@@ -110,7 +110,7 @@ public abstract class Doubles {
 	}
 
 	public static int indexOf(double[] a, double b) {
-		return indexOf(a, b, 0, a.length);
+		return indexOf(a, b, 0, a != null ? a.length : 0);
 	}
 
 	public static int indexOf(double[] a, double b, int start, int end) {

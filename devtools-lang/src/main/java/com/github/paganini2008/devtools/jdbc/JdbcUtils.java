@@ -17,7 +17,6 @@ package com.github.paganini2008.devtools.jdbc;
 
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,6 +30,7 @@ import java.util.function.Consumer;
 
 import javax.sql.DataSource;
 
+import com.github.paganini2008.devtools.CaseFormat;
 import com.github.paganini2008.devtools.CaseFormats;
 import com.github.paganini2008.devtools.Observable;
 import com.github.paganini2008.devtools.Observer;
@@ -301,7 +301,7 @@ public abstract class JdbcUtils {
 		try {
 			sm = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			rs = sm.executeQuery(sql);
-			return new CursorImpl(rs, observable);
+			return new CursorImpl(rs, CaseFormats.LOWER_CAMEL, observable);
 		} finally {
 			closeLazily(observable, rs, sm, connection);
 		}
@@ -383,7 +383,7 @@ public abstract class JdbcUtils {
 				callback.setValues(ps);
 			}
 			rs = ps.executeQuery();
-			return new CursorImpl(rs, observable);
+			return new CursorImpl(rs, CaseFormats.LOWER_CAMEL, observable);
 		} finally {
 			closeLazily(observable, rs, ps, connection);
 		}
@@ -399,10 +399,14 @@ public abstract class JdbcUtils {
 		});
 	}
 
-	private static Tuple toTuple(ResultSet rs) throws SQLException {
+	public static Tuple toTuple(ResultSet rs) throws SQLException {
+		return toTuple(rs, CaseFormats.LOWER_CAMEL);
+	}
+
+	public static Tuple toTuple(ResultSet rs, CaseFormat caseFormat) throws SQLException {
 		ResultSetMetaData rsmd = rs.getMetaData();
 		int columnCount = rsmd.getColumnCount();
-		Tuple tuple = Tuple.newTuple(CaseFormats.LOWER_CAMEL);
+		Tuple tuple = Tuple.newTuple(caseFormat);
 		for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
 			String columnName = rsmd.getColumnLabel(columnIndex);
 			Object value = rs.getObject(columnIndex);
@@ -418,14 +422,16 @@ public abstract class JdbcUtils {
 	 * @author Fred Feng
 	 * @version 1.0
 	 */
-	private static class CursorImpl implements Cursor<Tuple> {
+	static class CursorImpl implements Cursor<Tuple> {
 
 		private final ResultSet rs;
+		private final CaseFormat caseFormat;
 		private final Observable observable;
 		private final AtomicBoolean opened;
 
-		CursorImpl(ResultSet rs, Observable observable) {
+		CursorImpl(ResultSet rs, CaseFormat caseFormat, Observable observable) {
 			this.rs = rs;
+			this.caseFormat = caseFormat;
 			this.observable = observable;
 			this.opened = new AtomicBoolean(true);
 		}
@@ -446,7 +452,7 @@ public abstract class JdbcUtils {
 
 		public Tuple next() {
 			try {
-				return toTuple(rs);
+				return toTuple(rs, caseFormat);
 			} catch (SQLException e) {
 				opened.set(false);
 				throw new DetachedSqlException(e.getMessage(), e);
@@ -569,10 +575,14 @@ public abstract class JdbcUtils {
 		};
 	}
 
-	public static boolean existsTable(DatabaseMetaData dbmd, String schema, String tableName) throws SQLException {
+	public static boolean existsTable(Connection connection, String schema, String tableName) throws SQLException {
+		return existsTable(connection, null, schema, tableName);
+	}
+
+	public static boolean existsTable(Connection connection, String catalog, String schema, String tableName) throws SQLException {
 		ResultSet rs = null;
 		try {
-			rs = dbmd.getTables(null, schema, tableName, new String[] { "TABLE" });
+			rs = connection.getMetaData().getTables(catalog, schema, tableName, new String[] { "TABLE" });
 			if (rs != null && rs.next()) {
 				return (tableName.equalsIgnoreCase(rs.getString("TABLE_NAME")));
 			}
@@ -582,8 +592,34 @@ public abstract class JdbcUtils {
 		return false;
 	}
 
-	public static boolean existsTable(Connection connection, String schema, String tableName) throws SQLException {
-		return existsTable(connection.getMetaData(), schema, tableName);
+	public static Cursor<Tuple> describe(Connection connection) throws SQLException {
+		return describe(connection, null, null);
+	}
+
+	public static Cursor<Tuple> describe(Connection connection, String catalog, String schema) throws SQLException {
+		ResultSet rs = null;
+		Observable observable = Observable.unrepeatable();
+		try {
+			rs = connection.getMetaData().getTables(catalog, schema, "%", new String[] { "TABLE" });
+			return new CursorImpl(rs, CaseFormats.LOWER_CAMEL, observable);
+		} finally {
+			closeLazily(observable, rs, null, null);
+		}
+	}
+
+	public static Cursor<Tuple> describe(Connection connection, String tableName) throws SQLException {
+		return describe(connection, null, null, tableName);
+	}
+
+	public static Cursor<Tuple> describe(Connection connection, String catalog, String schema, String tableName) throws SQLException {
+		ResultSet rs = null;
+		Observable observable = Observable.unrepeatable();
+		try {
+			rs = connection.getMetaData().getColumns(catalog, schema, tableName, null);
+			return new CursorImpl(rs, CaseFormats.LOWER_CAMEL, observable);
+		} finally {
+			closeLazily(observable, rs, null, null);
+		}
 	}
 
 }

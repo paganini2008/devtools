@@ -102,7 +102,7 @@ public abstract class Bytes {
 	}
 
 	public static int indexOf(byte[] a, byte b, int start) {
-		return indexOf(a, b, start, a.length);
+		return indexOf(a, b, start, a != null ? a.length : 0);
 	}
 
 	public static int indexOf(byte[] a, byte b, int start, int end) {

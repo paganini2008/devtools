@@ -48,7 +48,8 @@ public abstract class KeyConversionMap<T, K, V> extends AbstractMap<K, V> implem
 	}
 
 	public V get(Object key) {
-		Object realKey = keys.get(convertKey(key));
+		Object str = convertKey(key);
+		Object realKey = keys.get(str);
 		return realKey != null ? delegate.get(realKey) : null;
 	}
 

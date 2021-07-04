@@ -102,7 +102,7 @@ public abstract class Ints {
 	}
 
 	public static int indexOf(int[] a, int b) {
-		return indexOf(a, b, 0, a.length);
+		return indexOf(a, b, 0, a != null ? a.length : 0);
 	}
 
 	public static int indexOf(int[] a, int b, int start, int end) {

@@ -101,7 +101,7 @@ public abstract class Longs {
 	}
 
 	public static int indexOf(long[] a, long b) {
-		return indexOf(a, b, 0, a.length);
+		return indexOf(a, b, 0, a != null ? a.length : 0);
 	}
 
 	public static int indexOf(long[] a, long b, int start, int end) {
