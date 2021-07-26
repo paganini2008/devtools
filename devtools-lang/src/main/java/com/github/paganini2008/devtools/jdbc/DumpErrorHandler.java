@@ -15,28 +15,16 @@
 */
 package com.github.paganini2008.devtools.jdbc;
 
-import java.util.function.Predicate;
-
-import com.github.paganini2008.devtools.collection.Tuple;
-
 /**
  * 
- * QueryDumpOptions
+ * DumpErrorHandler
  *
  * @author Fred Feng
  *
  * @since 2.0.2
  */
-public interface QueryDumpOptions extends JdbcDumpOptions {
+public interface DumpErrorHandler {
 
-	String getInsertionSql(Tuple t);
-
-	default Object[] getArgs(Tuple t) {
-		return t != null ? t.toValues() : new Object[0];
-	}
-
-	default Predicate<Tuple> getPredicate() {
-		return t -> true;
-	}
+	void handleError(String catalog, String schema, String sql, Object[] args, Throwable e);
 
 }

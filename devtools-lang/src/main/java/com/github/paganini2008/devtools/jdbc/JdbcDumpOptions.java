@@ -16,6 +16,9 @@
 package com.github.paganini2008.devtools.jdbc;
 
 import java.util.concurrent.Executor;
+import java.util.function.Predicate;
+
+import com.github.paganini2008.devtools.collection.Tuple;
 
 /**
  * 
@@ -35,12 +38,26 @@ public interface JdbcDumpOptions {
 		return null;
 	}
 
+	default String getTableName() {
+		return null;
+	}
+
 	default Executor getExecutor() {
 		return null;
 	}
 
 	default long getMaxRecords() {
 		return -1L;
+	}
+
+	String getInsertionSql(Tuple t);
+
+	default Object[] getArgs(Tuple t) {
+		return t != null ? t.toValues() : new Object[0];
+	}
+
+	default Predicate<Tuple> getPredicate() {
+		return t -> true;
 	}
 
 }

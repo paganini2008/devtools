@@ -28,7 +28,6 @@ import javax.sql.DataSource;
 import com.github.paganini2008.devtools.ArrayUtils;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.ListUtils;
-import com.github.paganini2008.devtools.collection.MultiMappedMap;
 import com.github.paganini2008.devtools.collection.Tuple;
 import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
 import com.github.paganini2008.devtools.primitives.Longs;
@@ -56,7 +55,8 @@ public class JdbcDumpTemplate {
 		this.destinationConnectionFactory = destinationConnectionFactory;
 	}
 
-	public long[] dump(String catalog, String schema, DatabaseDumpOptions dumpOptions) throws SQLException {
+	public long[] dump(String catalog, String schema, String[] excludedTables, JdbcDumpOptions dumpOptions, DumpErrorHandler errorHandler)
+			throws SQLException {
 		List<Long> rows = new ArrayList<Long>();
 		Connection sourceConnection = null;
 		try {
@@ -66,8 +66,8 @@ public class JdbcDumpTemplate {
 				Tuple tuple = cursor.next();
 				String tableName = tuple.getProperty("tableName");
 				if (StringUtils.isNotBlank(tableName)) {
-					if (ArrayUtils.isEmpty(dumpOptions.excludeTables()) || ArrayUtils.notContains(dumpOptions.excludeTables(), tableName)) {
-						rows.add(dump(catalog, schema, tableName, new TableDumpOptionsWrapper(tableName, dumpOptions)));
+					if (ArrayUtils.isEmpty(excludedTables) || ArrayUtils.notContains(excludedTables, tableName)) {
+						rows.add(dump(catalog, schema, tableName, new TableJdbcDumpOptions(tableName, dumpOptions), errorHandler));
 					}
 				}
 			}
@@ -78,11 +78,22 @@ public class JdbcDumpTemplate {
 
 	}
 
-	public long dump(String catalog, String schema, String tableName, QueryDumpOptions dumpOptions) throws SQLException {
-		return dump(catalog, schema, "select * from " + tableName, null, dumpOptions);
+	public long dump(String catalog, String schema, String tableName, JdbcDumpOptions dumpOptions, DumpErrorHandler errorHandler)
+			throws SQLException {
+		String sql = "select * from " + tableName;
+		try {
+			return dump(catalog, schema, sql, null, new TableJdbcDumpOptions(tableName, dumpOptions));
+		} catch (Exception e) {
+			if (errorHandler != null) {
+				errorHandler.handleError(catalog, schema, sql, null, e);
+				return 0;
+			} else {
+				throw e;
+			}
+		}
 	}
 
-	public long dump(String catalog, String schema, String sql, Object[] args, QueryDumpOptions dumpOptions) throws SQLException {
+	public long dump(String catalog, String schema, String sql, Object[] args, JdbcDumpOptions dumpOptions) throws SQLException {
 		AtomicLong rows = new AtomicLong();
 		Connection sourceConnection = null;
 		try {
@@ -116,8 +127,8 @@ public class JdbcDumpTemplate {
 
 	}
 
-	public long[] dump(String catalog, String schema, int batchSize, DumpProgress progress, DatabaseDumpOptions dumpOptions)
-			throws SQLException {
+	public long[] dump(String catalog, String schema, String[] excludedTables, int batchSize, DumpProgress progress,
+			JdbcDumpOptions dumpOptions, DumpErrorHandler errorHandler) throws SQLException {
 		List<Long> rows = new ArrayList<Long>();
 		Connection sourceConnection = null;
 		try {
@@ -127,9 +138,9 @@ public class JdbcDumpTemplate {
 				Tuple tuple = cursor.next();
 				String tableName = tuple.getProperty("tableName");
 				if (StringUtils.isNotBlank(tableName)) {
-					if (ArrayUtils.isEmpty(dumpOptions.excludeTables()) || ArrayUtils.notContains(dumpOptions.excludeTables(), tableName)) {
-						rows.add(
-								dump(catalog, schema, tableName, batchSize, progress, new TableDumpOptionsWrapper(tableName, dumpOptions)));
+					if (ArrayUtils.isEmpty(excludedTables) || ArrayUtils.notContains(excludedTables, tableName)) {
+						rows.add(dump(catalog, schema, tableName, batchSize, progress, new TableJdbcDumpOptions(tableName, dumpOptions),
+								errorHandler));
 					}
 				}
 			}
@@ -140,9 +151,19 @@ public class JdbcDumpTemplate {
 
 	}
 
-	public long dump(String catalog, String schema, String tableName, int batchSize, DumpProgress progress, QueryDumpOptions dumpOptions)
-			throws SQLException {
-		return dump(catalog, schema, "select * from " + tableName, null, batchSize, progress, dumpOptions);
+	public long dump(String catalog, String schema, String tableName, int batchSize, DumpProgress progress, JdbcDumpOptions dumpOptions,
+			DumpErrorHandler errorHandler) throws SQLException {
+		String sql = "select * from " + tableName;
+		try {
+			return dump(catalog, schema, sql, null, batchSize, progress, new TableJdbcDumpOptions(tableName, dumpOptions));
+		} catch (Exception e) {
+			if (errorHandler != null) {
+				errorHandler.handleError(catalog, schema, sql, null, e);
+				return 0;
+			} else {
+				throw e;
+			}
+		}
 	}
 
 	private long getTotalRecords(ConnectionFactory connectionFactory, String sql, Object[] args) throws SQLException {
@@ -155,7 +176,7 @@ public class JdbcDumpTemplate {
 	}
 
 	public long dump(String catalog, String schema, String sql, Object[] args, int batchSize, DumpProgress progress,
-			QueryDumpOptions dumpOptions) throws SQLException {
+			JdbcDumpOptions dumpOptions) throws SQLException {
 		AtomicLong rows = new AtomicLong();
 		if (progress != null) {
 			progress.onStart(catalog, schema, sql, args, dumpOptions);
@@ -228,13 +249,13 @@ public class JdbcDumpTemplate {
 		}
 	}
 
-	private static class TableDumpOptionsWrapper implements QueryDumpOptions {
+	static class TableJdbcDumpOptions implements JdbcDumpOptions {
 
+		private static final String SQL_INSERTION = "insert into %s(%s) values (%s)";
 		private final String tableName;
-		private final DatabaseDumpOptions dumpOptions;
-		private final MultiMappedMap<String, String, String> sqlCache = new MultiMappedMap<>();
+		private final JdbcDumpOptions dumpOptions;
 
-		TableDumpOptionsWrapper(String tableName, DatabaseDumpOptions dumpOptions) {
+		TableJdbcDumpOptions(String tableName, JdbcDumpOptions dumpOptions) {
 			this.tableName = tableName;
 			this.dumpOptions = dumpOptions;
 		}
@@ -250,6 +271,11 @@ public class JdbcDumpTemplate {
 		}
 
 		@Override
+		public String getTableName() {
+			return tableName;
+		}
+
+		@Override
 		public Executor getExecutor() {
 			return dumpOptions.getExecutor();
 		}
@@ -261,18 +287,23 @@ public class JdbcDumpTemplate {
 
 		@Override
 		public String getInsertionSql(Tuple t) {
-			return sqlCache.get(dumpOptions.getCatalog() + "." + dumpOptions.getSchema(), tableName,
-					() -> dumpOptions.getInsertionSql(tableName, t));
+			String sql = dumpOptions.getInsertionSql(t);
+			if (StringUtils.isNotBlank(sql)) {
+				return sql;
+			}
+			String[] columnNames = t.keys();
+			return String.format(SQL_INSERTION, tableName, ArrayUtils.join(columnNames, ","),
+					StringUtils.repeat("?", ",", columnNames.length));
 		}
 
 		@Override
 		public Predicate<Tuple> getPredicate() {
-			return dumpOptions.getPredicate(tableName);
+			return dumpOptions.getPredicate();
 		}
 
 		@Override
 		public Object[] getArgs(Tuple t) {
-			return dumpOptions.getArgs(tableName, t);
+			return dumpOptions.getArgs(t);
 		}
 	}
 

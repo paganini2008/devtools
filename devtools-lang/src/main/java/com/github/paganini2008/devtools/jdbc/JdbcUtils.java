@@ -47,7 +47,7 @@ import com.github.paganini2008.devtools.converter.ConvertUtils;
  */
 public abstract class JdbcUtils {
 
-	public static final String SQL_ROW_COUNT = "select count(*) as rowCount from (%s) as t";
+	public static final String SQL_ROW_COUNT = "select count(*) as row_count from (%s) as t";
 
 	public static void close(Connection connection) throws SQLException {
 		if (connection != null) {
