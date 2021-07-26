@@ -27,8 +27,20 @@ import java.util.concurrent.Executor;
  */
 public interface JdbcDumpOptions {
 
+	default String getCatalog() {
+		return null;
+	}
+
+	default String getSchema() {
+		return null;
+	}
+
 	default Executor getExecutor() {
 		return null;
+	}
+
+	default long getMaxRecords() {
+		return Long.MAX_VALUE;
 	}
 
 }

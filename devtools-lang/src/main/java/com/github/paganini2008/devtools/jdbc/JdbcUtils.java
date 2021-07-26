@@ -35,7 +35,6 @@ import com.github.paganini2008.devtools.CaseFormats;
 import com.github.paganini2008.devtools.Observable;
 import com.github.paganini2008.devtools.Observer;
 import com.github.paganini2008.devtools.StringUtils;
-import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.Tuple;
 import com.github.paganini2008.devtools.converter.ConvertUtils;
 
@@ -502,46 +501,56 @@ public abstract class JdbcUtils {
 		}
 	}
 
-	public static void scan(Connection connection, String sql, Object[] args, Consumer<Tuple> consumer) throws SQLException {
-		scan(connection, sql, setValues(args), consumer);
+	public static void scan(Connection connection, String sql, Object[] args, Consumer<Tuple> consumer, long maxRecords)
+			throws SQLException {
+		scan(connection, sql, setValues(args), consumer, maxRecords);
 	}
 
-	public static void scan(Connection connection, String sql, PreparedStatementCallback callback, Consumer<Tuple> consumer)
-			throws SQLException {
+	public static void scan(Connection connection, String sql, PreparedStatementCallback callback, Consumer<Tuple> consumer,
+			long maxRecords) throws SQLException {
 		Cursor<Tuple> cursor = cursor(connection, sql, callback);
-		CollectionUtils.forEach(cursor).forEach(consumer);
+		while (cursor.hasNext()) {
+			consumer.accept(cursor.next());
+			if (maxRecords > 0 && cursor.getRownum() > maxRecords) {
+				cursor.close();
+				break;
+			}
+		}
 	}
 
-	public static void batchScan(DataSource dataSource, String sql, Object[] args, int page, int pageSize, Consumer<List<Tuple>> consumer)
-			throws SQLException {
-		batchScan(new PooledConnectionFactory(dataSource), sql, args, page, pageSize, consumer);
+	public static void batchScan(DataSource dataSource, String sql, Object[] args, int page, int pageSize, Consumer<List<Tuple>> consumer,
+			long maxRecords) throws SQLException {
+		batchScan(new PooledConnectionFactory(dataSource), sql, args, page, pageSize, consumer, maxRecords);
 	}
 
 	public static void batchScan(DataSource dataSource, String sql, PreparedStatementCallback callback, int page, int pageSize,
-			Consumer<List<Tuple>> consumer) throws SQLException {
-		batchScan(new PooledConnectionFactory(dataSource), sql, callback, page, pageSize, consumer);
+			Consumer<List<Tuple>> consumer, long maxRecords) throws SQLException {
+		batchScan(new PooledConnectionFactory(dataSource), sql, callback, page, pageSize, consumer, maxRecords);
 	}
 
 	public static void batchScan(ConnectionFactory connectionFactory, String sql, Object[] args, int page, int pageSize,
-			Consumer<List<Tuple>> consumer) throws SQLException {
-		batchScan(connectionFactory, new DefaultPageableSql(sql), args, page, pageSize, consumer);
+			Consumer<List<Tuple>> consumer, long maxRecords) throws SQLException {
+		batchScan(connectionFactory, new DefaultPageableSql(sql), args, page, pageSize, consumer, maxRecords);
 	}
 
 	public static void batchScan(ConnectionFactory connectionFactory, PageableSql pageableSql, Object[] args, int page, int pageSize,
-			Consumer<List<Tuple>> consumer) throws SQLException {
-		batchScan(connectionFactory, pageableSql, setValues(args), page, pageSize, consumer);
+			Consumer<List<Tuple>> consumer, long maxRecords) throws SQLException {
+		batchScan(connectionFactory, pageableSql, setValues(args), page, pageSize, consumer, maxRecords);
 	}
 
 	public static void batchScan(ConnectionFactory connectionFactory, String sql, PreparedStatementCallback callback, int page,
-			int pageSize, Consumer<List<Tuple>> consumer) throws SQLException {
-		batchScan(connectionFactory, new DefaultPageableSql(sql), callback, page, pageSize, consumer);
+			int pageSize, Consumer<List<Tuple>> consumer, long maxRecords) throws SQLException {
+		batchScan(connectionFactory, new DefaultPageableSql(sql), callback, page, pageSize, consumer, maxRecords);
 	}
 
 	public static void batchScan(ConnectionFactory connectionFactory, PageableSql pageableSql, PreparedStatementCallback callback, int page,
-			int pageSize, Consumer<List<Tuple>> consumer) throws SQLException {
+			int pageSize, Consumer<List<Tuple>> consumer, long maxRecords) throws SQLException {
 		PageableQuery<Tuple> query = pageableQuery(connectionFactory, pageableSql, callback);
 		for (PageResponse<Tuple> pageResponse : query.forEach(page, pageSize)) {
 			consumer.accept(pageResponse.getContent());
+			if (maxRecords > 0 && pageResponse.getPageSize() * pageResponse.getPageNumber() > maxRecords) {
+				break;
+			}
 		}
 	}
 

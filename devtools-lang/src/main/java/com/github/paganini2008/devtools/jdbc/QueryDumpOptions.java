@@ -29,14 +29,6 @@ import com.github.paganini2008.devtools.collection.Tuple;
  */
 public interface QueryDumpOptions extends JdbcDumpOptions {
 
-	default String getCatalog() {
-		return null;
-	}
-
-	default String getSchema() {
-		return null;
-	}
-
 	String getInsertionSql(Tuple t);
 
 	default Object[] getArgs(Tuple t) {
