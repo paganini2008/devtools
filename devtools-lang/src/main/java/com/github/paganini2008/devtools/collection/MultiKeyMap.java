@@ -34,7 +34,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * MultiKeyMap
  * 
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 public class MultiKeyMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Serializable {
 
@@ -119,7 +119,7 @@ public class MultiKeyMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, S
 	 * ViewSet
 	 * 
 	 * @author Fred Feng
-	 * @version 1.0
+	 * @since 2.0.1
 	 */
 	static class ViewSet<T> extends AbstractSet<T> implements Serializable {
 
@@ -146,7 +146,7 @@ public class MultiKeyMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, S
 	 * CombinedEntry
 	 * 
 	 * @author Fred Feng
-	 * @version 1.0
+	 * @since 2.0.1
 	 */
 	static class CombinedEntry<K, V> implements Map.Entry<K, V>, Serializable {
 

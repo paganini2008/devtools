@@ -20,7 +20,7 @@ package com.github.paganini2008.devtools.collection;
  * BoundedMap
  *
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 public interface BoundedMap<K, V> {
 

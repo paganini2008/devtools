@@ -21,7 +21,7 @@ package com.github.paganini2008.devtools.io.filter;
  * 
  * @author Fred Feng
  * 
- * @version 1.0
+ * @since 2.0.1
  */
 public enum Operator {
 	GT, GTE, LT, LTE, EQ, NE;

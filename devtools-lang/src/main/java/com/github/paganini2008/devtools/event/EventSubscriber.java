@@ -21,7 +21,7 @@ package com.github.paganini2008.devtools.event;
  * 
  * @author Fred Feng
  * 
- * @version 1.0
+ * @since 2.0.1
  */
 public interface EventSubscriber<E extends Event<T>, T> extends Comparable<EventSubscriber<E, T>> {
 

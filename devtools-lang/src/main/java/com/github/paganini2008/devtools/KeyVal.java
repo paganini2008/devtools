@@ -22,7 +22,7 @@ import java.io.Serializable;
  * KeyVal
  *
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 public class KeyVal<K, V> implements Serializable {
 

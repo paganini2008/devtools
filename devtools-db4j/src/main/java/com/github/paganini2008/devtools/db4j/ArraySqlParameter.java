@@ -19,7 +19,7 @@ package com.github.paganini2008.devtools.db4j;
  * ArraySqlParameter
  * 
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 public class ArraySqlParameter extends AbstractSqlParameter implements SqlParameter {
 

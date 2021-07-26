@@ -32,7 +32,7 @@ import com.github.paganini2008.devtools.Comparables;
  *
  * @author Fred Feng
  * 
- * @version 1.0
+ * @since 2.0.1
  */
 public abstract class KeyMatchedMap<K extends Comparable<K>, V> extends AbstractMap<K, V> implements Map<K, V>, Serializable {
 

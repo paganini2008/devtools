@@ -27,7 +27,7 @@ import com.github.paganini2008.devtools.comparator.ReverseComparator;
  * MapComparator
  * 
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 @SuppressWarnings("all")
 public class MapComparator<K, V> extends AbstractComparator<Map<K, V>> {

@@ -25,7 +25,7 @@ import java.util.function.Function;
  * 
  * @author Fred Feng
  *
- * @version 1.0
+ * @since 2.0.1
  */
 public abstract class Provider<T, R> implements Function<T, R> {
 

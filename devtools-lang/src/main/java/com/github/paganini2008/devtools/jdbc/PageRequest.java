@@ -18,10 +18,10 @@ package com.github.paganini2008.devtools.jdbc;
 /**
  * 
  * PageRequest
- * 
+ *
  * @author Fred Feng
- * 
- * 
+ *
+ * @since 2.0.1
  */
 public interface PageRequest {
 

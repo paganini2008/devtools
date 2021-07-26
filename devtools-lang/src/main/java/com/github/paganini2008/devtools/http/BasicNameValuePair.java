@@ -21,7 +21,7 @@ import java.io.InputStream;
  * BasicNameValuePair
  * 
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 public class BasicNameValuePair implements NameValuePair {
 

@@ -33,7 +33,7 @@ import com.github.paganini2008.devtools.Sequence;
  * Jdk14ThreadPool
  * 
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 public class Jdk14ThreadPool implements ThreadPool {
 
@@ -113,7 +113,7 @@ public class Jdk14ThreadPool implements ThreadPool {
 	 * @author Fred Feng
 	 * 
 	 * 
-	 * @version 1.0
+	 * @since 2.0.1
 	 */
 	class IdleQueueKeeper implements Executable {
 
@@ -137,7 +137,7 @@ public class Jdk14ThreadPool implements ThreadPool {
 	 * @author Fred Feng
 	 * 
 	 * 
-	 * @version 1.0
+	 * @since 2.0.1
 	 */
 	static class Reference<R> {
 
@@ -169,7 +169,7 @@ public class Jdk14ThreadPool implements ThreadPool {
 	 * @author Fred Feng
 	 * 
 	 * 
-	 * @version 1.0
+	 * @since 2.0.1
 	 */
 	static class PromiseRunnable<R> implements Runnable {
 
@@ -331,7 +331,7 @@ public class Jdk14ThreadPool implements ThreadPool {
 	 * @author Fred Feng
 	 * 
 	 * 
-	 * @version 1.0
+	 * @since 2.0.1
 	 */
 	static class Sync {
 
@@ -428,7 +428,7 @@ public class Jdk14ThreadPool implements ThreadPool {
 	 * @author Fred Feng
 	 * 
 	 * 
-	 * @version 1.0
+	 * @since 2.0.1
 	 */
 	class PoolManager {
 
@@ -492,7 +492,7 @@ public class Jdk14ThreadPool implements ThreadPool {
 	 * @author Fred Feng
 	 * 
 	 * 
-	 * @version 1.0
+	 * @since 2.0.1
 	 */
 	class WorkerThread implements Runnable {
 

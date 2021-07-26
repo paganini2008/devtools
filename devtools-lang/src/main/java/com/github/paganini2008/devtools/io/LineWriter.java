@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * LineWriter
  * 
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 public class LineWriter extends BufferedWriter {
 

@@ -30,7 +30,7 @@ import com.github.paganini2008.devtools.primitives.Chars;
  * StringUtils
  * 
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 public abstract class StringUtils {
 

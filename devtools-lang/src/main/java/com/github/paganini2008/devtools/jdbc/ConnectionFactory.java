@@ -23,13 +23,19 @@ import java.sql.SQLException;
  * ConnectionFactory
  * 
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 public interface ConnectionFactory {
 
 	Connection getConnection() throws SQLException;
 
-	default void close(Connection connection) {
+	default Connection getConnection(String catalog, String schema) throws SQLException {
+		Connection connection = getConnection();
+		JdbcUtils.setPath(connection, catalog, schema);
+		return connection;
+	}
+
+	default void close(Connection connection) throws SQLException {
 		JdbcUtils.closeQuietly(connection);
 	}
 

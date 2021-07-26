@@ -25,7 +25,7 @@ import com.github.paganini2008.devtools.date.DateUtils;
  * TaskExecutor
  *
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 public interface TaskExecutor {
 
@@ -84,7 +84,7 @@ public interface TaskExecutor {
 	 * TaskDetail
 	 *
 	 * @author Fred Feng
-	 * @version 1.0
+	 * @since 2.0.1
 	 */
 	public interface TaskDetail {
 
@@ -113,7 +113,7 @@ public interface TaskExecutor {
 	 * TaskFuture
 	 *
 	 * @author Fred Feng
-	 * @version 1.0
+	 * @since 2.0.1
 	 */
 	public interface TaskFuture {
 

@@ -26,7 +26,7 @@ import java.lang.reflect.Proxy;
  * 
  * @author Fred Feng
  *
- * @since 1.0
+ * @since 2.0.1
  */
 public class JdkProxyFactory implements ProxyFactory {
 
@@ -44,7 +44,7 @@ public class JdkProxyFactory implements ProxyFactory {
 	 * 
 	 * @author Fred Feng
 	 *
-	 * @since 1.0
+	 * @since 2.0.1
 	 */
 	private static class JdkProxyInterceptor implements InvocationHandler {
 

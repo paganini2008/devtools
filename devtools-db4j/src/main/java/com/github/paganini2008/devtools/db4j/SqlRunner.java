@@ -46,7 +46,7 @@ import com.github.paganini2008.devtools.jdbc.PreparedStatementCallback;
  * SqlRunner
  *
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 public class SqlRunner {
 
@@ -564,7 +564,7 @@ public class SqlRunner {
 	 * PageableQueryImpl
 	 *
 	 * @author Fred Feng
-	 * @version 1.0
+	 * @since 2.0.1
 	 */
 	private static class PageableQueryImpl<T> extends PageableResultSetSlice<T> implements PageableQuery<T> {
 

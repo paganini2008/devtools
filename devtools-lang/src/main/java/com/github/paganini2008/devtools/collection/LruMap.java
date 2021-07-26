@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
  * 
  * @author Fred Feng
  * 
- * @version 1.0
+ * @since 2.0.1
  * @see LinkedHashMap
  */
 public class LruMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Serializable, BoundedMap<K, V> {

@@ -34,6 +34,7 @@ import com.github.paganini2008.devtools.CaseFormat;
 import com.github.paganini2008.devtools.CaseFormats;
 import com.github.paganini2008.devtools.Observable;
 import com.github.paganini2008.devtools.Observer;
+import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.Tuple;
 import com.github.paganini2008.devtools.converter.ConvertUtils;
@@ -42,7 +43,7 @@ import com.github.paganini2008.devtools.converter.ConvertUtils;
  * JdbcUtils
  * 
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 public abstract class JdbcUtils {
 
@@ -142,6 +143,19 @@ public abstract class JdbcUtils {
 		try {
 			rollbackAndClose(connection);
 		} catch (SQLException e) {
+		}
+	}
+
+	public static void setPath(Connection connection, String catalog, String schema) throws SQLException {
+		if (StringUtils.isNotBlank(catalog)) {
+			if (StringUtils.notEquals(connection.getCatalog(), catalog)) {
+				connection.setCatalog(catalog);
+			}
+		}
+		if (StringUtils.isNotBlank(schema)) {
+			if (StringUtils.notEquals(connection.getSchema(), schema)) {
+				connection.setSchema(schema);
+			}
 		}
 	}
 
@@ -420,7 +434,7 @@ public abstract class JdbcUtils {
 	 * CursorImpl
 	 *
 	 * @author Fred Feng
-	 * @version 1.0
+	 * @since 2.0.1
 	 */
 	static class CursorImpl implements Cursor<Tuple> {
 
@@ -498,17 +512,32 @@ public abstract class JdbcUtils {
 		CollectionUtils.forEach(cursor).forEach(consumer);
 	}
 
-	public static void scan(ConnectionFactory connectionFactory, PageableSql pageableSql, Object[] args, int page, int pageSize,
-			Consumer<List<Tuple>> consumer) throws SQLException {
-		scan(connectionFactory, pageableSql, setValues(args), page, pageSize, consumer);
+	public static void batchScan(DataSource dataSource, String sql, Object[] args, int page, int pageSize, Consumer<List<Tuple>> consumer)
+			throws SQLException {
+		batchScan(new PooledConnectionFactory(dataSource), sql, args, page, pageSize, consumer);
 	}
 
-	public static void scan(ConnectionFactory connectionFactory, String sql, PreparedStatementCallback callback, int page, int pageSize,
+	public static void batchScan(DataSource dataSource, String sql, PreparedStatementCallback callback, int page, int pageSize,
 			Consumer<List<Tuple>> consumer) throws SQLException {
-		scan(connectionFactory, new DefaultPageableSql(sql), callback, page, pageSize, consumer);
+		batchScan(new PooledConnectionFactory(dataSource), sql, callback, page, pageSize, consumer);
 	}
 
-	public static void scan(ConnectionFactory connectionFactory, PageableSql pageableSql, PreparedStatementCallback callback, int page,
+	public static void batchScan(ConnectionFactory connectionFactory, String sql, Object[] args, int page, int pageSize,
+			Consumer<List<Tuple>> consumer) throws SQLException {
+		batchScan(connectionFactory, new DefaultPageableSql(sql), args, page, pageSize, consumer);
+	}
+
+	public static void batchScan(ConnectionFactory connectionFactory, PageableSql pageableSql, Object[] args, int page, int pageSize,
+			Consumer<List<Tuple>> consumer) throws SQLException {
+		batchScan(connectionFactory, pageableSql, setValues(args), page, pageSize, consumer);
+	}
+
+	public static void batchScan(ConnectionFactory connectionFactory, String sql, PreparedStatementCallback callback, int page,
+			int pageSize, Consumer<List<Tuple>> consumer) throws SQLException {
+		batchScan(connectionFactory, new DefaultPageableSql(sql), callback, page, pageSize, consumer);
+	}
+
+	public static void batchScan(ConnectionFactory connectionFactory, PageableSql pageableSql, PreparedStatementCallback callback, int page,
 			int pageSize, Consumer<List<Tuple>> consumer) throws SQLException {
 		PageableQuery<Tuple> query = pageableQuery(connectionFactory, pageableSql, callback);
 		for (PageResponse<Tuple> pageResponse : query.forEach(page, pageSize)) {
@@ -607,15 +636,46 @@ public abstract class JdbcUtils {
 		}
 	}
 
-	public static Cursor<Tuple> describe(Connection connection, String tableName) throws SQLException {
-		return describe(connection, null, null, tableName);
+	public static Cursor<Tuple> getTableMetadata(Connection connection, String tableName) throws SQLException {
+		return getTableMetadata(connection, null, null, tableName);
 	}
 
-	public static Cursor<Tuple> describe(Connection connection, String catalog, String schema, String tableName) throws SQLException {
+	public static Cursor<Tuple> getTableMetadata(Connection connection, String catalog, String schema, String tableName)
+			throws SQLException {
 		ResultSet rs = null;
 		Observable observable = Observable.unrepeatable();
 		try {
 			rs = connection.getMetaData().getColumns(catalog, schema, tableName, null);
+			return new CursorImpl(rs, CaseFormats.LOWER_CAMEL, observable);
+		} finally {
+			closeLazily(observable, rs, null, null);
+		}
+	}
+
+	public static Cursor<Tuple> getPkMetadata(Connection connection, String tableName) throws SQLException {
+		return getPkMetadata(connection, null, null, tableName);
+	}
+
+	public static Cursor<Tuple> getPkMetadata(Connection connection, String catalog, String schema, String tableName) throws SQLException {
+		ResultSet rs = null;
+		Observable observable = Observable.unrepeatable();
+		try {
+			rs = connection.getMetaData().getPrimaryKeys(catalog, schema, tableName);
+			return new CursorImpl(rs, CaseFormats.LOWER_CAMEL, observable);
+		} finally {
+			closeLazily(observable, rs, null, null);
+		}
+	}
+
+	public static Cursor<Tuple> getFkMetadata(Connection connection, String tableName) throws SQLException {
+		return getFkMetadata(connection, null, null, tableName);
+	}
+
+	public static Cursor<Tuple> getFkMetadata(Connection connection, String catalog, String schema, String tableName) throws SQLException {
+		ResultSet rs = null;
+		Observable observable = Observable.unrepeatable();
+		try {
+			rs = connection.getMetaData().getImportedKeys(catalog, schema, tableName);
 			return new CursorImpl(rs, CaseFormats.LOWER_CAMEL, observable);
 		} finally {
 			closeLazily(observable, rs, null, null);

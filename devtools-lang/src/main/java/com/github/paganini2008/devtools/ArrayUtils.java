@@ -36,7 +36,7 @@ import com.github.paganini2008.devtools.primitives.Shorts;
  * ArrayUtils
  *
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 @SuppressWarnings("all")
 public abstract class ArrayUtils {
@@ -400,7 +400,11 @@ public abstract class ArrayUtils {
 	}
 
 	public static String join(Object[] array) {
-		return join(array, true);
+		return join(array, ",");
+	}
+
+	public static String join(Object[] array, String delimiter) {
+		return join(array, delimiter, true);
 	}
 
 	public static String join(Object[] array, boolean trim) {

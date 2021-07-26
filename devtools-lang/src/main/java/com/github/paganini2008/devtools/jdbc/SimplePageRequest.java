@@ -20,9 +20,10 @@ import java.io.Serializable;
 /**
  * 
  * SimplePageRequest
- * 
+ *
  * @author Fred Feng
- * 
+ *
+ * @since 2.0.1
  */
 public class SimplePageRequest implements PageRequest, Serializable {
 

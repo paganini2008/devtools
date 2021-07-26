@@ -23,7 +23,7 @@ import java.util.Map;
  * Jdbc data type
  * 
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 public enum JdbcType {
 

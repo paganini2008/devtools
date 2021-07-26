@@ -32,7 +32,7 @@ import com.github.paganini2008.devtools.collection.CaseInsensitiveMap;
  * @author Fred Feng
  * 
  * 
- * @version 1.0
+ * @since 2.0.1
  */
 @SuppressWarnings("unchecked")
 public abstract class HttpBaseImpl<T extends HttpBase<T>> implements HttpBase<T>, Serializable {

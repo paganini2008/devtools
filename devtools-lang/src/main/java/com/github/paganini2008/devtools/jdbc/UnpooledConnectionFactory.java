@@ -18,14 +18,12 @@ package com.github.paganini2008.devtools.jdbc;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import com.github.paganini2008.devtools.beans.ToStringBuilder;
-
 /**
  * 
  * UnpooledConnectionFactory
  * 
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 public class UnpooledConnectionFactory implements ConnectionFactory {
 
@@ -35,6 +33,8 @@ public class UnpooledConnectionFactory implements ConnectionFactory {
 	private String password;
 	private Boolean autoCommit;
 	private TransactionIsolationLevel transactionIsolationLevel;
+	private String catalog;
+	private String schema;
 
 	public UnpooledConnectionFactory() {
 	}
@@ -111,8 +111,26 @@ public class UnpooledConnectionFactory implements ConnectionFactory {
 		return connection;
 	}
 
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this, new String[] { "connection" });
+	public String getCatalog() {
+		return catalog;
+	}
+
+	public void setCatalog(String catalog) {
+		this.catalog = catalog;
+	}
+
+	public String getSchema() {
+		return schema;
+	}
+
+	public void setSchema(String schema) {
+		this.schema = schema;
+	}
+
+	@Override
+	public void close(Connection connection) throws SQLException {
+		JdbcUtils.setPath(connection, catalog, schema);
+		JdbcUtils.closeQuietly(connection);
 	}
 
 }

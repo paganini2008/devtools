@@ -25,7 +25,7 @@ import java.util.Map;
  * 
  * @author Fred Feng
  *
- * @since 1.0
+ * @since 2.0.1
  */
 public abstract class Console {
 
@@ -35,9 +35,22 @@ public abstract class Console {
 		}
 	}
 
+	public static void err(String msg) {
+		if (StringUtils.isNotBlank(msg)) {
+			System.err.println(msg);
+		}
+	}
+
 	public static void logf(String msg, Object... args) {
 		if (StringUtils.isNotBlank(msg)) {
 			System.out.printf(msg, args);
+			System.out.println();
+		}
+	}
+
+	public static void errf(String msg, Object... args) {
+		if (StringUtils.isNotBlank(msg)) {
+			System.err.printf(msg, args);
 			System.out.println();
 		}
 	}
@@ -50,10 +63,26 @@ public abstract class Console {
 		}
 	}
 
+	public static <T> void err(Enumeration<T> en) {
+		if (en != null) {
+			while (en.hasMoreElements()) {
+				System.err.println(en.nextElement());
+			}
+		}
+	}
+
 	public static <T> void log(Iterator<T> it) {
 		if (it != null) {
 			while (it.hasNext()) {
 				System.out.println(it.next());
+			}
+		}
+	}
+
+	public static <T> void err(Iterator<T> it) {
+		if (it != null) {
+			while (it.hasNext()) {
+				System.err.println(it.next());
 			}
 		}
 	}
@@ -66,6 +95,14 @@ public abstract class Console {
 		}
 	}
 
+	public static <T> void err(Iterable<T> iterable) {
+		if (iterable != null) {
+			for (T t : iterable) {
+				System.err.println(t);
+			}
+		}
+	}
+
 	public static <T> void log(T[] array) {
 		if (array != null) {
 			for (T t : array) {
@@ -74,10 +111,26 @@ public abstract class Console {
 		}
 	}
 
+	public static <T> void err(T[] array) {
+		if (array != null) {
+			for (T t : array) {
+				System.err.println(t);
+			}
+		}
+	}
+
 	public static <K, V> void log(Map<K, V> map) {
 		if (map != null) {
 			for (Map.Entry<K, V> en : map.entrySet()) {
 				System.out.println(en);
+			}
+		}
+	}
+
+	public static <K, V> void err(Map<K, V> map) {
+		if (map != null) {
+			for (Map.Entry<K, V> en : map.entrySet()) {
+				System.err.println(en);
 			}
 		}
 	}

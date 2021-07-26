@@ -20,7 +20,7 @@ package com.github.paganini2008.devtools.event;
  * EventGroup
  *
  * @author Fred Feng
- * @since 1.0
+ * @since 2.0.1
  */
 public interface EventGroup<E extends Event<T>, T> extends EventSubscriber<E, T> {
 

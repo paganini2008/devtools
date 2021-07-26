@@ -22,7 +22,7 @@ import java.util.Map;
  * MapSqlParameters
  * 
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 public class MapSqlParameters extends AbstractSqlParameter implements SqlParameters {
 

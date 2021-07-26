@@ -25,20 +25,36 @@ import javax.sql.DataSource;
  * PooledConnectionFactory
  * 
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 public class PooledConnectionFactory implements ConnectionFactory {
 
 	private final DataSource dataSource;
+	private final String catalog;
+	private final String schema;
 
 	public PooledConnectionFactory(DataSource dataSource) {
-		this.dataSource = dataSource;
+		this(dataSource, null, null);
 	}
 
+	public PooledConnectionFactory(DataSource dataSource, String catalog, String schema) {
+		this.dataSource = dataSource;
+		this.catalog = catalog;
+		this.schema = schema;
+	}
+
+	@Override
 	public Connection getConnection() throws SQLException {
 		return dataSource.getConnection();
 	}
-	
+
+	@Override
+	public void close(Connection connection) throws SQLException {
+		JdbcUtils.setPath(connection, catalog, schema);
+		JdbcUtils.closeQuietly(connection);
+	}
+
+	@Override
 	public String toString() {
 		return dataSource.toString();
 	}

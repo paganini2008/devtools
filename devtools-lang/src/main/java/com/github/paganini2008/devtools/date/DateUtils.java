@@ -23,17 +23,24 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import com.github.paganini2008.devtools.Assert;
+import com.github.paganini2008.devtools.Console;
 import com.github.paganini2008.devtools.collection.LruMap;
 
 /**
  * DateUtils
  * 
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 public abstract class DateUtils {
 
@@ -488,8 +495,115 @@ public abstract class DateUtils {
 		return timeUnit != TimeUnit.NANOSECONDS ? TimeUnit.NANOSECONDS.convert(interval, timeUnit) : interval;
 	}
 
+	public static <R> Map<Date, R> populate(Date from, int days, int interval, int calendarField, Function<Calendar, R> valueHandler) {
+		return populate(from, addDays(from, days), interval, calendarField, valueHandler);
+	}
+
+	public static <R> Map<Date, R> populate(Date from, Date to, int interval, int calendarField, Function<Calendar, R> valueHandler) {
+		return populate(from, to, interval, calendarField, c -> c.getTime(), valueHandler);
+	}
+
+	public static <T, R> Map<T, R> populate(Date from, int days, int interval, int calendarField, Function<Calendar, T> keyHandler,
+			Function<Calendar, R> valueHandler) {
+		return populate(from, addDays(from, days), interval, calendarField, keyHandler, valueHandler);
+	}
+
+	public static <T, R> Map<T, R> populate(Date from, Date to, int interval, int calendarField, Function<Calendar, T> keyHandler,
+			Function<Calendar, R> valueHandler) {
+		Map<T, R> data = new LinkedHashMap<T, R>();
+		Iterator<Calendar> dateIterator = toIterator(from, to, interval, calendarField);
+		Calendar calendar;
+		while (dateIterator.hasNext()) {
+			calendar = dateIterator.next();
+			data.put(keyHandler.apply(calendar), valueHandler.apply(calendar));
+		}
+		return data;
+	}
+
+	public static Iterator<Calendar> toIterator(Date from, int days, int interval, int calendarField) {
+		return new DateIterator(from, addDays(from, days), interval, calendarField);
+	}
+
+	public static Iterator<Calendar> toIterator(Date from, Date to, int interval, int calendarField) {
+		return from.before(to) ? new DateIterator(from, to, interval, calendarField)
+				: new ReverseDateIterator(from, to, interval, calendarField);
+	}
+
+	/**
+	 * 
+	 * DateIterator
+	 * 
+	 * @author Fred Feng
+	 *
+	 * @since 2.0.2
+	 */
+	static class DateIterator implements Iterator<Calendar> {
+
+		private final Date to;
+		private final Calendar calendar;
+		private final int interval;
+		private final int calendarField;
+
+		DateIterator(Date from, Date to, int interval, int calendarField) {
+			this.calendar = CalendarUtils.toCalendar(from, null);
+			this.to = to;
+			this.interval = interval;
+			this.calendarField = calendarField;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return calendar.getTime().compareTo(to) < 0;
+		}
+
+		@Override
+		public Calendar next() {
+			Calendar copy = (Calendar) calendar.clone();
+			calendar.add(calendarField, interval);
+			return copy;
+		}
+
+	}
+
+	/**
+	 * 
+	 * ReverseDateIterator
+	 * 
+	 * @author Fred Feng
+	 *
+	 * @since 2.0.2
+	 */
+	static class ReverseDateIterator implements Iterator<Calendar> {
+
+		private final Date to;
+		private final Calendar calendar;
+		private final int interval;
+		private final int calendarField;
+
+		ReverseDateIterator(Date from, Date to, int interval, int calendarField) {
+			this.calendar = CalendarUtils.toCalendar(from, null);
+			this.to = to;
+			this.interval = interval;
+			this.calendarField = calendarField;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return calendar.getTime().compareTo(to) > 0;
+		}
+
+		@Override
+		public Calendar next() {
+			Calendar copy = (Calendar) calendar.clone();
+			calendar.add(calendarField, -1 * interval);
+			return copy;
+		}
+
+	}
+
 	public static void main(String[] args) throws Exception {
-		System.out.println(getWeekOfMonth());
+		Map<Date, Object> result = populate(addDays(new Date(), 10), new Date(), 1, Calendar.DAY_OF_MONTH, c -> new HashMap<>());
+		Console.log(new TreeMap<Date, Object>(result));
 	}
 
 }

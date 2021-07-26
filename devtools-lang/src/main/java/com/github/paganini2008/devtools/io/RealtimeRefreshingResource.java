@@ -30,7 +30,7 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
  * RealtimeRefreshingResource
  * 
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 public class RealtimeRefreshingResource implements Resource, Executable {
 

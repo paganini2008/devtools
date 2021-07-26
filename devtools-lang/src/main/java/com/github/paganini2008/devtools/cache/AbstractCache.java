@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  * 
  * @author Fred Feng
  * 
- * @version 1.0
+ * @since 2.0.1
  */
 public abstract class AbstractCache implements Cache {
 
@@ -65,7 +65,7 @@ public abstract class AbstractCache implements Cache {
 	 * CacheIterator
 	 *
 	 * @author Fred Feng
-	 * @version 1.0
+	 * @since 2.0.1
 	 */
 	private static class CacheIterator implements Iterator<Object> {
 

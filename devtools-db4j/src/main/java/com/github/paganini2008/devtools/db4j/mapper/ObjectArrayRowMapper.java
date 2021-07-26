@@ -21,7 +21,7 @@ import com.github.paganini2008.devtools.db4j.JdbcType;
  * ObjectArrayRowMapper
  * 
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 public class ObjectArrayRowMapper extends AbstractRowMapper<Object[]> {
 

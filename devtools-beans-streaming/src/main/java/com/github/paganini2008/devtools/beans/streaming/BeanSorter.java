@@ -29,7 +29,7 @@ import com.github.paganini2008.devtools.comparator.ReverseComparator;
  * BeanSorter
  * 
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 @SuppressWarnings("all")
 public class BeanSorter<E> extends AbstractComparator<E> implements Sorter<E> {
@@ -40,7 +40,7 @@ public class BeanSorter<E> extends AbstractComparator<E> implements Sorter<E> {
 	 * 
 	 * @author Fred Feng
 	 * 
-	 * @version 1.0
+	 * @since 2.0.1
 	 */
 	static class ComparatorChain<E, T extends Comparable<T>> implements Comparator<E> {
 

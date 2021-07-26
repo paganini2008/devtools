@@ -36,7 +36,7 @@ import com.github.paganini2008.devtools.Assert;
  * SerializationUtils
  * 
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 @SuppressWarnings("all")
 public abstract class SerializationUtils {

@@ -33,7 +33,7 @@ import com.github.paganini2008.devtools.event.EventSubscriber;
  * Clock
  *
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 public final class Clock implements Executable {
 
@@ -197,7 +197,7 @@ public final class Clock implements Executable {
 	 * 
 	 * @author Fred Feng
 	 *
-	 * @since 1.0
+	 * @since 2.0.1
 	 */
 	static class ClockEvent extends Event<String> implements Cloneable {
 

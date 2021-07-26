@@ -28,7 +28,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * 
  * @author Fred Feng
  * 
- * @version 1.0
+ * @since 2.0.1
  */
 public class LruSet<E> extends AbstractSet<E> implements Set<E>, Serializable, BoundedCollection<E> {
 

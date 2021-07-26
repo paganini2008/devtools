@@ -23,7 +23,7 @@ import java.util.function.Function;
  * Day
  *
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 public interface Day extends Iterator<Day>, CronExpression {
 

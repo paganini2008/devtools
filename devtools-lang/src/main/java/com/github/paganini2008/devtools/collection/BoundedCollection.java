@@ -20,7 +20,7 @@ package com.github.paganini2008.devtools.collection;
  * BoundedCollection
  *
  * @author Fred Feng
- * @version 1.0
+ * @since 2.0.1
  */
 public interface BoundedCollection<E> {
 
