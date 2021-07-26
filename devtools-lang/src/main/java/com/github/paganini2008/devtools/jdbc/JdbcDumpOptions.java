@@ -40,7 +40,7 @@ public interface JdbcDumpOptions {
 	}
 
 	default long getMaxRecords() {
-		return Long.MAX_VALUE;
+		return -1L;
 	}
 
 }

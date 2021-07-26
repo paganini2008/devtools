@@ -158,7 +158,7 @@ public class JdbcDumpTemplate {
 			QueryDumpOptions dumpOptions) throws SQLException {
 		AtomicLong rows = new AtomicLong();
 		if (progress != null) {
-			progress.onStart(catalog, schema, sql, args);
+			progress.onStart(catalog, schema, sql, args, dumpOptions);
 		}
 		ConnectionFactory connectionFactory = new InternalConnectionFactory(sourceConnectionFactory, catalog, schema);
 		long totalRecords = progress != null ? getTotalRecords(connectionFactory, sql, args) : 0;
@@ -178,9 +178,9 @@ public class JdbcDumpTemplate {
 									}
 								});
 							});
-					rows.addAndGet(effectedRows != null ? effectedRows.length : 0);
+					long progressRecords = rows.addAndGet(effectedRows != null ? effectedRows.length : 0);
 					if (progress != null) {
-						progress.progress(rows.get(), totalRecords);
+						progress.progress(catalog, schema, sql, args, progressRecords, totalRecords, dumpOptions);
 					}
 				} catch (SQLException e) {
 					throw new JdbcDumpException("Failed to execute batch writing operation", e);
@@ -195,7 +195,7 @@ public class JdbcDumpTemplate {
 
 		}, dumpOptions.getMaxRecords());
 		if (progress != null) {
-			progress.onEnd(catalog, schema, sql, args);
+			progress.onEnd(catalog, schema, sql, args, dumpOptions);
 		}
 		return rows.get();
 	}

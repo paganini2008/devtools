@@ -25,18 +25,20 @@ package com.github.paganini2008.devtools.jdbc;
  */
 public interface DumpProgress {
 
-	default void onStart(String catalog, String schema, String sql, Object[] args) {
+	default void onStart(String catalog, String schema, String sql, Object[] args, JdbcDumpOptions dumpOptions) {
 	}
 
-	void progress(long progressRecords, long totalRecords);
+	void progress(String catalog, String schema, String sql, Object[] args, long progressRecords, long totalRecords,
+			JdbcDumpOptions dumpOptions);
 
-	default void onEnd(String catalog, String schema, String sql, Object[] args) {
+	default void onEnd(String catalog, String schema, String sql, Object[] args, JdbcDumpOptions dumpOptions) {
 	}
 
 	static final DumpProgress DEFAULT = new DumpProgress() {
 
 		@Override
-		public void progress(long progressRecords, long totalRecords) {
+		public void progress(String catalog, String schema, String sql, Object[] args, long progressRecords, long totalRecords,
+				JdbcDumpOptions dumpOptions) {
 		}
 	};
 }
