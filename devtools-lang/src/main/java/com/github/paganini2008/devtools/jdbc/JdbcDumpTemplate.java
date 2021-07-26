@@ -17,6 +17,8 @@ package com.github.paganini2008.devtools.jdbc;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
@@ -29,6 +31,7 @@ import com.github.paganini2008.devtools.collection.ListUtils;
 import com.github.paganini2008.devtools.collection.MultiMappedMap;
 import com.github.paganini2008.devtools.collection.Tuple;
 import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
+import com.github.paganini2008.devtools.primitives.Longs;
 
 /**
  * 
@@ -53,8 +56,8 @@ public class JdbcDumpTemplate {
 		this.destinationConnectionFactory = destinationConnectionFactory;
 	}
 
-	public long dump(String catalog, String schema, DatabaseDumpOptions dumpOptions) throws SQLException {
-		AtomicLong rows = new AtomicLong();
+	public long[] dump(String catalog, String schema, DatabaseDumpOptions dumpOptions) throws SQLException {
+		List<Long> rows = new ArrayList<Long>();
 		Connection sourceConnection = null;
 		try {
 			sourceConnection = sourceConnectionFactory.getConnection(catalog, schema);
@@ -64,11 +67,11 @@ public class JdbcDumpTemplate {
 				String tableName = tuple.getProperty("tableName");
 				if (StringUtils.isNotBlank(tableName)) {
 					if (ArrayUtils.isEmpty(dumpOptions.excludeTables()) || ArrayUtils.notContains(dumpOptions.excludeTables(), tableName)) {
-						rows.addAndGet(dump(catalog, schema, tableName, new TableDumpOptionsWrapper(tableName, dumpOptions)));
+						rows.add(dump(catalog, schema, tableName, new TableDumpOptionsWrapper(tableName, dumpOptions)));
 					}
 				}
 			}
-			return rows.get();
+			return Longs.toArray(rows);
 		} finally {
 			sourceConnectionFactory.close(sourceConnection);
 		}
@@ -113,8 +116,9 @@ public class JdbcDumpTemplate {
 
 	}
 
-	public long dump(String catalog, String schema, int batchSize, DatabaseDumpOptions dumpOptions) throws SQLException {
-		AtomicLong rows = new AtomicLong();
+	public long[] dump(String catalog, String schema, int batchSize, DumpProgress progress, DatabaseDumpOptions dumpOptions)
+			throws SQLException {
+		List<Long> rows = new ArrayList<Long>();
 		Connection sourceConnection = null;
 		try {
 			sourceConnection = sourceConnectionFactory.getConnection(catalog, schema);
@@ -124,25 +128,41 @@ public class JdbcDumpTemplate {
 				String tableName = tuple.getProperty("tableName");
 				if (StringUtils.isNotBlank(tableName)) {
 					if (ArrayUtils.isEmpty(dumpOptions.excludeTables()) || ArrayUtils.notContains(dumpOptions.excludeTables(), tableName)) {
-						rows.addAndGet(dump(catalog, schema, tableName, batchSize, new TableDumpOptionsWrapper(tableName, dumpOptions)));
+						rows.add(
+								dump(catalog, schema, tableName, batchSize, progress, new TableDumpOptionsWrapper(tableName, dumpOptions)));
 					}
 				}
 			}
-			return rows.get();
+			return Longs.toArray(rows);
 		} finally {
 			sourceConnectionFactory.close(sourceConnection);
 		}
 
 	}
 
-	public long dump(String catalog, String schema, String tableName, int batchSize, QueryDumpOptions dumpOptions) throws SQLException {
-		return dump(catalog, schema, "select * from " + tableName, null, batchSize, dumpOptions);
+	public long dump(String catalog, String schema, String tableName, int batchSize, DumpProgress progress, QueryDumpOptions dumpOptions)
+			throws SQLException {
+		return dump(catalog, schema, "select * from " + tableName, null, batchSize, progress, dumpOptions);
 	}
 
-	public long dump(String catalog, String schema, String sql, Object[] args, int batchSize, QueryDumpOptions dumpOptions)
-			throws SQLException {
+	private long getTotalRecords(ConnectionFactory connectionFactory, String sql, Object[] args) throws SQLException {
+		Connection connection = connectionFactory.getConnection();
+		try {
+			return JdbcUtils.rowCount(connection, sql, args);
+		} finally {
+			connectionFactory.close(connection);
+		}
+	}
+
+	public long dump(String catalog, String schema, String sql, Object[] args, int batchSize, DumpProgress progress,
+			QueryDumpOptions dumpOptions) throws SQLException {
 		AtomicLong rows = new AtomicLong();
-		JdbcUtils.batchScan(new InternalConnectionFactory(sourceConnectionFactory, catalog, schema), sql, args, 1, batchSize, list -> {
+		if (progress != null) {
+			progress.onStart(catalog, schema, sql, args);
+		}
+		ConnectionFactory connectionFactory = new InternalConnectionFactory(sourceConnectionFactory, catalog, schema);
+		long totalRecords = progress != null ? getTotalRecords(connectionFactory, sql, args) : 0;
+		JdbcUtils.batchScan(connectionFactory, sql, args, 1, batchSize, list -> {
 			ExecutorUtils.runInBackground(dumpOptions.getExecutor(), () -> {
 				Connection destinationConnection = null;
 				try {
@@ -159,6 +179,9 @@ public class JdbcDumpTemplate {
 								});
 							});
 					rows.addAndGet(effectedRows != null ? effectedRows.length : 0);
+					if (progress != null) {
+						progress.progress(rows.get(), totalRecords);
+					}
 				} catch (SQLException e) {
 					throw new JdbcDumpException("Failed to execute batch writing operation", e);
 				} finally {
@@ -171,6 +194,9 @@ public class JdbcDumpTemplate {
 			});
 
 		}, dumpOptions.getMaxRecords());
+		if (progress != null) {
+			progress.onEnd(catalog, schema, sql, args);
+		}
 		return rows.get();
 	}
 
@@ -189,6 +215,11 @@ public class JdbcDumpTemplate {
 		@Override
 		public Connection getConnection() throws SQLException {
 			return delegate.getConnection(catalog, schema);
+		}
+
+		@Override
+		public Connection getConnection(String catalog, String schema) throws SQLException {
+			throw new UnsupportedOperationException();
 		}
 
 		@Override

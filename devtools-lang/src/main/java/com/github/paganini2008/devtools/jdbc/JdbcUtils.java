@@ -30,6 +30,7 @@ import java.util.function.Consumer;
 
 import javax.sql.DataSource;
 
+import com.github.paganini2008.devtools.ArrayUtils;
 import com.github.paganini2008.devtools.CaseFormat;
 import com.github.paganini2008.devtools.CaseFormats;
 import com.github.paganini2008.devtools.Observable;
@@ -45,6 +46,8 @@ import com.github.paganini2008.devtools.converter.ConvertUtils;
  * @since 2.0.1
  */
 public abstract class JdbcUtils {
+
+	public static final String SQL_ROW_COUNT = "select count(*) as rowCount from (%s) as t";
 
 	public static void close(Connection connection) throws SQLException {
 		if (connection != null) {
@@ -611,6 +614,19 @@ public abstract class JdbcUtils {
 		return ps -> {
 			setValues(ps, args);
 		};
+	}
+
+	public static long rowCount(Connection connection, String sql) throws SQLException {
+		return rowCount(connection, sql, ArrayUtils.EMPTY_OBJECT_ARRAY);
+	}
+
+	public static long rowCount(Connection connection, String sql, Object[] args) throws SQLException {
+		return rowCount(connection, sql, setValues(args));
+	}
+
+	public static long rowCount(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
+		Tuple tuple = fetchOne(connection, String.format(SQL_ROW_COUNT, sql), callback);
+		return tuple != null ? ((Number) tuple.get("rowCount")).longValue() : 0L;
 	}
 
 	public static boolean existsTable(Connection connection, String schema, String tableName) throws SQLException {
