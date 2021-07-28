@@ -55,8 +55,8 @@ public class JdbcDumpTemplate {
 		this.destinationConnectionFactory = destinationConnectionFactory;
 	}
 
-	public long[] dump(String catalog, String schema, String[] excludedTables, JdbcDumpOptions dumpOptions, DumpErrorHandler errorHandler)
-			throws SQLException {
+	public long[] dump(String catalog, String schema, String[] excludedTables, DumpProgress progress, JdbcDumpOptions dumpOptions,
+			DumpErrorHandler errorHandler) throws SQLException {
 		List<Long> rows = new ArrayList<Long>();
 		Connection sourceConnection = null;
 		try {
@@ -67,7 +67,7 @@ public class JdbcDumpTemplate {
 				String tableName = tuple.getProperty("tableName");
 				if (StringUtils.isNotBlank(tableName)) {
 					if (ArrayUtils.isEmpty(excludedTables) || ArrayUtils.notContains(excludedTables, tableName)) {
-						rows.add(dump(catalog, schema, tableName, new TableJdbcDumpOptions(tableName, dumpOptions), errorHandler));
+						rows.add(dump(catalog, schema, tableName, progress, dumpOptions, errorHandler));
 					}
 				}
 			}
@@ -78,11 +78,11 @@ public class JdbcDumpTemplate {
 
 	}
 
-	public long dump(String catalog, String schema, String tableName, JdbcDumpOptions dumpOptions, DumpErrorHandler errorHandler)
-			throws SQLException {
-		String sql = "select * from " + tableName;
+	public long dump(String catalog, String schema, String tableName, DumpProgress progress, JdbcDumpOptions dumpOptions,
+			DumpErrorHandler errorHandler) throws SQLException {
+		final String sql = "select * from " + tableName;
 		try {
-			return dump(catalog, schema, sql, null, new TableJdbcDumpOptions(tableName, dumpOptions));
+			return dump(catalog, schema, sql, null, progress, new TableJdbcDumpOptions(tableName, dumpOptions));
 		} catch (Exception e) {
 			if (errorHandler != null) {
 				errorHandler.handleError(catalog, schema, sql, null, e);
@@ -93,11 +93,16 @@ public class JdbcDumpTemplate {
 		}
 	}
 
-	public long dump(String catalog, String schema, String sql, Object[] args, JdbcDumpOptions dumpOptions) throws SQLException {
+	public long dump(String catalog, String schema, String sql, Object[] args, DumpProgress progress, JdbcDumpOptions dumpOptions)
+			throws SQLException {
 		AtomicLong rows = new AtomicLong();
+		if (progress != null) {
+			progress.onStart(catalog, schema, sql, args, dumpOptions);
+		}
 		Connection sourceConnection = null;
 		try {
 			sourceConnection = sourceConnectionFactory.getConnection(catalog, schema);
+			long totalRecords = progress != null ? JdbcUtils.rowCount(sourceConnection, sql, args) : 0;
 			JdbcUtils.scan(sourceConnection, sql, args, t -> {
 				ExecutorUtils.runInBackground(dumpOptions.getExecutor(), () -> {
 					Connection destinationConnection = null;
@@ -107,7 +112,10 @@ public class JdbcDumpTemplate {
 						int effectedRow = JdbcUtils.update(destinationConnection, dumpOptions.getInsertionSql(t), ps -> {
 							JdbcUtils.setValues(ps, dumpOptions.getArgs(t));
 						});
-						rows.addAndGet(effectedRow);
+						long progressRecords = rows.addAndGet(effectedRow);
+						if (progress != null) {
+							progress.progress(catalog, schema, sql, args, progressRecords, totalRecords, dumpOptions);
+						}
 					} catch (SQLException e) {
 						throw new JdbcDumpException("Failed to execute writing operation", e);
 					} finally {
@@ -120,6 +128,9 @@ public class JdbcDumpTemplate {
 				});
 
 			}, dumpOptions.getMaxRecords());
+			if (progress != null) {
+				progress.onEnd(catalog, schema, sql, args, dumpOptions);
+			}
 			return rows.get();
 		} finally {
 			sourceConnectionFactory.close(sourceConnection);
@@ -139,8 +150,7 @@ public class JdbcDumpTemplate {
 				String tableName = tuple.getProperty("tableName");
 				if (StringUtils.isNotBlank(tableName)) {
 					if (ArrayUtils.isEmpty(excludedTables) || ArrayUtils.notContains(excludedTables, tableName)) {
-						rows.add(dump(catalog, schema, tableName, batchSize, progress, new TableJdbcDumpOptions(tableName, dumpOptions),
-								errorHandler));
+						rows.add(dump(catalog, schema, tableName, batchSize, progress, dumpOptions, errorHandler));
 					}
 				}
 			}
@@ -153,7 +163,7 @@ public class JdbcDumpTemplate {
 
 	public long dump(String catalog, String schema, String tableName, int batchSize, DumpProgress progress, JdbcDumpOptions dumpOptions,
 			DumpErrorHandler errorHandler) throws SQLException {
-		String sql = "select * from " + tableName;
+		final String sql = "select * from " + tableName;
 		try {
 			return dump(catalog, schema, sql, null, batchSize, progress, new TableJdbcDumpOptions(tableName, dumpOptions));
 		} catch (Exception e) {
@@ -166,23 +176,23 @@ public class JdbcDumpTemplate {
 		}
 	}
 
-	private long getTotalRecords(ConnectionFactory connectionFactory, String sql, Object[] args) throws SQLException {
-		Connection connection = connectionFactory.getConnection();
-		try {
-			return JdbcUtils.rowCount(connection, sql, args);
-		} finally {
-			connectionFactory.close(connection);
-		}
-	}
-
 	public long dump(String catalog, String schema, String sql, Object[] args, int batchSize, DumpProgress progress,
 			JdbcDumpOptions dumpOptions) throws SQLException {
 		AtomicLong rows = new AtomicLong();
 		if (progress != null) {
 			progress.onStart(catalog, schema, sql, args, dumpOptions);
 		}
+
 		ConnectionFactory connectionFactory = new InternalConnectionFactory(sourceConnectionFactory, catalog, schema);
-		long totalRecords = progress != null ? getTotalRecords(connectionFactory, sql, args) : 0;
+		Connection countConnection = null;
+		long totalRecords;
+		try {
+			countConnection = connectionFactory.getConnection();
+			totalRecords = progress != null ? JdbcUtils.rowCount(countConnection, sql, args) : 0;
+		} finally {
+			connectionFactory.close(countConnection);
+		}
+
 		JdbcUtils.batchScan(connectionFactory, sql, args, 1, batchSize, list -> {
 			ExecutorUtils.runInBackground(dumpOptions.getExecutor(), () -> {
 				Connection destinationConnection = null;
@@ -253,41 +263,36 @@ public class JdbcDumpTemplate {
 
 		private static final String SQL_INSERTION = "insert into %s(%s) values (%s)";
 		private final String tableName;
-		private final JdbcDumpOptions dumpOptions;
+		private final JdbcDumpOptions delegate;
 
 		TableJdbcDumpOptions(String tableName, JdbcDumpOptions dumpOptions) {
 			this.tableName = tableName;
-			this.dumpOptions = dumpOptions;
+			this.delegate = dumpOptions;
 		}
 
 		@Override
 		public String getCatalog() {
-			return dumpOptions.getCatalog();
+			return delegate.getCatalog();
 		}
 
 		@Override
 		public String getSchema() {
-			return dumpOptions.getSchema();
-		}
-
-		@Override
-		public String getTableName() {
-			return tableName;
+			return delegate.getSchema();
 		}
 
 		@Override
 		public Executor getExecutor() {
-			return dumpOptions.getExecutor();
+			return delegate.getExecutor();
 		}
 
 		@Override
 		public long getMaxRecords() {
-			return dumpOptions.getMaxRecords();
+			return delegate.getMaxRecords();
 		}
 
 		@Override
 		public String getInsertionSql(Tuple t) {
-			String sql = dumpOptions.getInsertionSql(t);
+			String sql = delegate.getInsertionSql(t);
 			if (StringUtils.isNotBlank(sql)) {
 				return sql;
 			}
@@ -298,13 +303,14 @@ public class JdbcDumpTemplate {
 
 		@Override
 		public Predicate<Tuple> getPredicate() {
-			return dumpOptions.getPredicate();
+			return delegate.getPredicate();
 		}
 
 		@Override
 		public Object[] getArgs(Tuple t) {
-			return dumpOptions.getArgs(t);
+			return delegate.getArgs(t);
 		}
+
 	}
 
 }

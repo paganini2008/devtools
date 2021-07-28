@@ -38,10 +38,6 @@ public interface JdbcDumpOptions {
 		return null;
 	}
 
-	default String getTableName() {
-		return null;
-	}
-
 	default Executor getExecutor() {
 		return null;
 	}

@@ -47,7 +47,8 @@ import com.github.paganini2008.devtools.converter.ConvertUtils;
  */
 public abstract class JdbcUtils {
 
-	public static final String SQL_ROW_COUNT = "select count(*) as row_count from (%s) as t";
+	public static final String SQL_ROW_COUNT = "select count(*) as row_count from (%s) t";
+	public static final String DDL_TRUNCATE_TABLE = "truncate table %s";
 
 	public static void close(Connection connection) throws SQLException {
 		if (connection != null) {
@@ -627,6 +628,10 @@ public abstract class JdbcUtils {
 	public static long rowCount(Connection connection, String sql, PreparedStatementCallback callback) throws SQLException {
 		Tuple tuple = fetchOne(connection, String.format(SQL_ROW_COUNT, sql), callback);
 		return tuple != null ? ((Number) tuple.get("rowCount")).longValue() : 0L;
+	}
+
+	public static void truncateTable(Connection connection, String tableName) throws SQLException {
+		update(connection, String.format(DDL_TRUNCATE_TABLE, tableName));
 	}
 
 	public static boolean existsTable(Connection connection, String schema, String tableName) throws SQLException {
