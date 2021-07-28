@@ -259,7 +259,7 @@ public class JdbcDumpTemplate {
 		}
 	}
 
-	static class TableJdbcDumpOptions implements JdbcDumpOptions {
+	private static class TableJdbcDumpOptions implements JdbcDumpOptions {
 
 		private static final String SQL_INSERTION = "insert into %s(%s) values (%s)";
 		private final String tableName;
