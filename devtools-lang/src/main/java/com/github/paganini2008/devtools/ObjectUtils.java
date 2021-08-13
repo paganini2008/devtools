@@ -21,11 +21,9 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.MapUtils;
-import com.github.paganini2008.devtools.multithreads.ThreadUtils;
 import com.github.paganini2008.devtools.primitives.Booleans;
 import com.github.paganini2008.devtools.primitives.Bytes;
 import com.github.paganini2008.devtools.primitives.Chars;
@@ -243,22 +241,4 @@ public abstract class ObjectUtils {
 		return hash;
 	}
 
-	public static <T> T polling(Retryable<T> retryable) {
-		return polling(retryable, () -> null);
-	}
-
-	public static <T> T polling(Retryable<T> retryable, Supplier<T> defaultValue) {
-		int retryCount = 1;
-		do {
-			try {
-				if (retryable.tryAccept()) {
-					return retryable.accept();
-				}
-			} catch (Throwable e) {
-				retryable.exceptionCaught(e, retryCount);
-			}
-			ThreadUtils.sleep(retryable.retryInterval());
-		} while (!retryable.tryAccept() && retryCount++ <= retryable.maxAttempts());
-		return defaultValue.get();
-	}
 }
