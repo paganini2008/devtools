@@ -427,4 +427,34 @@ public abstract class ClassUtils {
 		return null;
 	}
 
+	public static boolean notContains(Class<?>[] types, Class<?> type) {
+		return !contains(types, type);
+	}
+
+	public static boolean notContains(Class<?>[] types, Class<?> type, boolean matched) {
+		return !contains(types, type, matched);
+	}
+
+	public static boolean contains(Class<?>[] types, Class<?> type) {
+		return contains(types, type, false);
+	}
+
+	public static boolean contains(Class<?>[] types, Class<?> type, boolean matched) {
+		if (types == null) {
+			return false;
+		}
+		for (int i = 0, l = types.length; i < l; i++) {
+			if (matched) {
+				if (types[i].equals(type)) {
+					return true;
+				}
+			} else {
+				if (isAssignableFrom(types[i], type)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 }

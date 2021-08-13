@@ -24,14 +24,14 @@ package com.github.paganini2008.devtools.multithreads;
  */
 public interface Executable {
 
-	boolean execute();
+	boolean execute() throws Throwable;
 
-	default boolean onError(Throwable cause) {
-		cause.printStackTrace();
+	default boolean onError(Throwable e) {
+		e.printStackTrace();
 		return false;
 	}
 
-	default void onCancellation(Throwable cause) {
+	default void onCancellation(Throwable e) {
 	}
 
 }

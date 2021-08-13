@@ -18,7 +18,6 @@ package com.github.paganini2008.devtools.multithreads;
 import static com.github.paganini2008.devtools.date.DateUtils.convertToMillis;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
@@ -234,17 +233,17 @@ public abstract class ThreadUtils {
 		final Timer timer = new Timer();
 		timer.scheduleAtFixedRate(new TimerTask() {
 			public void run() {
-				Exception throwing = null;
+				Throwable thrown = null;
 				boolean result = true;
 				try {
 					result = e.execute();
-				} catch (Exception error) {
-					throwing = error;
+				} catch (Throwable error) {
+					thrown = error;
 					result = e.onError(error);
 				} finally {
 					if (!result) {
 						timer.cancel();
-						e.onCancellation(throwing);
+						e.onCancellation(thrown);
 					}
 				}
 			}
@@ -280,17 +279,17 @@ public abstract class ThreadUtils {
 		final Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
 			public void run() {
-				Throwable throwing = null;
+				Throwable thrown = null;
 				boolean result = true;
 				try {
 					result = e.execute();
 				} catch (Throwable error) {
-					throwing = error;
+					thrown = error;
 					result = e.onError(error);
 				} finally {
 					if (!result) {
 						timer.cancel();
-						e.onCancellation(throwing);
+						e.onCancellation(thrown);
 					}
 				}
 			}
@@ -307,35 +306,6 @@ public abstract class ThreadUtils {
 			}
 
 		};
-	}
-
-	/**
-	 * 
-	 * SerialExecutable
-	 * 
-	 * @author Fred Feng
-	 * 
-	 */
-	public static class SerialExecutable implements Executable {
-
-		private final List<Executable> executables;
-
-		SerialExecutable(Executable... executables) {
-			this.executables = Arrays.asList(executables);
-		}
-
-		public boolean execute() {
-			boolean result = true;
-			for (Executable executable : executables) {
-				result &= executable.execute();
-			}
-			return result;
-		}
-
-	}
-
-	public static Executable createSerial(Executable... executables) {
-		return new SerialExecutable(executables);
 	}
 
 	public static <T> void loop(int nThreads, int loops, Consumer<Integer> consumer) {

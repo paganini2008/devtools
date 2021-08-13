@@ -40,9 +40,13 @@ public class MultiListMap<K, V> extends AbstractMap<K, List<V>> implements Map<K
 	private final Supplier<List<V>> supplier;
 
 	public MultiListMap() {
-		this(new ConcurrentHashMap<K, List<V>>(), () -> {
+		this(() -> {
 			return new CopyOnWriteArrayList<V>();
 		});
+	}
+	
+	public MultiListMap(Supplier<List<V>> supplier) {
+		this(new ConcurrentHashMap<K, List<V>>(), supplier);
 	}
 
 	public MultiListMap(Map<K, List<V>> delegate, Supplier<List<V>> supplier) {

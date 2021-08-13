@@ -13,33 +13,30 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.github.paganini2008.devtools;
+package com.github.paganini2008.devtools.multithreads;
 
 /**
  * 
  * Retryable
  *
  * @author Fred Feng
- * @since 2.0.1
+ *
+ * @since 2.0.3
  */
-@Deprecated
-public interface Retryable<T> {
+public interface Retryable {
 
-	default boolean tryAccept() {
-		return true;
+	void execute() throws Throwable;
+
+	default int getMaxRetries() {
+		return Integer.MAX_VALUE;
 	}
 
-	T accept();
-
-	default void exceptionCaught(Throwable e, int retryCount) {
+	@SuppressWarnings("unchecked")
+	default Class<? extends Exception>[] captureClasses() {
+		return new Class[] { Exception.class };
 	}
 
-	default long retryInterval() {
-		return 1000L;
-	}
-
-	default int maxAttempts() {
-		return 0;
+	default void onError(int count, Throwable e) {
 	}
 
 }

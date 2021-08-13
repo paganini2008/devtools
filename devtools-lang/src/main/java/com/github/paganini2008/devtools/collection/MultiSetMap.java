@@ -42,13 +42,17 @@ public class MultiSetMap<K, V> extends AbstractMap<K, NavigableSet<V>> implement
 	private final Supplier<NavigableSet<V>> supplier;
 
 	public MultiSetMap() {
-		this(null);
+		this((left, right) -> 0);
 	}
 
 	public MultiSetMap(Comparator<V> c) {
 		this(new ConcurrentHashMap<K, NavigableSet<V>>(), () -> {
 			return new ConcurrentSkipListSet<V>(c);
 		});
+	}
+
+	public MultiSetMap(Supplier<NavigableSet<V>> supplier) {
+		this(new ConcurrentHashMap<K, NavigableSet<V>>(), supplier);
 	}
 
 	public MultiSetMap(Map<K, NavigableSet<V>> delegate, Supplier<NavigableSet<V>> supplier) {
