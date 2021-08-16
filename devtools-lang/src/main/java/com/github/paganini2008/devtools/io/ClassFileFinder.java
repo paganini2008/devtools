@@ -18,13 +18,21 @@ package com.github.paganini2008.devtools.io;
 import java.io.File;
 import java.net.URL;
 
-public class Finder {
+/**
+ * 
+ * ClassFileFinder
+ *
+ * @author Fred Feng
+ *
+ * @since 2.0.1
+ */
+public class ClassFileFinder {
 
 	private static final String classPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
 	private final String packageName;
 	private int maxDepth = -1;
 
-	public Finder(String packageName) {
+	public ClassFileFinder(String packageName) {
 		this.packageName = packageName;
 	}
 
