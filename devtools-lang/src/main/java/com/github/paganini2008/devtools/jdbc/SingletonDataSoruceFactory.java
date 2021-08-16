@@ -16,21 +16,27 @@
 package com.github.paganini2008.devtools.jdbc;
 
 import java.sql.SQLException;
-import java.util.Properties;
 
 import javax.sql.DataSource;
 
 /**
- * DataSourceFactory
  * 
+ * SingletonDataSoruceFactory
+ *
  * @author Fred Feng
- * @since 2.0.1
+ *
+ * @since 2.0.4
  */
-public interface DataSourceFactory {
+public class SingletonDataSoruceFactory implements DataSourceFactory {
 
-	default void setProperties(Properties config) throws SQLException {
+	private final DataSource dataSource;
+
+	public SingletonDataSoruceFactory(DataSource dataSource) {
+		this.dataSource = dataSource;
 	}
 
-	DataSource getDataSource() throws SQLException;
-
+	@Override
+	public DataSource getDataSource() throws SQLException {
+		return dataSource;
+	}
 }
