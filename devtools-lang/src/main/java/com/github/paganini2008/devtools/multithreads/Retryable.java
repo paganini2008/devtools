@@ -39,4 +39,8 @@ public interface Retryable {
 	default void onError(int count, Throwable e) {
 	}
 
+	default int getOrder() {
+		return 0;
+	}
+
 }
