@@ -19,6 +19,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -31,6 +32,54 @@ import java.util.concurrent.TimeUnit;
 public abstract class ExecutorUtils {
 
 	public static final int processorCount = Runtime.getRuntime().availableProcessors();
+
+	public static int getPoolSize(Executor executor, int defaultValue) {
+		if (executor instanceof ThreadPoolExecutor) {
+			return ((ThreadPoolExecutor) executor).getPoolSize();
+		} else {
+			return defaultValue;
+		}
+	}
+
+	public static int getCorePoolSize(Executor executor, int defaultValue) {
+		if (executor instanceof ThreadPoolExecutor) {
+			return ((ThreadPoolExecutor) executor).getCorePoolSize();
+		} else {
+			return defaultValue;
+		}
+	}
+
+	public static int getLargestPoolSize(Executor executor, int defaultValue) {
+		if (executor instanceof ThreadPoolExecutor) {
+			return ((ThreadPoolExecutor) executor).getLargestPoolSize();
+		} else {
+			return defaultValue;
+		}
+	}
+
+	public static int getMaximumPoolSize(Executor executor, int defaultValue) {
+		if (executor instanceof ThreadPoolExecutor) {
+			return ((ThreadPoolExecutor) executor).getMaximumPoolSize();
+		} else {
+			return defaultValue;
+		}
+	}
+
+	public static int getActiveCount(Executor executor, int defaultValue) {
+		if (executor instanceof ThreadPoolExecutor) {
+			return ((ThreadPoolExecutor) executor).getActiveCount();
+		} else {
+			return defaultValue;
+		}
+	}
+
+	public static long getCompletedTaskCount(Executor executor, int defaultValue) {
+		if (executor instanceof ThreadPoolExecutor) {
+			return ((ThreadPoolExecutor) executor).getCompletedTaskCount();
+		} else {
+			return defaultValue;
+		}
+	}
 
 	public static <T> T callInBackground(ExecutorService executor, Callable<T> callable) throws Exception {
 		if (executor != null) {

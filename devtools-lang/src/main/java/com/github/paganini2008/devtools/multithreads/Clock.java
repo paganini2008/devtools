@@ -223,11 +223,11 @@ public final class Clock implements Executable {
 
 	public static void main(String[] args) throws Throwable {
 		final AtomicInteger counter = new AtomicInteger();
-		Clock clock = new Clock(Executors.newFixedThreadPool(8), true);
+		Clock clock = new Clock();
 		ClockTask task = new ClockTask() {
 			protected void runTask() {
-				System.out.println("Test1: " + DateUtils.format(System.currentTimeMillis()));
-				if (counter.incrementAndGet() >= 100) {
+				System.out.println("Test0: " + DateUtils.format(System.currentTimeMillis()));
+				if (counter.incrementAndGet() >= 10) {
 					cancel();
 				}
 			}
@@ -236,37 +236,39 @@ public final class Clock implements Executable {
 
 		ClockTask task2 = new ClockTask() {
 			protected void runTask() {
-				System.out.println("Test2: " + DateUtils.format(System.currentTimeMillis()));
+				System.out.println("Test1: " + DateUtils.format(System.currentTimeMillis()));
 				if (counter.incrementAndGet() >= 100) {
 					cancel();
 				}
 			}
 		};
 		clock.schedule(task2, 1, 1, TimeUnit.SECONDS);
+
+		clock.scheduleAtFixedRate(new ClockTask() {
+			protected void runTask() {
+				ThreadUtils.randomSleep(1000);
+				System.out.println("Test2: " + DateUtils.format(System.currentTimeMillis()));
+			}
+		}, 5, 2, TimeUnit.SECONDS);
+		clock.scheduleAtFixedRate(new ClockTask() {
+			protected void runTask() {
+				ThreadUtils.randomSleep(1000, 4000);
+				System.out.println("Test3: " + DateUtils.format(System.currentTimeMillis()));
+			}
+		}, 10, 5, TimeUnit.SECONDS);
+		clock.schedule(new ClockTask() {
+			protected void runTask() {
+				System.out.println("Test4: " + DateUtils.format(System.currentTimeMillis()));
+			}
+		}, 10, TimeUnit.SECONDS);
+		clock.schedule(new ClockTask() {
+			protected void runTask() {
+				System.out.println("Test5: " + DateUtils.format(System.currentTimeMillis()));
+			}
+		}, 15, TimeUnit.SECONDS);
+		
 		System.in.read();
 		clock.stop();
-		// clock.scheduleAtFixedRate(new ClockTask() {
-		// protected void runTask() {
-		// ThreadUtils.randomSleep(1000);
-		// System.out.println("Test2: " + DateUtils.format(System.currentTimeMillis()));
-		// }
-		// }, 5, 2, TimeUnit.SECONDS);
-		// clock.scheduleAtFixedRate(new ClockTask() {
-		// protected void runTask() {
-		// ThreadUtils.randomSleep(1000, 4000);
-		// System.out.println("Test3: " + DateUtils.format(System.currentTimeMillis()));
-		// }
-		// }, 10, 5, TimeUnit.SECONDS);
-		// clock.schedule(new ClockTask() {
-		// protected void runTask() {
-		// System.out.println("Test4: " + DateUtils.format(System.currentTimeMillis()));
-		// }
-		// }, 10, TimeUnit.SECONDS);
-		// clock.schedule(new ClockTask() {
-		// protected void runTask() {
-		// System.out.println("Test5: " + DateUtils.format(System.currentTimeMillis()));
-		// }
-		// }, 15, TimeUnit.SECONDS);
 	}
 
 }

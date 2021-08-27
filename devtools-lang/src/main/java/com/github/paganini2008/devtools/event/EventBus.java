@@ -30,6 +30,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.ClassUtils;
 import com.github.paganini2008.devtools.multithreads.AtomicIntegerSequence;
+import com.github.paganini2008.devtools.multithreads.ExecutorUtils;
 import com.github.paganini2008.devtools.multithreads.ForEach;
 
 /**
@@ -69,6 +70,11 @@ public class EventBus<E extends Event<T>, T> {
 		eventHandler.join(autoShutdown);
 	}
 
+	private static int getMaxPermits(Executor executor) {
+		int maxPoolSize = ExecutorUtils.getMaximumPoolSize(executor, 0);
+		return maxPoolSize > 0 ? maxPoolSize * 2 : 0;
+	}
+
 	/**
 	 * 
 	 * EventHandler
@@ -82,7 +88,7 @@ public class EventBus<E extends Event<T>, T> {
 		final ConcurrentMap<Class<?>, EventGroup<E, T>> eventGroups = new ConcurrentHashMap<Class<?>, EventGroup<E, T>>();
 
 		EventHandler(Executor executor, boolean multicast) {
-			super(executor, 200);
+			super(executor, getMaxPermits(executor));
 			this.multicast = multicast;
 		}
 

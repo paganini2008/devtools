@@ -179,14 +179,14 @@ public abstract class ThreadUtils {
 		return Thread.currentThread().getName();
 	}
 
-	public static void schedule(final Runnable r, Date date) {
+	public static void schedule(Runnable r, Date date) {
 		if (date.before(new Date())) {
 			throw new IllegalArgumentException("Past time: " + date);
 		}
 		schedule(r, date.getTime() - System.currentTimeMillis());
 	}
 
-	public static void schedule(final Runnable r, long delay, TimeUnit timeUnit) {
+	public static void schedule(Runnable r, long delay, TimeUnit timeUnit) {
 		schedule(r, convertToMillis(delay, timeUnit));
 	}
 
@@ -266,12 +266,11 @@ public abstract class ThreadUtils {
 		return scheduleWithFixedDelay(e, interval, interval, timeUnit);
 	}
 
-	public static Timer scheduleWithFixedDelay(final Executable e, long delay, long interval, TimeUnit timeUnit) {
+	public static Timer scheduleWithFixedDelay(Executable e, long delay, long interval, TimeUnit timeUnit) {
 		return scheduleWithFixedDelay(e, delay, timeUnit, interval, timeUnit);
 	}
 
-	public static Timer scheduleWithFixedDelay(final Executable e, long delay, TimeUnit delayTimeUnit, long interval,
-			TimeUnit intervalTimeUnit) {
+	public static Timer scheduleWithFixedDelay(Executable e, long delay, TimeUnit delayTimeUnit, long interval, TimeUnit intervalTimeUnit) {
 		return scheduleWithFixedDelay(e, convertToMillis(delay, delayTimeUnit), convertToMillis(interval, intervalTimeUnit));
 	}
 

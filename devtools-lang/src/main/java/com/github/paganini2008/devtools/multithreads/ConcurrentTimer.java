@@ -18,12 +18,14 @@ package com.github.paganini2008.devtools.multithreads;
 import static com.github.paganini2008.devtools.date.DateUtils.convertToMillis;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.TimeUnit;
 
 import com.github.paganini2008.devtools.beans.EqualsBuilder;
@@ -42,7 +44,7 @@ import com.github.paganini2008.devtools.collection.MapUtils;
 public class ConcurrentTimer {
 
 	private final Map<TimerFeature, Timer> timers = new ConcurrentHashMap<TimerFeature, Timer>();
-	private final Map<TimerFeature, List<Executable>> executables = new ConcurrentHashMap<TimerFeature, List<Executable>>();
+	private final Map<TimerFeature, Set<Executable>> executables = new ConcurrentHashMap<TimerFeature, Set<Executable>>();
 
 	public Timer scheduleWithFixedDelay(Executable e, Date firstTime, long interval, TimeUnit timeUnit) {
 		return scheduleWithFixedDelay(e, firstTime, convertToMillis(interval, timeUnit));
@@ -69,8 +71,8 @@ public class ConcurrentTimer {
 
 	public Timer scheduleWithFixedDelay(Executable e, long delay, long interval) {
 		TimerFeature feature = new TimerFeature(delay, interval, false);
-		List<Executable> list = MapUtils.get(executables, feature, () -> {
-			return new CopyOnWriteArrayList<Executable>();
+		Set<Executable> list = MapUtils.get(executables, feature, () -> {
+			return new ConcurrentSkipListSet<Executable>();
 		});
 		list.add(e);
 		return MapUtils.get(timers, feature, () -> {
@@ -103,8 +105,8 @@ public class ConcurrentTimer {
 
 	public Timer scheduleAtFixedRate(Executable e, long delay, long interval) {
 		TimerFeature feature = new TimerFeature(delay, interval, true);
-		List<Executable> list = MapUtils.get(executables, feature, () -> {
-			return new CopyOnWriteArrayList<Executable>();
+		Set<Executable> list = MapUtils.get(executables, feature, () -> {
+			return new ConcurrentSkipListSet<Executable>();
 		});
 		list.add(e);
 		return MapUtils.get(timers, feature, () -> {
@@ -115,7 +117,7 @@ public class ConcurrentTimer {
 	public void cancel() {
 		for (Map.Entry<TimerFeature, Timer> entry : timers.entrySet()) {
 			entry.getValue().cancel();
-			List<Executable> executables = this.executables.get(entry.getKey());
+			Set<Executable> executables = this.executables.get(entry.getKey());
 			if (CollectionUtils.isNotEmpty(executables)) {
 				executables.forEach(e -> e.onCancellation(null));
 			}
@@ -134,9 +136,9 @@ public class ConcurrentTimer {
 	 */
 	static class SerialExecutable implements Executable {
 
-		private final List<Executable> executables;
+		private final Collection<Executable> executables;
 
-		SerialExecutable(List<Executable> executables) {
+		SerialExecutable(Set<Executable> executables) {
 			this.executables = executables;
 		}
 
