@@ -82,7 +82,7 @@ public class RetryableTimer extends ConcurrentTimer {
 	 *
 	 * @since 2.0.3
 	 */
-	class RetryableExecutable implements Executable, Comparable<RetryableExecutable> {
+	class RetryableExecutable implements Executable {
 
 		private final Retryable retryable;
 		private final AtomicInteger counter = new AtomicInteger(0);
@@ -119,11 +119,6 @@ public class RetryableTimer extends ConcurrentTimer {
 				retryable.onError(counter.get(), e);
 			}
 			currentRetryables.remove(retryable);
-		}
-
-		@Override
-		public int compareTo(RetryableExecutable e) {
-			return retryable.getOrder();
 		}
 
 	}

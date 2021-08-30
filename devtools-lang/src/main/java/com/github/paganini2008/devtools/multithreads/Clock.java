@@ -44,7 +44,7 @@ public final class Clock implements Executable {
 	private final EventBus<ClockEvent, String> eventBus;
 
 	public Clock() {
-		this(Runtime.getRuntime().availableProcessors());
+		this(ExecutorUtils.processorCount * 2);
 	}
 
 	public Clock(int nThreads) {
@@ -266,7 +266,7 @@ public final class Clock implements Executable {
 				System.out.println("Test5: " + DateUtils.format(System.currentTimeMillis()));
 			}
 		}, 15, TimeUnit.SECONDS);
-		
+
 		System.in.read();
 		clock.stop();
 	}

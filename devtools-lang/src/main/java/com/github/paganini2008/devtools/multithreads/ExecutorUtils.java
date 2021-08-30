@@ -81,6 +81,14 @@ public abstract class ExecutorUtils {
 		}
 	}
 
+	public static long getQueueSize(Executor executor, int defaultValue) {
+		if (executor instanceof ThreadPoolExecutor) {
+			return ((ThreadPoolExecutor) executor).getQueue().size();
+		} else {
+			return defaultValue;
+		}
+	}
+
 	public static <T> T callInBackground(ExecutorService executor, Callable<T> callable) throws Exception {
 		if (executor != null) {
 			Future<T> future = executor.submit(callable);
