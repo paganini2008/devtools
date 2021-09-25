@@ -396,42 +396,61 @@ public abstract class ArrayUtils {
 	}
 
 	public static String toString(Object[] array) {
-		return "[" + join(array, true) + "]";
+		return toString(array, ",");
 	}
 
-	public static String join(Object[] array) {
+	public static String toString(Object[] array, String delimiter) {
+		return "[" + join(array, delimiter) + "]";
+	}
+
+	public static <T> String join(T[] array) {
 		return join(array, ",");
 	}
 
-	public static String join(Object[] array, String delimiter) {
+	public static <T> String join(T[] array, String delimiter) {
 		return join(array, delimiter, true);
 	}
 
-	public static String join(Object[] array, boolean trim) {
-		return join(array, ",", trim);
+	public static <T> String join(T[] array, String delimiter, boolean trim) {
+		return join(array, t -> t, delimiter, trim);
 	}
 
-	public static String join(Object[] array, String delimiter, boolean trim) {
+	public static <T> String join(T[] array, Function<T, Object> getter, String delimiter, boolean trim) {
 		int l;
 		if (array == null || (l = array.length) == 0) {
 			return "";
 		}
-		boolean hasDelimiter = StringUtils.isNotBlank(delimiter);
+		if (delimiter == null) {
+			delimiter = "";
+		}
 		StringBuilder content = new StringBuilder();
 		for (int i = 0; i < l; i++) {
-			content.append(ObjectUtils.toString(array[i], trim, ""));
-			if (hasDelimiter && i != l - 1) {
+			content.append(ObjectUtils.toString(getter.apply(array[i]), trim, ""));
+			if (i != l - 1) {
 				content.append(delimiter);
 			}
 		}
 		return content.toString();
 	}
 
-	public static String join(Object[] left, Object[] right, String delimiter) {
+	public static <X, Y> String join(X[] left, Y[] right) {
+		return join(left, right, ",");
+	}
+
+	public static <X, Y> String join(X[] left, Y[] right, String delimiter) {
 		return join(left, right, delimiter, delimiter);
 	}
 
-	public static String join(Object[] left, Object[] right, String conjunction, String delimiter) {
+	public static <X, Y> String join(X[] left, Y[] right, String conjunction, String delimiter) {
+		return join(left, right, conjunction, delimiter, true);
+	}
+
+	public static <X, Y> String join(X[] left, Y[] right, String conjunction, String delimiter, boolean trim) {
+		return join(left, x -> x, right, y -> y, conjunction, delimiter, trim);
+	}
+
+	public static <X, Y> String join(X[] left, Function<X, Object> leftGetter, Y[] right, Function<Y, Object> rightGetter,
+			String conjunction, String delimiter, boolean trim) {
 		if (isEmpty(left) || isEmpty(right)) {
 			return "";
 		}
@@ -443,7 +462,8 @@ public abstract class ArrayUtils {
 		}
 		StringBuilder content = new StringBuilder();
 		for (int i = 0, l = Math.min(left.length, right.length); i < l; i++) {
-			content.append(ObjectUtils.toString(left[i])).append(conjunction).append(ObjectUtils.toString(right[i]));
+			content.append(ObjectUtils.toString(leftGetter.apply(left[i]), trim, "")).append(conjunction)
+					.append(ObjectUtils.toString(rightGetter.apply(right[i]), trim, ""));
 			if (i != l - 1) {
 				content.append(delimiter);
 			}

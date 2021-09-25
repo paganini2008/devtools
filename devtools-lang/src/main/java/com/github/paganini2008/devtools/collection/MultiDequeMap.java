@@ -36,7 +36,7 @@ import java.util.function.Supplier;
 public class MultiDequeMap<K, V> extends AbstractMap<K, Deque<V>> implements Map<K, Deque<V>>, Serializable {
 
 	private static final long serialVersionUID = -7112963888352476892L;
-	
+
 	private final Map<K, Deque<V>> delegate;
 	private final Supplier<Deque<V>> supplier;
 
@@ -114,6 +114,11 @@ public class MultiDequeMap<K, V> extends AbstractMap<K, Deque<V>> implements Map
 
 	public int size() {
 		return delegate.size();
+	}
+
+	public int size(String key) {
+		Deque<V> q = delegate.get(key);
+		return q != null ? q.size() : 0;
 	}
 
 	public Set<K> keySet() {

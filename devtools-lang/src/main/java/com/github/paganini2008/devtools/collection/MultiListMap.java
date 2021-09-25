@@ -44,7 +44,7 @@ public class MultiListMap<K, V> extends AbstractMap<K, List<V>> implements Map<K
 			return new CopyOnWriteArrayList<V>();
 		});
 	}
-	
+
 	public MultiListMap(Supplier<List<V>> supplier) {
 		this(new ConcurrentHashMap<K, List<V>>(), supplier);
 	}
@@ -127,6 +127,11 @@ public class MultiListMap<K, V> extends AbstractMap<K, List<V>> implements Map<K
 
 	public int size() {
 		return delegate.size();
+	}
+
+	public int size(String key) {
+		List<V> list = delegate.get(key);
+		return list != null ? list.size() : 0;
 	}
 
 	public Set<K> keys() {

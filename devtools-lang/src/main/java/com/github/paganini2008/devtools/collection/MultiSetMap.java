@@ -77,22 +77,22 @@ public class MultiSetMap<K, V> extends AbstractMap<K, NavigableSet<V>> implement
 
 	public V pollLast(K key) {
 		NavigableSet<V> set = delegate.get(key);
-		return set.pollLast();
+		return set != null ? set.pollLast() : null;
 	}
 
 	public V pollFirst(K key) {
 		NavigableSet<V> set = delegate.get(key);
-		return set.pollFirst();
+		return set != null ? set.pollFirst() : null;
 	}
 
 	public V peekFirst(K key) {
 		NavigableSet<V> set = delegate.get(key);
-		return set.first();
+		return set != null ? set.first() : null;
 	}
 
 	public V peekLast(K key) {
 		NavigableSet<V> set = delegate.get(key);
-		return set.last();
+		return set != null ? set.last() : null;
 	}
 
 	public NavigableSet<V> get(Object key) {
@@ -123,6 +123,11 @@ public class MultiSetMap<K, V> extends AbstractMap<K, NavigableSet<V>> implement
 
 	public int size() {
 		return delegate.size();
+	}
+
+	public int size(K key) {
+		NavigableSet<V> q = delegate.get(key);
+		return q != null ? q.size() : 0;
 	}
 
 	public Set<K> keySet() {

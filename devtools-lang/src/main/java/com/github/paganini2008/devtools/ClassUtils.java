@@ -457,4 +457,8 @@ public abstract class ClassUtils {
 		return false;
 	}
 
+	public static String join(Class<?>[] types, String delimiter) {
+		return ArrayUtils.join(types, type -> type.getName(), delimiter, true);
+	}
+
 }
