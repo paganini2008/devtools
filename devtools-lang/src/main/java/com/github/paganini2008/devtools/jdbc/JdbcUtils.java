@@ -162,6 +162,17 @@ public abstract class JdbcUtils {
 		}
 	}
 
+	public static void disableCommit(Connection connection) throws SQLException {
+		connection.setAutoCommit(false);
+	}
+
+	public static void disableCommitQuietly(Connection connection) {
+		try {
+			disableCommit(connection);
+		} catch (SQLException ignored) {
+		}
+	}
+
 	public static void printStackTrace(SQLException e) {
 		printStackTrace(e, new PrintWriter(System.err));
 	}

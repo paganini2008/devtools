@@ -23,8 +23,6 @@ import java.util.logging.Logger;
 import javax.sql.DataSource;
 
 import com.github.paganini2008.devtools.Assert;
-import com.github.paganini2008.devtools.logging.Log;
-import com.github.paganini2008.devtools.logging.LogFactory;
 
 /**
  * AbstractDataSource
@@ -33,8 +31,6 @@ import com.github.paganini2008.devtools.logging.LogFactory;
  * @since 2.0.1
  */
 public abstract class AbstractDataSource implements DriverManagerDataSource {
-
-	protected final Log logger = LogFactory.getLog(getClass());
 
 	public int getLoginTimeout() throws SQLException {
 		throw new UnsupportedOperationException("Not supported by " + getClass().getName());
