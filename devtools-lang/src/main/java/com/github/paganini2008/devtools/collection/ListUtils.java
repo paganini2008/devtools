@@ -67,7 +67,7 @@ public abstract class ListUtils {
 	}
 
 	public static <T> List<T> create(T... args) {
-		return args != null ? new ArrayList<T>(Arrays.asList(args)) : new ArrayList<T>();
+		return ArrayUtils.isNotEmpty(args) ? new ArrayList<T>(Arrays.asList(args)) : new ArrayList<T>();
 	}
 
 	public static <T> List<T> toList(Collection<T> c) {
