@@ -15,6 +15,8 @@
 */
 package com.github.paganini2008.devtools.comparator;
 
+import java.util.Comparator;
+
 /**
  * ComparatorHelper
  * 
@@ -22,6 +24,10 @@ package com.github.paganini2008.devtools.comparator;
  * @since 2.0.1
  */
 public abstract class ComparatorHelper {
+
+	public static <T> Comparator<T> empty() {
+		return (a, b) -> 0;
+	}
 
 	public static int valueOf(double result) {
 		if (result < 0) {

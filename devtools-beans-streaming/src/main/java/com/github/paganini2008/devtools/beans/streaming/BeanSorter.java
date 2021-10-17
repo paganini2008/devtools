@@ -15,14 +15,12 @@
 */
 package com.github.paganini2008.devtools.beans.streaming;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 import java.util.function.Function;
 
 import com.github.paganini2008.devtools.Comparables;
 import com.github.paganini2008.devtools.comparator.AbstractComparator;
-import com.github.paganini2008.devtools.comparator.ReverseComparator;
+import com.github.paganini2008.devtools.comparator.ComparatorHelper;
 
 /**
  * 
@@ -31,7 +29,6 @@ import com.github.paganini2008.devtools.comparator.ReverseComparator;
  * @author Fred Feng
  * @since 2.0.1
  */
-@SuppressWarnings("all")
 public class BeanSorter<E> extends AbstractComparator<E> implements Sorter<E> {
 
 	/**
@@ -56,37 +53,27 @@ public class BeanSorter<E> extends AbstractComparator<E> implements Sorter<E> {
 			return Comparables.compareTo(left, right);
 		}
 
-		public Comparator reverse() {
-			return new ReverseComparator<E>(this);
-		}
-
 	}
 
-	private final List<Comparator<E>> comparatorChains = new ArrayList<Comparator<E>>();
+	private Comparator<E> comparator = ComparatorHelper.empty();
 
 	public BeanSorter<E> reset() {
-		comparatorChains.clear();
+		this.comparator = ComparatorHelper.empty();
 		return this;
 	}
 
 	public <T extends Comparable<T>> BeanSorter<E> ascending(Function<E, T> function) {
-		comparatorChains.add(new ComparatorChain(function));
+		this.comparator = comparator.thenComparing(new ComparatorChain<>(function));
 		return this;
 	}
 
 	public <T extends Comparable<T>> BeanSorter<E> descending(Function<E, T> function) {
-		comparatorChains.add(new ComparatorChain(function).reverse());
+		this.comparator = comparator.thenComparing(new ComparatorChain<>(function).reversed());
 		return this;
 	}
 
 	public int compare(E a, E b) {
-		int value = 0;
-		for (Comparator<E> chain : comparatorChains) {
-			if ((value = chain.compare(a, b)) != 0) {
-				break;
-			}
-		}
-		return value;
+		return this.comparator.compare(a, b);
 	}
 
 }

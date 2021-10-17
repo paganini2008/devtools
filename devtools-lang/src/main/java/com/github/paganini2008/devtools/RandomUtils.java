@@ -15,13 +15,24 @@
 */
 package com.github.paganini2008.devtools;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Month;
+import java.time.Year;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.github.paganini2008.devtools.date.DateUtils;
 import com.github.paganini2008.devtools.primitives.Doubles;
 import com.github.paganini2008.devtools.primitives.Floats;
 import com.github.paganini2008.devtools.primitives.Ints;
 import com.github.paganini2008.devtools.primitives.Longs;
+import com.github.paganini2008.devtools.reflection.MethodUtils;
 
 /**
  * RandomUtils
@@ -116,12 +127,16 @@ public abstract class RandomUtils {
 	}
 
 	public static long[] randomLongs(int length, long from, long to) {
+		return randomLongs(length, from, to, false);
+	}
+
+	public static long[] randomLongs(int length, long from, long to, boolean existsAllowed) {
 		long[] results = new long[length];
 		long a;
 		for (int i = 0; i < length; i++) {
 			do {
 				a = randomLong(from, to);
-			} while (Longs.contains(results, a));
+			} while (!existsAllowed && Longs.contains(results, a));
 			results[i] = a;
 		}
 		return results;
@@ -141,28 +156,48 @@ public abstract class RandomUtils {
 	}
 
 	public static float[] randomFloats(int length, long from, long to) {
+		return randomFloats(length, from, to, false);
+	}
+
+	public static float[] randomFloats(int length, long from, long to, boolean existsAllowed) {
 		float[] results = new float[length];
 		float a;
 		for (int i = 0; i < length; i++) {
 			do {
 				a = randomFloat(from, to);
-			} while (Floats.contains(results, a));
+			} while (!existsAllowed && Floats.contains(results, a));
 			results[i] = a;
 		}
 		return results;
+	}
+
+	public static byte randomByte(byte from, byte to) {
+		return (byte) randomLong(from, to);
+	}
+
+	public static short randomShort(short from, short to) {
+		return (short) randomLong(from, to);
 	}
 
 	public static int randomInt(int from, int to) {
 		return (int) randomLong(from, to);
 	}
 
+	public static char randomChar(char from, char to) {
+		return (char) randomInt(Character.MIN_VALUE, Character.MAX_VALUE);
+	}
+
 	public static int[] randomInts(int length, int from, int to) {
+		return randomInts(length, from, to, false);
+	}
+
+	public static int[] randomInts(int length, int from, int to, boolean existsAllowed) {
 		int[] results = new int[length];
 		int a;
 		for (int i = 0; i < length; i++) {
 			do {
 				a = randomInt(from, to);
-			} while (Ints.contains(results, a));
+			} while (!existsAllowed && Ints.contains(results, a));
 			results[i] = a;
 		}
 		return results;
@@ -173,12 +208,16 @@ public abstract class RandomUtils {
 	}
 
 	public static double[] randomDoubles(int length, long from, long to) {
+		return randomDoubles(length, from, to, false);
+	}
+
+	public static double[] randomDoubles(int length, long from, long to, boolean existsAllowed) {
 		double[] results = new double[length];
 		double d;
 		for (int i = 0; i < length; i++) {
 			do {
 				d = randomDouble(from, to);
-			} while (Doubles.contains(results, d));
+			} while (!existsAllowed && Doubles.contains(results, d));
 			results[i] = d;
 		}
 		return results;
@@ -186,6 +225,66 @@ public abstract class RandomUtils {
 
 	public static boolean randomBoolean() {
 		return ThreadLocalRandom.current().nextBoolean();
+	}
+
+	public static BigDecimal randomBigDecimal(int position, int scale) {
+		StringBuilder str = new StringBuilder();
+		str.append(randomInt(1, 10));
+		int[] ints = randomInts(position - 1 + scale, 0, 9, true);
+		str.append(Ints.join(ints, ""));
+		return new BigDecimal(str.toString()).divide(BigDecimal.TEN.pow(scale)).setScale(scale, RoundingMode.HALF_UP);
+	}
+
+	public static BigInteger randomBigInteger(int position) {
+		return randomBigDecimal(position, 0).toBigInteger();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <E extends Enum<E>> E randomEnum(Class<E> enumClass) {
+		E[] enums = (E[]) MethodUtils.invokeStaticMethod(enumClass, "values");
+		return randomChoice(enums);
+	}
+
+	public static Year randomYear() {
+		return Year.of(randomInt(1970, DateUtils.getYear()));
+	}
+
+	public static YearMonth randomMonth(Year year) {
+		return year.atMonth(randomInt(1, 13));
+	}
+
+	public static LocalDate randomDate() {
+		return randomDate(randomYear());
+	}
+
+	public static LocalDate randomDate(Year year) {
+		return year.atDay(randomInt(1, year.isLeap() ? 366 : 365));
+	}
+
+	public static LocalDate randomDate(Year year, Month month) {
+		YearMonth yearMonth = year.atMonth(month);
+		return yearMonth.atDay(randomInt(1, yearMonth.atEndOfMonth().getDayOfMonth() + 1));
+	}
+
+	public static LocalDateTime randomDateTime() {
+		return randomDateTime(randomYear());
+	}
+
+	public static LocalDateTime randomDateTime(Year year) {
+		return randomDate(year).atTime(randomInt(0, 24), randomInt(0, 60), randomInt(0, 60));
+	}
+
+	public static LocalDateTime randomDateTime(Year year, int dayOfYear) {
+		return year.atDay(Math.min(dayOfYear, year.isLeap() ? 366 : 365)).atTime(randomInt(0, 24), randomInt(0, 60), randomInt(0, 60));
+	}
+
+	public static LocalDateTime randomDateTime(Year year, Month month, int dayOfMonth) {
+		YearMonth yearMonth = year.atMonth(month);
+		return yearMonth.atDay(dayOfMonth).atTime(randomInt(0, 24), randomInt(0, 60), randomInt(0, 60));
+	}
+
+	public static LocalTime randomTime() {
+		return LocalTime.of(randomInt(0, 24), randomInt(0, 60), randomInt(0, 60));
 	}
 
 }

@@ -18,6 +18,8 @@ package com.github.paganini2008.devtools.beans;
 import java.beans.PropertyDescriptor;
 import java.util.Map;
 
+import com.github.paganini2008.devtools.RandomUtils;
+import com.github.paganini2008.devtools.beans.MockConfig.MockType;
 import com.github.paganini2008.devtools.converter.ConvertUtils;
 import com.github.paganini2008.devtools.reflection.ConstructorUtils;
 
@@ -78,13 +80,15 @@ public abstract class BeanUtils {
 	}
 
 	public static <T> T convertAsBean(Map<String, ?> map, Class<T> requiredType) {
-		T object = BeanUtils.instantiate(requiredType);
+		T object = instantiate(requiredType);
 		Map<String, PropertyDescriptor> desc = PropertyUtils.getPropertyDescriptors(object.getClass());
+		String key;
 		Object value;
-		for (String key : desc.keySet()) {
+		for (Map.Entry<String, PropertyDescriptor> entry : desc.entrySet()) {
+			key = entry.getKey();
 			value = map.get(key);
 			if (value != null) {
-				PropertyUtils.setProperty(object, key, value);
+				PropertyUtils.setProperty(object, entry.getValue(), value);
 			}
 		}
 		return object;
@@ -115,6 +119,30 @@ public abstract class BeanUtils {
 		} catch (Exception e) {
 			throw new BeanInstantiationException(e.getMessage(), e);
 		}
+	}
+
+	public static <T> T mockBean(Class<T> beanClass, MockConfig mockConfig) {
+		T object = instantiate(beanClass);
+		Map<String, PropertyDescriptor> desc = PropertyUtils.getPropertyDescriptors(object.getClass());
+		Class<?> propertyType;
+		Object propertyValue;
+		for (PropertyDescriptor pd : desc.values()) {
+			propertyType = pd.getPropertyType();
+			if (mockConfig.recurs(propertyType)) {
+				propertyValue = mockBean(propertyType, mockConfig);
+			} else {
+				if (Enum.class.isAssignableFrom(propertyType)) {
+					propertyValue = RandomUtils.randomEnum((Class<Enum>) propertyType);
+				} else {
+					MockType<?> mockType = mockConfig.getMockType(propertyType);
+					propertyValue = mockType != null ? mockType.randomize() : null;
+				}
+			}
+			if (propertyValue != null) {
+				PropertyUtils.setProperty(object, pd.getName(), propertyValue);
+			}
+		}
+		return object;
 	}
 
 }
