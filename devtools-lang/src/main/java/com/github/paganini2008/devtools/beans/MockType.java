@@ -15,24 +15,19 @@
 */
 package com.github.paganini2008.devtools.beans;
 
+import java.lang.reflect.Type;
+
 /**
  * 
- * MockConfig
+ * MockType
  *
  * @author Fred Feng
  *
  * @since 2.0.4
  */
-public interface MockConfig {
+public interface MockType<T> {
+	
+	Type getType();
 
-	default boolean recurs(String propertyName, Class<?> propertyType) {
-		return false;
-	}
-
-	default <T> void assignManually(String propertyName, Class<?> propertyType, T bean) {
-	}
-
-	static MockConfig DEFAULT = new MockConfig() {
-	};
-
+	T randomize();
 }

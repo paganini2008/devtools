@@ -474,6 +474,12 @@ public abstract class DateUtils {
 		return calendar.get(calendarField);
 	}
 
+	public static int getLastDay(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+	}
+
 	public static long converToSecond(long interval, TimeUnit timeUnit) {
 		if (interval < 0) {
 			throw new IllegalArgumentException("interval < 0");

@@ -16,10 +16,11 @@
 package com.github.paganini2008.devtools.beans;
 
 import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import com.github.paganini2008.devtools.RandomUtils;
-import com.github.paganini2008.devtools.beans.MockConfig.MockType;
 import com.github.paganini2008.devtools.converter.ConvertUtils;
 import com.github.paganini2008.devtools.reflection.ConstructorUtils;
 
@@ -121,26 +122,37 @@ public abstract class BeanUtils {
 		}
 	}
 
+	public static <T> List<T> mockBeans(int size, Class<T> beanClass, MockConfig mockConfig) {
+		List<T> list = new ArrayList<>(size);
+		for (int i = 0; i < size; i++) {
+			list.add(mockBean(beanClass, mockConfig));
+		}
+		return list;
+	}
+
 	public static <T> T mockBean(Class<T> beanClass, MockConfig mockConfig) {
 		T object = instantiate(beanClass);
 		Map<String, PropertyDescriptor> desc = PropertyUtils.getPropertyDescriptors(object.getClass());
+		String propertyName;
 		Class<?> propertyType;
 		Object propertyValue;
 		for (PropertyDescriptor pd : desc.values()) {
+			propertyName = pd.getName();
 			propertyType = pd.getPropertyType();
-			if (mockConfig.recurs(propertyType)) {
+			if (mockConfig.recurs(propertyName, propertyType)) {
 				propertyValue = mockBean(propertyType, mockConfig);
 			} else {
 				if (Enum.class.isAssignableFrom(propertyType)) {
 					propertyValue = RandomUtils.randomEnum((Class<Enum>) propertyType);
 				} else {
-					MockType<?> mockType = mockConfig.getMockType(propertyType);
+					MockType<?> mockType = MockTypes.getMockType(propertyType);
 					propertyValue = mockType != null ? mockType.randomize() : null;
 				}
 			}
 			if (propertyValue != null) {
 				PropertyUtils.setProperty(object, pd.getName(), propertyValue);
 			}
+			mockConfig.assignManually(propertyName, propertyType, object);
 		}
 		return object;
 	}

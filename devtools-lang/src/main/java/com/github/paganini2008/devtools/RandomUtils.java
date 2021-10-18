@@ -24,7 +24,9 @@ import java.time.LocalTime;
 import java.time.Month;
 import java.time.Year;
 import java.time.YearMonth;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.github.paganini2008.devtools.date.DateUtils;
@@ -32,6 +34,7 @@ import com.github.paganini2008.devtools.primitives.Doubles;
 import com.github.paganini2008.devtools.primitives.Floats;
 import com.github.paganini2008.devtools.primitives.Ints;
 import com.github.paganini2008.devtools.primitives.Longs;
+import com.github.paganini2008.devtools.primitives.Shorts;
 import com.github.paganini2008.devtools.reflection.MethodUtils;
 
 /**
@@ -122,8 +125,32 @@ public abstract class RandomUtils {
 		return list.get(randomInt(0, Math.min(length, list.size())));
 	}
 
+	public static boolean randomBoolean() {
+		return ThreadLocalRandom.current().nextBoolean();
+	}
+
+	public static byte randomByte() {
+		return randomByte((byte) 0, Byte.MAX_VALUE);
+	}
+
+	public static byte randomByte(byte from, byte to) {
+		return (byte) randomInt(from, to);
+	}
+
+	public static char randomChar() {
+		return randomChar(Character.MIN_VALUE, Character.MAX_VALUE);
+	}
+
+	public static char randomChar(char from, char to) {
+		return (char) randomInt(from, to);
+	}
+
+	public static long randomLong() {
+		return randomLong(0, Long.MAX_VALUE);
+	}
+
 	public static long randomLong(long from, long to) {
-		return (long) Math.floor(randomDouble(from, to));
+		return ThreadLocalRandom.current().nextLong(from, to);
 	}
 
 	public static long[] randomLongs(int length, long from, long to) {
@@ -132,22 +159,22 @@ public abstract class RandomUtils {
 
 	public static long[] randomLongs(int length, long from, long to, boolean existsAllowed) {
 		long[] results = new long[length];
-		long a;
+		long l;
 		for (int i = 0; i < length; i++) {
 			do {
-				a = randomLong(from, to);
-			} while (!existsAllowed && Longs.contains(results, a));
-			results[i] = a;
+				l = randomLong(from, to);
+			} while (!existsAllowed && Longs.contains(results, l));
+			results[i] = l;
 		}
 		return results;
 	}
 
-	private static double nextDouble() {
-		return ThreadLocalRandom.current().nextDouble();
+	public static float randomFloat() {
+		return ThreadLocalRandom.current().nextFloat();
 	}
 
 	public static float randomFloat(long from, long to) {
-		return (float) randomDouble(from, to);
+		return randomFloat() * (to - from) + from;
 	}
 
 	public static float randomFloat(long from, long to, int scale) {
@@ -171,20 +198,36 @@ public abstract class RandomUtils {
 		return results;
 	}
 
-	public static byte randomByte(byte from, byte to) {
-		return (byte) randomLong(from, to);
+	public static short randomShort() {
+		return randomShort((short) 0, Short.MAX_VALUE);
 	}
 
 	public static short randomShort(short from, short to) {
-		return (short) randomLong(from, to);
+		return (short) randomInt(from, to);
+	}
+
+	public static short[] randomShorts(int length, short from, short to) {
+		return randomShorts(length, from, to, false);
+	}
+
+	public static short[] randomShorts(int length, short from, short to, boolean existsAllowed) {
+		short[] results = new short[length];
+		short s;
+		for (int i = 0; i < length; i++) {
+			do {
+				s = randomShort(from, to);
+			} while (!existsAllowed && Shorts.contains(results, s));
+			results[i] = s;
+		}
+		return results;
+	}
+
+	public static int randomInt() {
+		return randomInt(0, Integer.MAX_VALUE);
 	}
 
 	public static int randomInt(int from, int to) {
-		return (int) randomLong(from, to);
-	}
-
-	public static char randomChar(char from, char to) {
-		return (char) randomInt(Character.MIN_VALUE, Character.MAX_VALUE);
+		return ThreadLocalRandom.current().nextInt(from, to);
 	}
 
 	public static int[] randomInts(int length, int from, int to) {
@@ -203,8 +246,12 @@ public abstract class RandomUtils {
 		return results;
 	}
 
+	private static double randomDouble() {
+		return ThreadLocalRandom.current().nextDouble();
+	}
+
 	public static double randomDouble(long from, long to) {
-		return nextDouble() * (to - from) + from;
+		return randomDouble() * (to - from) + from;
 	}
 
 	public static double[] randomDoubles(int length, long from, long to) {
@@ -223,20 +270,56 @@ public abstract class RandomUtils {
 		return results;
 	}
 
-	public static boolean randomBoolean() {
-		return ThreadLocalRandom.current().nextBoolean();
+	public static BigDecimal randomBigDecimal(int precision) {
+		Random r = ThreadLocalRandom.current();
+		BigInteger n = BigInteger.TEN.pow(precision);
+		BigInteger m;
+		do {
+			m = new BigInteger(n.bitLength(), r);
+		} while (m.compareTo(n) >= 0);
+		return new BigDecimal(m, precision);
 	}
 
-	public static BigDecimal randomBigDecimal(int position, int scale) {
-		StringBuilder str = new StringBuilder();
-		str.append(randomInt(1, 10));
-		int[] ints = randomInts(position - 1 + scale, 0, 9, true);
-		str.append(Ints.join(ints, ""));
-		return new BigDecimal(str.toString()).divide(BigDecimal.TEN.pow(scale)).setScale(scale, RoundingMode.HALF_UP);
+	public static BigDecimal randomBigDecimal(int precision, int scale) {
+		BigDecimal from = BigDecimal.TEN.pow(precision - 1);
+		BigDecimal to = BigDecimal.TEN.pow(precision);
+		return randomBigDecimal(precision + scale + 1).multiply(to.subtract(from)).add(from).setScale(scale, RoundingMode.HALF_UP);
 	}
 
-	public static BigInteger randomBigInteger(int position) {
-		return randomBigDecimal(position, 0).toBigInteger();
+	public static BigDecimal[] randomBigDecimals(int length, int precision, int scale) {
+		return randomBigDecimals(length, precision, scale, false);
+	}
+
+	public static BigDecimal[] randomBigDecimals(int length, int precision, int scale, boolean existsAllowed) {
+		BigDecimal[] results = new BigDecimal[length];
+		BigDecimal b;
+		for (int i = 0; i < length; i++) {
+			do {
+				b = randomBigDecimal(precision, scale);
+			} while (!existsAllowed && ArrayUtils.contains(results, b));
+			results[i] = b;
+		}
+		return results;
+	}
+
+	public static BigInteger randomBigInteger(int precision) {
+		return randomBigDecimal(precision, 0).toBigInteger();
+	}
+
+	public static BigInteger[] randomBigIntegers(int length, int precision) {
+		return randomBigIntegers(length, precision, false);
+	}
+
+	public static BigInteger[] randomBigIntegers(int length, int precision, boolean existsAllowed) {
+		BigInteger[] results = new BigInteger[length];
+		BigInteger b;
+		for (int i = 0; i < length; i++) {
+			do {
+				b = randomBigInteger(precision);
+			} while (!existsAllowed && ArrayUtils.contains(results, b));
+			results[i] = b;
+		}
+		return results;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -246,45 +329,88 @@ public abstract class RandomUtils {
 	}
 
 	public static Year randomYear() {
-		return Year.of(randomInt(1970, DateUtils.getYear()));
+		return Year.of(randomInt(1970, DateUtils.getYear() + 1));
 	}
 
 	public static YearMonth randomMonth(Year year) {
 		return year.atMonth(randomInt(1, 13));
 	}
 
-	public static LocalDate randomDate() {
-		return randomDate(randomYear());
+	public static LocalDate randomLocalDate() {
+		return randomLocalDate(Year.now());
 	}
 
-	public static LocalDate randomDate(Year year) {
-		return year.atDay(randomInt(1, year.isLeap() ? 366 : 365));
+	public static LocalDate randomLocalDate(Year year) {
+		return year.atDay(randomInt(1, (year.isLeap() ? 366 : 365) + 1));
 	}
 
-	public static LocalDate randomDate(Year year, Month month) {
+	public static LocalDate randomLocalDate(Year year, Month month) {
 		YearMonth yearMonth = year.atMonth(month);
 		return yearMonth.atDay(randomInt(1, yearMonth.atEndOfMonth().getDayOfMonth() + 1));
 	}
 
-	public static LocalDateTime randomDateTime() {
-		return randomDateTime(randomYear());
+	public static LocalDateTime randomLocalDateTime() {
+		return randomLocalDateTime(Year.now());
 	}
 
-	public static LocalDateTime randomDateTime(Year year) {
-		return randomDate(year).atTime(randomInt(0, 24), randomInt(0, 60), randomInt(0, 60));
+	public static LocalDateTime randomLocalDateTime(Year year) {
+		return randomLocalDateTime(year, randomInt(1, (year.isLeap() ? 366 : 365) + 1));
 	}
 
-	public static LocalDateTime randomDateTime(Year year, int dayOfYear) {
+	public static LocalDateTime randomLocalDateTime(Year year, int dayOfYear) {
 		return year.atDay(Math.min(dayOfYear, year.isLeap() ? 366 : 365)).atTime(randomInt(0, 24), randomInt(0, 60), randomInt(0, 60));
 	}
 
-	public static LocalDateTime randomDateTime(Year year, Month month, int dayOfMonth) {
+	public static LocalDateTime randomLocalDateTime(Year year, Month month) {
+		return randomLocalDateTime(year, month, randomInt(1, month.maxLength() + 1));
+	}
+
+	public static LocalDateTime randomLocalDateTime(Year year, Month month, int dayOfMonth) {
 		YearMonth yearMonth = year.atMonth(month);
 		return yearMonth.atDay(dayOfMonth).atTime(randomInt(0, 24), randomInt(0, 60), randomInt(0, 60));
 	}
 
-	public static LocalTime randomTime() {
+	public static LocalTime randomLocalTime() {
 		return LocalTime.of(randomInt(0, 24), randomInt(0, 60), randomInt(0, 60));
+	}
+
+	public static Date randomDate() {
+		return randomDate(DateUtils.getYear());
+	}
+
+	public static Date randomDate(int year) {
+		return randomDate(year, randomInt(1, 13));
+	}
+
+	public static Date randomDate(int year, int month) {
+		Date current = DateUtils.valueOf(year, month, 1);
+		int date = randomInt(1, DateUtils.getLastDay(current) + 1);
+		return DateUtils.setDay(current, date);
+	}
+
+	public static Date randomDateTime() {
+		return randomDateTime(DateUtils.getYear());
+	}
+
+	public static Date randomDateTime(int year) {
+		return randomDateTime(year, randomInt(1, 13));
+	}
+
+	public static Date randomDateTime(int year, int month) {
+		Date current = DateUtils.valueOf(year, month, 1);
+		int dayOfMonth = randomInt(1, DateUtils.getLastDay(current) + 1);
+		return DateUtils.valueOf(year, month, dayOfMonth, randomInt(0, 24), randomInt(0, 60), randomInt(0, 60));
+	}
+
+	public static Date randomDateTime(int year, int month, int dayOfMonth) {
+		Date current = DateUtils.valueOf(year, month, 1);
+		dayOfMonth = Math.min(dayOfMonth, DateUtils.getLastDay(current));
+		return DateUtils.valueOf(year, month, dayOfMonth, randomInt(0, 24), randomInt(0, 60), randomInt(0, 60));
+	}
+
+	public static void main(String[] args) {
+		for (int i = 1; i <= 100; i++)
+			System.out.println(randomLocalDateTime(Year.now(), Month.AUGUST));
 	}
 
 }

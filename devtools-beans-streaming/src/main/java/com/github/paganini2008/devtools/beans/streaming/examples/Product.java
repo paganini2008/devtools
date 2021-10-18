@@ -48,6 +48,9 @@ public class Product {
 
 		private String name;
 		private String password;
+		
+		public Salesman() {
+		}
 
 		public Salesman(String name, String password) {
 			this.name = name;
