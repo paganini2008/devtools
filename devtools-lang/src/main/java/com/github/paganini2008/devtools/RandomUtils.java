@@ -17,6 +17,7 @@ package com.github.paganini2008.devtools;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -149,6 +150,31 @@ public abstract class RandomUtils {
 		return randomLong(0, Long.MAX_VALUE);
 	}
 
+	public static long randomLong(int precision) {
+		if (Math.log10(Long.MAX_VALUE) <= precision) {
+			throw new IllegalArgumentException("Exceed maximum long value");
+		}
+		long from = (long) Math.pow(10, precision - 1);
+		long to = (long) Math.pow(10, precision);
+		return randomLong(from, to);
+	}
+
+	public static long[] randomLongs(int length, int precision) {
+		return randomLongs(length, precision, false);
+	}
+
+	public static long[] randomLongs(int length, int precision, boolean existsAllowed) {
+		long[] results = new long[length];
+		long l;
+		for (int i = 0; i < length; i++) {
+			do {
+				l = randomLong(precision);
+			} while (!existsAllowed && Longs.contains(results, l));
+			results[i] = l;
+		}
+		return results;
+	}
+
 	public static long randomLong(long from, long to) {
 		return ThreadLocalRandom.current().nextLong(from, to);
 	}
@@ -175,11 +201,6 @@ public abstract class RandomUtils {
 
 	public static float randomFloat(long from, long to) {
 		return randomFloat() * (to - from) + from;
-	}
-
-	public static float randomFloat(long from, long to, int scale) {
-		float f = randomFloat(from, to);
-		return Floats.toFixed(f, 2);
 	}
 
 	public static float[] randomFloats(int length, long from, long to) {
@@ -226,6 +247,31 @@ public abstract class RandomUtils {
 		return randomInt(0, Integer.MAX_VALUE);
 	}
 
+	public static int randomInt(int precision) {
+		if (Math.log10(Integer.MAX_VALUE) <= precision) {
+			throw new IllegalArgumentException("Exceed maximum integer value");
+		}
+		int from = (int) Math.pow(10, precision - 1);
+		int to = (int) Math.pow(10, precision);
+		return randomInt(from, to);
+	}
+
+	public static int[] randomInts(int length, int precision) {
+		return randomInts(length, length, precision, false);
+	}
+
+	public static int[] randomInts(int length, int precision, boolean existsAllowed) {
+		int[] results = new int[length];
+		int a;
+		for (int i = 0; i < length; i++) {
+			do {
+				a = randomInt(precision);
+			} while (!existsAllowed && Ints.contains(results, a));
+			results[i] = a;
+		}
+		return results;
+	}
+
 	public static int randomInt(int from, int to) {
 		return ThreadLocalRandom.current().nextInt(from, to);
 	}
@@ -270,20 +316,48 @@ public abstract class RandomUtils {
 		return results;
 	}
 
-	public static BigDecimal randomBigDecimal(int precision) {
+	public static BigInteger randomBigInteger(long from, long to) {
+		return randomBigInteger(BigInteger.valueOf(from), BigInteger.valueOf(to));
+	}
+
+	public static BigInteger randomBigInteger(BigInteger from, BigInteger to) {
+		return randomBigDecimal(new BigDecimal(from), new BigDecimal(to)).toBigInteger();
+	}
+
+	public static BigDecimal randomBigDecimal(long from, long to) {
+		return randomBigDecimal(BigDecimal.valueOf(from), BigDecimal.valueOf(to));
+	}
+
+	public static BigDecimal randomBigDecimal(BigDecimal from, BigDecimal to) {
+		int scale = to.round(new MathContext(1)).scale();
+		return randomBigDecimal(Math.abs(Math.min(-16, scale)), from, to);
+	}
+
+	private static BigDecimal randomBigDecimal(int scale, BigDecimal from, BigDecimal to) {
+		BigDecimal rand = randomBigDecimal(scale);
+		return rand.multiply(to.subtract(from)).add(from);
+	}
+
+	public static BigDecimal randomBigDecimal(int scale) {
 		Random r = ThreadLocalRandom.current();
-		BigInteger n = BigInteger.TEN.pow(precision);
+		BigInteger n = BigInteger.TEN.pow(scale);
 		BigInteger m;
 		do {
 			m = new BigInteger(n.bitLength(), r);
 		} while (m.compareTo(n) >= 0);
-		return new BigDecimal(m, precision);
+		return new BigDecimal(m, scale);
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(randomBigDecimal(11, 6));
 	}
 
 	public static BigDecimal randomBigDecimal(int precision, int scale) {
 		BigDecimal from = BigDecimal.TEN.pow(precision - 1);
 		BigDecimal to = BigDecimal.TEN.pow(precision);
-		return randomBigDecimal(precision + scale + 1).multiply(to.subtract(from)).add(from).setScale(scale, RoundingMode.HALF_UP);
+		scale = Math.abs(to.round(new MathContext(1)).scale()) + scale;
+		BigDecimal value = randomBigDecimal(scale, from, to);
+		return value.setScale(scale, RoundingMode.HALF_UP);
 	}
 
 	public static BigDecimal[] randomBigDecimals(int length, int precision, int scale) {
@@ -408,7 +482,7 @@ public abstract class RandomUtils {
 		return DateUtils.valueOf(year, month, dayOfMonth, randomInt(0, 24), randomInt(0, 60), randomInt(0, 60));
 	}
 
-	public static void main(String[] args) {
+	public static void main2(String[] args) {
 		for (int i = 1; i <= 100; i++)
 			System.out.println(randomLocalDateTime(Year.now(), Month.AUGUST));
 	}
