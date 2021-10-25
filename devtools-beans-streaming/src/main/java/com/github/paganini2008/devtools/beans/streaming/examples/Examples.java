@@ -59,7 +59,7 @@ public abstract class Examples {
 			product.setLocation(RandomUtils.randomChoice(locations));
 			product.setName("Product-" + product.getId());
 			product.setNumber(RandomUtils.randomLong(1, 1000));
-			product.setPrice(RandomUtils.randomFloat(10, 1000, 2));
+			product.setPrice(RandomUtils.randomFloat(10, 1000));
 			product.setSales(BigInteger.valueOf(RandomUtils.randomLong(10000, 100000)));
 			product.setStyle(Style.values()[RandomUtils.randomInt(0, 2)]);
 			product.setSalesman(new Product.Salesman(RandomUtils.randomChoice(users), "123456"));

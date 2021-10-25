@@ -18,6 +18,7 @@ package com.github.paganini2008.devtools.beans;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -27,9 +28,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.github.paganini2008.devtools.RandomDateUtils;
 import com.github.paganini2008.devtools.RandomStringUtils;
 import com.github.paganini2008.devtools.RandomUtils;
 import com.github.paganini2008.devtools.StringUtils;
+import com.github.paganini2008.devtools.math.BigDecimalUtils;
+import com.github.paganini2008.devtools.primitives.Doubles;
+import com.github.paganini2008.devtools.primitives.Floats;
 
 /**
  * 
@@ -41,19 +46,38 @@ import com.github.paganini2008.devtools.StringUtils;
  */
 public abstract class MockTypes {
 
-	public static class MockByte implements MockType<Byte> {
+	public static class MockChoiceByte implements MockType<Byte> {
+
+		private final byte[] choice;
+
+		public MockChoiceByte(byte[] choice) {
+			this.choice = choice;
+		}
+
+		@Override
+		public Type[] getTypes() {
+			return new Type[] { Byte.class, byte.class };
+		}
+
+		@Override
+		public Byte randomize() {
+			return RandomUtils.randomChoice(choice);
+		}
+	}
+
+	public static class MockRangeByte implements MockType<Byte> {
 
 		private final byte from;
 		private final byte to;
 
-		public MockByte(byte from, byte to) {
+		public MockRangeByte(byte from, byte to) {
 			this.from = from;
 			this.to = to;
 		}
 
 		@Override
-		public Type getType() {
-			return Byte.class;
+		public Type[] getTypes() {
+			return new Type[] { Byte.class, byte.class };
 		}
 
 		@Override
@@ -63,19 +87,39 @@ public abstract class MockTypes {
 
 	};
 
-	public static class MockShort implements MockType<Short> {
+	public static class MockChoiceShort implements MockType<Short> {
+
+		private final short[] choice;
+
+		public MockChoiceShort(short[] choice) {
+			this.choice = choice;
+		}
+
+		@Override
+		public Type[] getTypes() {
+			return new Type[] { Short.class, short.class };
+		}
+
+		@Override
+		public Short randomize() {
+			return RandomUtils.randomChoice(choice);
+		}
+
+	};
+
+	public static class MockRangeShort implements MockType<Short> {
 
 		private final short from;
 		private final short to;
 
-		public MockShort(short from, short to) {
+		public MockRangeShort(short from, short to) {
 			this.from = from;
 			this.to = to;
 		}
 
 		@Override
-		public Type getType() {
-			return Short.class;
+		public Type[] getTypes() {
+			return new Type[] { Short.class, short.class };
 		}
 
 		@Override
@@ -85,19 +129,39 @@ public abstract class MockTypes {
 
 	};
 
-	public static class MockInteger implements MockType<Integer> {
+	public static class MockChoiceInteger implements MockType<Integer> {
+
+		private final int[] choice;
+
+		public MockChoiceInteger(int[] choice) {
+			this.choice = choice;
+		}
+
+		@Override
+		public Type[] getTypes() {
+			return new Type[] { Integer.class, int.class };
+		}
+
+		@Override
+		public Integer randomize() {
+			return RandomUtils.randomChoice(choice);
+		}
+
+	};
+
+	public static class MockRangeInteger implements MockType<Integer> {
 
 		private final int from;
 		private final int to;
 
-		public MockInteger(int from, int to) {
+		public MockRangeInteger(int from, int to) {
 			this.from = from;
 			this.to = to;
 		}
 
 		@Override
-		public Type getType() {
-			return Integer.class;
+		public Type[] getTypes() {
+			return new Type[] { Integer.class, int.class };
 		}
 
 		@Override
@@ -107,19 +171,78 @@ public abstract class MockTypes {
 
 	};
 
+	public static class MockInteger implements MockType<Integer> {
+
+		private final int precision;
+
+		public MockInteger(int precision) {
+			this.precision = precision;
+		}
+
+		@Override
+		public Type[] getTypes() {
+			return new Type[] { Integer.class, int.class };
+		}
+
+		@Override
+		public Integer randomize() {
+			return RandomUtils.defineInt(precision);
+		}
+	}
+
 	public static class MockLong implements MockType<Long> {
+
+		private final int precision;
+
+		public MockLong(int precision) {
+			this.precision = precision;
+		}
+
+		@Override
+		public Type[] getTypes() {
+			return new Type[] { Long.class, long.class };
+		}
+
+		@Override
+		public Long randomize() {
+			return RandomUtils.defineLong(precision);
+		}
+
+	};
+
+	public static class MockChoiceLong implements MockType<Long> {
+
+		private final long[] choice;
+
+		public MockChoiceLong(long[] choice) {
+			this.choice = choice;
+		}
+
+		@Override
+		public Type[] getTypes() {
+			return new Type[] { Long.class, long.class };
+		}
+
+		@Override
+		public Long randomize() {
+			return RandomUtils.randomChoice(choice);
+		}
+
+	};
+
+	public static class MockRangeLong implements MockType<Long> {
 
 		private final long from;
 		private final long to;
 
-		public MockLong(long from, long to) {
+		public MockRangeLong(long from, long to) {
 			this.from = from;
 			this.to = to;
 		}
 
 		@Override
-		public Type getType() {
-			return Long.class;
+		public Type[] getTypes() {
+			return new Type[] { Long.class, long.class };
 		}
 
 		@Override
@@ -131,44 +254,134 @@ public abstract class MockTypes {
 
 	public static class MockFloat implements MockType<Float> {
 
-		private final long from;
-		private final long to;
+		private final int precision;
+		private final int scale;
 
-		public MockFloat(long from, long to) {
-			this.from = from;
-			this.to = to;
+		public MockFloat(int precision, int scale) {
+			this.precision = precision;
+			this.scale = scale;
 		}
 
 		@Override
-		public Type getType() {
-			return Float.class;
+		public Type[] getTypes() {
+			return new Type[] { Float.class, float.class };
 		}
 
 		@Override
 		public Float randomize() {
-			return RandomUtils.randomFloat(from, to);
+			return RandomUtils.defineFloat(precision, scale);
+		}
+
+	};
+
+	public static class MockChoiceFloat implements MockType<Float> {
+
+		private final float[] choice;
+
+		public MockChoiceFloat(float[] choice) {
+			this.choice = choice;
+		}
+
+		@Override
+		public Type[] getTypes() {
+			return new Type[] { Float.class, float.class };
+		}
+
+		@Override
+		public Float randomize() {
+			return RandomUtils.randomChoice(choice);
+		}
+
+	};
+
+	public static class MockRangeFloat implements MockType<Float> {
+
+		private final long from;
+		private final long to;
+		private int scale;
+
+		public MockRangeFloat(long from, long to, int scale) {
+			this.from = from;
+			this.to = to;
+			this.scale = scale;
+		}
+
+		@Override
+		public Type[] getTypes() {
+			return new Type[] { Float.class, float.class };
+		}
+
+		@Override
+		public Float randomize() {
+			float f = RandomUtils.randomFloat(from, to);
+			return scale >= 0 ? Floats.toFixed(f, scale) : f;
 		}
 
 	};
 
 	public static class MockDouble implements MockType<Double> {
 
-		private final long from;
-		private final long to;
+		private final int precision;
+		private final int scale;
 
-		public MockDouble(long from, long to) {
-			this.from = from;
-			this.to = to;
+		public MockDouble(int precision, int scale) {
+			this.precision = precision;
+			this.scale = scale;
 		}
 
 		@Override
-		public Type getType() {
-			return Double.class;
+		public Type[] getTypes() {
+			return new Type[] { Double.class, double.class };
 		}
 
 		@Override
 		public Double randomize() {
-			return RandomUtils.randomDouble(from, to);
+			return RandomUtils.defineDouble(precision, scale);
+		}
+
+	};
+
+	public static class MockChoiceDouble implements MockType<Double> {
+
+		private final double[] choice;
+
+		public MockChoiceDouble(double[] choice) {
+			this.choice = choice;
+		}
+
+		@Override
+		public Type[] getTypes() {
+			return new Type[] { Double.class, double.class };
+		}
+
+		@Override
+		public Double randomize() {
+			return RandomUtils.randomChoice(choice);
+		}
+
+	};
+
+	public static class MockRangeDouble implements MockType<Double> {
+
+		private final long from;
+		private final long to;
+		private final int scale;
+
+		public MockRangeDouble(long from, long to, int scale) {
+			this.from = from;
+			this.to = to;
+			this.scale = scale;
+		}
+
+		@Override
+		public Type[] getTypes() {
+			return new Type[] { Double.class, double.class };
+		}
+
+		@Override
+		public Double randomize() {
+			double d = RandomUtils.randomDouble(from, to);
+			return scale >= 0 ? Doubles.toFixed(d, scale) : d;
 		}
 
 	};
@@ -176,13 +389,33 @@ public abstract class MockTypes {
 	public static class MockBoolean implements MockType<Boolean> {
 
 		@Override
-		public Type getType() {
-			return Boolean.class;
+		public Type[] getTypes() {
+			return new Type[] { Boolean.class, boolean.class };
 		}
 
 		@Override
 		public Boolean randomize() {
 			return RandomUtils.randomBoolean();
+		}
+
+	};
+
+	public static class MockChoiceCharacter implements MockType<Character> {
+
+		private final char[] choice;
+
+		public MockChoiceCharacter(char[] choice) {
+			this.choice = choice;
+		}
+
+		@Override
+		public Type[] getTypes() {
+			return new Type[] { Character.class, char.class };
+		}
+
+		@Override
+		public Character randomize() {
+			return RandomUtils.randomChoice(choice);
 		}
 
 	};
@@ -200,8 +433,8 @@ public abstract class MockTypes {
 		}
 
 		@Override
-		public Type getType() {
-			return Character.class;
+		public Type[] getTypes() {
+			return new Type[] { Character.class, char.class };
 		}
 
 		@Override
@@ -222,13 +455,13 @@ public abstract class MockTypes {
 		}
 
 		@Override
-		public Type getType() {
-			return LocalDate.class;
+		public Type[] getTypes() {
+			return new Type[] { LocalDate.class };
 		}
 
 		@Override
 		public LocalDate randomize() {
-			return RandomUtils.randomLocalDate(year, month);
+			return RandomDateUtils.randomLocalDate(year, month);
 		}
 
 	}
@@ -246,13 +479,13 @@ public abstract class MockTypes {
 		}
 
 		@Override
-		public Type getType() {
-			return LocalDateTime.class;
+		public Type[] getTypes() {
+			return new Type[] { LocalDateTime.class };
 		}
 
 		@Override
 		public LocalDateTime randomize() {
-			return RandomUtils.randomLocalDateTime(year, month, dayOfMonth);
+			return RandomDateUtils.randomLocalDateTime(year, month, dayOfMonth);
 		}
 
 	}
@@ -260,13 +493,13 @@ public abstract class MockTypes {
 	public static class MockLocalTime implements MockType<LocalTime> {
 
 		@Override
-		public Type getType() {
-			return LocalTime.class;
+		public Type[] getTypes() {
+			return new Type[] { LocalTime.class };
 		}
 
 		@Override
 		public LocalTime randomize() {
-			return RandomUtils.randomLocalTime();
+			return RandomDateUtils.randomLocalTime();
 		}
 
 	}
@@ -282,18 +515,18 @@ public abstract class MockTypes {
 		}
 
 		@Override
-		public Type getType() {
-			return Date.class;
+		public Type[] getTypes() {
+			return new Type[] { Date.class };
 		}
 
 		@Override
 		public Date randomize() {
 			if (year < 0 && month < 0) {
-				return RandomUtils.randomDate();
+				return RandomDateUtils.randomDate();
 			} else if (year > 0 && month < 0) {
-				return RandomUtils.randomDate(year);
+				return RandomDateUtils.randomDate(year);
 			} else if (year > 0 && month > 0) {
-				return RandomUtils.randomDate(year, month);
+				return RandomDateUtils.randomDate(year, month);
 			}
 			throw new IllegalArgumentException("Year: " + year + ", Month: " + month);
 		}
@@ -313,22 +546,71 @@ public abstract class MockTypes {
 		}
 
 		@Override
-		public Type getType() {
-			return Date.class;
+		public Type[] getTypes() {
+			return new Type[] { Date.class };
 		}
 
 		@Override
 		public Date randomize() {
 			if (year < 0 && month < 0 && dayOfMonth < 0) {
-				return RandomUtils.randomDateTime();
+				return RandomDateUtils.randomDateTime();
 			} else if (year > 0 && month < 0 && dayOfMonth < 0) {
-				return RandomUtils.randomDateTime(year);
+				return RandomDateUtils.randomDateTime(year);
 			} else if (year > 0 && month > 0 && dayOfMonth < 0) {
-				return RandomUtils.randomDateTime(year, month);
+				return RandomDateUtils.randomDateTime(year, month);
 			} else if (year > 0 && month > 0 && dayOfMonth > 0) {
-				return RandomUtils.randomDateTime(year, month, dayOfMonth);
+				return RandomDateUtils.randomDateTime(year, month, dayOfMonth);
 			}
 			throw new IllegalArgumentException("Year: " + year + ", Month: " + month + ", DayOfMonth: " + dayOfMonth);
+		}
+
+	}
+
+	public static class MockChoiceBigDecimal implements MockType<BigDecimal> {
+
+		private final BigDecimal[] choice;
+
+		public MockChoiceBigDecimal(BigDecimal[] choice) {
+			this.choice = choice;
+		}
+
+		@Override
+		public Type[] getTypes() {
+			return new Type[] { BigDecimal.class };
+		}
+
+		@Override
+		public BigDecimal randomize() {
+			return RandomUtils.randomChoice(choice);
+		}
+
+	};
+
+	public static class MockRangeBigDecimal implements MockType<BigDecimal> {
+
+		private final BigDecimal from;
+		private final BigDecimal to;
+		private final int scale;
+
+		public MockRangeBigDecimal(double from, double to, int scale) {
+			this(BigDecimal.valueOf(from), BigDecimal.valueOf(to), scale);
+		}
+
+		public MockRangeBigDecimal(BigDecimal from, BigDecimal to, int scale) {
+			this.from = from;
+			this.to = to;
+			this.scale = scale;
+		}
+
+		@Override
+		public Type[] getTypes() {
+			return new Type[] { BigDecimal.class };
+		}
+
+		@Override
+		public BigDecimal randomize() {
+			BigDecimal value = RandomUtils.randomBigDecimal(from, to);
+			return BigDecimalUtils.setScale(value, scale, RoundingMode.HALF_UP);
 		}
 
 	}
@@ -344,13 +626,59 @@ public abstract class MockTypes {
 		}
 
 		@Override
-		public Type getType() {
-			return BigDecimal.class;
+		public Type[] getTypes() {
+			return new Type[] { BigDecimal.class };
 		}
 
 		@Override
 		public BigDecimal randomize() {
-			return RandomUtils.randomBigDecimal(position, scale);
+			return RandomUtils.defineBigDecimal(position, scale);
+		}
+
+	}
+
+	public static class MockChoiceBigInteger implements MockType<BigInteger> {
+
+		private final BigInteger[] choice;
+
+		public MockChoiceBigInteger(BigInteger[] choice) {
+			this.choice = choice;
+		}
+
+		@Override
+		public Type[] getTypes() {
+			return new Type[] { BigInteger.class };
+		}
+
+		@Override
+		public BigInteger randomize() {
+			return RandomUtils.randomChoice(choice);
+		}
+
+	};
+
+	public static class MockRangeBigInteger implements MockType<BigInteger> {
+
+		private final BigInteger from;
+		private final BigInteger to;
+
+		public MockRangeBigInteger(long from, long to) {
+			this(BigInteger.valueOf(from), BigInteger.valueOf(to));
+		}
+
+		public MockRangeBigInteger(BigInteger from, BigInteger to) {
+			this.from = from;
+			this.to = to;
+		}
+
+		@Override
+		public Type[] getTypes() {
+			return new Type[] { BigInteger.class };
+		}
+
+		@Override
+		public BigInteger randomize() {
+			return RandomUtils.randomBigInteger(from, to);
 		}
 
 	}
@@ -364,16 +692,36 @@ public abstract class MockTypes {
 		}
 
 		@Override
-		public Type getType() {
-			return BigInteger.class;
+		public Type[] getTypes() {
+			return new Type[] { BigInteger.class };
 		}
 
 		@Override
 		public BigInteger randomize() {
-			return RandomUtils.randomBigInteger(position);
+			return RandomUtils.defineBigInteger(position);
 		}
 
 	}
+
+	public static class MockChoiceString implements MockType<String> {
+
+		private final String[] choice;
+
+		public MockChoiceString(String[] choice) {
+			this.choice = choice;
+		}
+
+		@Override
+		public Type[] getTypes() {
+			return new Type[] { String.class };
+		}
+
+		@Override
+		public String randomize() {
+			return RandomUtils.randomChoice(choice);
+		}
+
+	};
 
 	public static class MockString implements MockType<String> {
 
@@ -406,8 +754,8 @@ public abstract class MockTypes {
 		}
 
 		@Override
-		public Type getType() {
-			return String.class;
+		public Type[] getTypes() {
+			return new Type[] { String.class };
 		}
 
 		@Override
@@ -425,12 +773,12 @@ public abstract class MockTypes {
 	static {
 		setMockType(new MockBoolean());
 		setMockType(new MockCharacter(true, true, true));
-		setMockType(new MockByte((byte) 0, Byte.MAX_VALUE));
-		setMockType(new MockShort((short) 0, Short.MAX_VALUE));
-		setMockType(new MockInteger(0, Integer.MAX_VALUE));
-		setMockType(new MockLong(0L, Long.MAX_VALUE));
-		setMockType(new MockFloat(0L, Integer.MAX_VALUE));
-		setMockType(new MockDouble(0L, Long.MAX_VALUE));
+		setMockType(new MockRangeByte((byte) 0, Byte.MAX_VALUE));
+		setMockType(new MockRangeShort((short) 0, Short.MAX_VALUE));
+		setMockType(new MockRangeInteger(0, Integer.MAX_VALUE));
+		setMockType(new MockRangeLong(0L, Long.MAX_VALUE));
+		setMockType(new MockFloat(10, 2));
+		setMockType(new MockDouble(10, 2));
 		setMockType(new MockBigInteger(11));
 		setMockType(new MockBigDecimal(11, 2));
 		setMockType(new MockDate(-1, -1));
@@ -440,7 +788,9 @@ public abstract class MockTypes {
 
 	public static <T> void setMockType(MockType<T> mockType) {
 		if (mockType != null) {
-			types.put(mockType.getType(), mockType);
+			for (Type type : mockType.getTypes()) {
+				types.put(type, mockType);
+			}
 		}
 	}
 

@@ -27,7 +27,7 @@ import java.lang.reflect.Type;
  */
 public interface MockType<T> {
 	
-	Type getType();
+	Type[] getTypes();
 
 	T randomize();
 }

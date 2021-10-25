@@ -20,6 +20,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.Year;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
@@ -374,13 +377,13 @@ public abstract class DateUtils {
 		return values;
 	}
 
-	public static Date valueOf(int year, int month, int date) {
-		return valueOf(year, month, date, 0, 0, 0);
+	public static Date valueOf(int year, int month, int dateOfMonth) {
+		return valueOf(year, month, dateOfMonth, 0, 0, 0);
 	}
 
-	public static Date valueOf(int year, int month, int date, int hour, int minute, int second) {
+	public static Date valueOf(int year, int month, int dateOfMonth, int hour, int minute, int second) {
 		Calendar c = Calendar.getInstance();
-		c.set(year, month - 1, date, hour, minute, second);
+		c.set(year, month - 1, dateOfMonth, hour, minute, second);
 		return c.getTime();
 	}
 
@@ -499,6 +502,23 @@ public abstract class DateUtils {
 			throw new IllegalArgumentException("interval < 0");
 		}
 		return timeUnit != TimeUnit.NANOSECONDS ? TimeUnit.NANOSECONDS.convert(interval, timeUnit) : interval;
+	}
+
+	public static LocalDate setDayOfMonth(Year year, Month month, int dayOfMonth) {
+		Assert.isNull(year, "Nullable year");
+		Assert.isNull(month, "Nullable month");
+		YearMonth yearMonth = year.atMonth(month);
+		return setDayOfMonth(yearMonth, dayOfMonth);
+	}
+
+	public static LocalDate setDayOfMonth(YearMonth yearMonth, int dayOfMonth) {
+		Assert.isNull(yearMonth, "Nullable year and month");
+		return yearMonth.atDay(Math.min(yearMonth.atEndOfMonth().getDayOfMonth(), dayOfMonth));
+	}
+
+	public static LocalDate setDayOfYear(Year year, int dayOfYear) {
+		Assert.isNull(year, "Nullable year");
+		return year.atDay(Math.min(dayOfYear, year.isLeap() ? 366 : 365));
 	}
 
 	public static <R> Map<Date, R> populate(Date from, int days, int interval, int calendarField, Function<Calendar, R> valueHandler) {

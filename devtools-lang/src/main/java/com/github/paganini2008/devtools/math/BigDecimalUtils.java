@@ -810,14 +810,20 @@ public abstract class BigDecimalUtils {
 		return val != null ? val.toBigInteger() : null;
 	}
 
-	public static BigDecimal setScale(String value, int scale, RoundingMode roundingMode) {
-		BigDecimal val = parse(value);
-		return value != null ? val.setScale(scale, roundingMode) : null;
+	public static BigDecimal setScale(String string, int scale, RoundingMode roundingMode) {
+		BigDecimal value = parse(string);
+		if (value != null) {
+			return scale > 0 ? value.setScale(scale, roundingMode) : value;
+		}
+		return null;
 	}
 
-	public static BigDecimal setScale(Number value, int scale, RoundingMode roundingMode) {
-		BigDecimal val = valueOf(value);
-		return value != null ? val.setScale(scale, roundingMode) : null;
+	public static BigDecimal setScale(Number number, int scale, RoundingMode roundingMode) {
+		BigDecimal value = valueOf(number);
+		if (value != null) {
+			return scale > 0 ? value.setScale(scale, roundingMode) : value;
+		}
+		return null;
 	}
 
 	public static BigDecimal[] divideAndRemainder(String a, String b, MathContext mc) {
@@ -871,6 +877,16 @@ public abstract class BigDecimalUtils {
 			numberPlainStringCache.put(n, repr);
 		}
 		return repr;
+	}
+
+	public static int getPrecision(BigDecimal value) {
+		return Math.abs(value.round(new MathContext(1)).scale());
+	}
+
+	public static int getScale(BigDecimal value) {
+		String str = value.stripTrailingZeros().toPlainString();
+		int index = str.indexOf(".");
+		return index < 0 ? 0 : str.length() - index - 1;
 	}
 
 	public static <K, V extends Number> Map<K, BigDecimal> mergeAndSum(Map<K, V> m1, Map<K, V> m2) {

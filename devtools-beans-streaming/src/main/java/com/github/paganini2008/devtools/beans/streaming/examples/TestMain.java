@@ -9,15 +9,18 @@ import com.github.paganini2008.devtools.beans.MockConfig;
 public class TestMain {
 
 	public static void main(String[] args) {
-		List<Product> list = BeanUtils.mockBeans(100, Product.class, new MockConfig() {
-
-			@Override
-			public boolean recurs(String propertyName, Class<?> propertyType) {
-				return Product.Salesman.class == propertyType;
-			}
-
-		});
-		Console.log(list);
+//		List<Product> list = BeanUtils.mockBeans(100, Product.class, new MockConfig() {
+//
+//			@Override
+//			public boolean recurs(String propertyName, Class<?> propertyType) {
+//				return Product.Salesman.class == propertyType;
+//			}
+//
+//		});
+//		Console.log(list);
+		
+		float a = 1.23f;
+		System.out.println(a);
 	}
 
 }
