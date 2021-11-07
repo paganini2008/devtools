@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.github.paganini2008.devtools.RandomUtils;
 import com.github.paganini2008.devtools.converter.ConvertUtils;
 import com.github.paganini2008.devtools.reflection.ConstructorUtils;
 
@@ -122,37 +121,36 @@ public abstract class BeanUtils {
 		}
 	}
 
-	public static <T> List<T> mockBeans(int size, Class<T> beanClass, MockConfig mockConfig) {
-		List<T> list = new ArrayList<>(size);
-		for (int i = 0; i < size; i++) {
-			list.add(mockBean(beanClass, mockConfig));
+	public static <T> List<T> mockBeans(int count, Class<T> beanClass, MockContext context) {
+		return mockBeans(count, beanClass, context, new RandomTemplate());
+	}
+
+	public static <T> List<T> mockBeans(int count, Class<T> beanClass, MockContext context, RandomOperations operations) {
+		List<T> list = new ArrayList<T>(count);
+		for (int i = 0; i < count; i++) {
+			list.add(mockBean(beanClass, context, operations));
 		}
 		return list;
 	}
 
-	public static <T> T mockBean(Class<T> beanClass, MockConfig mockConfig) {
+	public static <T> T mockBean(Class<T> beanClass, MockContext context, RandomOperations operations) {
 		T object = instantiate(beanClass);
 		Map<String, PropertyDescriptor> desc = PropertyUtils.getPropertyDescriptors(object.getClass());
 		String propertyName;
 		Class<?> propertyType;
 		Object propertyValue;
 		for (PropertyDescriptor pd : desc.values()) {
+			context.reset();
 			propertyName = pd.getName();
 			propertyType = pd.getPropertyType();
-			if (mockConfig.recurs(propertyName, propertyType)) {
-				propertyValue = mockBean(propertyType, mockConfig);
+			if (propertyType.isAnnotationPresent(Recur.class)) {
+				propertyValue = mockBean(propertyType, context, operations);
 			} else {
-				if (Enum.class.isAssignableFrom(propertyType)) {
-					propertyValue = RandomUtils.randomEnum((Class<Enum>) propertyType);
-				} else {
-					MockType<?> mockType = MockTypes.getMockType(propertyType);
-					propertyValue = mockType != null ? mockType.randomize() : null;
-				}
+				propertyValue = context.mock(propertyType, operations);
 			}
 			if (propertyValue != null) {
 				PropertyUtils.setProperty(object, pd.getName(), propertyValue);
 			}
-			mockConfig.assignManually(propertyName, propertyType, object);
 		}
 		return object;
 	}

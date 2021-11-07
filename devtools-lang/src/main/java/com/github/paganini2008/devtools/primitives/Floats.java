@@ -21,6 +21,7 @@ import static java.lang.Float.NEGATIVE_INFINITY;
 import static java.lang.Float.POSITIVE_INFINITY;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -875,6 +876,10 @@ public abstract class Floats {
 
 	public static float toFixed(float value, int scale) {
 		return Float.parseFloat(NumberUtils.format(value, scale));
+	}
+
+	public static float toFixed(float value, int scale, RoundingMode roundingMode) {
+		return toFixed(value, scale);
 	}
 
 	public static String toPlainString(float value) {

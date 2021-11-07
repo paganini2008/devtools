@@ -279,9 +279,7 @@ public abstract class DateUtils {
 	}
 
 	public static Date addField(Date date, int calendarField, int amount) {
-		if (date == null) {
-			throw new IllegalArgumentException("The date must not be null.");
-		}
+		Assert.isNull(date,"The date must not be null");
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
 		c.add(calendarField, amount);
@@ -317,6 +315,7 @@ public abstract class DateUtils {
 	}
 
 	public static Date setAM(Date date, int hour, int minute, int second) {
+		Assert.isNull(date, "The date must not be null");
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
 		c.set(Calendar.AM_PM, Calendar.AM);
@@ -327,6 +326,7 @@ public abstract class DateUtils {
 	}
 
 	public static Date setPM(Date date, int hour, int minute, int second) {
+		Assert.isNull(date, "The date must not be null");
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
 		c.set(Calendar.AM_PM, Calendar.PM);
@@ -337,6 +337,7 @@ public abstract class DateUtils {
 	}
 
 	public static Date setTime(Date date, int hourOfDay, int minute, int second) {
+		Assert.isNull(date, "The date must not be null");
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
 		c.set(Calendar.HOUR_OF_DAY, hourOfDay);
@@ -345,10 +346,30 @@ public abstract class DateUtils {
 		return c.getTime();
 	}
 
+	public static Date today() {
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date());
+		c.set(Calendar.HOUR_OF_DAY, 0);
+		c.set(Calendar.MINUTE, 0);
+		c.set(Calendar.SECOND, 0);
+		return c.getTime();
+	}
+
+	public static Date setTime(Date date, Date time) {
+		Assert.isNull(date, "The date must not be null");
+		Assert.isNull(time, "The time must not be null");
+		Calendar c = Calendar.getInstance();
+		c.setTime(time);
+		Calendar copy = (Calendar) c.clone();
+		c.setTime(date);
+		c.set(Calendar.HOUR_OF_DAY, copy.get(Calendar.HOUR_OF_DAY));
+		c.set(Calendar.MINUTE, copy.get(Calendar.MINUTE));
+		c.set(Calendar.SECOND, copy.get(Calendar.SECOND));
+		return c.getTime();
+	}
+
 	private static Date setField(Date date, int calendarField, int amount) {
-		if (date == null) {
-			throw new IllegalArgumentException("The date must not be null");
-		}
+		Assert.isNull(date, "The date must not be null");
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
 		c.set(calendarField, amount);
@@ -383,7 +404,7 @@ public abstract class DateUtils {
 
 	public static Date valueOf(int year, int month, int dateOfMonth, int hour, int minute, int second) {
 		Calendar c = Calendar.getInstance();
-		c.set(year, month - 1, dateOfMonth, hour, minute, second);
+		c.set(year, month, dateOfMonth, hour, minute, second);
 		return c.getTime();
 	}
 
@@ -392,13 +413,8 @@ public abstract class DateUtils {
 		return c.getTime();
 	}
 
-	public static Date setTime(int hour, int minute, int second) {
-		Calendar c = Calendar.getInstance();
-		c.setTimeInMillis(System.currentTimeMillis());
-		c.set(Calendar.HOUR_OF_DAY, hour);
-		c.set(Calendar.MINUTE, minute);
-		c.set(Calendar.SECOND, second);
-		return c.getTime();
+	public static Date setTime(int hourOfDay, int minute, int second) {
+		return setTime(new Date(), hourOfDay, minute, second);
 	}
 
 	public static Date[] parseMany(String[] strings, String[] datePatterns) {

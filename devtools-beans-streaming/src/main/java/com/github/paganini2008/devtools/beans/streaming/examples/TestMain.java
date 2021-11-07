@@ -5,22 +5,13 @@ import java.util.List;
 import com.github.paganini2008.devtools.Console;
 import com.github.paganini2008.devtools.beans.BeanUtils;
 import com.github.paganini2008.devtools.beans.MockConfig;
+import com.github.paganini2008.devtools.beans.MockContext;
 
 public class TestMain {
 
 	public static void main(String[] args) {
-//		List<Product> list = BeanUtils.mockBeans(100, Product.class, new MockConfig() {
-//
-//			@Override
-//			public boolean recurs(String propertyName, Class<?> propertyType) {
-//				return Product.Salesman.class == propertyType;
-//			}
-//
-//		});
-//		Console.log(list);
-		
-		float a = 1.23f;
-		System.out.println(a);
+		List<Product> list = BeanUtils.mockBeans(100, Product.class, new MockContext());
+		Console.log(list);
 	}
 
 }

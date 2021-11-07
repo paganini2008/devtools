@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
+import com.github.paganini2008.devtools.beans.Recur;
 import com.github.paganini2008.devtools.beans.ToStringBuilder;
 
 /**
@@ -42,6 +43,8 @@ public class Product {
 	private Long number;
 	private BigDecimal freight;
 	private Style style;
+	
+	@Recur
 	private Salesman salesman;
 
 	public static class Salesman {

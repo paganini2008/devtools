@@ -122,24 +122,12 @@ public abstract class RandomUtils {
 		return ThreadLocalRandom.current().nextBoolean();
 	}
 
-	public static byte randomByte() {
-		return randomByte((byte) 0, Byte.MAX_VALUE);
-	}
-
 	public static byte randomByte(byte from, byte to) {
 		return (byte) randomInt(from, to);
 	}
 
-	public static char randomChar() {
-		return randomChar(Character.MIN_VALUE, Character.MAX_VALUE);
-	}
-
 	public static char randomChar(char from, char to) {
 		return (char) randomInt(from, to);
-	}
-
-	public static short randomShort() {
-		return randomShort((short) 0, Short.MAX_VALUE);
 	}
 
 	public static short randomShort(short from, short to) {
@@ -192,7 +180,7 @@ public abstract class RandomUtils {
 	}
 
 	public static int randomInt(int from, int to) {
-		return ThreadLocalRandom.current().nextInt(from, to);
+		return from != to ? ThreadLocalRandom.current().nextInt(from, to) : from;
 	}
 
 	public static int[] randomInts(int length, int from, int to) {
@@ -209,10 +197,6 @@ public abstract class RandomUtils {
 			results[i] = a;
 		}
 		return results;
-	}
-
-	public static long randomLong() {
-		return randomLong(0, Long.MAX_VALUE);
 	}
 
 	public static long defineLong(int precision) {
@@ -241,7 +225,7 @@ public abstract class RandomUtils {
 	}
 
 	public static long randomLong(long from, long to) {
-		return ThreadLocalRandom.current().nextLong(from, to);
+		return from != to ? ThreadLocalRandom.current().nextLong(from, to) : from;
 	}
 
 	public static long[] randomLongs(int length, long from, long to) {
@@ -264,8 +248,13 @@ public abstract class RandomUtils {
 		return ThreadLocalRandom.current().nextFloat();
 	}
 
-	public static float randomFloat(long from, long to) {
-		return randomFloat() * (to - from) + from;
+	public static float randomFloat(float from, float to) {
+		return from != to ? randomFloat() * (to - from) + from : from;
+	}
+
+	public static float randomFloat(float from, float to, int scale) {
+		float rand = randomFloat();
+		return Floats.toFixed(rand, scale);
 	}
 
 	public static float defineFloat(int precision, int scale) {
@@ -291,11 +280,11 @@ public abstract class RandomUtils {
 		return results;
 	}
 
-	public static float[] randomFloats(int length, long from, long to) {
+	public static float[] randomFloats(int length, float from, float to) {
 		return randomFloats(length, from, to, false);
 	}
 
-	public static float[] randomFloats(int length, long from, long to, boolean existsAllowed) {
+	public static float[] randomFloats(int length, float from, float to, boolean existsAllowed) {
 		float[] results = new float[length];
 		float a;
 		for (int i = 0; i < length; i++) {
@@ -307,12 +296,17 @@ public abstract class RandomUtils {
 		return results;
 	}
 
-	private static double randomDouble() {
+	public static double randomDouble() {
 		return ThreadLocalRandom.current().nextDouble();
 	}
 
-	public static double randomDouble(long from, long to) {
-		return randomDouble() * (to - from) + from;
+	public static double randomDouble(double from, double to) {
+		return from != to ? ThreadLocalRandom.current().nextDouble(from, to) : from;
+	}
+
+	public static double randomDouble(double from, double to, int scale) {
+		double rand = randomDouble(from, to);
+		return Doubles.toFixed(rand, scale);
 	}
 
 	public static double defineDouble(int precision, int scale) {
@@ -338,11 +332,11 @@ public abstract class RandomUtils {
 		return results;
 	}
 
-	public static double[] randomDoubles(int length, long from, long to) {
+	public static double[] randomDoubles(int length, double from, double to) {
 		return randomDoubles(length, from, to, false);
 	}
 
-	public static double[] randomDoubles(int length, long from, long to, boolean existsAllowed) {
+	public static double[] randomDoubles(int length, double from, double to, boolean existsAllowed) {
 		double[] results = new double[length];
 		double d;
 		for (int i = 0; i < length; i++) {
@@ -362,17 +356,17 @@ public abstract class RandomUtils {
 		return randomBigDecimal(new BigDecimal(from), new BigDecimal(to)).toBigInteger();
 	}
 
-	public static BigDecimal randomBigDecimal(double from, double to) {
-		return randomBigDecimal(BigDecimal.valueOf(from), BigDecimal.valueOf(to));
+	public static BigDecimal randomBigDecimal(double from, double to, int scale) {
+		return randomBigDecimal(BigDecimal.valueOf(from), BigDecimal.valueOf(to), scale);
 	}
 
 	public static BigDecimal randomBigDecimal(BigDecimal from, BigDecimal to) {
 		int p = BigDecimalUtils.getPrecision(to);
 		int s = BigDecimalUtils.getScale(to);
-		return randomBigDecimal(Math.max(16, p + s), from, to);
+		return randomBigDecimal(from, to, Math.max(16, p + s));
 	}
 
-	public static BigDecimal randomBigDecimal(int scale, BigDecimal from, BigDecimal to) {
+	public static BigDecimal randomBigDecimal(BigDecimal from, BigDecimal to, int scale) {
 		BigDecimal rand = randomBigDecimal(scale);
 		return rand.multiply(to.subtract(from)).add(from).stripTrailingZeros();
 	}
@@ -399,7 +393,7 @@ public abstract class RandomUtils {
 		BigDecimal from = BigDecimal.TEN.pow(precision - 1);
 		BigDecimal to = BigDecimal.TEN.pow(precision);
 		int newScale = BigDecimalUtils.getPrecision(to) + scale;
-		BigDecimal value = randomBigDecimal(newScale, from, to);
+		BigDecimal value = randomBigDecimal(from, to, newScale);
 		return scale >= 0 ? value.setScale(scale, RoundingMode.HALF_UP) : value;
 	}
 

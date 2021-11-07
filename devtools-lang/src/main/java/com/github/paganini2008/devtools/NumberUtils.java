@@ -308,7 +308,7 @@ public abstract class NumberUtils {
 	public static DecimalFormat getDecimalFormat(String pattern) {
 		DecimalFormat df = formatCache.get(pattern);
 		if (df == null) {
-			formatCache.put(pattern, new DecimalFormat(pattern));
+			formatCache.putIfAbsent(pattern, new DecimalFormat(pattern));
 			df = formatCache.get(pattern);
 		}
 		return df;

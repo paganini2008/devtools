@@ -290,7 +290,7 @@ public abstract class RandomDateUtils {
 		int dayOfMonth = randomInt(fromDayOfMonth, toDayOfMonth);
 		return DateUtils.valueOf(year, month, dayOfMonth);
 	}
-	
+
 	public static Date randomDateTime() {
 		return randomDateTime(DateUtils.getYear());
 	}
@@ -326,6 +326,20 @@ public abstract class RandomDateUtils {
 		int minute = randomInt(fromMinute, toMinute);
 		int second = randomInt(fromSecond, toSecond);
 		return DateUtils.setTime(date, hourOfDay, minute, second);
+	}
+
+	public static Date randomDateTime(String from, String to, String datePattern) {
+		Date fromDate = DateUtils.parse(from, datePattern);
+		Date toDate = StringUtils.isNotBlank(to) ? DateUtils.parse(to, datePattern) : new Date();
+		return randomDateTime(fromDate, toDate);
+	}
+
+	public static Date randomDateTime(Date date, String from, String to, String datePattern) {
+		Date fromTime = DateUtils.parse(from, datePattern);
+		Date toTime = StringUtils.isNotBlank(to) ? DateUtils.parse(to, datePattern) : new Date();
+		Date fromDate = DateUtils.setTime(date, fromTime);
+		Date toDate = DateUtils.setTime(date, toTime);
+		return randomDateTime(fromDate, toDate);
 	}
 
 	public static Date randomDateTime(Date fromDate, Date toDate) {
