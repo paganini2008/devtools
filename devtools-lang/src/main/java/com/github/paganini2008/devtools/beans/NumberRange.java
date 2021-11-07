@@ -24,5 +24,7 @@ public @interface NumberRange {
 	int precision() default -1;
 
 	int scale() default 0;
+	
+	String value() default "";
 
 }

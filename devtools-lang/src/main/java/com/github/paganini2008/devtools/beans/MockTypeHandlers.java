@@ -15,7 +15,7 @@
 */
 package com.github.paganini2008.devtools.beans;
 
-import java.lang.reflect.Type;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -36,11 +36,11 @@ public abstract class MockTypeHandlers {
 	public static class StringTypeHandler implements MockTypeHandler {
 
 		@Override
-		public Object apply(Type type, RandomOperations operations, MockContext context) {
-			if (type == String.class) {
-				return operations.randomString(type, context);
+		public Object apply(Field field, RandomOperations operations, MockContext context) {
+			if (field.getType() == String.class) {
+				return operations.randomString(field, context);
 			}
-			return context.mock(type, operations);
+			return context.mock(field, operations);
 		}
 
 	}
@@ -48,11 +48,11 @@ public abstract class MockTypeHandlers {
 	public static class BigIntegerTypeHandler implements MockTypeHandler {
 
 		@Override
-		public Object apply(Type type, RandomOperations operations, MockContext context) {
-			if (type == BigInteger.class) {
-				return operations.randomBigInteger(type, context);
+		public Object apply(Field field, RandomOperations operations, MockContext context) {
+			if (field.getType() == BigInteger.class) {
+				return operations.randomBigInteger(field, context);
 			}
-			return context.mock(type, operations);
+			return context.mock(field, operations);
 		}
 
 	}
@@ -60,11 +60,11 @@ public abstract class MockTypeHandlers {
 	public static class BigDecimalTypeHandler implements MockTypeHandler {
 
 		@Override
-		public Object apply(Type type, RandomOperations operations, MockContext context) {
-			if (type == BigDecimal.class) {
-				return operations.randomBigDecimal(type, context);
+		public Object apply(Field field, RandomOperations operations, MockContext context) {
+			if (field.getType() == BigDecimal.class) {
+				return operations.randomBigDecimal(field, context);
 			}
-			return context.mock(type, operations);
+			return context.mock(field, operations);
 		}
 
 	}
@@ -72,11 +72,11 @@ public abstract class MockTypeHandlers {
 	public static class DateTypeHandler implements MockTypeHandler {
 
 		@Override
-		public Object apply(Type type, RandomOperations operations, MockContext context) {
-			if (type == Date.class) {
-				return operations.randomDate(type, context);
+		public Object apply(Field field, RandomOperations operations, MockContext context) {
+			if (field.getType() == Date.class) {
+				return operations.randomDate(field, context);
 			}
-			return context.mock(type, operations);
+			return context.mock(field, operations);
 		}
 
 	}
@@ -84,11 +84,11 @@ public abstract class MockTypeHandlers {
 	public static class LocalDateTypeHandler implements MockTypeHandler {
 
 		@Override
-		public Object apply(Type type, RandomOperations operations, MockContext context) {
-			if (type == LocalDate.class) {
-				return operations.randomLocalDate(type, context);
+		public Object apply(Field field, RandomOperations operations, MockContext context) {
+			if (field.getType() == LocalDate.class) {
+				return operations.randomLocalDate(field, context);
 			}
-			return context.mock(type, operations);
+			return context.mock(field, operations);
 		}
 
 	}
@@ -96,11 +96,11 @@ public abstract class MockTypeHandlers {
 	public static class LocalDateTimeTypeHandler implements MockTypeHandler {
 
 		@Override
-		public Object apply(Type type, RandomOperations operations, MockContext context) {
-			if (type == LocalDateTime.class) {
-				return operations.randomLocalDateTime(type, context);
+		public Object apply(Field field, RandomOperations operations, MockContext context) {
+			if (field.getType() == LocalDateTime.class) {
+				return operations.randomLocalDateTime(field, context);
 			}
-			return context.mock(type, operations);
+			return context.mock(field, operations);
 		}
 
 	}
@@ -108,11 +108,11 @@ public abstract class MockTypeHandlers {
 	public static class LocalTimeTypeHandler implements MockTypeHandler {
 
 		@Override
-		public Object apply(Type type, RandomOperations operations, MockContext context) {
-			if (type == LocalTime.class) {
-				return operations.randomLocalTime(type, context);
+		public Object apply(Field field, RandomOperations operations, MockContext context) {
+			if (field.getType() == LocalTime.class) {
+				return operations.randomLocalTime(field, context);
 			}
-			return context.mock(type, operations);
+			return context.mock(field, operations);
 		}
 
 	}
@@ -120,11 +120,11 @@ public abstract class MockTypeHandlers {
 	public static class BooleanTypeHandler implements MockTypeHandler {
 
 		@Override
-		public Object apply(Type type, RandomOperations operations, MockContext context) {
-			if (type == Boolean.class || type == boolean.class) {
-				return operations.randomBoolean(type, context);
+		public Object apply(Field field, RandomOperations operations, MockContext context) {
+			if (field.getType() == Boolean.class || field.getType() == boolean.class) {
+				return operations.randomBoolean(field, context);
 			}
-			return context.mock(type, operations);
+			return context.mock(field, operations);
 		}
 
 	}
@@ -132,11 +132,11 @@ public abstract class MockTypeHandlers {
 	public static class CharacterTypeHandler implements MockTypeHandler {
 
 		@Override
-		public Object apply(Type type, RandomOperations operations, MockContext context) {
-			if (type == Character.class || type == char.class) {
-				return operations.randomChar(type, context);
+		public Object apply(Field field, RandomOperations operations, MockContext context) {
+			if (field.getType() == Character.class || field.getType() == char.class) {
+				return operations.randomChar(field, context);
 			}
-			return context.mock(type, operations);
+			return context.mock(field, operations);
 		}
 
 	}
@@ -144,11 +144,11 @@ public abstract class MockTypeHandlers {
 	public static class ByteTypeHandler implements MockTypeHandler {
 
 		@Override
-		public Object apply(Type type, RandomOperations operations, MockContext context) {
-			if (type == Byte.class || type == byte.class) {
-				return operations.randomByte(type, context);
+		public Object apply(Field field, RandomOperations operations, MockContext context) {
+			if (field.getType() == Byte.class || field.getType() == byte.class) {
+				return operations.randomByte(field, context);
 			}
-			return context.mock(type, operations);
+			return context.mock(field, operations);
 		}
 
 	}
@@ -156,11 +156,11 @@ public abstract class MockTypeHandlers {
 	public static class ShortTypeHandler implements MockTypeHandler {
 
 		@Override
-		public Object apply(Type type, RandomOperations operations, MockContext context) {
-			if (type == Short.class || type == short.class) {
-				return operations.randomShort(type, context);
+		public Object apply(Field field, RandomOperations operations, MockContext context) {
+			if (field.getType() == Short.class || field.getType() == short.class) {
+				return operations.randomShort(field, context);
 			}
-			return context.mock(type, operations);
+			return context.mock(field, operations);
 		}
 
 	}
@@ -168,11 +168,11 @@ public abstract class MockTypeHandlers {
 	public static class IntegerTypeHandler implements MockTypeHandler {
 
 		@Override
-		public Object apply(Type type, RandomOperations operations, MockContext context) {
-			if (type == Integer.class || type == int.class) {
-				return operations.randomInt(type, context);
+		public Object apply(Field field, RandomOperations operations, MockContext context) {
+			if (field.getType() == Integer.class || field.getType() == int.class) {
+				return operations.randomInt(field, context);
 			}
-			return context.mock(type, operations);
+			return context.mock(field, operations);
 		}
 
 	}
@@ -180,11 +180,11 @@ public abstract class MockTypeHandlers {
 	public static class LongTypeHandler implements MockTypeHandler {
 
 		@Override
-		public Object apply(Type type, RandomOperations operations, MockContext context) {
-			if (type == Long.class || type == long.class) {
-				return operations.randomLong(type, context);
+		public Object apply(Field field, RandomOperations operations, MockContext context) {
+			if (field.getType() == Long.class || field.getType() == long.class) {
+				return operations.randomLong(field, context);
 			}
-			return context.mock(type, operations);
+			return context.mock(field, operations);
 		}
 
 	}
@@ -192,11 +192,11 @@ public abstract class MockTypeHandlers {
 	public static class FloatTypeHandler implements MockTypeHandler {
 
 		@Override
-		public Object apply(Type type, RandomOperations operations, MockContext context) {
-			if (type == Float.class || type == float.class) {
-				return operations.randomFloat(type, context);
+		public Object apply(Field field, RandomOperations operations, MockContext context) {
+			if (field.getType() == Float.class || field.getType() == float.class) {
+				return operations.randomFloat(field, context);
 			}
-			return context.mock(type, operations);
+			return context.mock(field, operations);
 		}
 
 	}
@@ -204,24 +204,23 @@ public abstract class MockTypeHandlers {
 	public static class DoubleTypeHandler implements MockTypeHandler {
 
 		@Override
-		public Object apply(Type type, RandomOperations operations, MockContext context) {
-			if (type == Double.class || type == double.class) {
-				return operations.randomDouble(type, context);
+		public Object apply(Field field, RandomOperations operations, MockContext context) {
+			if (field.getType() == Double.class || field.getType() == double.class) {
+				return operations.randomDouble(field, context);
 			}
-			return context.mock(type, operations);
+			return context.mock(field, operations);
 		}
 
 	}
 
 	public static class EnumTypeHandler implements MockTypeHandler {
 
-		@SuppressWarnings("all")
 		@Override
-		public Object apply(Type type, RandomOperations operations, MockContext context) {
-			if (Enum.class.isAssignableFrom((Class<?>) type)) {
-				return operations.randomEnum((Class<Enum>) type, context);
+		public Object apply(Field field, RandomOperations operations, MockContext context) {
+			if (Enum.class.isAssignableFrom(field.getType())) {
+				return operations.randomEnum(field, context);
 			}
-			return context.mock(type, operations);
+			return context.mock(field, operations);
 		}
 
 	}

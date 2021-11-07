@@ -24,5 +24,7 @@ public @interface FloatRange {
 	int precision() default -1;
 
 	int scale() default 6;
+	
+	String value() default "";
 
 }

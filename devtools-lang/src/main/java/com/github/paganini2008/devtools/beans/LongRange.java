@@ -20,5 +20,7 @@ public @interface LongRange {
 	long from() default Long.MIN_VALUE;
 
 	long to() default Long.MAX_VALUE;
+	
+	String value() default "";
 
 }

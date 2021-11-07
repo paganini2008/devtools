@@ -22,5 +22,7 @@ public @interface DateRange {
 	String to() default "";
 
 	String format() default "yyyy-MM-dd";
+	
+	String value() default "";
 
 }

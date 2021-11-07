@@ -24,5 +24,7 @@ public @interface DoubleRange {
 	int precision() default -1;
 
 	int scale() default 16;
+	
+	String value() default "";
 
 }

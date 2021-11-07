@@ -16,12 +16,14 @@
 package com.github.paganini2008.devtools.beans;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import com.github.paganini2008.devtools.converter.ConvertUtils;
 import com.github.paganini2008.devtools.reflection.ConstructorUtils;
+import com.github.paganini2008.devtools.reflection.FieldUtils;
 
 /**
  * 
@@ -139,18 +141,22 @@ public abstract class BeanUtils {
 		String propertyName;
 		Class<?> propertyType;
 		Object propertyValue;
+		Field field;
 		for (PropertyDescriptor pd : desc.values()) {
 			context.reset();
 			propertyName = pd.getName();
-			propertyType = pd.getPropertyType();
-			if (propertyType.isAnnotationPresent(Recur.class)) {
-				propertyValue = mockBean(propertyType, context, operations);
-			} else {
-				propertyValue = context.mock(propertyType, operations);
+			field = FieldUtils.getFieldIfAbsent(beanClass, propertyName);
+			if (field != null) {
+				if (field.isAnnotationPresent(Recur.class)) {
+					propertyValue = mockBean(pd.getPropertyType(), context, operations);
+				} else {
+					propertyValue = context.mock(field, operations);
+				}
+				if (propertyValue != null) {
+					PropertyUtils.setProperty(object, pd.getName(), propertyValue);
+				}
 			}
-			if (propertyValue != null) {
-				PropertyUtils.setProperty(object, pd.getName(), propertyValue);
-			}
+
 		}
 		return object;
 	}

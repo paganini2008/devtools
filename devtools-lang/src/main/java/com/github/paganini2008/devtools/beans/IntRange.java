@@ -20,5 +20,7 @@ public @interface IntRange {
 	int from() default Integer.MIN_VALUE;
 
 	int to() default Integer.MAX_VALUE;
+	
+	String value() default "";
 
 }

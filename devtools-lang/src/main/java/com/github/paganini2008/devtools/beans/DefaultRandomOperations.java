@@ -1,6 +1,6 @@
 package com.github.paganini2008.devtools.beans;
 
-import java.lang.reflect.Type;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -23,89 +23,90 @@ import com.github.paganini2008.devtools.beans.MockContext.RandomStringConfig;
 public class DefaultRandomOperations implements RandomOperations {
 
 	@Override
-	public boolean randomBoolean(Type type, MockContext context) {
+	public boolean randomBoolean(Field field, MockContext context) {
 		return RandomUtils.randomBoolean();
 	}
 
 	@Override
-	public char randomChar(Type type, MockContext context) {
+	public char randomChar(Field field, MockContext context) {
 		return RandomUtils.randomChar(context.getRandomConfig().getMinCharValue(), context.getRandomConfig().getMaxCharValue());
 	}
 
 	@Override
-	public byte randomByte(Type type, MockContext context) {
+	public byte randomByte(Field field, MockContext context) {
 		return RandomUtils.randomByte(context.getRandomConfig().getMinByteValue(), context.getRandomConfig().getMaxByteValue());
 	}
 
 	@Override
-	public short randomShort(Type type, MockContext context) {
+	public short randomShort(Field field, MockContext context) {
 		return RandomUtils.randomShort(context.getRandomConfig().getMinShortValue(), context.getRandomConfig().getMaxShortValue());
 	}
 
 	@Override
-	public int randomInt(Type type, MockContext context) {
+	public int randomInt(Field field, MockContext context) {
 		return RandomUtils.randomInt(context.getRandomConfig().getMinIntValue(), context.getRandomConfig().getMaxIntValue());
 	}
 
 	@Override
-	public long randomLong(Type type, MockContext context) {
+	public long randomLong(Field field, MockContext context) {
 		return RandomUtils.randomLong(context.getRandomConfig().getMinLongValue(), context.getRandomConfig().getMaxLongValue());
 	}
 
 	@Override
-	public float randomFloat(Type type, MockContext context) {
+	public float randomFloat(Field field, MockContext context) {
 		return RandomUtils.randomFloat(context.getRandomConfig().getMinFloatValue(), context.getRandomConfig().getMaxFloatValue(), 6);
 	}
 
 	@Override
-	public double randomDouble(Type type, MockContext context) {
+	public double randomDouble(Field field, MockContext context) {
 		return RandomUtils.randomDouble(context.getRandomConfig().getMinDoubleValue(), context.getRandomConfig().getMaxDoubleValue(), 16);
 	}
 
 	@Override
-	public BigInteger randomBigInteger(Type type, MockContext context) {
+	public BigInteger randomBigInteger(Field field, MockContext context) {
 		return RandomUtils.randomBigInteger(context.getRandomConfig().getMinLongValue(), context.getRandomConfig().getMaxLongValue());
 	}
 
 	@Override
-	public BigDecimal randomBigDecimal(Type type, MockContext context) {
+	public BigDecimal randomBigDecimal(Field field, MockContext context) {
 		return RandomUtils.randomBigDecimal(context.getRandomConfig().getMinDoubleValue(), context.getRandomConfig().getMaxDoubleValue(),
 				0);
 	}
 
 	@Override
-	public String randomString(Type type, MockContext context) {
+	public String randomString(Field field, MockContext context) {
 		RandomStringConfig config = context.getRandomStringConfig();
 		return RandomStringUtils.randomString(config.getLength(), config.isDigit(), config.isLowerCaseLetter(), config.isUpperCaseLetter());
 	}
 
 	@Override
-	public Date randomDate(Type type, MockContext context) {
+	public Date randomDate(Field field, MockContext context) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public LocalDate randomLocalDate(Type type, MockContext context) {
+	public LocalDate randomLocalDate(Field field, MockContext context) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public LocalDateTime randomLocalDateTime(Type type, MockContext context) {
+	public LocalDateTime randomLocalDateTime(Field field, MockContext context) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public LocalTime randomLocalTime(Type type, MockContext context) {
+	public LocalTime randomLocalTime(Field field, MockContext context) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public <E extends Enum<E>> E randomEnum(Class<E> enumClass, MockContext context) {
-		return RandomUtils.randomEnum(enumClass);
+	public <E extends Enum<E>> E randomEnum(Field field, MockContext context) {
+		return RandomUtils.randomEnum((Class<E>) field.getType());
 	}
 
 }

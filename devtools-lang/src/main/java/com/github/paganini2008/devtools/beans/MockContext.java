@@ -15,7 +15,9 @@
 */
 package com.github.paganini2008.devtools.beans;
 
-import java.lang.reflect.Type;
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +54,11 @@ public final class MockContext {
 	private final List<MockTypeHandler> typeHandlers = new ArrayList<MockTypeHandler>();
 	private final Map<String, Supplier<String>> stringSupplier = new HashMap<String, Supplier<String>>();
 	private final Map<String, Supplier<Integer>> integerSupplier = new HashMap<String, Supplier<Integer>>();
+	private final Map<String, Supplier<Long>> longSupplier = new HashMap<String, Supplier<Long>>();
+	private final Map<String, Supplier<Float>> floatSupplier = new HashMap<String, Supplier<Float>>();
+	private final Map<String, Supplier<Double>> doubleSupplier = new HashMap<String, Supplier<Double>>();
+	private final Map<String, Supplier<BigInteger>> bigIntegerSupplier = new HashMap<String, Supplier<BigInteger>>();
+	private final Map<String, Supplier<BigDecimal>> bigDecimalSupplier = new HashMap<String, Supplier<BigDecimal>>();
 
 	public MockContext() {
 		initialize();
@@ -300,7 +307,7 @@ public final class MockContext {
 		this.index = 0;
 	}
 
-	public void addStringSupplier(String example, Supplier<String> supplier) {
+	public void setStringSupplier(String example, Supplier<String> supplier) {
 		stringSupplier.put(example, supplier);
 	}
 
@@ -308,10 +315,50 @@ public final class MockContext {
 		return stringSupplier.get(example);
 	}
 
-	protected Object mock(Type type, RandomOperations operations) {
+	public void setIntegerSupplier(String example, Supplier<Integer> supplier) {
+		integerSupplier.put(example, supplier);
+	}
+
+	public Supplier<Integer> getIntegerSupplier(String example) {
+		return integerSupplier.get(example);
+	}
+
+	public void setLongSupplier(String example, Supplier<Long> supplier) {
+		longSupplier.put(example, supplier);
+	}
+
+	public Supplier<Long> getLongSupplier(String example) {
+		return longSupplier.get(example);
+	}
+
+	public void setFloatSupplier(String example, Supplier<Float> supplier) {
+		floatSupplier.put(example, supplier);
+	}
+
+	public Supplier<Float> getFloatSupplier(String example) {
+		return floatSupplier.get(example);
+	}
+
+	public void setDoubleSupplier(String example, Supplier<Double> supplier) {
+		doubleSupplier.put(example, supplier);
+	}
+
+	public Supplier<Double> getDoubleSupplier(String example) {
+		return doubleSupplier.get(example);
+	}
+
+	public Supplier<BigDecimal> getBigDecimalSupplier(String example) {
+		return bigDecimalSupplier.get(example);
+	}
+
+	public Supplier<BigInteger> getBigIntegerSupplier(String example) {
+		return bigIntegerSupplier.get(example);
+	}
+
+	protected Object mock(Field field, RandomOperations operations) {
 		if (index < typeHandlers.size()) {
 			MockTypeHandler typeHandler = typeHandlers.get(index++);
-			return typeHandler.apply(type, operations, this);
+			return typeHandler.apply(field, operations, this);
 		}
 		return null;
 	}

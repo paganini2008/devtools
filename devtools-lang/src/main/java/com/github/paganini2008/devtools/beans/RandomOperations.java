@@ -1,6 +1,6 @@
 package com.github.paganini2008.devtools.beans;
 
-import java.lang.reflect.Type;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -18,36 +18,36 @@ import java.util.Date;
  */
 public interface RandomOperations {
 
-	boolean randomBoolean(Type type, MockContext context);
+	boolean randomBoolean(Field field, MockContext context);
 
-	char randomChar(Type type, MockContext context);
+	char randomChar(Field field, MockContext context);
 
-	byte randomByte(Type type, MockContext context);
+	byte randomByte(Field field, MockContext context);
 
-	short randomShort(Type type, MockContext context);
+	short randomShort(Field field, MockContext context);
 
-	int randomInt(Type type, MockContext context);
+	int randomInt(Field field, MockContext context);
 
-	long randomLong(Type type, MockContext context);
+	long randomLong(Field field, MockContext context);
 
-	float randomFloat(Type type, MockContext context);
+	float randomFloat(Field field, MockContext context);
 
-	double randomDouble(Type type, MockContext context);
+	double randomDouble(Field field, MockContext context);
 
-	BigInteger randomBigInteger(Type type, MockContext context);
+	BigInteger randomBigInteger(Field field, MockContext context);
 
-	BigDecimal randomBigDecimal(Type type, MockContext context);
+	BigDecimal randomBigDecimal(Field field, MockContext context);
 
-	String randomString(Type type, MockContext context);
+	String randomString(Field field, MockContext context);
 
-	Date randomDate(Type type, MockContext context);
+	Date randomDate(Field field, MockContext context);
 
-	LocalDate randomLocalDate(Type type, MockContext context);
+	LocalDate randomLocalDate(Field field, MockContext context);
 
-	LocalDateTime randomLocalDateTime(Type type, MockContext context);
+	LocalDateTime randomLocalDateTime(Field field, MockContext context);
 
-	LocalTime randomLocalTime(Type type, MockContext context);
+	LocalTime randomLocalTime(Field field, MockContext context);
 
-	<E extends Enum<E>> E randomEnum(Class<E> enumClass, MockContext context);
+	<E extends Enum<E>> E randomEnum(Field field, MockContext context);
 
 }

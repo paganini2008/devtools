@@ -15,7 +15,7 @@
 */
 package com.github.paganini2008.devtools.beans;
 
-import java.lang.reflect.Type;
+import java.lang.reflect.Field;
 
 /**
  * 
@@ -27,6 +27,6 @@ import java.lang.reflect.Type;
  */
 public interface MockTypeHandler {
 
-	Object apply(Type type, RandomOperations operations, MockContext context);
+	Object apply(Field field, RandomOperations operations, MockContext context);
 
 }

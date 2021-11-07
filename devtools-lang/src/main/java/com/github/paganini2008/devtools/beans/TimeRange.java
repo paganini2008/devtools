@@ -23,4 +23,6 @@ public @interface TimeRange {
 
 	String format() default "HH:mm:ss";
 
+	String value() default "";
+
 }

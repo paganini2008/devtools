@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
+import com.github.paganini2008.devtools.beans.IntRange;
 import com.github.paganini2008.devtools.beans.Recur;
 import com.github.paganini2008.devtools.beans.ToStringBuilder;
 
@@ -32,6 +33,7 @@ import com.github.paganini2008.devtools.beans.ToStringBuilder;
  */
 public class Product {
 
+	@IntRange(from = 100000000, to = 1000000000)
 	private int id;
 	private String name;
 	private String location;
@@ -43,7 +45,7 @@ public class Product {
 	private Long number;
 	private BigDecimal freight;
 	private Style style;
-	
+
 	@Recur
 	private Salesman salesman;
 
@@ -51,7 +53,7 @@ public class Product {
 
 		private String name;
 		private String password;
-		
+
 		public Salesman() {
 		}
 
