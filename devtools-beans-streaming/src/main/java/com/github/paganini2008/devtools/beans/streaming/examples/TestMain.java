@@ -9,8 +9,10 @@ import com.github.paganini2008.devtools.beans.MockContext;
 public class TestMain {
 
 	public static void main(String[] args) {
-		List<Product> list = BeanUtils.mockBeans(10000, Product.class, new MockContext());
-		Console.log(list);
+		//List<Product> list = BeanUtils.mockBeans(10000, Product.class, new MockContext());
+		//Console.log(list);
+		
+		Console.log(System.getProperties());
 	}
 
 }

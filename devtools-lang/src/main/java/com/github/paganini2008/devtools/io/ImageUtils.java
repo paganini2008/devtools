@@ -27,18 +27,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.Base64;
+import java.util.Base64.Decoder;
+import java.util.Base64.Encoder;
 
 import javax.imageio.ImageIO;
 
 import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.net.Urls;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
-
 /**
  * 
- * ImageUtils 
+ * ImageUtils
  *
  * @author Fred Feng
  * @since 2.0.1
@@ -134,8 +134,8 @@ public abstract class ImageUtils {
 
 	public static String encode(BufferedImage src, String type) throws IOException {
 		byte[] bytes = toByteArray(src, type);
-		BASE64Encoder encoder = new BASE64Encoder();
-		String img = encoder.encode(bytes);
+		Encoder encoder = Base64.getEncoder();
+		String img = encoder.encodeToString(bytes);
 		img = "data:image/" + type.toLowerCase() + ";base64," + img;
 		return img;
 	}
@@ -175,8 +175,8 @@ public abstract class ImageUtils {
 		Assert.isNull(code, "Unspecified image source.");
 		Assert.isNull(output, "Unspecified output file.");
 		try {
-			BASE64Decoder decoder = new BASE64Decoder();
-			byte[] b = decoder.decodeBuffer(code);
+			Decoder decoder = Base64.getDecoder();
+			byte[] b = decoder.decode(code);
 			for (int i = 0; i < b.length; ++i) {
 				if (b[i] < 0) {
 					b[i] += 256;
