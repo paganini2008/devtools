@@ -18,6 +18,7 @@ package com.github.paganini2008.devtools.date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -127,6 +128,14 @@ public abstract class DateUtils {
 			result[i++] = toDate(c, defaultValue);
 		}
 		return result;
+	}
+	
+	public static Long getTimeInMillis(Instant instant) {
+		return getTimeInMillis(instant, null);
+	}
+
+	public static Long getTimeInMillis(Instant instant, Long defaultValue) {
+		return instant != null ? instant.toEpochMilli() : defaultValue;
 	}
 
 	public static String format(Long ms, String datePattern) {
@@ -279,7 +288,7 @@ public abstract class DateUtils {
 	}
 
 	public static Date addField(Date date, int calendarField, int amount) {
-		Assert.isNull(date,"The date must not be null");
+		Assert.isNull(date, "The date must not be null");
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
 		c.add(calendarField, amount);
@@ -493,9 +502,16 @@ public abstract class DateUtils {
 		return calendar.get(calendarField);
 	}
 
-	public static int getLastDay(Date date) {
+	public static int getLastDayOfMonth(Date date) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
+		return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+	}
+
+	public static int getLastDayOfMonth(int year, int month) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, month);
 		return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 	}
 

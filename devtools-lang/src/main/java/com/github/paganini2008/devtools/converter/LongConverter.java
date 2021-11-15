@@ -21,7 +21,6 @@ import java.util.Date;
 
 import com.github.paganini2008.devtools.date.CalendarUtils;
 import com.github.paganini2008.devtools.date.DateUtils;
-import com.github.paganini2008.devtools.date.LocalDateUtils;
 import com.github.paganini2008.devtools.primitives.Longs;
 
 /**
@@ -70,7 +69,7 @@ public class LongConverter extends BasicConverter<Long> {
 
 	private final Converter<Instant, Long> instantConverter = new Converter<Instant, Long>() {
 		public Long convertValue(Instant source, Long defaultValue) {
-			return LocalDateUtils.getTimeInMillis(source, defaultValue);
+			return DateUtils.getTimeInMillis(source, defaultValue);
 		}
 	};
 

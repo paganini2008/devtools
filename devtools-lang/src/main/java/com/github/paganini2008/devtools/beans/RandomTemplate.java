@@ -175,7 +175,7 @@ public class RandomTemplate implements RandomOperations {
 		}
 		TimeRange timeRange = field.getAnnotation(TimeRange.class);
 		if (timeRange != null) {
-			time = RandomDateUtils.randomDateTime(new Date(), timeRange.from(), timeRange.to(), dateRange.format());
+			time = RandomDateUtils.randomDateTime(new Date(), timeRange.from(), timeRange.to(), timeRange.format());
 		}
 		if (date == null && time == null) {
 			return delegate.randomDate(field, context);
