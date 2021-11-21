@@ -15,7 +15,12 @@
 */
 package com.github.paganini2008.devtools;
 
+import static com.github.paganini2008.devtools.RandomUtils.randomDayOfMonth;
+import static com.github.paganini2008.devtools.RandomUtils.randomDayOfYear;
+import static com.github.paganini2008.devtools.RandomUtils.randomHourOfDay;
 import static com.github.paganini2008.devtools.RandomUtils.randomInt;
+import static com.github.paganini2008.devtools.RandomUtils.randomMinuteOrSecond;
+import static com.github.paganini2008.devtools.RandomUtils.randomMonth;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,7 +29,6 @@ import java.time.Month;
 import java.time.Year;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.Date;
 
 import com.github.paganini2008.devtools.date.DateUtils;
@@ -43,7 +47,7 @@ import com.github.paganini2008.devtools.date.LocalTimeUtils;
 public abstract class RandomDateUtils {
 
 	public static Year randomYear() {
-		return randomYear(Year.of(1970), Year.now());
+		return randomYear(DateUtils.YEAR_START, Year.now());
 	}
 
 	public static Year randomYear(Year fromYear, Year toYear) {
@@ -51,7 +55,7 @@ public abstract class RandomDateUtils {
 	}
 
 	public static Year randomYear(int fromYear, int toYear) {
-		return Year.of(randomValueOfYear(fromYear, toYear));
+		return Year.of(RandomUtils.randomYear(fromYear, toYear));
 	}
 
 	public static YearMonth randomYearMonth(Year year) {
@@ -69,17 +73,17 @@ public abstract class RandomDateUtils {
 	}
 
 	public static YearMonth randomYearMonth(int year) {
-		return randomYearMonth(year, 0, 11);
+		return randomYearMonth(year, 0, 12);
 	}
 
 	public static YearMonth randomYearMonth(int year, int fromMonth, int toMonth) {
 		Year isoYear = Year.of(year);
-		Month month = Month.values()[randomValueOfMonth(fromMonth, toMonth)];
+		Month month = Month.values()[randomMonth(fromMonth, toMonth)];
 		return isoYear.atMonth(month);
 	}
 
 	public static YearMonth randomYearMonth(int fromYear, int toYear, int fromMonth, int toMonth) {
-		int year = randomValueOfYear(fromYear, toYear);
+		int year = RandomUtils.randomYear(fromYear, toYear);
 		return randomYearMonth(year, fromMonth, toMonth);
 	}
 
@@ -92,7 +96,7 @@ public abstract class RandomDateUtils {
 	}
 
 	public static LocalDate randomLocalDate(Year year, int fromDayOfYear, int toDayOfYear) {
-		int dayOfYear = randomValueOfDayOfYear(year, fromDayOfYear, toDayOfYear);
+		int dayOfYear = randomDayOfYear(year, fromDayOfYear, toDayOfYear);
 		return year.atDay(dayOfYear);
 	}
 
@@ -110,7 +114,7 @@ public abstract class RandomDateUtils {
 	}
 
 	public static LocalDate randomLocalDate(YearMonth yearMonth, int fromDayOfMonth, int toDayOfMonth) {
-		int dayOfMonth = randomValueOfDayOfMonth(yearMonth, fromDayOfMonth, toDayOfMonth);
+		int dayOfMonth = randomDayOfMonth(yearMonth, fromDayOfMonth, toDayOfMonth);
 		return yearMonth.atDay(dayOfMonth);
 	}
 
@@ -130,7 +134,7 @@ public abstract class RandomDateUtils {
 	}
 
 	public static LocalDate randomLocalDate(int year, int month, int fromDayOfMonth, int toDayOfMonth) {
-		int dayOfMonth = randomValueOfDayOfMonth(year, month, fromDayOfMonth, toDayOfMonth);
+		int dayOfMonth = randomDayOfMonth(year, month, fromDayOfMonth, toDayOfMonth);
 		return LocalDateUtils.valueOf(year, month, dayOfMonth);
 	}
 
@@ -217,7 +221,7 @@ public abstract class RandomDateUtils {
 		int th = to.getHour();
 		int tm = to.getMinute();
 		int ts = to.getSecond();
-		return localDate.atTime(randomValueOfHourOfDay(fh, th), randomValueOfMinuteOrSecond(fm, tm), randomValueOfMinuteOrSecond(fs, ts));
+		return localDate.atTime(randomHourOfDay(fh, th), randomMinuteOrSecond(fm, tm), randomMinuteOrSecond(fs, ts));
 	}
 
 	public static LocalDateTime randomLocalDateTime(Year year, Month month) {
@@ -225,7 +229,7 @@ public abstract class RandomDateUtils {
 	}
 
 	public static LocalDateTime randomLocalDateTime(Year year, Month month, int dayOfMonth) {
-		LocalDate localDate = DateUtils.setDayOfMonth(year, month, dayOfMonth);
+		LocalDate localDate = year.atMonth(month).atDay(dayOfMonth);
 		return randomLocalDateTime(localDate);
 	}
 
@@ -254,7 +258,7 @@ public abstract class RandomDateUtils {
 	}
 
 	public static LocalDateTime randomLocalDateTime(Year year, Month month, int dayOfMonth, LocalTime fromTime, LocalTime toTime) {
-		LocalDate localDate = DateUtils.setDayOfMonth(year, month, dayOfMonth);
+		LocalDate localDate = year.atMonth(month).atDay(dayOfMonth);
 		return randomLocalDateTime(localDate, fromTime, toTime);
 	}
 
@@ -276,11 +280,6 @@ public abstract class RandomDateUtils {
 		return randomLocalDateTime(localDate, fromTime, toTime);
 	}
 
-	public static LocalDateTime randomLocalDateTime(LocalDate localDate) {
-		return LocalDateTimeUtils.valueOf(localDate, randomValueOfHourOfDay(0, 23), randomValueOfMinuteOrSecond(0, 59),
-				randomValueOfMinuteOrSecond(0, 59));
-	}
-
 	public static LocalDateTime randomLocalDateTime(LocalDate fromLocalDate, LocalDate toLocalDate) {
 		LocalDate localDate = randomLocalDate(fromLocalDate, toLocalDate);
 		return randomLocalDateTime(localDate);
@@ -291,9 +290,40 @@ public abstract class RandomDateUtils {
 		return randomLocalDateTime(localDate, fromTime, toTime);
 	}
 
+	public static LocalDateTime randomLocalDateTime(LocalDate localDate) {
+		return randomLocalDateTime(localDate, 0, 23, 0, 59, 0, 59);
+	}
+
+	public static LocalDateTime randomLocalDateTime(LocalDate localDate, int fromHourOfDay, int toHourOfDay, int fromMinute, int toMinute,
+			int fromSecond, int toSecond) {
+		LocalTime localTime = randomLocalTime(fromHourOfDay, toHourOfDay, fromMinute, toMinute, fromSecond, toSecond);
+		return localDate.atTime(localTime);
+	}
+
+	public static LocalDateTime randomLocalDateTime(int year, int month, int dayOfMonth, int fromHourOfDay, int toHourOfDay, int fromMinute,
+			int toMinute, int fromSecond, int toSecond) {
+		LocalDate localDate = LocalDateUtils.valueOf(year, month, dayOfMonth);
+		return randomLocalDateTime(localDate, fromHourOfDay, toHourOfDay, fromMinute, toMinute, fromSecond, toSecond);
+	}
+
+	public static LocalDateTime randomLocalDateTime(int fromYear, int toYear, int fromMonth, int toMonth, int fromDayOfMonth,
+			int toDayOfMonth, int fromHourOfDay, int toHourOfDay, int fromMinute, int toMinute, int fromSecond, int toSecond) {
+		LocalDate localDate = randomLocalDate(fromYear, toYear, fromMonth, toMonth, fromDayOfMonth, toDayOfMonth);
+		return randomLocalDateTime(localDate, fromHourOfDay, toHourOfDay, fromMinute, toMinute, fromSecond, toSecond);
+	}
+
 	public static LocalTime randomLocalTime() {
-		return LocalTimeUtils.valueOf(randomValueOfHourOfDay(0, 23), randomValueOfMinuteOrSecond(0, 59),
-				randomValueOfMinuteOrSecond(0, 59));
+		return randomLocalTime(0, 23, 0, 59);
+	}
+
+	public static LocalTime randomLocalTime(int fromHourOfDay, int toHourOfDay, int fromMinute, int toMinute) {
+		return randomLocalTime(fromHourOfDay, toHourOfDay, fromMinute, toMinute, 0, 59);
+	}
+
+	public static LocalTime randomLocalTime(int fromHourOfDay, int toHourOfDay, int fromMinute, int toMinute, int fromSecond,
+			int toSecond) {
+		return LocalTimeUtils.valueOf(randomHourOfDay(fromHourOfDay, toHourOfDay), randomMinuteOrSecond(fromMinute, toMinute),
+				randomMinuteOrSecond(fromSecond, toSecond));
 	}
 
 	public static LocalTime randomLocalTime(String from, String to) {
@@ -319,7 +349,7 @@ public abstract class RandomDateUtils {
 	}
 
 	public static Date randomDate(int year) {
-		return randomDate(year, 11);
+		return randomDate(year, 12);
 	}
 
 	public static Date randomDate(int year, int month) {
@@ -327,15 +357,17 @@ public abstract class RandomDateUtils {
 	}
 
 	public static Date randomDate(int year, int month, int fromDayOfMonth, int toDayOfMonth) {
-		int dateOfMonth = randomValueOfDayOfMonth(year, month, fromDayOfMonth, toDayOfMonth);
-		return DateUtils.valueOf(year, month, dateOfMonth);
+		int dayOfMonth = randomDayOfMonth(year, month, fromDayOfMonth, toDayOfMonth);
+		LocalDate localDate = LocalDate.of(year, month, dayOfMonth);
+		return DateUtils.toDate(localDate, null);
 	}
 
 	public static Date randomDate(int fromYear, int toYear, int fromMonth, int toMonth, int fromDayOfMonth, int toDayOfMonth) {
-		int year = randomValueOfYear(fromYear, toYear);
-		int month = randomValueOfMonth(fromMonth, toMonth);
-		int dayOfMonth = randomValueOfDayOfMonth(year, month, fromDayOfMonth, toDayOfMonth);
-		return DateUtils.valueOf(year, month, dayOfMonth);
+		int year = RandomUtils.randomYear(fromYear, toYear);
+		int month = randomMonth(fromMonth, toMonth);
+		int dayOfMonth = randomDayOfMonth(year, month, fromDayOfMonth, toDayOfMonth);
+		LocalDate localDate = LocalDate.of(year, month, dayOfMonth);
+		return DateUtils.toDate(localDate, null);
 	}
 
 	public static Date randomDateTime() {
@@ -343,7 +375,7 @@ public abstract class RandomDateUtils {
 	}
 
 	public static Date randomDateTime(int year) {
-		return randomDateTime(year, 11);
+		return randomDateTime(year, 12);
 	}
 
 	public static Date randomDateTime(int year, int month) {
@@ -361,8 +393,9 @@ public abstract class RandomDateUtils {
 
 	public static Date randomDateTime(int year, int month, int fromDayOfMonth, int toDayOfMonth, int fromHourOfDay, int toHourOfDay,
 			int fromMinute, int toMinute, int fromSecond, int toSecond) {
-		int dayOfMonth = randomValueOfDayOfMonth(year, month, fromDayOfMonth, toDayOfMonth);
-		Date date = DateUtils.valueOf(year, month, dayOfMonth);
+		int dayOfMonth = randomDayOfMonth(year, month, fromDayOfMonth, toDayOfMonth);
+		LocalDate localDate = LocalDate.of(year, month, dayOfMonth);
+		Date date = DateUtils.toDate(localDate, null);
 		return randomDateTime(date, fromHourOfDay, toHourOfDay, fromMinute, toMinute, fromSecond, toSecond);
 	}
 
@@ -374,9 +407,9 @@ public abstract class RandomDateUtils {
 
 	public static Date randomDateTime(Date date, int fromHourOfDay, int toHourOfDay, int fromMinute, int toMinute, int fromSecond,
 			int toSecond) {
-		int hourOfDay = randomValueOfHourOfDay(fromHourOfDay, toHourOfDay);
-		int minute = randomValueOfMinuteOrSecond(fromMinute, toMinute);
-		int second = randomValueOfMinuteOrSecond(fromSecond, toSecond);
+		int hourOfDay = randomHourOfDay(fromHourOfDay, toHourOfDay);
+		int minute = randomMinuteOrSecond(fromMinute, toMinute);
+		int second = randomMinuteOrSecond(fromSecond, toSecond);
 		return DateUtils.setTime(date, hourOfDay, minute, second);
 	}
 
@@ -395,64 +428,22 @@ public abstract class RandomDateUtils {
 	}
 
 	public static Date randomDateTime(Date fromDate, Date toDate) {
-		Calendar c = Calendar.getInstance();
-		c.setTime(fromDate);
-		int fromYear = c.get(Calendar.YEAR);
-		int fromMonth = c.get(Calendar.MONTH);
-		int fromDayOfMonth = c.get(Calendar.DAY_OF_MONTH);
-		int fromHourOfDay = c.get(Calendar.HOUR_OF_DAY);
-		int fromMinute = c.get(Calendar.MINUTE);
-		int fromSecond = c.get(Calendar.SECOND);
-		c.setTime(toDate);
-		int toYear = c.get(Calendar.YEAR);
-		int toMonth = c.get(Calendar.MONTH);
-		int toDayOfMonth = c.get(Calendar.DAY_OF_MONTH);
-		int toHourOfDay = c.get(Calendar.HOUR_OF_DAY);
-		int toMinute = c.get(Calendar.MINUTE);
-		int toSecond = c.get(Calendar.SECOND);
+		LocalDateTime ldt = LocalDateTimeUtils.toLocalDateTime(fromDate, null);
+		int fromYear = ldt.getYear();
+		int fromMonth = ldt.getMonthValue();
+		int fromDayOfMonth = ldt.getDayOfMonth();
+		int fromHourOfDay = ldt.getHour();
+		int fromMinute = ldt.getMinute();
+		int fromSecond = ldt.getSecond();
+		ldt = LocalDateTimeUtils.toLocalDateTime(toDate, null);
+		int toYear = ldt.getYear();
+		int toMonth = ldt.getMonthValue();
+		int toDayOfMonth = ldt.getDayOfMonth();
+		int toHourOfDay = ldt.getHour();
+		int toMinute = ldt.getMinute();
+		int toSecond = ldt.getSecond();
 		return randomDateTime(fromYear, toYear, fromMonth, toMonth, fromDayOfMonth, toDayOfMonth, fromHourOfDay, toHourOfDay, fromMinute,
 				toMinute, fromSecond, toSecond);
-	}
-
-	private static int randomValueOfYear(int fromYear, int toYear) {
-		Assert.lt(fromYear, 1970, "FromYear starts from 1970");
-		return randomInt(fromYear, Math.min(9999, toYear) + 1);
-	}
-
-	private static int randomValueOfMonth(int fromMonth, int toMonth) {
-		Assert.lt(fromMonth, 0, "FromMonth starts from 0");
-		Assert.gt(toMonth, 11, "ToMonth ends with 11");
-		return randomInt(fromMonth, toMonth + 1);
-	}
-
-	private static int randomValueOfDayOfYear(Year year, int fromDayOfYear, int toDayOfYear) {
-		Assert.lt(fromDayOfYear, 1, "FromDay of Year starts from 1");
-		int theDayOfYear = Math.min(toDayOfYear, year.isLeap() ? 366 : 365) + 1;
-		return randomInt(fromDayOfYear, theDayOfYear);
-	}
-
-	private static int randomValueOfDayOfMonth(YearMonth yearMonth, int fromDayOfMonth, int toDayOfMonth) {
-		Assert.lt(fromDayOfMonth, 1, "FromDay of Month starts from 1");
-		int lastDayOfMonth = Math.min(toDayOfMonth, yearMonth.atEndOfMonth().getDayOfMonth());
-		return randomInt(fromDayOfMonth, lastDayOfMonth + 1);
-	}
-
-	private static int randomValueOfDayOfMonth(int year, int month, int fromDayOfMonth, int toDayOfMonth) {
-		Assert.lt(fromDayOfMonth, 1, "FromDay of Month starts from 1");
-		int lastDayOfMonth = Math.min(toDayOfMonth, DateUtils.getLastDayOfMonth(year, month));
-		return randomInt(fromDayOfMonth, lastDayOfMonth + 1);
-	}
-
-	private static int randomValueOfHourOfDay(int fromHourOfDay, int toHourOfDay) {
-		Assert.lt(fromHourOfDay, 0, "FromHour of Day starts from 0");
-		Assert.gt(toHourOfDay, 23, "FromHour of Day ends with 23");
-		return randomInt(fromHourOfDay, toHourOfDay + 1);
-	}
-
-	private static int randomValueOfMinuteOrSecond(int from, int to) {
-		Assert.lt(from, 0, "FromMinute Or FromSecond  starts from 0");
-		Assert.gt(to, 59, "FromMinute Or FromSecond ends with 59");
-		return randomInt(from, to + 1);
 	}
 
 }

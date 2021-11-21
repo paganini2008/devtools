@@ -21,9 +21,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.time.Year;
-import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
@@ -48,20 +46,15 @@ import com.github.paganini2008.devtools.collection.LruMap;
  */
 public abstract class DateUtils {
 
+	public static final int YEAR_START_FROM = 1970;
+	public static final Year YEAR_START = Year.of(YEAR_START_FROM);
+	public static final int YEAR_END_WITH = 9999;
+	public static final Year YEAR_END = Year.of(YEAR_END_WITH);
+
 	public static final Date[] EMPTY_ARRAY = new Date[0];
 	public final static String DEFAULT_DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
 	public final static SimpleDateFormat DEFAULT_DATE_FORMATTER = new SimpleDateFormat(DEFAULT_DATE_PATTERN, Locale.ENGLISH);
-	private final static LruMap<String, SimpleDateFormat> dateFormatterCache = new LruMap<String, SimpleDateFormat>(16);
-
-	public static DateFormat getDateFormatter(String datePattern) {
-		Assert.hasNoText(datePattern, "Date pattern can not be blank.");
-		SimpleDateFormat sdf = dateFormatterCache.get(datePattern);
-		if (sdf == null) {
-			dateFormatterCache.put(datePattern, new SimpleDateFormat(datePattern, Locale.ENGLISH));
-			sdf = dateFormatterCache.get(datePattern);
-		}
-		return sdf;
-	}
+	private final static LruMap<String, SimpleDateFormat> dfCache = new LruMap<String, SimpleDateFormat>(16);
 
 	public static Date toDate(Long ms) {
 		return toDate(ms, null);
@@ -69,6 +62,14 @@ public abstract class DateUtils {
 
 	public static Date toDate(Long ms, Date defaultValue) {
 		return ms != null ? new Date(ms) : defaultValue;
+	}
+
+	public static Date toDate(Instant ms) {
+		return toDate(ms, null);
+	}
+
+	public static Date toDate(Instant ms, Date defaultValue) {
+		return ms != null ? Date.from(ms) : defaultValue;
 	}
 
 	public static Date toDate(Calendar calendar) {
@@ -84,6 +85,9 @@ public abstract class DateUtils {
 	}
 
 	public static Date toDate(LocalDate localDate, ZoneId zoneId, Date defaultValue) {
+		if (zoneId == null) {
+			zoneId = ZoneId.systemDefault();
+		}
 		return localDate != null ? Date.from(localDate.atStartOfDay(zoneId).toInstant()) : defaultValue;
 	}
 
@@ -92,6 +96,9 @@ public abstract class DateUtils {
 	}
 
 	public static Date toDate(LocalDateTime localDateTime, ZoneId zoneId, Date defaultValue) {
+		if (zoneId == null) {
+			zoneId = ZoneId.systemDefault();
+		}
 		return localDateTime != null ? Date.from(localDateTime.atZone(zoneId).toInstant()) : defaultValue;
 	}
 
@@ -129,7 +136,7 @@ public abstract class DateUtils {
 		}
 		return result;
 	}
-	
+
 	public static Long getTimeInMillis(Instant instant) {
 		return getTimeInMillis(instant, null);
 	}
@@ -345,35 +352,12 @@ public abstract class DateUtils {
 		return c.getTime();
 	}
 
-	public static Date setTime(Date date, int hourOfDay, int minute, int second) {
-		Assert.isNull(date, "The date must not be null");
-		Calendar c = Calendar.getInstance();
-		c.setTime(date);
-		c.set(Calendar.HOUR_OF_DAY, hourOfDay);
-		c.set(Calendar.MINUTE, minute);
-		c.set(Calendar.SECOND, second);
-		return c.getTime();
-	}
-
 	public static Date today() {
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());
 		c.set(Calendar.HOUR_OF_DAY, 0);
 		c.set(Calendar.MINUTE, 0);
 		c.set(Calendar.SECOND, 0);
-		return c.getTime();
-	}
-
-	public static Date setTime(Date date, Date time) {
-		Assert.isNull(date, "The date must not be null");
-		Assert.isNull(time, "The time must not be null");
-		Calendar c = Calendar.getInstance();
-		c.setTime(time);
-		Calendar copy = (Calendar) c.clone();
-		c.setTime(date);
-		c.set(Calendar.HOUR_OF_DAY, copy.get(Calendar.HOUR_OF_DAY));
-		c.set(Calendar.MINUTE, copy.get(Calendar.MINUTE));
-		c.set(Calendar.SECOND, copy.get(Calendar.SECOND));
 		return c.getTime();
 	}
 
@@ -407,23 +391,35 @@ public abstract class DateUtils {
 		return values;
 	}
 
-	public static Date valueOf(int year, int month, int dateOfMonth) {
-		return valueOf(year, month, dateOfMonth, 0, 0, 0);
-	}
-
-	public static Date valueOf(int year, int month, int dateOfMonth, int hour, int minute, int second) {
-		Calendar c = Calendar.getInstance();
-		c.set(year, month, dateOfMonth, hour, minute, second);
-		return c.getTime();
-	}
-
-	public static Date valueOf(long time, int hour, int minute, int second) {
-		Calendar c = CalendarUtils.valueOf(time, hour, minute, second);
-		return c.getTime();
+	public static Date setTime(long time, int hourOfDay, int minute, int second) {
+		return setTime(new Date(time), hourOfDay, minute, second);
 	}
 
 	public static Date setTime(int hourOfDay, int minute, int second) {
 		return setTime(new Date(), hourOfDay, minute, second);
+	}
+
+	public static Date setTime(Date date, int hourOfDay, int minute, int second) {
+		Assert.isNull(date, "The date must not be null");
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.set(Calendar.HOUR_OF_DAY, hourOfDay);
+		c.set(Calendar.MINUTE, minute);
+		c.set(Calendar.SECOND, second);
+		return c.getTime();
+	}
+
+	public static Date setTime(Date date, Date time) {
+		Assert.isNull(date, "The date must not be null");
+		Assert.isNull(time, "The time must not be null");
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		Calendar copy = (Calendar) c.clone();
+		copy.setTime(time);
+		c.set(Calendar.HOUR_OF_DAY, copy.get(Calendar.HOUR_OF_DAY));
+		c.set(Calendar.MINUTE, copy.get(Calendar.MINUTE));
+		c.set(Calendar.SECOND, copy.get(Calendar.SECOND));
+		return c.getTime();
 	}
 
 	public static Date[] parseMany(String[] strings, String[] datePatterns) {
@@ -508,13 +504,6 @@ public abstract class DateUtils {
 		return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 	}
 
-	public static int getLastDayOfMonth(int year, int month) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.YEAR, year);
-		calendar.set(Calendar.MONTH, month);
-		return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-	}
-
 	public static long converToSecond(long interval, TimeUnit timeUnit) {
 		if (interval < 0) {
 			throw new IllegalArgumentException("interval < 0");
@@ -534,23 +523,6 @@ public abstract class DateUtils {
 			throw new IllegalArgumentException("interval < 0");
 		}
 		return timeUnit != TimeUnit.NANOSECONDS ? TimeUnit.NANOSECONDS.convert(interval, timeUnit) : interval;
-	}
-
-	public static LocalDate setDayOfMonth(Year year, Month month, int dayOfMonth) {
-		Assert.isNull(year, "Nullable year");
-		Assert.isNull(month, "Nullable month");
-		YearMonth yearMonth = year.atMonth(month);
-		return setDayOfMonth(yearMonth, dayOfMonth);
-	}
-
-	public static LocalDate setDayOfMonth(YearMonth yearMonth, int dayOfMonth) {
-		Assert.isNull(yearMonth, "Nullable year and month");
-		return yearMonth.atDay(Math.min(yearMonth.atEndOfMonth().getDayOfMonth(), dayOfMonth));
-	}
-
-	public static LocalDate setDayOfYear(Year year, int dayOfYear) {
-		Assert.isNull(year, "Nullable year");
-		return year.atDay(Math.min(dayOfYear, year.isLeap() ? 366 : 365));
 	}
 
 	public static <R> Map<Date, R> populate(Date from, int days, int interval, int calendarField, Function<Calendar, R> valueHandler) {
@@ -657,6 +629,16 @@ public abstract class DateUtils {
 			return copy;
 		}
 
+	}
+
+	public static DateFormat getDateFormatter(String datePattern) {
+		Assert.hasNoText(datePattern, "Date pattern can not be blank.");
+		SimpleDateFormat sdf = dfCache.get(datePattern);
+		if (sdf == null) {
+			dfCache.put(datePattern, new SimpleDateFormat(datePattern, Locale.ENGLISH));
+			sdf = dfCache.get(datePattern);
+		}
+		return sdf;
 	}
 
 	public static void main(String[] args) throws Exception {

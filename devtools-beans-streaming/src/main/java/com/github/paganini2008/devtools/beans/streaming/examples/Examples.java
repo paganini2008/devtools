@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.function.Predicate;
 
+import com.github.paganini2008.devtools.RandomDateUtils;
 import com.github.paganini2008.devtools.RandomUtils;
 import com.github.paganini2008.devtools.beans.streaming.Group;
 import com.github.paganini2008.devtools.beans.streaming.Orders;
@@ -51,7 +52,7 @@ public abstract class Examples {
 		String[] locations = new String[] { "London", "NewYork", "Tokyo", "HongKong", "Paris" };
 		for (int i = 0; i < 10000; i++) {
 			Product product = new Product();
-			product.setCreated(DateUtils.valueOf(2020, RandomUtils.randomInt(1, 12), RandomUtils.randomInt(1, 28)));
+			product.setCreated(RandomDateUtils.randomDate(2021));
 			product.setExpired(DateUtils.addDays(product.getCreated(), 90));
 			product.setExport(RandomUtils.randomBoolean());
 			product.setFreight(BigDecimal.valueOf(RandomUtils.randomFloat(10, 100)).setScale(2, RoundingMode.HALF_UP));

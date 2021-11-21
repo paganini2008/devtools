@@ -738,7 +738,13 @@ public abstract class MapUtils {
 		return data;
 	}
 
-	public static <K, V> Map<K, V> newLruMap(final int initialSize, final int maxSize, final EvictionListener<K, V> evictionListener) {
+	public static <K, V> Map<K, V> synchronizedLinkedHashMap(final int initialSize, final int maxSize,
+			final EvictionListener<K, V> evictionListener) {
+		return Collections.synchronizedMap(newLinkedHashMap(initialSize, maxSize, evictionListener));
+	}
+
+	public static <K, V> Map<K, V> newLinkedHashMap(final int initialSize, final int maxSize,
+			final EvictionListener<K, V> evictionListener) {
 		if (maxSize < 1) {
 			throw new IllegalArgumentException("MaxSize must greater than zero");
 		}

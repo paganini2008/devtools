@@ -168,14 +168,27 @@ public class RandomTemplate implements RandomOperations {
 
 	@Override
 	public Date randomDate(Field field, MockContext context) {
+		String example = null;
 		Date date = null, time = null;
 		DateRange dateRange = field.getAnnotation(DateRange.class);
 		if (dateRange != null) {
-			date = RandomDateUtils.randomDateTime(dateRange.from(), dateRange.to(), dateRange.format());
+			example = StringUtils.isNotBlank(dateRange.value()) ? dateRange.value() : field.getName();
+			Supplier<Date> supplier = context.getDateSupplier(example);
+			if (supplier != null) {
+				date = supplier.get();
+			} else {
+				date = RandomDateUtils.randomDateTime(dateRange.from(), dateRange.to(), dateRange.format());
+			}
 		}
 		TimeRange timeRange = field.getAnnotation(TimeRange.class);
 		if (timeRange != null) {
-			time = RandomDateUtils.randomDateTime(new Date(), timeRange.from(), timeRange.to(), timeRange.format());
+			example = StringUtils.isNotBlank(timeRange.value()) ? timeRange.value() : field.getName();
+			Supplier<Date> supplier = context.getDateSupplier(example);
+			if (supplier != null) {
+				time = supplier.get();
+			} else {
+				time = RandomDateUtils.randomDateTime(new Date(), timeRange.from(), timeRange.to(), timeRange.format());
+			}
 		}
 		if (date == null && time == null) {
 			return delegate.randomDate(field, context);
@@ -193,25 +206,44 @@ public class RandomTemplate implements RandomOperations {
 	public LocalDate randomLocalDate(Field field, MockContext context) {
 		DateRange dateRange = field.getAnnotation(DateRange.class);
 		if (dateRange != null) {
-			return RandomDateUtils.randomLocalDate(dateRange.from(), dateRange.to(),
-					DateTimeFormatter.ofPattern(dateRange.format(), Locale.ENGLISH));
+			String example = StringUtils.isNotBlank(dateRange.value()) ? dateRange.value() : field.getName();
+			Supplier<LocalDate> supplier = context.getLocalDateSupplier(example);
+			if (supplier != null) {
+				return supplier.get();
+			} else {
+				return RandomDateUtils.randomLocalDate(dateRange.from(), dateRange.to(),
+						DateTimeFormatter.ofPattern(dateRange.format(), Locale.ENGLISH));
+			}
 		}
 		return delegate.randomLocalDate(field, context);
 	}
 
 	@Override
 	public LocalDateTime randomLocalDateTime(Field field, MockContext context) {
+		String example;
 		LocalDate localDate = null;
 		LocalTime localTime = null;
 		DateRange dateRange = field.getAnnotation(DateRange.class);
 		if (dateRange != null) {
-			localDate = RandomDateUtils.randomLocalDate(dateRange.from(), dateRange.to(),
-					DateTimeFormatter.ofPattern(dateRange.format(), Locale.ENGLISH));
+			example = StringUtils.isNotBlank(dateRange.value()) ? dateRange.value() : field.getName();
+			Supplier<LocalDate> supplier = context.getLocalDateSupplier(example);
+			if (supplier != null) {
+				localDate = supplier.get();
+			} else {
+				localDate = RandomDateUtils.randomLocalDate(dateRange.from(), dateRange.to(),
+						DateTimeFormatter.ofPattern(dateRange.format(), Locale.ENGLISH));
+			}
 		}
 		TimeRange timeRange = field.getAnnotation(TimeRange.class);
 		if (timeRange != null) {
-			localTime = RandomDateUtils.randomLocalTime(timeRange.from(), timeRange.to(),
-					DateTimeFormatter.ofPattern(timeRange.format(), Locale.ENGLISH));
+			example = StringUtils.isNotBlank(timeRange.value()) ? timeRange.value() : field.getName();
+			Supplier<LocalTime> supplier = context.getLocalTimeSupplier(example);
+			if (supplier != null) {
+				localTime = supplier.get();
+			} else {
+				localTime = RandomDateUtils.randomLocalTime(timeRange.from(), timeRange.to(),
+						DateTimeFormatter.ofPattern(timeRange.format(), Locale.ENGLISH));
+			}
 		}
 		if (localDate == null && localTime == null) {
 			return delegate.randomLocalDateTime(field, context);
@@ -229,6 +261,11 @@ public class RandomTemplate implements RandomOperations {
 	public LocalTime randomLocalTime(Field field, MockContext context) {
 		TimeRange timeRange = field.getAnnotation(TimeRange.class);
 		if (timeRange != null) {
+			String example = StringUtils.isNotBlank(timeRange.value()) ? timeRange.value() : field.getName();
+			Supplier<LocalTime> supplier = context.getLocalTimeSupplier(example);
+			if (supplier != null) {
+				return supplier.get();
+			}
 			return RandomDateUtils.randomLocalTime(timeRange.from(), timeRange.to(),
 					DateTimeFormatter.ofPattern(timeRange.format(), Locale.ENGLISH));
 		}

@@ -18,10 +18,13 @@ package com.github.paganini2008.devtools;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.time.Year;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.github.paganini2008.devtools.date.TimeAsserts;
 import com.github.paganini2008.devtools.math.BigDecimalUtils;
 import com.github.paganini2008.devtools.primitives.Doubles;
 import com.github.paganini2008.devtools.primitives.Floats;
@@ -253,7 +256,7 @@ public abstract class RandomUtils {
 	}
 
 	public static float randomFloat(float from, float to, int scale) {
-		float rand = randomFloat();
+		float rand = randomFloat(from, to);
 		return Floats.toFixed(rand, scale);
 	}
 
@@ -437,6 +440,48 @@ public abstract class RandomUtils {
 	public static <E extends Enum<E>> E randomEnum(Class<E> enumClass) {
 		E[] enums = (E[]) MethodUtils.invokeStaticMethod(enumClass, "values");
 		return randomChoice(enums);
+	}
+
+	public static int randomYear(int fromYear, int toYear) {
+		TimeAsserts.validateYear(fromYear);
+		TimeAsserts.validateYear(toYear);
+		return randomInt(fromYear, toYear + 1);
+	}
+
+	public static int randomMonth(int fromMonth, int toMonth) {
+		TimeAsserts.validateMonth(fromMonth);
+		TimeAsserts.validateMonth(toMonth);
+		return randomInt(fromMonth, toMonth + 1);
+	}
+
+	public static int randomDayOfYear(Year year, int fromDayOfYear, int toDayOfYear) {
+		TimeAsserts.validateDayOfYear(year, fromDayOfYear);
+		toDayOfYear = Math.min(toDayOfYear, year.isLeap() ? 366 : 365);
+		return randomInt(fromDayOfYear, toDayOfYear + 1);
+	}
+
+	public static int randomDayOfMonth(YearMonth yearMonth, int fromDayOfMonth, int toDayOfMonth) {
+		TimeAsserts.validateDayOfMonth(yearMonth, fromDayOfMonth);
+		toDayOfMonth = Math.min(toDayOfMonth, yearMonth.atEndOfMonth().getDayOfMonth());
+		return randomInt(fromDayOfMonth, toDayOfMonth + 1);
+	}
+
+	public static int randomDayOfMonth(int year, int month, int fromDayOfMonth, int toDayOfMonth) {
+		TimeAsserts.validateDayOfMonth(year, month, fromDayOfMonth);
+		toDayOfMonth = Math.min(toDayOfMonth, YearMonth.of(year, month).atEndOfMonth().getDayOfMonth());
+		return randomInt(fromDayOfMonth, toDayOfMonth + 1);
+	}
+
+	public static int randomHourOfDay(int fromHourOfDay, int toHourOfDay) {
+		TimeAsserts.validateHourOfDay(fromHourOfDay);
+		TimeAsserts.validateHourOfDay(toHourOfDay);
+		return randomInt(fromHourOfDay, toHourOfDay + 1);
+	}
+
+	public static int randomMinuteOrSecond(int from, int to) {
+		TimeAsserts.validateMinuteOfSecond(from);
+		TimeAsserts.validateMinuteOfSecond(to);
+		return randomInt(from, to + 1);
 	}
 
 }

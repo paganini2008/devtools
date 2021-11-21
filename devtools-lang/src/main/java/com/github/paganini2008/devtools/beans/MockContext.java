@@ -206,10 +206,10 @@ public final class MockContext {
 	}
 
 	public static class RandomDateConfig {
-		private int fromYear = 1970;
+		private int fromYear = DateUtils.YEAR_START_FROM;
 		private int toYear = DateUtils.getYear();
-		private int fromMonth = 0;
-		private int toMonth = 11;
+		private int fromMonth = 1;
+		private int toMonth = 12;
 		private int fromDayOfMonth = 1;
 		private int toDayOfMonth = 31;
 		private int fromHourOfDay = 0;
@@ -483,6 +483,22 @@ public final class MockContext {
 
 	public Supplier<BigInteger> getBigIntegerSupplier(String example) {
 		return bigIntegerSupplier.get(example);
+	}
+
+	public Supplier<Date> getDateSupplier(String example) {
+		return dateSupplier.get(example);
+	}
+
+	public Supplier<LocalDate> getLocalDateSupplier(String example) {
+		return localDateSupplier.get(example);
+	}
+
+	public Supplier<LocalDateTime> getLocalDateTimeSupplier(String example) {
+		return localDateTimeSupplier.get(example);
+	}
+
+	public Supplier<LocalTime> getLocalTimeSupplier(String example) {
+		return localTimeSupplier.get(example);
 	}
 
 	protected Object mock(Field field, RandomOperations operations) {

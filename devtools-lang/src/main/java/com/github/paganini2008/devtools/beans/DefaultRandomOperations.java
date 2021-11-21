@@ -98,14 +98,17 @@ public class DefaultRandomOperations implements RandomOperations {
 
 	@Override
 	public LocalDateTime randomLocalDateTime(Field field, MockContext context) {
-		// TODO Auto-generated method stub
-		return null;
+		RandomDateConfig config = context.getRandomDateConfig();
+		return RandomDateUtils.randomLocalDateTime(config.getFromYear(), config.getToYear(), config.getFromMonth(), config.getToMonth(),
+				config.getFromDayOfMonth(), config.getToDayOfMonth(), config.getFromHourOfDay(), config.getToHourOfDay(),
+				config.getFromMinute(), config.getToMinute(), config.getFromSecond(), config.getToSecond());
 	}
 
 	@Override
 	public LocalTime randomLocalTime(Field field, MockContext context) {
-		// TODO Auto-generated method stub
-		return null;
+		RandomDateConfig config = context.getRandomDateConfig();
+		return RandomDateUtils.randomLocalTime(config.getFromHourOfDay(), config.getToHourOfDay(), config.getFromMinute(),
+				config.getToMinute(), config.getFromSecond(), config.getToSecond());
 	}
 
 	@SuppressWarnings("unchecked")
