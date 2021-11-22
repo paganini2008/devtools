@@ -35,6 +35,7 @@ import com.github.paganini2008.devtools.date.DateUtils;
 import com.github.paganini2008.devtools.date.LocalDateTimeUtils;
 import com.github.paganini2008.devtools.date.LocalDateUtils;
 import com.github.paganini2008.devtools.date.LocalTimeUtils;
+import com.github.paganini2008.devtools.date.YearMonthUtils;
 
 /**
  * 
@@ -47,7 +48,7 @@ import com.github.paganini2008.devtools.date.LocalTimeUtils;
 public abstract class RandomDateUtils {
 
 	public static Year randomYear() {
-		return randomYear(DateUtils.YEAR_START, Year.now());
+		return randomYear(YearMonthUtils.YEAR_START, Year.now());
 	}
 
 	public static Year randomYear(Year fromYear, Year toYear) {
@@ -135,7 +136,7 @@ public abstract class RandomDateUtils {
 
 	public static LocalDate randomLocalDate(int year, int month, int fromDayOfMonth, int toDayOfMonth) {
 		int dayOfMonth = randomDayOfMonth(year, month, fromDayOfMonth, toDayOfMonth);
-		return LocalDateUtils.valueOf(year, month, dayOfMonth);
+		return LocalDateUtils.of(year, month, dayOfMonth);
 	}
 
 	public static LocalDate randomLocalDate(int year, int fromMonth, int toMonth, int fromDayOfMonth, int toDayOfMonth) {
@@ -191,7 +192,7 @@ public abstract class RandomDateUtils {
 	}
 
 	public static LocalDateTime randomLocalDateTime(Year year, int dayOfYear, LocalTime from, LocalTime to) {
-		LocalDate localDate = LocalDateUtils.valueOf(year, dayOfYear);
+		LocalDate localDate = LocalDateUtils.of(year, dayOfYear);
 		return randomLocalDateTime(localDate, from, to);
 	}
 
@@ -302,7 +303,7 @@ public abstract class RandomDateUtils {
 
 	public static LocalDateTime randomLocalDateTime(int year, int month, int dayOfMonth, int fromHourOfDay, int toHourOfDay, int fromMinute,
 			int toMinute, int fromSecond, int toSecond) {
-		LocalDate localDate = LocalDateUtils.valueOf(year, month, dayOfMonth);
+		LocalDate localDate = LocalDateUtils.of(year, month, dayOfMonth);
 		return randomLocalDateTime(localDate, fromHourOfDay, toHourOfDay, fromMinute, toMinute, fromSecond, toSecond);
 	}
 
@@ -322,7 +323,7 @@ public abstract class RandomDateUtils {
 
 	public static LocalTime randomLocalTime(int fromHourOfDay, int toHourOfDay, int fromMinute, int toMinute, int fromSecond,
 			int toSecond) {
-		return LocalTimeUtils.valueOf(randomHourOfDay(fromHourOfDay, toHourOfDay), randomMinuteOrSecond(fromMinute, toMinute),
+		return LocalTimeUtils.of(randomHourOfDay(fromHourOfDay, toHourOfDay), randomMinuteOrSecond(fromMinute, toMinute),
 				randomMinuteOrSecond(fromSecond, toSecond));
 	}
 

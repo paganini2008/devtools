@@ -54,12 +54,18 @@ public abstract class TimeAsserts {
 		validateDayOfMonth(YearMonth.of(year, month), dayOfMonth);
 	}
 
+	public static void validateTime(int hourOfDay, int minute, int second) {
+		Assert.outOfRange(hourOfDay, 0, 23, "Out of hour range of a day. Input: " + hourOfDay);
+		Assert.outOfRange(minute, 0, 59, "Out of minute range of one hour. Input: " + minute);
+		Assert.outOfRange(second, 0, 59, "Out of second range of one minute. Input: " + second);
+	}
+
 	public static void validateHourOfDay(int hourOfDay) {
 		Assert.outOfRange(hourOfDay, 0, 23, "Out of hour range of a day. Input: " + hourOfDay);
 	}
 
-	public static void validateMinuteOfSecond(int timeValue) {
-		Assert.outOfRange(timeValue, 0, 59, "Out of time range of one minute or one second. Input: " + timeValue);
+	public static void validateMinuteOrSecond(int timeValue) {
+		Assert.outOfRange(timeValue, 0, 59, "Out of time range of one minute or one hour. Input: " + timeValue);
 	}
 
 }

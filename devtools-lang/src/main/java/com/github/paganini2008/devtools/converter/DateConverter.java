@@ -23,8 +23,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.github.paganini2008.devtools.date.DateUtils;
-import com.github.paganini2008.devtools.date.LocalDateTimeUtils;
-import com.github.paganini2008.devtools.date.LocalDateUtils;
 
 /**
  * DateConverter
@@ -64,11 +62,9 @@ public class DateConverter extends BasicConverter<Date> {
 				return defaultValue;
 			}
 			if (source.length == 3) {
-				LocalDate localDate = LocalDateUtils.valueOf(source[0], source[1], source[2]);
-				return DateUtils.toDate(localDate, null);
+				return DateUtils.of(source[0], source[1], source[2]);
 			} else if (source.length == 6) {
-				LocalDateTime localDateTime = LocalDateTimeUtils.valueOf(source[0], source[1], source[2], source[3], source[4], source[5]);
-				return DateUtils.toDate(localDateTime, null);
+				return DateUtils.of(source[0], source[1], source[2], source[3], source[4], source[5]);
 			}
 			throw new IllegalArgumentException("Int array's length need to be 3 or 6.");
 		}

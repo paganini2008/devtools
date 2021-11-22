@@ -21,7 +21,6 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Year;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
@@ -47,9 +46,7 @@ import com.github.paganini2008.devtools.collection.LruMap;
 public abstract class DateUtils {
 
 	public static final int YEAR_START_FROM = 1970;
-	public static final Year YEAR_START = Year.of(YEAR_START_FROM);
 	public static final int YEAR_END_WITH = 9999;
-	public static final Year YEAR_END = Year.of(YEAR_END_WITH);
 
 	public static final Date[] EMPTY_ARRAY = new Date[0];
 	public final static String DEFAULT_DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
@@ -302,53 +299,69 @@ public abstract class DateUtils {
 		return c.getTime();
 	}
 
+	public static Date setYear(int amount) {
+		return setYear(new Date(), amount);
+	}
+
 	public static Date setYear(Date date, int amount) {
 		return setField(date, Calendar.YEAR, amount);
+	}
+
+	public static Date setMonth(int amount) {
+		return setMonth(new Date(), amount);
 	}
 
 	public static Date setMonth(Date date, int amount) {
 		return setField(date, Calendar.MONTH, amount);
 	}
 
+	public static Date setWeekOfYear(int amount) {
+		return setWeekOfYear(new Date(), amount);
+	}
+
 	public static Date setWeekOfYear(Date date, int amount) {
 		return setField(date, Calendar.WEEK_OF_YEAR, amount);
+	}
+
+	public static Date setWeekOfMonth(int amount) {
+		return setWeekOfMonth(new Date(), amount);
 	}
 
 	public static Date setWeekOfMonth(Date date, int amount) {
 		return setField(date, Calendar.WEEK_OF_MONTH, amount);
 	}
 
+	public static Date setDayOfWeek(int amount) {
+		return setDayOfWeek(new Date(), amount);
+	}
+
 	public static Date setDayOfWeek(Date date, int amount) {
 		return setField(date, Calendar.DAY_OF_WEEK, amount);
 	}
 
-	public static Date setDay(Date date, int amount) {
+	public static Date setDayOfMonth(int amount) {
+		return setDayOfMonth(new Date(), amount);
+	}
+
+	public static Date setDayOfMonth(Date date, int amount) {
 		return setField(date, Calendar.DAY_OF_MONTH, amount);
+	}
+
+	public static Date setDayOfYear(int amount) {
+		return setDayOfYear(new Date(), amount);
 	}
 
 	public static Date setDayOfYear(Date date, int amount) {
 		return setField(date, Calendar.DAY_OF_YEAR, amount);
 	}
 
-	public static Date setAM(Date date, int hour, int minute, int second) {
-		Assert.isNull(date, "The date must not be null");
+	private static Date setField(Date date, int calendarField, int amount) {
+		if (date == null) {
+			date = new Date();
+		}
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
-		c.set(Calendar.AM_PM, Calendar.AM);
-		c.set(Calendar.HOUR, hour);
-		c.set(Calendar.MINUTE, minute);
-		c.set(Calendar.SECOND, second);
-		return c.getTime();
-	}
-
-	public static Date setPM(Date date, int hour, int minute, int second) {
-		Assert.isNull(date, "The date must not be null");
-		Calendar c = Calendar.getInstance();
-		c.setTime(date);
-		c.set(Calendar.AM_PM, Calendar.PM);
-		c.set(Calendar.HOUR, hour);
-		c.set(Calendar.MINUTE, minute);
-		c.set(Calendar.SECOND, second);
+		c.set(calendarField, amount);
 		return c.getTime();
 	}
 
@@ -361,11 +374,29 @@ public abstract class DateUtils {
 		return c.getTime();
 	}
 
-	private static Date setField(Date date, int calendarField, int amount) {
-		Assert.isNull(date, "The date must not be null");
+	public static Date setAM(Date date, int hour, int minute, int second) {
+		if (date == null) {
+			date = new Date();
+		}
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
-		c.set(calendarField, amount);
+		c.set(Calendar.AM_PM, Calendar.AM);
+		c.set(Calendar.HOUR, hour);
+		c.set(Calendar.MINUTE, minute);
+		c.set(Calendar.SECOND, second);
+		return c.getTime();
+	}
+
+	public static Date setPM(Date date, int hour, int minute, int second) {
+		if (date == null) {
+			date = new Date();
+		}
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.set(Calendar.AM_PM, Calendar.PM);
+		c.set(Calendar.HOUR, hour);
+		c.set(Calendar.MINUTE, minute);
+		c.set(Calendar.SECOND, second);
 		return c.getTime();
 	}
 
@@ -452,12 +483,28 @@ public abstract class DateUtils {
 		return getField(date, Calendar.MONTH);
 	}
 
-	public static int getDate() {
-		return getDate(new Date());
+	public static int getDayOfMonth() {
+		return getDayOfMonth(new Date());
 	}
 
-	public static int getDate(Date date) {
+	public static int getDayOfMonth(Date date) {
 		return getField(date, Calendar.DAY_OF_MONTH);
+	}
+
+	public static int getDayOfWeek() {
+		return getDayOfWeek(new Date());
+	}
+
+	public static int getDayOfWeek(Date date) {
+		return getField(date, Calendar.DAY_OF_WEEK);
+	}
+
+	public static int getDayOfYear() {
+		return getDayOfYear(new Date());
+	}
+
+	public static int getDayOfYear(Date date) {
+		return getField(date, Calendar.DAY_OF_YEAR);
 	}
 
 	public static int getWeekOfMonth() {
@@ -498,10 +545,32 @@ public abstract class DateUtils {
 		return calendar.get(calendarField);
 	}
 
+	public static int getLastDayOfYear(Date date) {
+		return getLastDay(date, Calendar.DAY_OF_YEAR);
+	}
+
 	public static int getLastDayOfMonth(Date date) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+		return getLastDay(date, Calendar.DAY_OF_MONTH);
+	}
+
+	public static int getLastWeekOfYear(Date date) {
+		return getLastDay(date, Calendar.WEEK_OF_YEAR);
+	}
+
+	public static int getLastDay(Date date, int calendarField) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		return c.getActualMaximum(calendarField);
+	}
+
+	public static Date of(int year, int month, int dayOfMonth) {
+		return of(year, month, dayOfMonth, 0, 0, 0);
+	}
+
+	public static Date of(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second) {
+		Calendar c = Calendar.getInstance();
+		c.set(year, month - 1, dayOfMonth, hourOfDay, minute, second);
+		return c.getTime();
 	}
 
 	public static long converToSecond(long interval, TimeUnit timeUnit) {
@@ -641,7 +710,7 @@ public abstract class DateUtils {
 		return sdf;
 	}
 
-	public static void main(String[] args) throws Exception {
+	public static void main2(String[] args) throws Exception {
 		Map<Date, Object> result = populate(addDays(new Date(), 10), new Date(), 1, Calendar.DAY_OF_MONTH, c -> new HashMap<>());
 		Console.log(new TreeMap<Date, Object>(result));
 	}

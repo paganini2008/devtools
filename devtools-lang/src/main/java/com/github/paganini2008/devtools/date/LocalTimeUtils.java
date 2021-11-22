@@ -38,6 +38,7 @@ import com.github.paganini2008.devtools.collection.LruMap;
  */
 public abstract class LocalTimeUtils {
 
+	public static final LocalTime[] EMPTY_ARRAY = new LocalTime[0];
 	private final static LruMap<String, DateTimeFormatter> dfCache = new LruMap<String, DateTimeFormatter>(16);
 
 	public static LocalTime toLocalTime(Long ms, ZoneId zoneId) {
@@ -109,11 +110,12 @@ public abstract class LocalTimeUtils {
 		return parseLocalTime(text, getDateTimeFormatter(datePattern), defaultValue);
 	}
 
-	public static LocalTime valueOf(int hourOfDay, int minute) {
-		return valueOf(hourOfDay, minute, 0);
+	public static LocalTime of(int hourOfDay, int minute) {
+		return of(hourOfDay, minute, 0);
 	}
 
-	public static LocalTime valueOf(int hourOfDay, int minute, int second) {
+	public static LocalTime of(int hourOfDay, int minute, int second) {
+		TimeAsserts.validateTime(hourOfDay, minute, second);
 		return LocalTime.of(hourOfDay, minute, second);
 	}
 

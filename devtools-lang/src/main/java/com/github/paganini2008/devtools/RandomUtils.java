@@ -479,8 +479,8 @@ public abstract class RandomUtils {
 	}
 
 	public static int randomMinuteOrSecond(int from, int to) {
-		TimeAsserts.validateMinuteOfSecond(from);
-		TimeAsserts.validateMinuteOfSecond(to);
+		TimeAsserts.validateMinuteOrSecond(from);
+		TimeAsserts.validateMinuteOrSecond(to);
 		return randomInt(from, to + 1);
 	}
 

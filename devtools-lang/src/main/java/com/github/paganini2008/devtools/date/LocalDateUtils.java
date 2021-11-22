@@ -41,38 +41,62 @@ import com.github.paganini2008.devtools.collection.LruMap;
  */
 public abstract class LocalDateUtils {
 
+	public static final LocalDate[] EMPTY_ARRAY = new LocalDate[0];
 	private final static LruMap<String, DateTimeFormatter> dfCache = new LruMap<String, DateTimeFormatter>(16);
 
-	public static LocalDate addDays(Date date, int days) {
-		return addDays(toLocalDate(date, null), days);
+	public static LocalDate addYears(Date date, int years) {
+		return addDays(toLocalDate(date, null), years);
 	}
 
-	public static LocalDate addDays(LocalDate localDate, int days) {
-		return localDate.plus(days, ChronoUnit.DAYS);
+	public static LocalDate addYears(int years) {
+		return addYears(LocalDate.now(), years);
+	}
+
+	public static LocalDate addYears(LocalDate localDate, int years) {
+		return addAmount(localDate, years, ChronoUnit.YEARS);
 	}
 
 	public static LocalDate addMonths(Date date, int months) {
 		return addMonths(toLocalDate(date, null), months);
 	}
 
+	public static LocalDate addMonths(int months) {
+		return addMonths(LocalDate.now(), months);
+	}
+
 	public static LocalDate addMonths(LocalDate localDate, int months) {
-		return localDate.plus(months, ChronoUnit.MONTHS);
+		return addAmount(localDate, months, ChronoUnit.MONTHS);
 	}
 
-	public static LocalDate addYears(Date date, int years) {
-		return addDays(toLocalDate(date, null), years);
+	public static LocalDate addDays(Date date, int days) {
+		return addDays(toLocalDate(date, null), days);
 	}
 
-	public static LocalDate addYears(LocalDate localDate, int years) {
-		return localDate.plus(years, ChronoUnit.YEARS);
+	public static LocalDate addDays(int days) {
+		return addDays(LocalDate.now(), days);
+	}
+
+	public static LocalDate addDays(LocalDate localDate, int days) {
+		return addAmount(localDate, days, ChronoUnit.DAYS);
 	}
 
 	public static LocalDate addWeeks(Date date, int weeks) {
 		return addWeeks(toLocalDate(date, null), weeks);
 	}
 
+	public static LocalDate addWeeks(int weeks) {
+		return addWeeks(LocalDate.now(), weeks);
+	}
+
 	public static LocalDate addWeeks(LocalDate localDate, int weeks) {
-		return localDate.plus(weeks, ChronoUnit.WEEKS);
+		return addAmount(localDate, weeks, ChronoUnit.WEEKS);
+	}
+
+	public static LocalDate addAmount(LocalDate localDate, int amount, ChronoUnit chronoUnit) {
+		if (localDate == null) {
+			localDate = LocalDate.now();
+		}
+		return localDate.plus(amount, chronoUnit);
 	}
 
 	public static LocalDate toLocalDate(Long ms, ZoneId zoneId) {
@@ -164,19 +188,25 @@ public abstract class LocalDateUtils {
 		return parseLocalDate(text, getDateTimeFormatter(datePattern), defaultValue);
 	}
 
-	public static LocalDate valueOf(Year year, int dayOfYear) {
-		return year.atDay(Math.min(dayOfYear, year.isLeap() ? 366 : 365));
+	public static LocalDate of(Year year, int dayOfYear) {
+		TimeAsserts.validateDayOfYear(year, dayOfYear);
+		return year.atDay(dayOfYear);
 	}
 
-	public static LocalDate valueOf(YearMonth yearMonth, int dayOfMonth) {
+	public static LocalDate of(YearMonth yearMonth, int dayOfMonth) {
+		TimeAsserts.validateDayOfMonth(yearMonth, dayOfMonth);
 		return yearMonth.atDay(dayOfMonth);
 	}
 
-	public static LocalDate valueOf(Year year, Month month, int dayOfMonth) {
-		return valueOf(year.atMonth(month), dayOfMonth);
+	public static LocalDate of(Year year, Month month, int dayOfMonth) {
+		YearMonth yearMonth = YearMonthUtils.toYearMonth(year, month);
+		return of(yearMonth, dayOfMonth);
 	}
 
-	public static LocalDate valueOf(int year, int month, int dayOfMonth) {
+	public static LocalDate of(int year, int month, int dayOfMonth) {
+		TimeAsserts.validateYear(year);
+		TimeAsserts.validateMonth(month);
+		TimeAsserts.validateDayOfMonth(year, month, dayOfMonth);
 		return LocalDate.of(year, month, dayOfMonth);
 	}
 
