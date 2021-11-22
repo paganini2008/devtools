@@ -51,7 +51,7 @@ public abstract class TimeAsserts {
 	}
 
 	public static void validateDayOfMonth(int year, int month, int dayOfMonth) {
-		validateDayOfMonth(YearMonth.of(year, month), dayOfMonth);
+		validateDayOfMonth(YearMonthUtils.of(year, month), dayOfMonth);
 	}
 
 	public static void validateTime(int hourOfDay, int minute, int second) {
