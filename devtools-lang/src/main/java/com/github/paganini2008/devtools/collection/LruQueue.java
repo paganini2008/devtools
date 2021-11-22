@@ -17,7 +17,6 @@ package com.github.paganini2008.devtools.collection;
 
 import java.io.Serializable;
 import java.util.AbstractQueue;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;

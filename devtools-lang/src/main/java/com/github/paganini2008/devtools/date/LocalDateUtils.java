@@ -23,6 +23,7 @@ import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -41,6 +42,38 @@ import com.github.paganini2008.devtools.collection.LruMap;
 public abstract class LocalDateUtils {
 
 	private final static LruMap<String, DateTimeFormatter> dfCache = new LruMap<String, DateTimeFormatter>(16);
+
+	public static LocalDate addDays(Date date, int days) {
+		return addDays(toLocalDate(date, null), days);
+	}
+
+	public static LocalDate addDays(LocalDate localDate, int days) {
+		return localDate.plus(days, ChronoUnit.DAYS);
+	}
+
+	public static LocalDate addMonths(Date date, int months) {
+		return addMonths(toLocalDate(date, null), months);
+	}
+
+	public static LocalDate addMonths(LocalDate localDate, int months) {
+		return localDate.plus(months, ChronoUnit.MONTHS);
+	}
+
+	public static LocalDate addYears(Date date, int years) {
+		return addDays(toLocalDate(date, null), years);
+	}
+
+	public static LocalDate addYears(LocalDate localDate, int years) {
+		return localDate.plus(years, ChronoUnit.YEARS);
+	}
+
+	public static LocalDate addWeeks(Date date, int weeks) {
+		return addWeeks(toLocalDate(date, null), weeks);
+	}
+
+	public static LocalDate addWeeks(LocalDate localDate, int weeks) {
+		return localDate.plus(weeks, ChronoUnit.WEEKS);
+	}
 
 	public static LocalDate toLocalDate(Long ms, ZoneId zoneId) {
 		return toLocalDate(ms, zoneId, null);

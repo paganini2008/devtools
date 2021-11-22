@@ -24,6 +24,7 @@ import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -43,6 +44,69 @@ import com.github.paganini2008.devtools.collection.LruMap;
 public abstract class LocalDateTimeUtils {
 
 	private final static LruMap<String, DateTimeFormatter> dfCache = new LruMap<String, DateTimeFormatter>(16);
+
+	public static LocalDateTime addSeconds(Date date, int seconds) {
+		return addSeconds(toLocalDateTime(date, null), seconds);
+	}
+
+	public static LocalDateTime addSeconds(LocalDateTime localDateTime, int seconds) {
+		return addAmount(localDateTime, seconds, ChronoUnit.SECONDS);
+	}
+
+	public static LocalDateTime addMinutes(Date date, int minutes) {
+		return addMinutes(toLocalDateTime(date, null), minutes);
+	}
+
+	public static LocalDateTime addMinutes(LocalDateTime localDateTime, int minutes) {
+		return addAmount(localDateTime, minutes, ChronoUnit.MINUTES);
+	}
+
+	public static LocalDateTime addHours(Date date, int hours) {
+		return addHours(toLocalDateTime(date, null), hours);
+	}
+
+	public static LocalDateTime addHours(LocalDateTime localDateTime, int hours) {
+		return addAmount(localDateTime, hours, ChronoUnit.HOURS);
+	}
+
+	public static LocalDateTime addDays(Date date, int days) {
+		return addDays(toLocalDateTime(date, null), days);
+	}
+
+	public static LocalDateTime addDays(LocalDateTime localDateTime, int days) {
+		return addAmount(localDateTime, days, ChronoUnit.DAYS);
+	}
+
+	public static LocalDateTime addMonths(Date date, int months) {
+		return addMonths(toLocalDateTime(date, null), months);
+	}
+
+	public static LocalDateTime addMonths(LocalDateTime localDateTime, int months) {
+		return addAmount(localDateTime, months, ChronoUnit.MONTHS);
+	}
+
+	public static LocalDateTime addYears(Date date, int years) {
+		return addDays(toLocalDateTime(date, null), years);
+	}
+
+	public static LocalDateTime addYears(LocalDateTime localDateTime, int years) {
+		return addAmount(localDateTime, years, ChronoUnit.YEARS);
+	}
+
+	public static LocalDateTime addWeeks(Date date, int weeks) {
+		return addWeeks(toLocalDateTime(date, null), weeks);
+	}
+
+	public static LocalDateTime addWeeks(LocalDateTime localDateTime, int weeks) {
+		return addAmount(localDateTime, weeks, ChronoUnit.WEEKS);
+	}
+
+	public static LocalDateTime addAmount(LocalDateTime localDateTime, int amount, ChronoUnit chronoUnit) {
+		if (localDateTime == null) {
+			localDateTime = LocalDateTime.now();
+		}
+		return localDateTime.plus(amount, chronoUnit);
+	}
 
 	public static LocalDateTime toLocalDateTime(Long ms, ZoneId zoneId) {
 		return toLocalDateTime(ms, zoneId, null);
@@ -141,7 +205,20 @@ public abstract class LocalDateTimeUtils {
 	}
 
 	public static LocalDateTime valueOf(Year year, Month month, int dayOfMonth, int hourOfDay, int minute, int second) {
-		return valueOf(year.atMonth(month), dayOfMonth, hourOfDay, minute, second);
+		YearMonth yearMonth = YearMonth.now();
+		if (year != null && month != null) {
+			yearMonth = year.atMonth(month);
+		} else if (year != null && month == null) {
+			yearMonth = yearMonth.with(year);
+		} else if (year == null && month != null) {
+			yearMonth = yearMonth.with(month);
+		}
+		return valueOf(yearMonth, dayOfMonth, hourOfDay, minute, second);
+	}
+
+	public static LocalDateTime of(Date date, int hourOfDay, int minute, int second) {
+		LocalDate localDate = LocalDateUtils.toLocalDate(date, null, LocalDate.now());
+		return valueOf(localDate, hourOfDay, minute, second);
 	}
 
 	public static LocalDateTime valueOf(LocalDate localDate, int hourOfDay, int minute, int second) {
