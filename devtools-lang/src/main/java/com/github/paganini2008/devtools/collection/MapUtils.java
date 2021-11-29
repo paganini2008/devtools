@@ -54,33 +54,6 @@ public abstract class MapUtils {
 		return new SingletonEntry(key, value);
 	}
 
-	private static class SingletonEntry implements Map.Entry {
-
-		private SingletonEntry(Object key, Object value) {
-			Assert.isNull(key, "Key must not be null.");
-			this.key = key;
-			this.value = value;
-		}
-
-		private Object key;
-		private Object value;
-
-		@Override
-		public Object getKey() {
-			return key;
-		}
-
-		@Override
-		public Object getValue() {
-			return value;
-		}
-
-		@Override
-		public Object setValue(Object value) {
-			throw new UnsupportedOperationException();
-		}
-	}
-
 	public static <K, V> Map<K, V> synchronizedHashMap(int initialCapacity, float loadFactor) {
 		return Collections.synchronizedMap(new HashMap<>(initialCapacity, loadFactor));
 	}
@@ -852,6 +825,33 @@ public abstract class MapUtils {
 			data.put(entry.getKey(), value);
 		}
 		return data;
+	}
+	
+	private static class SingletonEntry implements Map.Entry {
+
+		private SingletonEntry(Object key, Object value) {
+			Assert.isNull(key, "Key must not be null.");
+			this.key = key;
+			this.value = value;
+		}
+
+		private Object key;
+		private Object value;
+
+		@Override
+		public Object getKey() {
+			return key;
+		}
+
+		@Override
+		public Object getValue() {
+			return value;
+		}
+
+		@Override
+		public Object setValue(Object value) {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 }
