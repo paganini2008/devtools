@@ -18,7 +18,6 @@ package com.github.paganini2008.devtools.collection;
 import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -46,7 +45,7 @@ public class LruMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Serial
 	}
 
 	public LruMap(final boolean sorted, final int maxSize) {
-		this(sorted, maxSize, (size, listener) -> Collections.synchronizedMap(MapUtils.newLruMap(16, size, listener)));
+		this(sorted, maxSize, (size, listener) -> MapUtils.synchronizedLinkedHashMap(16, size, listener));
 	}
 
 	public LruMap(final boolean sorted, final int maxSize, final LruMapSupplier<K, Object> supplier) {
@@ -54,8 +53,7 @@ public class LruMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Serial
 	}
 
 	public LruMap(final Map<K, V> delegate, final int maxSize) {
-		this(delegate, maxSize,
-				(size, listener) -> Collections.synchronizedMap(MapUtils.newLruMap(16, size, listener)));
+		this(delegate, maxSize, (size, listener) -> MapUtils.synchronizedLinkedHashMap(16, size, listener));
 	}
 
 	public LruMap(final Map<K, V> delegate, final int maxSize, final LruMapSupplier<K, Object> supplier) {

@@ -1,0 +1,356 @@
+/**
+* Copyright 2017-2021 Fred Feng (paganini.fy@gmail.com)
+
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+package com.github.paganini2008.devtools.date;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.Year;
+import java.time.YearMonth;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
+import com.github.paganini2008.devtools.Assert;
+import com.github.paganini2008.devtools.StringUtils;
+import com.github.paganini2008.devtools.collection.LruMap;
+
+/**
+ * 
+ * LocalDateTimeUtils
+ *
+ * @author Fred Feng
+ *
+ * @since 2.0.4
+ */
+public abstract class LocalDateTimeUtils {
+
+	public static final LocalDateTime[] EMPTY_ARRAY = new LocalDateTime[0];
+	private final static LruMap<String, DateTimeFormatter> dfCache = new LruMap<String, DateTimeFormatter>(16);
+
+	public static LocalDateTime addSeconds(Date date, int seconds) {
+		return addSeconds(toLocalDateTime(date, null), seconds);
+	}
+
+	public static LocalDateTime addSeconds(int seconds) {
+		return addSeconds(LocalDateTime.now(), seconds);
+	}
+
+	public static LocalDateTime addSeconds(LocalDateTime localDateTime, int seconds) {
+		return addAmount(localDateTime, seconds, ChronoUnit.SECONDS);
+	}
+
+	public static LocalDateTime addMinutes(Date date, int minutes) {
+		return addMinutes(toLocalDateTime(date, null), minutes);
+	}
+
+	public static LocalDateTime addMinutes(int minutes) {
+		return addMinutes(LocalDateTime.now(), minutes);
+	}
+
+	public static LocalDateTime addMinutes(LocalDateTime localDateTime, int minutes) {
+		return addAmount(localDateTime, minutes, ChronoUnit.MINUTES);
+	}
+
+	public static LocalDateTime addHours(Date date, int hours) {
+		return addHours(toLocalDateTime(date, null), hours);
+	}
+
+	public static LocalDateTime addHours(int hours) {
+		return addHours(LocalDateTime.now(), hours);
+	}
+
+	public static LocalDateTime addHours(LocalDateTime localDateTime, int hours) {
+		return addAmount(localDateTime, hours, ChronoUnit.HOURS);
+	}
+
+	public static LocalDateTime addDays(Date date, int days) {
+		return addDays(toLocalDateTime(date, null), days);
+	}
+
+	public static LocalDateTime addDays(int days) {
+		return addDays(LocalDateTime.now(), days);
+	}
+
+	public static LocalDateTime addDays(LocalDateTime localDateTime, int days) {
+		return addAmount(localDateTime, days, ChronoUnit.DAYS);
+	}
+
+	public static LocalDateTime addMonths(Date date, int months) {
+		return addMonths(toLocalDateTime(date, null), months);
+	}
+
+	public static LocalDateTime addMonths(int months) {
+		return addMonths(LocalDateTime.now(), months);
+	}
+
+	public static LocalDateTime addMonths(LocalDateTime localDateTime, int months) {
+		return addAmount(localDateTime, months, ChronoUnit.MONTHS);
+	}
+
+	public static LocalDateTime addYears(Date date, int years) {
+		return addDays(toLocalDateTime(date, null), years);
+	}
+
+	public static LocalDateTime addYears(int years) {
+		return addYears(LocalDateTime.now(), years);
+	}
+
+	public static LocalDateTime addYears(LocalDateTime localDateTime, int years) {
+		return addAmount(localDateTime, years, ChronoUnit.YEARS);
+	}
+
+	public static LocalDateTime addWeeks(Date date, int weeks) {
+		return addWeeks(toLocalDateTime(date, null), weeks);
+	}
+
+	public static LocalDateTime addWeeks(int weeks) {
+		return addWeeks(LocalDateTime.now(), weeks);
+	}
+
+	public static LocalDateTime addWeeks(LocalDateTime localDateTime, int weeks) {
+		return addAmount(localDateTime, weeks, ChronoUnit.WEEKS);
+	}
+
+	public static LocalDateTime addAmount(LocalDateTime localDateTime, int amount, ChronoUnit chronoUnit) {
+		if (localDateTime == null) {
+			localDateTime = LocalDateTime.now();
+		}
+		return localDateTime.plus(amount, chronoUnit);
+	}
+
+	public static int getYear(LocalDateTime localDateTime) {
+		return getField(localDateTime, ChronoField.YEAR);
+	}
+
+	public static int getMonth(LocalDateTime localDateTime) {
+		return getField(localDateTime, ChronoField.MONTH_OF_YEAR);
+	}
+
+	public static int getDayOfMonth(LocalDateTime localDateTime) {
+		return getField(localDateTime, ChronoField.DAY_OF_MONTH);
+	}
+
+	public static int getDayOfWeek(LocalDateTime localDateTime) {
+		return getField(localDateTime, ChronoField.DAY_OF_WEEK);
+	}
+
+	public static int getDayOfYear(LocalDateTime localDateTime) {
+		return getField(localDateTime, ChronoField.DAY_OF_YEAR);
+	}
+
+	public static int getHourOfDay(LocalDateTime localDateTime) {
+		return getField(localDateTime, ChronoField.HOUR_OF_DAY);
+	}
+
+	public static int getMinute(LocalDateTime localDateTime) {
+		return getField(localDateTime, ChronoField.MINUTE_OF_HOUR);
+	}
+
+	public static int getSecond(LocalDateTime localDateTime) {
+		return getField(localDateTime, ChronoField.SECOND_OF_MINUTE);
+	}
+
+	public static int getField(LocalDateTime localDateTime, ChronoField field) {
+		if (localDateTime == null) {
+			localDateTime = LocalDateTime.now();
+		}
+		return localDateTime.get(field);
+	}
+
+	public static LocalDateTime setYear(LocalDateTime localDateTime, int year) {
+		return setField(localDateTime, ChronoField.YEAR, year);
+	}
+
+	public static LocalDateTime setMonth(LocalDateTime localDateTime, int month) {
+		return setField(localDateTime, ChronoField.MONTH_OF_YEAR, month);
+	}
+
+	public static LocalDateTime setDayOfMonth(LocalDateTime localDateTime, int dayOfMonth) {
+		return setField(localDateTime, ChronoField.DAY_OF_MONTH, dayOfMonth);
+	}
+
+	public static LocalDateTime setDayOfWeek(LocalDateTime localDateTime, int dayOfWeek) {
+		return setField(localDateTime, ChronoField.DAY_OF_WEEK, dayOfWeek);
+	}
+
+	public static LocalDateTime setDayOfYear(LocalDateTime localDateTime, int dayOfYear) {
+		return setField(localDateTime, ChronoField.DAY_OF_YEAR, dayOfYear);
+	}
+
+	public static LocalDateTime setHourOfDay(LocalDateTime localDateTime, int hourOfDay) {
+		return setField(localDateTime, ChronoField.HOUR_OF_DAY, hourOfDay);
+	}
+
+	public static LocalDateTime setMinute(LocalDateTime localDateTime, int minute) {
+		return setField(localDateTime, ChronoField.MINUTE_OF_HOUR, minute);
+	}
+
+	public static LocalDateTime setSecond(LocalDateTime localDateTime, int second) {
+		return setField(localDateTime, ChronoField.SECOND_OF_MINUTE, second);
+	}
+
+	public static LocalDateTime setField(LocalDateTime localDateTime, ChronoField field, int value) {
+		if (localDateTime == null) {
+			localDateTime = LocalDateTime.now();
+		}
+		return localDateTime.with(field, value);
+	}
+
+	public static LocalDateTime toLocalDateTime(Long ms, ZoneId zoneId) {
+		return toLocalDateTime(ms, zoneId, null);
+	}
+
+	public static LocalDateTime toLocalDateTime(Long ms, ZoneId zoneId, LocalDateTime defaultValue) {
+		if (zoneId == null) {
+			zoneId = ZoneId.systemDefault();
+		}
+		try {
+			return ms != null ? Instant.ofEpochMilli(ms).atZone(zoneId).toLocalDateTime() : defaultValue;
+		} catch (RuntimeException e) {
+			return defaultValue;
+		}
+	}
+
+	public static LocalDateTime toLocalDateTime(Date date, ZoneId zoneId) {
+		return toLocalDateTime(date, zoneId, null);
+	}
+
+	public static LocalDateTime toLocalDateTime(Date date, ZoneId zoneId, LocalDateTime defaultValue) {
+		if (zoneId == null) {
+			zoneId = ZoneId.systemDefault();
+		}
+		try {
+			return date != null ? date.toInstant().atZone(zoneId).toLocalDateTime() : defaultValue;
+		} catch (RuntimeException e) {
+			return defaultValue;
+		}
+	}
+
+	public static LocalDateTime toLocalDateTime(Calendar calendar, ZoneId zoneId) {
+		return toLocalDateTime(calendar, zoneId, null);
+	}
+
+	public static LocalDateTime toLocalDateTime(Calendar calendar, ZoneId zoneId, LocalDateTime defaultValue) {
+		if (zoneId == null) {
+			zoneId = ZoneId.systemDefault();
+		}
+		try {
+			return calendar != null ? calendar.toInstant().atZone(zoneId).toLocalDateTime() : defaultValue;
+		} catch (RuntimeException e) {
+			return defaultValue;
+		}
+	}
+
+	public static String format(LocalDateTime localDateTime, String datePattern) {
+		return format(localDateTime, datePattern, "");
+	}
+
+	public static String format(LocalDateTime localDateTime, String datePattern, String defaultValue) {
+		return localDateTime != null ? localDateTime.format(getDateTimeFormatter(datePattern)) : defaultValue;
+	}
+
+	public static String format(LocalDateTime localDateTime) {
+		return format(localDateTime, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+	}
+
+	public static String format(LocalDateTime localDateTime, DateTimeFormatter dateTimeFormatter) {
+		return format(localDateTime, dateTimeFormatter, "");
+	}
+
+	public static String format(LocalDateTime localDateTime, DateTimeFormatter dateTimeFormatter, String defaultValue) {
+		return localDateTime != null ? localDateTime.format(dateTimeFormatter) : defaultValue;
+	}
+
+	public static LocalDateTime parseLocalDateTime(String text) {
+		return parseLocalDateTime(text, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+	}
+
+	public static LocalDateTime parseLocalDateTime(String text, DateTimeFormatter formatter) {
+		return parseLocalDateTime(text, formatter, null);
+	}
+
+	public static LocalDateTime parseLocalDateTime(String text, DateTimeFormatter formatter, LocalDateTime defaultValue) {
+		try {
+			return StringUtils.isNotBlank(text) ? LocalDateTime.parse(text, formatter) : defaultValue;
+		} catch (DateTimeParseException e) {
+			return defaultValue;
+		}
+	}
+
+	public static LocalDateTime parseLocalDateTime(String text, String datePattern) {
+		return parseLocalDateTime(text, datePattern, null);
+	}
+
+	public static LocalDateTime parseLocalDateTime(String text, String datePattern, LocalDateTime defaultValue) {
+		return parseLocalDateTime(text, getDateTimeFormatter(datePattern), defaultValue);
+	}
+
+	public static LocalDateTime of(YearMonth yearMonth, int dayOfMonth, int hourOfDay, int minute, int second) {
+		if (yearMonth == null) {
+			yearMonth = YearMonth.now();
+		}
+		TimeAsserts.validateTime(hourOfDay, minute, second);
+		return yearMonth.atDay(dayOfMonth).atTime(hourOfDay, minute, second);
+	}
+
+	public static LocalDateTime of(Year year, Month month, int dayOfMonth, int hourOfDay, int minute, int second) {
+		YearMonth yearMonth = YearMonthUtils.toYearMonth(year, month);
+		return of(yearMonth, dayOfMonth, hourOfDay, minute, second);
+	}
+
+	public static LocalDateTime of(Date date, int hourOfDay, int minute, int second) {
+		LocalDate localDate = LocalDateUtils.toLocalDate(date, null);
+		return of(localDate, hourOfDay, minute, second);
+	}
+
+	public static LocalDateTime of(LocalDate localDate, int hourOfDay, int minute, int second) {
+		if (localDate == null) {
+			localDate = LocalDate.now();
+		}
+		TimeAsserts.validateTime(hourOfDay, minute, second);
+		return localDate.atTime(hourOfDay, minute, second);
+	}
+
+	public static LocalDateTime of(int year, int month, int dayOfMonth) {
+		return of(year, month, dayOfMonth, 0, 0, 0);
+	}
+
+	public static LocalDateTime of(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second) {
+		TimeAsserts.validateYear(year);
+		TimeAsserts.validateMonth(month);
+		TimeAsserts.validateDayOfMonth(year, month, dayOfMonth);
+		TimeAsserts.validateTime(hourOfDay, minute, second);
+		return LocalDateTime.of(year, month, dayOfMonth, hourOfDay, minute, second);
+	}
+
+	private static DateTimeFormatter getDateTimeFormatter(String datePattern) {
+		Assert.hasNoText(datePattern, "DatePattern can not be blank.");
+		DateTimeFormatter sdf = dfCache.get(datePattern);
+		if (sdf == null) {
+			dfCache.put(datePattern, DateTimeFormatter.ofPattern(datePattern, Locale.ENGLISH));
+			sdf = dfCache.get(datePattern);
+		}
+		return sdf;
+	}
+
+}

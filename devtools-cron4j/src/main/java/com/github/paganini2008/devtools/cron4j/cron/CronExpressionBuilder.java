@@ -53,7 +53,7 @@ public abstract class CronExpressionBuilder {
 	}
 
 	public static TheDay day() {
-		return month().day(DateUtils.getDate());
+		return month().day(DateUtils.getDayOfMonth());
 	}
 
 	public static TheDay day(int year, int month, int day) {

@@ -64,7 +64,7 @@ public class LocalDateConverter extends BasicConverter<LocalDate> {
 	}
 
 	private ZoneId zoneId = ZoneId.systemDefault();
-	private DateTimeFormatter dateFormatter = LocalDateUtils.DEFAULT_DATE_FORMATTER;
+	private DateTimeFormatter dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE;
 
 	public void setZoneId(ZoneId zoneId) {
 		this.zoneId = zoneId;

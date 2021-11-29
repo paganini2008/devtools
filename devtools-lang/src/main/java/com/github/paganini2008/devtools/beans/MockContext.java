@@ -18,7 +18,11 @@ package com.github.paganini2008.devtools.beans;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +44,7 @@ import com.github.paganini2008.devtools.beans.MockTypeHandlers.LocalTimeTypeHand
 import com.github.paganini2008.devtools.beans.MockTypeHandlers.LongTypeHandler;
 import com.github.paganini2008.devtools.beans.MockTypeHandlers.ShortTypeHandler;
 import com.github.paganini2008.devtools.beans.MockTypeHandlers.StringTypeHandler;
+import com.github.paganini2008.devtools.date.DateUtils;
 
 /**
  * 
@@ -59,6 +64,10 @@ public final class MockContext {
 	private final Map<String, Supplier<Double>> doubleSupplier = new HashMap<String, Supplier<Double>>();
 	private final Map<String, Supplier<BigInteger>> bigIntegerSupplier = new HashMap<String, Supplier<BigInteger>>();
 	private final Map<String, Supplier<BigDecimal>> bigDecimalSupplier = new HashMap<String, Supplier<BigDecimal>>();
+	private final Map<String, Supplier<Date>> dateSupplier = new HashMap<String, Supplier<Date>>();
+	private final Map<String, Supplier<LocalDate>> localDateSupplier = new HashMap<String, Supplier<LocalDate>>();
+	private final Map<String, Supplier<LocalTime>> localTimeSupplier = new HashMap<String, Supplier<LocalTime>>();
+	private final Map<String, Supplier<LocalDateTime>> localDateTimeSupplier = new HashMap<String, Supplier<LocalDateTime>>();
 
 	public MockContext() {
 		initialize();
@@ -196,6 +205,118 @@ public final class MockContext {
 
 	}
 
+	public static class RandomDateConfig {
+		private int fromYear = DateUtils.YEAR_START_FROM;
+		private int toYear = DateUtils.getYear();
+		private int fromMonth = 1;
+		private int toMonth = 12;
+		private int fromDayOfMonth = 1;
+		private int toDayOfMonth = 31;
+		private int fromHourOfDay = 0;
+		private int toHourOfDay = 23;
+		private int fromMinute = 0;
+		private int toMinute = 59;
+		private int fromSecond = 0;
+		private int toSecond = 59;
+
+		public int getFromYear() {
+			return fromYear;
+		}
+
+		public void setFromYear(int fromYear) {
+			this.fromYear = fromYear;
+		}
+
+		public int getToYear() {
+			return toYear;
+		}
+
+		public void setToYear(int toYear) {
+			this.toYear = toYear;
+		}
+
+		public int getFromMonth() {
+			return fromMonth;
+		}
+
+		public void setFromMonth(int fromMonth) {
+			this.fromMonth = fromMonth;
+		}
+
+		public int getToMonth() {
+			return toMonth;
+		}
+
+		public void setToMonth(int toMonth) {
+			this.toMonth = toMonth;
+		}
+
+		public int getFromDayOfMonth() {
+			return fromDayOfMonth;
+		}
+
+		public void setFromDayOfMonth(int fromDayOfMonth) {
+			this.fromDayOfMonth = fromDayOfMonth;
+		}
+
+		public int getToDayOfMonth() {
+			return toDayOfMonth;
+		}
+
+		public void setToDayOfMonth(int toDayOfMonth) {
+			this.toDayOfMonth = toDayOfMonth;
+		}
+
+		public int getFromHourOfDay() {
+			return fromHourOfDay;
+		}
+
+		public void setFromHourOfDay(int fromHourOfDay) {
+			this.fromHourOfDay = fromHourOfDay;
+		}
+
+		public int getToHourOfDay() {
+			return toHourOfDay;
+		}
+
+		public void setToHourOfDay(int toHourOfDay) {
+			this.toHourOfDay = toHourOfDay;
+		}
+
+		public int getFromMinute() {
+			return fromMinute;
+		}
+
+		public void setFromMinute(int fromMinute) {
+			this.fromMinute = fromMinute;
+		}
+
+		public int getToMinute() {
+			return toMinute;
+		}
+
+		public void setToMinute(int toMinute) {
+			this.toMinute = toMinute;
+		}
+
+		public int getFromSecond() {
+			return fromSecond;
+		}
+
+		public void setFromSecond(int fromSecond) {
+			this.fromSecond = fromSecond;
+		}
+
+		public int getToSecond() {
+			return toSecond;
+		}
+
+		public void setToSecond(int toSecond) {
+			this.toSecond = toSecond;
+		}
+
+	}
+
 	public static class RandomStringConfig {
 
 		private int length = 32;
@@ -274,6 +395,7 @@ public final class MockContext {
 	}
 
 	private RandomConfig randomConfig = new RandomConfig();
+	private RandomDateConfig randomDateConfig = new RandomDateConfig();
 	private RandomStringConfig randomStringConfig = new RandomStringConfig();
 
 	public RandomConfig getRandomConfig() {
@@ -282,6 +404,14 @@ public final class MockContext {
 
 	public void setRandomConfig(RandomConfig randomConfig) {
 		this.randomConfig = randomConfig;
+	}
+
+	public RandomDateConfig getRandomDateConfig() {
+		return randomDateConfig;
+	}
+
+	public void setRandomDateConfig(RandomDateConfig randomDateConfig) {
+		this.randomDateConfig = randomDateConfig;
 	}
 
 	public RandomStringConfig getRandomStringConfig() {
@@ -353,6 +483,22 @@ public final class MockContext {
 
 	public Supplier<BigInteger> getBigIntegerSupplier(String example) {
 		return bigIntegerSupplier.get(example);
+	}
+
+	public Supplier<Date> getDateSupplier(String example) {
+		return dateSupplier.get(example);
+	}
+
+	public Supplier<LocalDate> getLocalDateSupplier(String example) {
+		return localDateSupplier.get(example);
+	}
+
+	public Supplier<LocalDateTime> getLocalDateTimeSupplier(String example) {
+		return localDateTimeSupplier.get(example);
+	}
+
+	public Supplier<LocalTime> getLocalTimeSupplier(String example) {
+		return localTimeSupplier.get(example);
 	}
 
 	protected Object mock(Field field, RandomOperations operations) {

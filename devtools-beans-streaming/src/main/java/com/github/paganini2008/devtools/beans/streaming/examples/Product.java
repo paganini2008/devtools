@@ -19,7 +19,11 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
+import com.github.paganini2008.devtools.beans.DateRange;
+import com.github.paganini2008.devtools.beans.DoubleRange;
+import com.github.paganini2008.devtools.beans.FloatRange;
 import com.github.paganini2008.devtools.beans.IntRange;
+import com.github.paganini2008.devtools.beans.LongRange;
 import com.github.paganini2008.devtools.beans.Recur;
 import com.github.paganini2008.devtools.beans.ToStringBuilder;
 
@@ -37,12 +41,18 @@ public class Product {
 	private int id;
 	private String name;
 	private String location;
+	@DateRange(from = "2020-01-01", to = "2021-03-08")
 	private Date created;
+	@DateRange(from = "2020-01-01", to = "2021-10-12")
 	private Date expired;
+	@FloatRange(from = 100, to = 1000)
 	private Float price;
+	@LongRange(from = 0, to = 10)
 	private BigInteger sales;
 	private boolean export;
+	@LongRange(from = 1, to = 1000l)
 	private Long number;
+	@DoubleRange(from = 50, to = 200, scale = 2)
 	private BigDecimal freight;
 	private Style style;
 

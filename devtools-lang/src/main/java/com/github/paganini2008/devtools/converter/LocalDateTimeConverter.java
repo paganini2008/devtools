@@ -21,7 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
-import com.github.paganini2008.devtools.date.LocalDateUtils;
+import com.github.paganini2008.devtools.date.LocalDateTimeUtils;
 
 /**
  * 
@@ -34,25 +34,25 @@ public class LocalDateTimeConverter extends BasicConverter<LocalDateTime> {
 
 	private final Converter<Long, LocalDateTime> longConverter = new Converter<Long, LocalDateTime>() {
 		public LocalDateTime convertValue(Long source, LocalDateTime defaultValue) {
-			return LocalDateUtils.toLocalDateTime(source, zoneId, defaultValue);
+			return LocalDateTimeUtils.toLocalDateTime(source, zoneId, defaultValue);
 		}
 	};
 
 	private final Converter<String, LocalDateTime> stringConverter = new Converter<String, LocalDateTime>() {
 		public LocalDateTime convertValue(String source, LocalDateTime defaultValue) {
-			return LocalDateUtils.parseLocalDateTime(source, dateTimeFormatter, defaultValue);
+			return LocalDateTimeUtils.parseLocalDateTime(source, dateTimeFormatter, defaultValue);
 		}
 	};
 
 	private final Converter<Date, LocalDateTime> dateConverter = new Converter<Date, LocalDateTime>() {
 		public LocalDateTime convertValue(Date source, LocalDateTime defaultValue) {
-			return LocalDateUtils.toLocalDateTime(source, zoneId, defaultValue);
+			return LocalDateTimeUtils.toLocalDateTime(source, zoneId, defaultValue);
 		}
 	};
 
 	private final Converter<Calendar, LocalDateTime> calendarConverter = new Converter<Calendar, LocalDateTime>() {
 		public LocalDateTime convertValue(Calendar source, LocalDateTime defaultValue) {
-			return LocalDateUtils.toLocalDateTime(source, zoneId, defaultValue);
+			return LocalDateTimeUtils.toLocalDateTime(source, zoneId, defaultValue);
 		}
 	};
 
@@ -64,7 +64,7 @@ public class LocalDateTimeConverter extends BasicConverter<LocalDateTime> {
 	}
 
 	private ZoneId zoneId = ZoneId.systemDefault();
-	private DateTimeFormatter dateTimeFormatter = LocalDateUtils.DEFAULT_DATETIME_FORMATTER;
+	private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
 	public void setZoneId(ZoneId zoneId) {
 		this.zoneId = zoneId;

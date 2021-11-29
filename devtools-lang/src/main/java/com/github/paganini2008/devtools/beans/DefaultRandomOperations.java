@@ -8,8 +8,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
 
+import com.github.paganini2008.devtools.RandomDateUtils;
 import com.github.paganini2008.devtools.RandomStringUtils;
 import com.github.paganini2008.devtools.RandomUtils;
+import com.github.paganini2008.devtools.beans.MockContext.RandomDateConfig;
 import com.github.paganini2008.devtools.beans.MockContext.RandomStringConfig;
 
 /**
@@ -81,26 +83,32 @@ public class DefaultRandomOperations implements RandomOperations {
 
 	@Override
 	public Date randomDate(Field field, MockContext context) {
-		// TODO Auto-generated method stub
-		return null;
+		RandomDateConfig config = context.getRandomDateConfig();
+		return RandomDateUtils.randomDateTime(config.getFromYear(), config.getToYear(), config.getFromMonth(), config.getToMonth(),
+				config.getFromDayOfMonth(), config.getToDayOfMonth(), config.getFromHourOfDay(), config.getToHourOfDay(),
+				config.getFromMinute(), config.getToMinute(), config.getFromSecond(), config.getToSecond());
 	}
 
 	@Override
 	public LocalDate randomLocalDate(Field field, MockContext context) {
-		// TODO Auto-generated method stub
-		return null;
+		RandomDateConfig config = context.getRandomDateConfig();
+		return RandomDateUtils.randomLocalDate(config.getFromYear(), config.getToYear(), config.getFromMonth(), config.getToMonth(),
+				config.getFromDayOfMonth(), config.getToDayOfMonth());
 	}
 
 	@Override
 	public LocalDateTime randomLocalDateTime(Field field, MockContext context) {
-		// TODO Auto-generated method stub
-		return null;
+		RandomDateConfig config = context.getRandomDateConfig();
+		return RandomDateUtils.randomLocalDateTime(config.getFromYear(), config.getToYear(), config.getFromMonth(), config.getToMonth(),
+				config.getFromDayOfMonth(), config.getToDayOfMonth(), config.getFromHourOfDay(), config.getToHourOfDay(),
+				config.getFromMinute(), config.getToMinute(), config.getFromSecond(), config.getToSecond());
 	}
 
 	@Override
 	public LocalTime randomLocalTime(Field field, MockContext context) {
-		// TODO Auto-generated method stub
-		return null;
+		RandomDateConfig config = context.getRandomDateConfig();
+		return RandomDateUtils.randomLocalTime(config.getFromHourOfDay(), config.getToHourOfDay(), config.getFromMinute(),
+				config.getToMinute(), config.getFromSecond(), config.getToSecond());
 	}
 
 	@SuppressWarnings("unchecked")

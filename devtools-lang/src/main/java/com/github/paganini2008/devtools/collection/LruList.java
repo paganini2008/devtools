@@ -17,7 +17,6 @@ package com.github.paganini2008.devtools.collection;
 
 import java.io.Serializable;
 import java.util.AbstractList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -49,8 +48,7 @@ public class LruList<E> extends AbstractList<E> implements List<E>, Serializable
 	}
 
 	public LruList(final List<E> delegate, final int maxSize) {
-		this(delegate, maxSize,
-				(size, listener) -> Collections.synchronizedMap(MapUtils.newLruMap(16, size, listener)));
+		this(delegate, maxSize, (size, listener) -> MapUtils.synchronizedLinkedHashMap(16, size, listener));
 	}
 
 	public LruList(final List<E> delegate, final int maxSize, final LruMapSupplier<Integer, E> supplier) {

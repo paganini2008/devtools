@@ -15,6 +15,7 @@
 */
 package com.github.paganini2008.devtools.converter;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -37,6 +38,12 @@ public class DateConverter extends BasicConverter<Date> {
 		}
 	};
 
+	private final Converter<Instant, Date> instantConverter = new Converter<Instant, Date>() {
+		public Date convertValue(Instant source, Date defaultValue) {
+			return DateUtils.toDate(source, defaultValue);
+		}
+	};
+
 	private final Converter<String, Date> stringConverter = new Converter<String, Date>() {
 		public Date convertValue(String source, Date defaultValue) {
 			return DateUtils.parse(source, datePatterns, defaultValue);
@@ -55,9 +62,9 @@ public class DateConverter extends BasicConverter<Date> {
 				return defaultValue;
 			}
 			if (source.length == 3) {
-				return DateUtils.valueOf(source[0], source[1], source[2]);
+				return DateUtils.of(source[0], source[1], source[2]);
 			} else if (source.length == 6) {
-				return DateUtils.valueOf(source[0], source[1], source[2], source[3], source[4], source[5]);
+				return DateUtils.of(source[0], source[1], source[2], source[3], source[4], source[5]);
 			}
 			throw new IllegalArgumentException("Int array's length need to be 3 or 6.");
 		}
@@ -77,6 +84,7 @@ public class DateConverter extends BasicConverter<Date> {
 
 	public DateConverter() {
 		registerType(Long.class, longConverter);
+		registerType(Instant.class, instantConverter);
 		registerType(String.class, stringConverter);
 		registerType(Calendar.class, calendarConverter);
 		registerType(int[].class, intArrayConverter);

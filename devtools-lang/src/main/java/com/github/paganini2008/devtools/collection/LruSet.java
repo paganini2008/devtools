@@ -17,7 +17,6 @@ package com.github.paganini2008.devtools.collection;
 
 import java.io.Serializable;
 import java.util.AbstractSet;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -47,8 +46,7 @@ public class LruSet<E> extends AbstractSet<E> implements Set<E>, Serializable, B
 	}
 
 	public LruSet(final Set<E> delegate, final int maxSize) {
-		this(delegate, maxSize,
-				(size, listener) -> Collections.synchronizedMap(MapUtils.newLruMap(16, size, listener)));
+		this(delegate, maxSize, (size, listener) -> MapUtils.synchronizedLinkedHashMap(16, size, listener));
 	}
 
 	public LruSet(final Set<E> delegate, final int maxSize, final LruMapSupplier<E, Object> supplier) {

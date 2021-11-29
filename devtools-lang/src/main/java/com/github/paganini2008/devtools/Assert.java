@@ -25,7 +25,7 @@ package com.github.paganini2008.devtools;
 public abstract class Assert {
 
 	public static void hasNoLength(CharSequence text) {
-		hasNoLength(text, "The string type parameter must not be null or empty.");
+		hasNoLength(text, "The string parameter must not be null or empty.");
 	}
 
 	public static void hasNoLength(CharSequence text, String msg, Object... args) {
@@ -33,7 +33,7 @@ public abstract class Assert {
 	}
 
 	public static void hasNoText(CharSequence text) {
-		hasNoText(text, "The string type parameter must not be null or empty.");
+		hasNoText(text, "The string parameter must not be null or no length.");
 	}
 
 	public static void hasNoText(CharSequence text, String msg, Object... args) {
@@ -61,27 +61,35 @@ public abstract class Assert {
 	}
 
 	public static <T extends Comparable<T>> void lt(T a, T b, String msg, Object... args) {
-		isTrue(a.compareTo(b) < 0, msg, args);
+		isTrue(a != null && a.compareTo(b) < 0, msg, args);
 	}
 
 	public static <T extends Comparable<T>> void lte(T a, T b, String msg, Object... args) {
-		isTrue(a.compareTo(b) <= 0, msg, args);
+		isTrue(a != null && a.compareTo(b) <= 0, msg, args);
 	}
 
 	public static <T extends Comparable<T>> void gt(T a, T b, String msg, Object... args) {
-		isTrue(a.compareTo(b) > 0, msg, args);
+		isTrue(a != null && a.compareTo(b) > 0, msg, args);
 	}
 
 	public static <T extends Comparable<T>> void gte(T a, T b, String msg, Object... args) {
-		isTrue(a.compareTo(b) >= 0, msg, args);
+		isTrue(a != null && a.compareTo(b) >= 0, msg, args);
 	}
 
 	public static <T extends Comparable<T>> void ne(T a, T b, String msg, Object... args) {
-		isTrue(a.compareTo(b) != 0, msg, args);
+		isTrue(a != null && a.compareTo(b) != 0, msg, args);
 	}
 
 	public static <T extends Comparable<T>> void eq(T a, T b, String msg, Object... args) {
-		isTrue(a.compareTo(b) == 0, msg, args);
+		isTrue(a != null && a.compareTo(b) == 0, msg, args);
+	}
+
+	public static <T extends Comparable<T>> void range(T value, T minValue, T maxValue, String msg, Object... args) {
+		isTrue(value != null && value.compareTo(minValue) >= 0 && value.compareTo(maxValue) <= 0, msg, args);
+	}
+
+	public static <T extends Comparable<T>> void outOfRange(T value, T minValue, T maxValue, String msg, Object... args) {
+		isTrue(value != null && value.compareTo(minValue) < 0 && value.compareTo(maxValue) > 0, msg, args);
 	}
 
 	public static void isTrue(boolean result, String msg, Object... args) {
