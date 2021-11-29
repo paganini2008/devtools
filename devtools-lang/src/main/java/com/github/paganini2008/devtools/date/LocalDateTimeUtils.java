@@ -177,32 +177,64 @@ public abstract class LocalDateTimeUtils {
 		return localDateTime.get(field);
 	}
 
+	public static LocalDateTime setYear(int year) {
+		return setYear(LocalDateTime.now(), year);
+	}
+
 	public static LocalDateTime setYear(LocalDateTime localDateTime, int year) {
 		return setField(localDateTime, ChronoField.YEAR, year);
+	}
+
+	public static LocalDateTime setMonth(int month) {
+		return setMonth(LocalDateTime.now(), month);
 	}
 
 	public static LocalDateTime setMonth(LocalDateTime localDateTime, int month) {
 		return setField(localDateTime, ChronoField.MONTH_OF_YEAR, month);
 	}
 
+	public static LocalDateTime setDayOfMonth(int dayOfMonth) {
+		return setDayOfMonth(LocalDateTime.now(), dayOfMonth);
+	}
+
 	public static LocalDateTime setDayOfMonth(LocalDateTime localDateTime, int dayOfMonth) {
 		return setField(localDateTime, ChronoField.DAY_OF_MONTH, dayOfMonth);
+	}
+
+	public static LocalDateTime setDayOfWeek(int dayOfWeek) {
+		return setDayOfWeek(LocalDateTime.now(), dayOfWeek);
 	}
 
 	public static LocalDateTime setDayOfWeek(LocalDateTime localDateTime, int dayOfWeek) {
 		return setField(localDateTime, ChronoField.DAY_OF_WEEK, dayOfWeek);
 	}
 
+	public static LocalDateTime setDayOfYear(int dayOfYear) {
+		return setDayOfYear(LocalDateTime.now(), dayOfYear);
+	}
+
 	public static LocalDateTime setDayOfYear(LocalDateTime localDateTime, int dayOfYear) {
 		return setField(localDateTime, ChronoField.DAY_OF_YEAR, dayOfYear);
+	}
+
+	public static LocalDateTime setHourOfDay(int hourOfDay) {
+		return setHourOfDay(LocalDateTime.now(), hourOfDay);
 	}
 
 	public static LocalDateTime setHourOfDay(LocalDateTime localDateTime, int hourOfDay) {
 		return setField(localDateTime, ChronoField.HOUR_OF_DAY, hourOfDay);
 	}
 
+	public static LocalDateTime setMinute(int minute) {
+		return setMinute(LocalDateTime.now(), minute);
+	}
+
 	public static LocalDateTime setMinute(LocalDateTime localDateTime, int minute) {
 		return setField(localDateTime, ChronoField.MINUTE_OF_HOUR, minute);
+	}
+
+	public static LocalDateTime setSecond(int second) {
+		return setSecond(LocalDateTime.now(), second);
 	}
 
 	public static LocalDateTime setSecond(LocalDateTime localDateTime, int second) {

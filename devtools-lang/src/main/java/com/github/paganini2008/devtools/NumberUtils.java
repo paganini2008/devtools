@@ -32,8 +32,6 @@ public abstract class NumberUtils {
 
 	private final static LruMap<String, DecimalFormat> formatCache = new LruMap<String, DecimalFormat>(128);
 
-	public static final DecimalFormat DEFAULT_NUMBER_FORMATTER = getDecimalFormat("0.00");
-
 	public static String toPlainString(Number n) {
 		return toPlainString(n, "");
 	}
@@ -305,7 +303,7 @@ public abstract class NumberUtils {
 		return getDecimalFormat(getDecimalPattern(s, scale));
 	}
 
-	public static DecimalFormat getDecimalFormat(String pattern) {
+	private static DecimalFormat getDecimalFormat(String pattern) {
 		DecimalFormat df = formatCache.get(pattern);
 		if (df == null) {
 			formatCache.putIfAbsent(pattern, new DecimalFormat(pattern));
@@ -318,16 +316,16 @@ public abstract class NumberUtils {
 		return format(value, getDecimalPattern("0", scale));
 	}
 
+	public static String format(Number value) {
+		return format(value, "0.00");
+	}
+
 	public static String format(Number value, String pattern) {
 		return format(value, pattern, "");
 	}
 
 	public static String format(Number value, String pattern, String defaultValue) {
 		return format(value, getDecimalFormat(pattern), defaultValue);
-	}
-
-	public static String format(Number value) {
-		return format(value, DEFAULT_NUMBER_FORMATTER);
 	}
 
 	public static String format(Number value, DecimalFormat df) {
@@ -339,13 +337,11 @@ public abstract class NumberUtils {
 			return defaultValue;
 		}
 		Assert.isNull(df, "DecimalFormat can not be null.");
-		synchronized (NumberUtils.class) {
-			return df.format(value);
-		}
+		return doFormat(value, df);
 	}
 
 	public static String[] formatMany(Number[] values) {
-		return formatMany(values, DEFAULT_NUMBER_FORMATTER);
+		return formatMany(values, "0.00");
 	}
 
 	public static String[] formatMany(Number[] values, DecimalFormat df) {
@@ -368,6 +364,17 @@ public abstract class NumberUtils {
 
 	public static String[] formatMany(Number[] values, String pattern, String defaultValue) {
 		return formatMany(values, getDecimalFormat(pattern), defaultValue);
+	}
+
+	private static String doFormat(Number value, DecimalFormat df) {
+		synchronized (NumberUtils.class) {
+			return df.format(value);
+		}
+	}
+
+	public static void main(String[] args) {
+		Number[] arr = { (short) 1, 2.0d, 3.14f, BigDecimal.valueOf(2908.126), Integer.MAX_VALUE };
+		System.out.println(ArrayUtils.toString(formatMany(arr)));
 	}
 
 }

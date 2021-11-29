@@ -15,7 +15,10 @@
 */
 package com.github.paganini2008.devtools.date;
 
+import static com.github.paganini2008.devtools.date.DateUtils.DEFAULT_DATE_PATTERN;
+
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Calendar;
@@ -35,12 +38,20 @@ public abstract class CalendarUtils {
 
 	public static final Calendar[] EMPTY_ARRAY = new Calendar[0];
 
+	public static String[] formatMany(Calendar[] dates, String datePattern) {
+		return formatMany(dates, datePattern, "");
+	}
+
+	public static String[] formatMany(Calendar[] dates, String datePattern, String defaultValue) {
+		return formatMany(dates, new SimpleDateFormat(datePattern), defaultValue);
+	}
+
 	public static String[] formatMany(Calendar[] dates) {
-		return formatMany(dates, DateUtils.DEFAULT_DATE_FORMATTER);
+		return formatMany(dates, DEFAULT_DATE_PATTERN);
 	}
 
 	public static String[] formatMany(Calendar[] dates, DateFormat df) {
-		return formatMany(dates, df, null);
+		return formatMany(dates, df, "");
 	}
 
 	public static String[] formatMany(Calendar[] dates, DateFormat df, String defaultValue) {
@@ -53,12 +64,8 @@ public abstract class CalendarUtils {
 		return values;
 	}
 
-	public static String[] formatMany(Calendar[] dates, String datePattern) {
-		return formatMany(dates, datePattern, "");
-	}
-
-	public static String[] formatMany(Calendar[] dates, String datePattern, String defaultValue) {
-		return formatMany(dates, DateUtils.getDateFormatter(datePattern), defaultValue);
+	public static String format(Calendar cal) {
+		return format(cal, DEFAULT_DATE_PATTERN);
 	}
 
 	public static String format(Calendar c, String datePattern) {
@@ -70,10 +77,6 @@ public abstract class CalendarUtils {
 			return defaultValue;
 		}
 		return DateUtils.format(c.getTime(), datePattern, defaultValue);
-	}
-
-	public static String format(Calendar cal) {
-		return format(cal, DateUtils.DEFAULT_DATE_FORMATTER);
 	}
 
 	public static String format(Calendar c, DateFormat df) {
@@ -124,15 +127,6 @@ public abstract class CalendarUtils {
 		return array;
 	}
 
-	public static Calendar[] toCalendarArray(long[] dates, TimeZone timeZone) {
-		Calendar[] array = new Calendar[dates.length];
-		int i = 0;
-		for (long date : dates) {
-			array[i++] = toCalendar(date, timeZone);
-		}
-		return array;
-	}
-
 	public static Calendar[] toCalendarArray(Long[] dates, TimeZone timeZone) {
 		return toCalendarArray(dates, timeZone, null);
 	}
@@ -154,10 +148,7 @@ public abstract class CalendarUtils {
 		if (ms == null) {
 			return defaultValue;
 		}
-		Calendar c = Calendar.getInstance();
-		c.setTimeZone(timeZone);
-		c.setTimeInMillis(ms);
-		return c;
+		return toCalendar(new Date(ms), timeZone, defaultValue);
 	}
 
 	public static Calendar toCalendar(Date date, TimeZone timeZone) {
@@ -168,10 +159,7 @@ public abstract class CalendarUtils {
 		if (date == null) {
 			return defaultValue;
 		}
-		Calendar c = Calendar.getInstance();
-		if (timeZone != null) {
-			c.setTimeZone(timeZone);
-		}
+		Calendar c = getCalendar(timeZone);
 		c.setTime(date);
 		return c;
 	}
@@ -181,7 +169,8 @@ public abstract class CalendarUtils {
 	}
 
 	public static Calendar toCalendar(LocalDateTime localDateTime, TimeZone timeZone, Calendar defaultValue) {
-		return localDateTime != null ? toCalendar(DateUtils.toDate(localDateTime, timeZone.toZoneId()), timeZone) : defaultValue;
+		Date date = DateUtils.toDate(localDateTime, timeZone.toZoneId());
+		return localDateTime != null ? toCalendar(date, timeZone) : defaultValue;
 	}
 
 	public static Calendar toCalendar(LocalDate localDate, TimeZone timeZone) {
@@ -189,7 +178,8 @@ public abstract class CalendarUtils {
 	}
 
 	public static Calendar toCalendar(LocalDate localDate, TimeZone timeZone, Calendar defaultValue) {
-		return localDate != null ? toCalendar(DateUtils.toDate(localDate, timeZone.toZoneId()), timeZone) : defaultValue;
+		Date date = DateUtils.toDate(localDate, timeZone.toZoneId());
+		return localDate != null ? toCalendar(date, timeZone) : defaultValue;
 	}
 
 	public static Calendar[] toCalendarArray(Date[] dates, TimeZone timeZone) {
@@ -227,22 +217,29 @@ public abstract class CalendarUtils {
 		return values;
 	}
 
-	public static Calendar valueOf(long time, int hour, int minute, int second) {
-		Calendar c = toCalendar(time, TimeZone.getDefault());
+	public static Calendar setTime(long timeInMs, int hour, int minute, int second) {
+		Calendar c = toCalendar(timeInMs, null);
 		c.set(Calendar.HOUR_OF_DAY, hour);
 		c.set(Calendar.MINUTE, minute);
 		c.set(Calendar.SECOND, second);
 		return c;
 	}
 
-	public static Calendar valueOf(int year, int month, int date) {
-		return valueOf(year, month, date, 0, 0, 0);
+	public static Calendar of(int year, int month, int date) {
+		return of(year, month, date, 0, 0, 0);
 	}
 
-	public static Calendar valueOf(int year, int month, int date, int hour, int minute, int second) {
-		Calendar c = Calendar.getInstance();
-		c.set(year, month - 1, date, hour, minute, second);
+	public static Calendar of(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second) {
+		Calendar c = getCalendar(null);
+		c.set(year, month - 1, dayOfMonth, hourOfDay, minute, second);
 		return c;
+	}
+
+	private static Calendar getCalendar(TimeZone timeZone) {
+		if (timeZone == null) {
+			timeZone = TimeZone.getDefault();
+		}
+		return Calendar.getInstance(timeZone);
 	}
 
 }

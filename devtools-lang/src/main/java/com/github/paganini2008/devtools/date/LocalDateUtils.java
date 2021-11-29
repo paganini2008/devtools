@@ -23,6 +23,7 @@ import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
@@ -97,6 +98,73 @@ public abstract class LocalDateUtils {
 			localDate = LocalDate.now();
 		}
 		return localDate.plus(amount, chronoUnit);
+	}
+
+	public static LocalDate setYear(int year) {
+		return setYear(LocalDate.now(), year);
+	}
+
+	public static LocalDate setYear(Date date, int year) {
+		return setYear(toLocalDate(date, null), year);
+	}
+
+	public static LocalDate setYear(LocalDate localDate, int year) {
+		return setField(localDate, ChronoField.YEAR, year);
+	}
+
+	public static LocalDate setMonth(int month) {
+		return setMonth(LocalDate.now(), month);
+	}
+
+	public static LocalDate setMonth(Date date, int month) {
+		return setMonth(toLocalDate(date, null), month);
+	}
+
+	public static LocalDate setMonth(LocalDate localDate, int month) {
+		return setField(localDate, ChronoField.MONTH_OF_YEAR, month);
+	}
+
+	public static LocalDate setDayOfMonth(int dayOfMonth) {
+		return setDayOfMonth(LocalDate.now(), dayOfMonth);
+	}
+
+	public static LocalDate setDayOfMonth(Date date, int dayOfMonth) {
+		return setDayOfMonth(toLocalDate(date, null), dayOfMonth);
+	}
+
+	public static LocalDate setDayOfMonth(LocalDate localDate, int dayOfMonth) {
+		return setField(localDate, ChronoField.DAY_OF_MONTH, dayOfMonth);
+	}
+
+	public static LocalDate setDayOfWeek(int dayOfWeek) {
+		return setDayOfMonth(LocalDate.now(), dayOfWeek);
+	}
+
+	public static LocalDate setDayOfWeek(Date date, int dayOfWeek) {
+		return setDayOfWeek(toLocalDate(date, null), dayOfWeek);
+	}
+
+	public static LocalDate setDayOfWeek(LocalDate localDate, int dayOfWeek) {
+		return setField(localDate, ChronoField.DAY_OF_WEEK, dayOfWeek);
+	}
+
+	public static LocalDate setDayOfYear(int dayOfYear) {
+		return setDayOfYear(LocalDate.now(), dayOfYear);
+	}
+
+	public static LocalDate setDayOfYear(Date date, int dayOfYear) {
+		return setDayOfYear(toLocalDate(date, null), dayOfYear);
+	}
+
+	public static LocalDate setDayOfYear(LocalDate localDate, int dayOfYear) {
+		return setField(localDate, ChronoField.DAY_OF_YEAR, dayOfYear);
+	}
+
+	public static LocalDate setField(LocalDate localDate, ChronoField field, int value) {
+		if (localDate == null) {
+			localDate = LocalDate.now();
+		}
+		return localDate.with(field, value);
 	}
 
 	public static LocalDate toLocalDate(Long ms, ZoneId zoneId) {

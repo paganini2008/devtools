@@ -17,6 +17,7 @@ package com.github.paganini2008.devtools.converter;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -227,7 +228,7 @@ public class StringArrayConverter extends BasicConverter<String[]> {
 	}
 
 	private DecimalFormat decimalFormat = new DecimalFormat("0.##");
-	private DateFormat dateFormat = DateUtils.DEFAULT_DATE_FORMATTER;
+	private DateFormat dateFormat = new SimpleDateFormat(DateUtils.DEFAULT_DATE_PATTERN);
 	private String delimiter = ",";
 	private boolean trim;
 

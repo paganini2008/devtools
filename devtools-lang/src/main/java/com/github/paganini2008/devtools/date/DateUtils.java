@@ -50,7 +50,6 @@ public abstract class DateUtils {
 
 	public static final Date[] EMPTY_ARRAY = new Date[0];
 	public final static String DEFAULT_DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
-	public final static SimpleDateFormat DEFAULT_DATE_FORMATTER = new SimpleDateFormat(DEFAULT_DATE_PATTERN, Locale.ENGLISH);
 	private final static LruMap<String, SimpleDateFormat> dfCache = new LruMap<String, SimpleDateFormat>(16);
 
 	public static Date toDate(Long ms) {
@@ -142,16 +141,16 @@ public abstract class DateUtils {
 		return instant != null ? instant.toEpochMilli() : defaultValue;
 	}
 
+	public static String format(Long ms) {
+		return format(ms, DEFAULT_DATE_PATTERN);
+	}
+
 	public static String format(Long ms, String datePattern) {
 		return format(ms, datePattern, "");
 	}
 
 	public static String format(Long ms, String datePattern, String defaultValue) {
 		return format(ms, getDateFormatter(datePattern), defaultValue);
-	}
-
-	public static String format(Long ms) {
-		return format(ms, DEFAULT_DATE_FORMATTER);
 	}
 
 	public static String format(Long ms, DateFormat df) {
@@ -162,14 +161,11 @@ public abstract class DateUtils {
 		if (ms == null) {
 			return defaultValue;
 		}
-		Assert.isNull(df, "DateFormat can not be null.");
-		synchronized (DateUtils.class) {
-			try {
-				return df.format(ms);
-			} catch (RuntimeException e) {
-				return defaultValue;
-			}
-		}
+		return format(new Date(ms), df, defaultValue);
+	}
+
+	public static String format(Date date) {
+		return format(date, DEFAULT_DATE_PATTERN);
 	}
 
 	public static String format(Date date, String datePattern) {
@@ -180,20 +176,20 @@ public abstract class DateUtils {
 		return format(date, getDateFormatter(datePattern), defaultValue);
 	}
 
-	public static String format(Date date) {
-		return format(date, DEFAULT_DATE_FORMATTER);
-	}
-
 	public static String format(Date date, DateFormat df) {
 		return format(date, df, "");
 	}
 
 	public static String format(Date date, DateFormat df, String defaultValue) {
-		return format(date.getTime(), df, defaultValue);
+		if (date == null) {
+			return defaultValue;
+		}
+		Assert.isNull(df, "DateFormat can not be null.");
+		return doFormat(date, df, defaultValue);
 	}
 
 	public static String[] formatMany(Date[] dates) {
-		return formatMany(dates, DEFAULT_DATE_FORMATTER);
+		return formatMany(dates, DEFAULT_DATE_PATTERN);
 	}
 
 	public static String[] formatMany(Date[] dates, DateFormat df) {
@@ -219,18 +215,17 @@ public abstract class DateUtils {
 	}
 
 	public static String reformat(String str, String srcFormat, String destFormat) {
-		return reformat(str, srcFormat, destFormat, str);
+		return reformat(str, srcFormat, destFormat, null);
 	}
 
 	public static String reformat(String str, String srcFormat, String destFormat, String defaultValue) {
-		try {
-			DateFormat leftSdf = getDateFormatter(srcFormat);
-			Date date = leftSdf.parse(str);
-			DateFormat rightSdf = getDateFormatter(destFormat);
-			return rightSdf.format(date);
-		} catch (ParseException e) {
+		DateFormat df = getDateFormatter(srcFormat);
+		Date date = doParse(str, df, null);
+		if (date == null) {
 			return defaultValue;
 		}
+		df = getDateFormatter(destFormat);
+		return doFormat(date, df, defaultValue);
 	}
 
 	public static Date parse(String str, String datePattern) {
@@ -238,14 +233,8 @@ public abstract class DateUtils {
 	}
 
 	public static Date parse(String str, String datePattern, Date defaultValue) {
-		DateFormat sdf = getDateFormatter(datePattern);
-		synchronized (DateUtils.class) {
-			try {
-				return sdf.parse(str);
-			} catch (ParseException e) {
-				return defaultValue;
-			}
-		}
+		DateFormat df = getDateFormatter(datePattern);
+		return doParse(str, df, defaultValue);
 	}
 
 	public static Date parse(String str, String[] datePatterns) {
@@ -261,6 +250,26 @@ public abstract class DateUtils {
 			}
 		}
 		return defaultValue;
+	}
+
+	private static String doFormat(Date date, DateFormat df, String defaultValue) {
+		synchronized (DateUtils.class) {
+			try {
+				return df.format(date);
+			} catch (RuntimeException e) {
+				return defaultValue;
+			}
+		}
+	}
+
+	private static Date doParse(String str, DateFormat df, Date defaultValue) {
+		synchronized (DateUtils.class) {
+			try {
+				return df.parse(str);
+			} catch (ParseException e) {
+				return defaultValue;
+			}
+		}
 	}
 
 	public static Date addYears(Date date, int amount) {
@@ -700,7 +709,7 @@ public abstract class DateUtils {
 
 	}
 
-	public static DateFormat getDateFormatter(String datePattern) {
+	private static DateFormat getDateFormatter(String datePattern) {
 		Assert.hasNoText(datePattern, "Date pattern can not be blank.");
 		SimpleDateFormat sdf = dfCache.get(datePattern);
 		if (sdf == null) {

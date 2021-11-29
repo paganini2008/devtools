@@ -23,6 +23,7 @@ import java.nio.charset.Charset;
 import java.sql.Clob;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -342,7 +343,7 @@ public class StringConverter extends BasicConverter<String> {
 	private boolean trim;
 	private Charset charset = CharsetUtils.DEFAULT;
 	private DecimalFormat decimalFormat = new DecimalFormat("0.##");
-	private DateFormat dateFormat = DateUtils.DEFAULT_DATE_FORMATTER;
+	private DateFormat dateFormat = new SimpleDateFormat(DateUtils.DEFAULT_DATE_PATTERN);
 
 	public void setDelimiter(String delimiter) {
 		this.delimiter = delimiter;
