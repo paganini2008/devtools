@@ -33,6 +33,7 @@ import java.util.function.Supplier;
 import com.github.paganini2008.devtools.ArrayUtils;
 import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.MatchMode;
+import com.github.paganini2008.devtools.MissingKeyException;
 import com.github.paganini2008.devtools.ObjectUtils;
 import com.github.paganini2008.devtools.converter.ConvertUtils;
 
@@ -49,12 +50,109 @@ public abstract class MapUtils {
 		return Collections.EMPTY_MAP;
 	}
 
+	public static <K, V> Map.Entry singletonEntry(K key, V value) {
+		return new SingletonEntry(key, value);
+	}
+
+	private static class SingletonEntry implements Map.Entry {
+
+		private SingletonEntry(Object key, Object value) {
+			Assert.isNull(key, "Key must not be null.");
+			this.key = key;
+			this.value = value;
+		}
+
+		private Object key;
+		private Object value;
+
+		@Override
+		public Object getKey() {
+			return key;
+		}
+
+		@Override
+		public Object getValue() {
+			return value;
+		}
+
+		@Override
+		public Object setValue(Object value) {
+			throw new UnsupportedOperationException();
+		}
+	}
+
+	public static <K, V> Map<K, V> synchronizedHashMap(int initialCapacity, float loadFactor) {
+		return Collections.synchronizedMap(new HashMap<>(initialCapacity, loadFactor));
+	}
+
+	public static <K, V> Map<K, V> synchronizedHashMap(int initialCapacity) {
+		return Collections.synchronizedMap(new HashMap<>(initialCapacity, 0.75F));
+	}
+
+	public static <K, V> Map<K, V> synchronizedHashMap() {
+		return Collections.synchronizedMap(new HashMap<>());
+	}
+
+	public static <K, V> Map<K, V> synchronizedHashMap(Map<K, V> m) {
+		return Collections.synchronizedMap(new HashMap<>(m));
+	}
+
+	public static <K, V> Map<K, V> synchronizedLinkedHashMap() {
+		return Collections.synchronizedMap(new LinkedHashMap<>());
+	}
+
+	public static <K, V> Map<K, V> synchronizedLinkedHashMap(Map<K, V> m) {
+		return Collections.synchronizedMap(new LinkedHashMap<>(m));
+	}
+
+	public static <K, V> Map<K, V> synchronizedLinkedHashMap(int initialCapacity, float loadFactor, boolean accessOrder) {
+		return Collections.synchronizedMap(new LinkedHashMap<>(initialCapacity, loadFactor, accessOrder));
+	}
+
+	public static <K, V> Map<K, V> synchronizedLinkedHashMap(final int initialSize, final int maxSize,
+			final EvictionListener<K, V> evictionListener) {
+		if (maxSize < 1) {
+			throw new IllegalArgumentException("MaxSize must greater than zero");
+		}
+		return Collections.synchronizedMap(new LinkedHashMap<K, V>(initialSize, 0.75F, true) {
+			private static final long serialVersionUID = 1L;
+
+			protected boolean removeEldestEntry(Map.Entry<K, V> eldestEntry) {
+				boolean result;
+				if (result = size() > maxSize) {
+					if (evictionListener != null) {
+						evictionListener.onEviction(eldestEntry.getKey(), eldestEntry.getValue());
+					}
+				}
+				return result;
+			}
+		});
+	}
+
+	public static <K, V> Map<K, V> singletonMap(Map<K, V> map) {
+		return singletonMap(map, true);
+	}
+
+	public static <K, V> Map<K, V> singletonMap(Map<K, V> map, boolean firstEntry) {
+		Map.Entry<K, V> entry = firstEntry ? getFirstEntry(map) : getLastEntry(map);
+		return singletonMap(entry);
+	}
+
+	public static <K, V> Map<K, V> singletonMap(Map.Entry<K, V> entry) {
+		Assert.isNull(entry);
+		return Collections.singletonMap(entry.getKey(), entry.getValue());
+	}
+
 	public static boolean isMap(Object obj) {
 		return obj == null ? false : obj instanceof Map;
 	}
 
 	public static boolean isNotMap(Object obj) {
 		return !isMap(obj);
+	}
+
+	public static Object getIfRequired(Map<String, Object> map, String key) {
+		return getIfRequired(map, key, new MissingKeyException(key));
 	}
 
 	public static <K, V> V getIfRequired(Map<K, V> map, K key, RuntimeException e) {
@@ -130,14 +228,15 @@ public abstract class MapUtils {
 	}
 
 	public static <E> List<E> toList(Map<E, E> map) {
-		if (map != null) {
-			List<E> list = new ArrayList<E>();
-			for (Map.Entry<E, E> e : map.entrySet()) {
-				list.add(e.getKey());
-				list.add(e.getValue());
-			}
+		if (isEmpty(map)) {
+			return ListUtils.emptyList();
 		}
-		return null;
+		List<E> list = new ArrayList<E>();
+		for (Map.Entry<E, E> e : map.entrySet()) {
+			list.add(e.getKey());
+			list.add(e.getValue());
+		}
+		return list;
 	}
 
 	public static <K, V> List<Map.Entry<K, V>> toEntries(Map<K, V> map) {
@@ -148,19 +247,24 @@ public abstract class MapUtils {
 	}
 
 	public static <K, V> Entry<K, V> getFirstEntry(Map<K, V> map) {
-		return getEntry(map, 0);
+		Assert.isNull(map, "Map must not be null.");
+		return CollectionUtils.getFirst(map.entrySet().iterator());
 	}
 
 	public static <K, V> Entry<K, V> getLastEntry(Map<K, V> map) {
-		return getEntry(map, -1);
+		Assert.isNull(map, "Map must not be null.");
+		return CollectionUtils.getLast(map.entrySet().iterator());
 	}
 
 	public static void main(String[] args) {
-		Map<String, String> map = new LinkedHashMap<String, String>();
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("a12", "123");
 		map.put("a", "123");
+		map.put("a1", "123");
+		map.put("a9", "123");
 		map.put("b", "234");
 		map.put("c", "345");
-		System.out.println(getLastEntry(map));
+		System.out.println(getFirstEntry(map));
 	}
 
 	public static <K, V> Map.Entry<K, V> getEntry(Map<K, V> map, int index) {
@@ -181,6 +285,7 @@ public abstract class MapUtils {
 	}
 
 	public static <K, V> void putAll(Map<K, V> map, Collection<Entry<K, V>> entries) {
+		Assert.isNull(map, "Map must not be null.");
 		if (CollectionUtils.isNotEmpty(entries)) {
 			for (Entry<K, V> e : entries) {
 				map.put(e.getKey(), e.getValue());
@@ -189,6 +294,7 @@ public abstract class MapUtils {
 	}
 
 	public static <K, V> void putAll(Map<K, V> map, Entry<K, V>[] entries) {
+		Assert.isNull(map, "Map must not be null.");
 		if (ArrayUtils.isNotEmpty(entries)) {
 			for (Entry<K, V> e : entries) {
 				map.put(e.getKey(), e.getValue());
@@ -197,6 +303,7 @@ public abstract class MapUtils {
 	}
 
 	public static <K, V> void removeKeys(Map<K, V> map, Collection<K> keys) {
+		Assert.isNull(map, "Map must not be null.");
 		if (CollectionUtils.isNotEmpty(keys)) {
 			for (Object key : keys) {
 				map.remove(key);
@@ -205,6 +312,7 @@ public abstract class MapUtils {
 	}
 
 	public static <K, V> void removeKeys(Map<K, V> map, K[] keys) {
+		Assert.isNull(map, "Map must not be null.");
 		if (ArrayUtils.isNotEmpty(keys)) {
 			for (Object key : keys) {
 				map.remove(key);
@@ -213,6 +321,7 @@ public abstract class MapUtils {
 	}
 
 	public static <K, V> void retainKeys(Map<K, V> map, Collection<K> keys) {
+		Assert.isNull(map, "Map must not be null.");
 		if (CollectionUtils.isNotEmpty(keys)) {
 			Iterator<Map.Entry<K, V>> it = map.entrySet().iterator();
 			Object o;
@@ -226,6 +335,7 @@ public abstract class MapUtils {
 	}
 
 	public static <K, V> void retainKeys(Map<K, V> map, K[] keys) {
+		Assert.isNull(map, "Map must not be null.");
 		if (ArrayUtils.isNotEmpty(keys)) {
 			Iterator<Map.Entry<K, V>> it = map.entrySet().iterator();
 			Object o;
@@ -728,48 +838,20 @@ public abstract class MapUtils {
 	}
 
 	public static <K, V> Map<K, V> toSingleValueMap(Map<K, V[]> multiValueMap) {
+		return toSingleValueMap(multiValueMap, true);
+	}
+
+	public static <K, V> Map<K, V> toSingleValueMap(Map<K, V[]> multiValueMap, boolean firstValue) {
 		if (MapUtils.isEmpty(multiValueMap)) {
-			return Collections.EMPTY_MAP;
+			return emptyMap();
 		}
 		Map<K, V> data = new LinkedHashMap<K, V>();
+		V value;
 		for (Map.Entry<K, V[]> entry : multiValueMap.entrySet()) {
-			data.put(entry.getKey(), (V) ArrayUtils.getFirst(entry.getValue()));
+			value = firstValue ? (V) ArrayUtils.getFirst(entry.getValue()) : (V) ArrayUtils.getLast(entry.getValue());
+			data.put(entry.getKey(), value);
 		}
 		return data;
-	}
-
-	public static <K, V> Map<K, V> synchronizedLinkedHashMap(final int initialSize, final int maxSize,
-			final EvictionListener<K, V> evictionListener) {
-		return Collections.synchronizedMap(newLinkedHashMap(initialSize, maxSize, evictionListener));
-	}
-
-	public static <K, V> Map<K, V> newLinkedHashMap(final int initialSize, final int maxSize,
-			final EvictionListener<K, V> evictionListener) {
-		if (maxSize < 1) {
-			throw new IllegalArgumentException("MaxSize must greater than zero");
-		}
-		return new LinkedHashMap<K, V>(initialSize, 0.75F, true) {
-			private static final long serialVersionUID = 1L;
-
-			protected boolean removeEldestEntry(Map.Entry<K, V> eldestEntry) {
-				boolean result;
-				if (result = size() > maxSize) {
-					if (evictionListener != null) {
-						evictionListener.onEviction(eldestEntry.getKey(), eldestEntry.getValue());
-					}
-				}
-				return result;
-			}
-		};
-	}
-
-	public static <K, V> Map<K, V> singletonMap(Map<K, V> map, boolean isLast) {
-		Map.Entry<K, V> entry = isLast ? getLastEntry(map) : getFirstEntry(map);
-		return singletonMap(entry);
-	}
-
-	public static <K, V> Map<K, V> singletonMap(Map.Entry<K, V> entry) {
-		return Collections.singletonMap(entry.getKey(), entry.getValue());
 	}
 
 }
