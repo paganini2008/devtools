@@ -13,7 +13,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.github.paganini2008.devtools.beans;
+package com.github.paganini2008.devtools.mock;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -28,23 +28,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import com.github.paganini2008.devtools.beans.MockTypeHandlers.BigDecimalTypeHandler;
-import com.github.paganini2008.devtools.beans.MockTypeHandlers.BigIntegerTypeHandler;
-import com.github.paganini2008.devtools.beans.MockTypeHandlers.BooleanTypeHandler;
-import com.github.paganini2008.devtools.beans.MockTypeHandlers.ByteTypeHandler;
-import com.github.paganini2008.devtools.beans.MockTypeHandlers.CharacterTypeHandler;
-import com.github.paganini2008.devtools.beans.MockTypeHandlers.DateTypeHandler;
-import com.github.paganini2008.devtools.beans.MockTypeHandlers.DoubleTypeHandler;
-import com.github.paganini2008.devtools.beans.MockTypeHandlers.EnumTypeHandler;
-import com.github.paganini2008.devtools.beans.MockTypeHandlers.FloatTypeHandler;
-import com.github.paganini2008.devtools.beans.MockTypeHandlers.IntegerTypeHandler;
-import com.github.paganini2008.devtools.beans.MockTypeHandlers.LocalDateTimeTypeHandler;
-import com.github.paganini2008.devtools.beans.MockTypeHandlers.LocalDateTypeHandler;
-import com.github.paganini2008.devtools.beans.MockTypeHandlers.LocalTimeTypeHandler;
-import com.github.paganini2008.devtools.beans.MockTypeHandlers.LongTypeHandler;
-import com.github.paganini2008.devtools.beans.MockTypeHandlers.ShortTypeHandler;
-import com.github.paganini2008.devtools.beans.MockTypeHandlers.StringTypeHandler;
 import com.github.paganini2008.devtools.date.DateUtils;
+import com.github.paganini2008.devtools.mock.MockTypeHandlers.BigDecimalTypeHandler;
+import com.github.paganini2008.devtools.mock.MockTypeHandlers.BigIntegerTypeHandler;
+import com.github.paganini2008.devtools.mock.MockTypeHandlers.BooleanTypeHandler;
+import com.github.paganini2008.devtools.mock.MockTypeHandlers.ByteTypeHandler;
+import com.github.paganini2008.devtools.mock.MockTypeHandlers.CharacterTypeHandler;
+import com.github.paganini2008.devtools.mock.MockTypeHandlers.DateTypeHandler;
+import com.github.paganini2008.devtools.mock.MockTypeHandlers.DoubleTypeHandler;
+import com.github.paganini2008.devtools.mock.MockTypeHandlers.EnumTypeHandler;
+import com.github.paganini2008.devtools.mock.MockTypeHandlers.FloatTypeHandler;
+import com.github.paganini2008.devtools.mock.MockTypeHandlers.IntegerTypeHandler;
+import com.github.paganini2008.devtools.mock.MockTypeHandlers.LocalDateTimeTypeHandler;
+import com.github.paganini2008.devtools.mock.MockTypeHandlers.LocalDateTypeHandler;
+import com.github.paganini2008.devtools.mock.MockTypeHandlers.LocalTimeTypeHandler;
+import com.github.paganini2008.devtools.mock.MockTypeHandlers.LongTypeHandler;
+import com.github.paganini2008.devtools.mock.MockTypeHandlers.ShortTypeHandler;
+import com.github.paganini2008.devtools.mock.MockTypeHandlers.StringTypeHandler;
 
 /**
  * 

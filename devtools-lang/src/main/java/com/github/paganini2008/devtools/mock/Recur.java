@@ -13,20 +13,23 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.github.paganini2008.devtools.beans;
+package com.github.paganini2008.devtools.mock;
 
-import java.lang.reflect.Field;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * 
- * MockTypeHandler
+ * Recur
  *
  * @author Fred Feng
  *
  * @since 2.0.4
  */
-public interface MockTypeHandler {
-
-	Object apply(Field field, RandomOperations operations, MockContext context);
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.FIELD })
+public @interface Recur {
 
 }

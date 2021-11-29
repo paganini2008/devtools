@@ -13,21 +13,29 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.github.paganini2008.devtools.beans;
+package com.github.paganini2008.devtools.mock;
 
-import java.lang.reflect.Type;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * 
- * MockType
+ * IntRange
  *
  * @author Fred Feng
  *
  * @since 2.0.4
  */
-public interface MockType<T> {
-	
-	Type[] getTypes();
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.FIELD })
+public @interface IntRange {
 
-	T randomize();
+	int from() default Integer.MIN_VALUE;
+
+	int to() default Integer.MAX_VALUE;
+	
+	String value() default "";
+
 }

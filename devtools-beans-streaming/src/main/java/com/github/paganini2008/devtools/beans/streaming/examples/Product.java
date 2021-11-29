@@ -19,13 +19,13 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
-import com.github.paganini2008.devtools.beans.DateRange;
-import com.github.paganini2008.devtools.beans.DoubleRange;
-import com.github.paganini2008.devtools.beans.FloatRange;
-import com.github.paganini2008.devtools.beans.IntRange;
-import com.github.paganini2008.devtools.beans.LongRange;
-import com.github.paganini2008.devtools.beans.Recur;
 import com.github.paganini2008.devtools.beans.ToStringBuilder;
+import com.github.paganini2008.devtools.mock.DateRange;
+import com.github.paganini2008.devtools.mock.DoubleRange;
+import com.github.paganini2008.devtools.mock.FloatRange;
+import com.github.paganini2008.devtools.mock.IntRange;
+import com.github.paganini2008.devtools.mock.LongRange;
+import com.github.paganini2008.devtools.mock.Recur;
 
 /**
  * 

@@ -16,14 +16,10 @@
 package com.github.paganini2008.devtools.beans;
 
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import com.github.paganini2008.devtools.converter.ConvertUtils;
 import com.github.paganini2008.devtools.reflection.ConstructorUtils;
-import com.github.paganini2008.devtools.reflection.FieldUtils;
 
 /**
  * 
@@ -121,44 +117,6 @@ public abstract class BeanUtils {
 		} catch (Exception e) {
 			throw new BeanInstantiationException(e.getMessage(), e);
 		}
-	}
-
-	public static <T> List<T> mockBeans(int count, Class<T> beanClass, MockContext context) {
-		return mockBeans(count, beanClass, context, new RandomTemplate());
-	}
-
-	public static <T> List<T> mockBeans(int count, Class<T> beanClass, MockContext context, RandomOperations operations) {
-		List<T> list = new ArrayList<T>(count);
-		for (int i = 0; i < count; i++) {
-			list.add(mockBean(beanClass, context, operations));
-		}
-		return list;
-	}
-
-	public static <T> T mockBean(Class<T> beanClass, MockContext context, RandomOperations operations) {
-		T object = instantiate(beanClass);
-		Map<String, PropertyDescriptor> desc = PropertyUtils.getPropertyDescriptors(object.getClass());
-		String propertyName;
-		Class<?> propertyType;
-		Object propertyValue;
-		Field field;
-		for (PropertyDescriptor pd : desc.values()) {
-			context.reset();
-			propertyName = pd.getName();
-			field = FieldUtils.getFieldIfAbsent(beanClass, propertyName);
-			if (field != null) {
-				if (field.isAnnotationPresent(Recur.class)) {
-					propertyValue = mockBean(pd.getPropertyType(), context, operations);
-				} else {
-					propertyValue = context.mock(field, operations);
-				}
-				if (propertyValue != null) {
-					PropertyUtils.setProperty(object, pd.getName(), propertyValue);
-				}
-			}
-
-		}
-		return object;
 	}
 
 }
