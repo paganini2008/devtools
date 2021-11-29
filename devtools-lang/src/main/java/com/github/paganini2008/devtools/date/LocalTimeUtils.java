@@ -115,7 +115,7 @@ public abstract class LocalTimeUtils {
 	}
 
 	public static LocalTime of(int hourOfDay, int minute, int second) {
-		TimeAsserts.validateTime(hourOfDay, minute, second);
+		TimeAssert.validateTime(hourOfDay, minute, second);
 		return LocalTime.of(hourOfDay, minute, second);
 	}
 

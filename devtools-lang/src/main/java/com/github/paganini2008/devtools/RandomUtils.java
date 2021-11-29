@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-import com.github.paganini2008.devtools.date.TimeAsserts;
+import com.github.paganini2008.devtools.date.TimeAssert;
 import com.github.paganini2008.devtools.math.BigDecimalUtils;
 import com.github.paganini2008.devtools.primitives.Doubles;
 import com.github.paganini2008.devtools.primitives.Floats;
@@ -443,44 +443,44 @@ public abstract class RandomUtils {
 	}
 
 	public static int randomYear(int fromYear, int toYear) {
-		TimeAsserts.validateYear(fromYear);
-		TimeAsserts.validateYear(toYear);
+		TimeAssert.validateYear(fromYear);
+		TimeAssert.validateYear(toYear);
 		return randomInt(fromYear, toYear + 1);
 	}
 
 	public static int randomMonth(int fromMonth, int toMonth) {
-		TimeAsserts.validateMonth(fromMonth);
-		TimeAsserts.validateMonth(toMonth);
+		TimeAssert.validateMonth(fromMonth);
+		TimeAssert.validateMonth(toMonth);
 		return randomInt(fromMonth, toMonth + 1);
 	}
 
 	public static int randomDayOfYear(Year year, int fromDayOfYear, int toDayOfYear) {
-		TimeAsserts.validateDayOfYear(year, fromDayOfYear);
+		TimeAssert.validateDayOfYear(year, fromDayOfYear);
 		toDayOfYear = Math.min(toDayOfYear, year.isLeap() ? 366 : 365);
 		return randomInt(fromDayOfYear, toDayOfYear + 1);
 	}
 
 	public static int randomDayOfMonth(YearMonth yearMonth, int fromDayOfMonth, int toDayOfMonth) {
-		TimeAsserts.validateDayOfMonth(yearMonth, fromDayOfMonth);
+		TimeAssert.validateDayOfMonth(yearMonth, fromDayOfMonth);
 		toDayOfMonth = Math.min(toDayOfMonth, yearMonth.atEndOfMonth().getDayOfMonth());
 		return randomInt(fromDayOfMonth, toDayOfMonth + 1);
 	}
 
 	public static int randomDayOfMonth(int year, int month, int fromDayOfMonth, int toDayOfMonth) {
-		TimeAsserts.validateDayOfMonth(year, month, fromDayOfMonth);
+		TimeAssert.validateDayOfMonth(year, month, fromDayOfMonth);
 		toDayOfMonth = Math.min(toDayOfMonth, YearMonth.of(year, month).atEndOfMonth().getDayOfMonth());
 		return randomInt(fromDayOfMonth, toDayOfMonth + 1);
 	}
 
 	public static int randomHourOfDay(int fromHourOfDay, int toHourOfDay) {
-		TimeAsserts.validateHourOfDay(fromHourOfDay);
-		TimeAsserts.validateHourOfDay(toHourOfDay);
+		TimeAssert.validateHourOfDay(fromHourOfDay);
+		TimeAssert.validateHourOfDay(toHourOfDay);
 		return randomInt(fromHourOfDay, toHourOfDay + 1);
 	}
 
 	public static int randomMinuteOrSecond(int from, int to) {
-		TimeAsserts.validateMinuteOrSecond(from);
-		TimeAsserts.validateMinuteOrSecond(to);
+		TimeAssert.validateMinuteOrSecond(from);
+		TimeAssert.validateMinuteOrSecond(to);
 		return randomInt(from, to + 1);
 	}
 

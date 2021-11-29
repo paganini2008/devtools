@@ -45,8 +45,8 @@ import com.github.paganini2008.devtools.collection.LruMap;
  */
 public abstract class DateUtils {
 
-	public static final int YEAR_START_FROM = 1970;
-	public static final int YEAR_END_WITH = 9999;
+	public static final int MIN_YEAR = 1970;
+	public static final int MAX_YEAR = 9999;
 
 	public static final Date[] EMPTY_ARRAY = new Date[0];
 	public final static String DEFAULT_DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";

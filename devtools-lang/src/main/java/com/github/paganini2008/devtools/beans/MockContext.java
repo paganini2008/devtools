@@ -206,7 +206,7 @@ public final class MockContext {
 	}
 
 	public static class RandomDateConfig {
-		private int fromYear = DateUtils.YEAR_START_FROM;
+		private int fromYear = DateUtils.MIN_YEAR;
 		private int toYear = DateUtils.getYear();
 		private int fromMonth = 1;
 		private int toMonth = 12;

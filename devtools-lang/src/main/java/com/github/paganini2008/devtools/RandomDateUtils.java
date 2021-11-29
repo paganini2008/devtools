@@ -35,7 +35,7 @@ import com.github.paganini2008.devtools.date.DateUtils;
 import com.github.paganini2008.devtools.date.LocalDateTimeUtils;
 import com.github.paganini2008.devtools.date.LocalDateUtils;
 import com.github.paganini2008.devtools.date.LocalTimeUtils;
-import com.github.paganini2008.devtools.date.YearMonthUtils;
+import com.github.paganini2008.devtools.date.YearUtils;
 
 /**
  * 
@@ -48,7 +48,7 @@ import com.github.paganini2008.devtools.date.YearMonthUtils;
 public abstract class RandomDateUtils {
 
 	public static Year randomYear() {
-		return randomYear(YearMonthUtils.YEAR_START, Year.now());
+		return randomYear(YearUtils.MIN_YEAR, Year.now());
 	}
 
 	public static Year randomYear(Year fromYear, Year toYear) {

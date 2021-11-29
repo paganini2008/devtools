@@ -189,12 +189,12 @@ public abstract class LocalDateUtils {
 	}
 
 	public static LocalDate of(Year year, int dayOfYear) {
-		TimeAsserts.validateDayOfYear(year, dayOfYear);
+		TimeAssert.validateDayOfYear(year, dayOfYear);
 		return year.atDay(dayOfYear);
 	}
 
 	public static LocalDate of(YearMonth yearMonth, int dayOfMonth) {
-		TimeAsserts.validateDayOfMonth(yearMonth, dayOfMonth);
+		TimeAssert.validateDayOfMonth(yearMonth, dayOfMonth);
 		return yearMonth.atDay(dayOfMonth);
 	}
 
@@ -204,9 +204,9 @@ public abstract class LocalDateUtils {
 	}
 
 	public static LocalDate of(int year, int month, int dayOfMonth) {
-		TimeAsserts.validateYear(year);
-		TimeAsserts.validateMonth(month);
-		TimeAsserts.validateDayOfMonth(year, month, dayOfMonth);
+		TimeAssert.validateYear(year);
+		TimeAssert.validateMonth(month);
+		TimeAssert.validateDayOfMonth(year, month, dayOfMonth);
 		return LocalDate.of(year, month, dayOfMonth);
 	}
 

@@ -15,8 +15,8 @@
 */
 package com.github.paganini2008.devtools.date;
 
-import static com.github.paganini2008.devtools.date.DateUtils.YEAR_END_WITH;
-import static com.github.paganini2008.devtools.date.DateUtils.YEAR_START_FROM;
+import static com.github.paganini2008.devtools.date.DateUtils.MAX_YEAR;
+import static com.github.paganini2008.devtools.date.DateUtils.MIN_YEAR;
 
 import java.time.Year;
 import java.time.YearMonth;
@@ -25,16 +25,16 @@ import com.github.paganini2008.devtools.Assert;
 
 /**
  * 
- * TimeAsserts
+ * TimeAssert
  *
  * @author Fred Feng
  *
  * @since 2.0.4
  */
-public abstract class TimeAsserts {
+public abstract class TimeAssert {
 
 	public static void validateYear(int year) {
-		Assert.outOfRange(year, YEAR_START_FROM, YEAR_END_WITH, "Out of year range. Input: " + year);
+		Assert.outOfRange(year, MIN_YEAR, MAX_YEAR, "Out of year range. Input: " + year);
 	}
 
 	public static void validateMonth(int month) {
@@ -65,7 +65,7 @@ public abstract class TimeAsserts {
 	}
 
 	public static void validateMinuteOrSecond(int timeValue) {
-		Assert.outOfRange(timeValue, 0, 59, "Out of time range of one minute or one hour. Input: " + timeValue);
+		Assert.outOfRange(timeValue, 0, 59, "Out of time range of one minute or one second. Input: " + timeValue);
 	}
 
 }

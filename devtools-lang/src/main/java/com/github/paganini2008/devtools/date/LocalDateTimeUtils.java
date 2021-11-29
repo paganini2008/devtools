@@ -309,7 +309,7 @@ public abstract class LocalDateTimeUtils {
 		if (yearMonth == null) {
 			yearMonth = YearMonth.now();
 		}
-		TimeAsserts.validateTime(hourOfDay, minute, second);
+		TimeAssert.validateTime(hourOfDay, minute, second);
 		return yearMonth.atDay(dayOfMonth).atTime(hourOfDay, minute, second);
 	}
 
@@ -327,7 +327,7 @@ public abstract class LocalDateTimeUtils {
 		if (localDate == null) {
 			localDate = LocalDate.now();
 		}
-		TimeAsserts.validateTime(hourOfDay, minute, second);
+		TimeAssert.validateTime(hourOfDay, minute, second);
 		return localDate.atTime(hourOfDay, minute, second);
 	}
 
@@ -336,10 +336,10 @@ public abstract class LocalDateTimeUtils {
 	}
 
 	public static LocalDateTime of(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second) {
-		TimeAsserts.validateYear(year);
-		TimeAsserts.validateMonth(month);
-		TimeAsserts.validateDayOfMonth(year, month, dayOfMonth);
-		TimeAsserts.validateTime(hourOfDay, minute, second);
+		TimeAssert.validateYear(year);
+		TimeAssert.validateMonth(month);
+		TimeAssert.validateDayOfMonth(year, month, dayOfMonth);
+		TimeAssert.validateTime(hourOfDay, minute, second);
 		return LocalDateTime.of(year, month, dayOfMonth, hourOfDay, minute, second);
 	}
 

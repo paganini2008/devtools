@@ -15,31 +15,24 @@
 */
 package com.github.paganini2008.devtools.date;
 
-import java.time.Month;
 import java.time.Year;
-import java.time.YearMonth;
-
-import com.github.paganini2008.devtools.Assert;
 
 /**
  * 
- * YearMonthUtils
+ * TimeAssert
  *
  * @author Fred Feng
  *
  * @since 2.0.4
  */
-public abstract class YearMonthUtils {
+public abstract class YearUtils {
 
-	public static YearMonth toYearMonth(Year year, Month month) {
-		Assert.outOfRange(year, YearUtils.MIN_YEAR, YearUtils.MAX_YEAR, "Out of year range. Input: " + year);
-		return year.atMonth(month);
-	}
+	public static final Year MIN_YEAR = Year.of(DateUtils.MIN_YEAR);
+	public static final Year MAX_YEAR = Year.of(DateUtils.MAX_YEAR);
 
-	public static YearMonth of(int year, int month) {
+	public static Year of(int year) {
 		TimeAssert.validateYear(year);
-		TimeAssert.validateMonth(month);
-		return YearMonth.of(year, month);
+		return Year.of(year);
 	}
 
 }
