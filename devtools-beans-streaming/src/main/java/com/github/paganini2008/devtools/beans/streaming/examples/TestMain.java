@@ -11,8 +11,6 @@ public class TestMain {
 	public static void main(String[] args) throws Exception {
 		List<Product> list = BeanMocker.mockBeans(10000, Product.class, new MockContext());
 		Console.log(list);
-		//Console.log(System.getProperties());
-		//System.out.println(ImageUtils.encode(new URL("http://asdfgh.wsy7.com/upload/2019/01/22/1237/1548131870672006141995.png"), "png"));
 	}
 
 }
