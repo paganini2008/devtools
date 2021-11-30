@@ -272,28 +272,80 @@ public abstract class DateUtils {
 		}
 	}
 
+	public static Date addYears(int amount) {
+		return addYears(new Date(), amount);
+	}
+
 	public static Date addYears(Date date, int amount) {
 		return addField(date, Calendar.YEAR, amount);
+	}
+
+	public static Date addMonths(int amount) {
+		return addMonths(new Date(), amount);
 	}
 
 	public static Date addMonths(Date date, int amount) {
 		return addField(date, Calendar.MONTH, amount);
 	}
 
-	public static Date addWeeks(Date date, int amount) {
+	public static Date addWeekOfYear(int amount) {
+		return addWeekOfYear(new Date(), amount);
+	}
+
+	public static Date addWeekOfYear(Date date, int amount) {
 		return addField(date, Calendar.WEEK_OF_YEAR, amount);
 	}
 
-	public static Date addDays(Date date, int amount) {
+	public static Date addWeekOfMonth(int amount) {
+		return addWeekOfMonth(new Date(), amount);
+	}
+
+	public static Date addWeekOfMonth(Date date, int amount) {
+		return addField(date, Calendar.WEEK_OF_MONTH, amount);
+	}
+
+	public static Date addDayOfYear(int amount) {
+		return addDayOfYear(new Date(), amount);
+	}
+
+	public static Date addDayOfYear(Date date, int amount) {
+		return addField(date, Calendar.DAY_OF_YEAR, amount);
+	}
+
+	public static Date addDayOfMonth(int amount) {
+		return addDayOfMonth(new Date(), amount);
+	}
+
+	public static Date addDayOfMonth(Date date, int amount) {
 		return addField(date, Calendar.DAY_OF_MONTH, amount);
 	}
 
-	public static Date addHours(Date date, int amount) {
+	public static Date addDayOfWeek(int amount) {
+		return addDayOfWeek(new Date(), amount);
+	}
+
+	public static Date addDayOfWeek(Date date, int amount) {
+		return addField(date, Calendar.DAY_OF_WEEK, amount);
+	}
+
+	public static Date addHourOfDay(int amount) {
+		return addHourOfDay(new Date(), amount);
+	}
+
+	public static Date addHourOfDay(Date date, int amount) {
 		return addField(date, Calendar.HOUR_OF_DAY, amount);
+	}
+
+	public static Date addMinutes(int amount) {
+		return addMinutes(new Date(), amount);
 	}
 
 	public static Date addMinutes(Date date, int amount) {
 		return addField(date, Calendar.MINUTE, amount);
+	}
+
+	public static Date addSeconds(int amount) {
+		return addSeconds(new Date(), amount);
 	}
 
 	public static Date addSeconds(Date date, int amount) {
@@ -301,7 +353,9 @@ public abstract class DateUtils {
 	}
 
 	public static Date addField(Date date, int calendarField, int amount) {
-		Assert.isNull(date, "The date must not be null");
+		if (date == null) {
+			date = new Date();
+		}
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
 		c.add(calendarField, amount);
@@ -604,7 +658,7 @@ public abstract class DateUtils {
 	}
 
 	public static <R> Map<Date, R> populate(Date from, int days, int interval, int calendarField, Function<Calendar, R> valueHandler) {
-		return populate(from, addDays(from, days), interval, calendarField, valueHandler);
+		return populate(from, addDayOfMonth(from, days), interval, calendarField, valueHandler);
 	}
 
 	public static <R> Map<Date, R> populate(Date from, Date to, int interval, int calendarField, Function<Calendar, R> valueHandler) {
@@ -613,7 +667,7 @@ public abstract class DateUtils {
 
 	public static <T, R> Map<T, R> populate(Date from, int days, int interval, int calendarField, Function<Calendar, T> keyHandler,
 			Function<Calendar, R> valueHandler) {
-		return populate(from, addDays(from, days), interval, calendarField, keyHandler, valueHandler);
+		return populate(from, addDayOfMonth(from, days), interval, calendarField, keyHandler, valueHandler);
 	}
 
 	public static <T, R> Map<T, R> populate(Date from, Date to, int interval, int calendarField, Function<Calendar, T> keyHandler,
@@ -629,7 +683,7 @@ public abstract class DateUtils {
 	}
 
 	public static Iterator<Calendar> toIterator(Date from, int days, int interval, int calendarField) {
-		return new DateIterator(from, addDays(from, days), interval, calendarField);
+		return new DateIterator(from, addDayOfMonth(from, days), interval, calendarField);
 	}
 
 	public static Iterator<Calendar> toIterator(Date from, Date to, int interval, int calendarField) {
@@ -720,7 +774,7 @@ public abstract class DateUtils {
 	}
 
 	public static void main2(String[] args) throws Exception {
-		Map<Date, Object> result = populate(addDays(new Date(), 10), new Date(), 1, Calendar.DAY_OF_MONTH, c -> new HashMap<>());
+		Map<Date, Object> result = populate(addDayOfMonth(new Date(), 10), new Date(), 1, Calendar.DAY_OF_MONTH, c -> new HashMap<>());
 		Console.log(new TreeMap<Date, Object>(result));
 	}
 

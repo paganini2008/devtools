@@ -53,7 +53,7 @@ public abstract class Examples {
 		for (int i = 0; i < 10000; i++) {
 			Product product = new Product();
 			product.setCreated(RandomDateUtils.randomDate(2021));
-			product.setExpired(DateUtils.addDays(product.getCreated(), 90));
+			product.setExpired(DateUtils.addDayOfMonth(product.getCreated(), 90));
 			product.setExport(RandomUtils.randomBoolean());
 			product.setFreight(BigDecimal.valueOf(RandomUtils.randomFloat(10, 100)).setScale(2, RoundingMode.HALF_UP));
 			product.setId(i + 1);
