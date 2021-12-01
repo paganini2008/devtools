@@ -62,7 +62,7 @@ public abstract class KeyMatchedMap<K extends Comparable<K>, V> extends Abstract
 	}
 
 	public V put(K key, V value) {
-		Assert.isNull(key, "Non null key");
+		Assert.isNull(key, "Nullable key");
 		keys.add(key);
 		return delegate.put(key, value);
 	}
