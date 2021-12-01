@@ -18,50 +18,34 @@ package com.github.paganini2008.devtools.time;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicStampedReference;
 
-import com.github.paganini2008.devtools.collection.MapUtils;
-import com.github.paganini2008.devtools.collection.MutableMap;
+import com.github.paganini2008.devtools.collection.AtomicMutableMap;
 
 /**
  * 
- * AccumulatingTimeSlotTable
+ * AggTimeSlotTable
  *
  * @author Fred Feng
- *
  * @since 2.0.4
  */
-public class AccumulatingTimeSlotTable<V> extends MutableMap<Instant, List<V>> implements MeasureTable<List<V>> {
+public class AggTimeSlotTable<V> extends AtomicMutableMap<Instant, V> implements TimeSlotTable<V> {
 
-	private static final long serialVersionUID = 8180993603631297273L;
+	private static final long serialVersionUID = -1609264341186593908L;
 
-	private final int span;
 	private final TimeSlot timeSlot;
+	private final int span;
 
-	public AccumulatingTimeSlotTable(int span, TimeSlot timeSlot) {
+	public AggTimeSlotTable(int span, TimeSlot timeSlot) {
 		this(new ConcurrentHashMap<>(), span, timeSlot);
 	}
 
-	public AccumulatingTimeSlotTable(Map<Instant, List<V>> delegate, int span, TimeSlot timeSlot) {
+	public AggTimeSlotTable(Map<Instant, AtomicStampedReference<V>> delegate, int span, TimeSlot timeSlot) {
 		super(delegate);
-		this.span = span;
 		this.timeSlot = timeSlot;
-	}
-
-	public List<V> put(Instant ins, V value) {
-		List<V> list = MapUtils.get(this, ins, () -> new CopyOnWriteArrayList<>());
-		list.add(value);
-		return list;
-	}
-
-	@Override
-	public List<V> put(Instant ins, List<V> values) {
-		List<V> list = MapUtils.get(this, ins, () -> new CopyOnWriteArrayList<>());
-		list.addAll(values);
-		return list;
+		this.span = span;
 	}
 
 	@Override

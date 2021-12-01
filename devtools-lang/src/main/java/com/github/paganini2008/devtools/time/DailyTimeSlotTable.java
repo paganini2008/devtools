@@ -12,7 +12,7 @@ import com.github.paganini2008.devtools.collection.ConcurrentSortedBoundedMap;
  * @author Fred Feng
  * @since 2.0.4
  */
-public class DailyTimeSlotTable<V> extends TimeSlotTable<V> {
+public class DailyTimeSlotTable<V> extends AggTimeSlotTable<V> {
 
 	private static final long serialVersionUID = 1020741898314951406L;
 

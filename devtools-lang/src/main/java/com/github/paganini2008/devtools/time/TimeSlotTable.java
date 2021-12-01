@@ -18,40 +18,24 @@ package com.github.paganini2008.devtools.time;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicStampedReference;
-
-import com.github.paganini2008.devtools.collection.AtomicMutableMap;
+import java.util.stream.Collectors;
 
 /**
  * 
  * TimeSlotTable
  *
  * @author Fred Feng
+ *
  * @since 2.0.4
  */
-public class TimeSlotTable<V> extends AtomicMutableMap<Instant, V> implements MeasureTable<V> {
+public interface TimeSlotTable<V> extends Map<Instant, V> {
 
-	private static final long serialVersionUID = -1609264341186593908L;
-
-	private final TimeSlot timeSlot;
-	private final int span;
-
-	public TimeSlotTable(int span, TimeSlot timeSlot) {
-		this(new ConcurrentHashMap<>(), span, timeSlot);
-	}
-
-	public TimeSlotTable(Map<Instant, AtomicStampedReference<V>> delegate, int span, TimeSlot timeSlot) {
-		super(delegate);
-		this.timeSlot = timeSlot;
-		this.span = span;
-	}
-
-	@Override
-	protected Instant mutate(Object inputKey) {
-		LocalDateTime ldt = timeSlot.locate((Instant) inputKey, span);
-		return ldt.atZone(ZoneId.systemDefault()).toInstant();
+	default Map<LocalDateTime, V> output() {
+		return entrySet().stream().sorted(Map.Entry.comparingByKey())
+				.collect(Collectors.toMap(e -> e.getKey().atZone(ZoneId.systemDefault()).toLocalDateTime(), e -> e.getValue(),
+						(oldVal, newVal) -> oldVal, LinkedHashMap::new));
 	}
 
 }
