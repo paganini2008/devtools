@@ -63,7 +63,15 @@ public abstract class ListUtils {
 	}
 
 	public static <T> List<T> unmodifiableList(Collection<T> c) {
-		return Collections.unmodifiableList(new ArrayList<T>(c));
+		return Collections.unmodifiableList(toList(c));
+	}
+
+	public static <T> List<T> synchronizedList() {
+		return Collections.synchronizedList(new ArrayList<T>());
+	}
+
+	public static <T> List<T> synchronizedList(Collection<T> c) {
+		return Collections.synchronizedList(toList(c));
 	}
 
 	public static <T> List<T> create(T... args) {

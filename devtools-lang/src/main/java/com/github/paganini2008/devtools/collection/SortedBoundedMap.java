@@ -18,11 +18,12 @@ package com.github.paganini2008.devtools.collection;
 import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.function.BiFunction;
 
 /**
  * 
@@ -41,14 +42,14 @@ public class SortedBoundedMap<K, V> extends AbstractMap<K, V> implements Map<K, 
 	private final Map<K, V> delegate;
 
 	public SortedBoundedMap(int maxSize) {
-		this(new LinkedHashMap<K, V>(), maxSize);
+		this(new TreeMap<K, V>(), maxSize);
 	}
 
 	public SortedBoundedMap(Map<K, V> delegate, int maxSize) {
 		this(delegate, maxSize, new TreeSet<K>());
 	}
 
-	protected SortedBoundedMap(Map<K, V> delegate, int maxSize, NavigableSet<K> keys) {
+	public SortedBoundedMap(Map<K, V> delegate, int maxSize, NavigableSet<K> keys) {
 		this.delegate = delegate;
 		this.maxSize = maxSize;
 		this.keys = keys;
@@ -73,6 +74,11 @@ public class SortedBoundedMap<K, V> extends AbstractMap<K, V> implements Map<K, 
 	@Override
 	public boolean containsKey(Object key) {
 		return delegate.containsKey(key);
+	}
+
+	@Override
+	public V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
+		return delegate.merge(key, value, remappingFunction);
 	}
 
 	@Override

@@ -40,8 +40,8 @@ public enum TimeSlot {
 		}
 
 		@Override
-		public int sizeOf(int span) {
-			return 24 / span + 1;
+		public int sizeOf(int span, int days) {
+			return (24 / span + 1) * days;
 		}
 
 	},
@@ -56,8 +56,8 @@ public enum TimeSlot {
 		}
 
 		@Override
-		public int sizeOf(int span) {
-			return (60 / span + 1) * 24;
+		public int sizeOf(int span, int days) {
+			return (60 / span + 1) * 24 * days;
 		}
 
 	},
@@ -73,14 +73,14 @@ public enum TimeSlot {
 		}
 
 		@Override
-		public int sizeOf(int span) {
-			return (60 / span + 1) * 60 * 24;
+		public int sizeOf(int span, int days) {
+			return (60 / span + 1) * 60 * 24 * days;
 		}
 
 	};
 
 	public abstract LocalDateTime locate(Instant timestamp, int span);
 
-	public abstract int sizeOf(int span);
+	public abstract int sizeOf(int span, int days);
 
 }

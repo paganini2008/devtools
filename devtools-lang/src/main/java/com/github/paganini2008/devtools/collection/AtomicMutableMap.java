@@ -18,34 +18,39 @@ package com.github.paganini2008.devtools.collection;
 import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicStampedReference;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 /**
  * 
- * MutableMap
+ * AtomicMutableMap
  *
  * @author Fred Feng
  * @since 2.0.4
  */
-public abstract class MutableMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Serializable {
+public abstract class AtomicMutableMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	protected final Map<K, V> delegate;
+	protected final Map<K, AtomicStampedReference<V>> delegate;
 
-	protected MutableMap(Map<K, V> delegate) {
+	protected AtomicMutableMap(Map<K, AtomicStampedReference<V>> delegate) {
 		this.delegate = delegate;
 	}
 
 	@Override
 	public V get(Object key) {
-		return delegate.get(mutate(key));
+		return delegate.get(mutate(key)).getReference();
 	}
 
 	@Override
 	public V put(K key, V value) {
-		return delegate.put(mutate(key), value);
+		AtomicStampedReference<V> prev = delegate.put(mutate(key), new AtomicStampedReference<V>(value, 0));
+		return prev != null ? prev.getReference() : null;
 	}
 
 	@Override
@@ -60,7 +65,8 @@ public abstract class MutableMap<K, V> extends AbstractMap<K, V> implements Map<
 
 	@Override
 	public V remove(Object key) {
-		return delegate.remove(mutate(key));
+		AtomicStampedReference<V> prev = delegate.remove(mutate(key));
+		return prev != null ? prev.getReference() : null;
 	}
 
 	@Override
@@ -70,7 +76,7 @@ public abstract class MutableMap<K, V> extends AbstractMap<K, V> implements Map<
 
 	@Override
 	public Collection<V> values() {
-		return delegate.values();
+		return delegate.values().stream().map(ref -> ref.getReference()).collect(Collectors.toUnmodifiableList());
 	}
 
 	@Override
@@ -85,7 +91,28 @@ public abstract class MutableMap<K, V> extends AbstractMap<K, V> implements Map<
 
 	@Override
 	public Set<Entry<K, V>> entrySet() {
-		return delegate.entrySet();
+		return delegate.entrySet().stream()
+				.collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().getReference(), (o, n) -> o, LinkedHashMap::new)).entrySet();
+	}
+
+	@Override
+	public V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> fun) {
+		key = mutate(key);
+		AtomicStampedReference<V> ref = delegate.get(key);
+		if (ref == null) {
+			delegate.putIfAbsent(key, new AtomicStampedReference<V>(null, 0));
+			ref = delegate.get(key);
+		}
+		if (ref != null) {
+			V current;
+			V update;
+			do {
+				current = ref.getReference();
+				update = fun.apply(current, value);
+			} while (!ref.compareAndSet(current, update, ref.getStamp(), ref.getStamp() + 1));
+			return update;
+		}
+		return null;
 	}
 
 	protected abstract K mutate(Object key);

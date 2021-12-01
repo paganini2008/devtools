@@ -15,6 +15,8 @@
 */
 package com.github.paganini2008.devtools.collection;
 
+import java.util.Map;
+
 /**
  * 
  * BoundedMap
@@ -22,11 +24,12 @@ package com.github.paganini2008.devtools.collection;
  * @author Fred Feng
  * @since 2.0.1
  */
-public interface BoundedMap<K, V> {
+public interface BoundedMap<K, V> extends Map<K, V> {
 
 	int getMaxSize();
 
 	default void onEviction(K eldestKey, V eldestValue) {
+		System.out.println("taotai: " + eldestKey + ", val: " + eldestValue);
 	}
 
 }

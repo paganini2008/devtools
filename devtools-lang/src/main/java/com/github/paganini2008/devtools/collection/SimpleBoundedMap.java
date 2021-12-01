@@ -48,7 +48,7 @@ public class SimpleBoundedMap<K, V> extends AbstractMap<K, V> implements Map<K, 
 		this(delegate, maxSize, new LinkedList<K>());
 	}
 
-	protected SimpleBoundedMap(Map<K, V> delegate, int maxSize, Queue<K> keys) {
+	public SimpleBoundedMap(Map<K, V> delegate, int maxSize, Queue<K> keys) {
 		this.delegate = delegate;
 		this.maxSize = maxSize;
 		this.keys = keys;

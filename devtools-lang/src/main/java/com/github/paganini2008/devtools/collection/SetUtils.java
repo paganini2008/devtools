@@ -19,8 +19,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Set;
+
+import com.github.paganini2008.devtools.ArrayUtils;
 
 /**
  * SetUtils
@@ -40,11 +41,19 @@ public abstract class SetUtils {
 	}
 
 	public static <T> Set<T> unmodifiableSet(Collection<T> c) {
-		return Collections.unmodifiableSet((c instanceof Set ? (Set<T>) c : new HashSet(c)));
+		return Collections.unmodifiableSet(toSet(c));
+	}
+
+	public static <T> Set<T> synchronizedSet() {
+		return Collections.synchronizedSet(new HashSet<T>());
+	}
+
+	public static <T> Set<T> synchronizedSet(Collection<T> c) {
+		return Collections.synchronizedSet(toSet(c));
 	}
 
 	public static <T> Set<T> create(T... args) {
-		return toSet(Arrays.asList(args));
+		return ArrayUtils.isNotEmpty(args) ? new HashSet<T>(Arrays.asList(args)) : new HashSet<T>();
 	}
 
 	public static <T> Set<T> toSet(Collection<T> c) {

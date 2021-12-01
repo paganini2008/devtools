@@ -18,10 +18,13 @@ package com.github.paganini2008.devtools.date;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicStampedReference;
+import java.util.stream.Collectors;
 
-import com.github.paganini2008.devtools.collection.LruMap;
-import com.github.paganini2008.devtools.collection.MutableMap;
+import com.github.paganini2008.devtools.collection.AtomicMutableMap;
 
 /**
  * 
@@ -30,14 +33,18 @@ import com.github.paganini2008.devtools.collection.MutableMap;
  * @author Fred Feng
  * @since 2.0.4
  */
-public class TimeSlotTable extends MutableMap<Instant, Object> {
+public class TimeSlotTable extends AtomicMutableMap<Instant, Object> {
 
 	private static final long serialVersionUID = -1609264341186593908L;
 
 	private final TimeSlot timeSlot;
 	private final int span;
 
-	public TimeSlotTable(Map<Instant, Object> delegate, int span, TimeSlot timeSlot) {
+	public TimeSlotTable(int span, TimeSlot timeSlot) {
+		this(new ConcurrentHashMap<>(), span, timeSlot);
+	}
+
+	public TimeSlotTable(Map<Instant, AtomicStampedReference<Object>> delegate, int span, TimeSlot timeSlot) {
 		super(delegate);
 		this.timeSlot = timeSlot;
 		this.span = span;
@@ -49,8 +56,9 @@ public class TimeSlotTable extends MutableMap<Instant, Object> {
 		return ldt.atZone(ZoneId.systemDefault()).toInstant();
 	}
 
-	public static TimeSlotTable scroll(int span, TimeSlot timeSlot) {
-		return new TimeSlotTable(new LruMap<>(timeSlot.sizeOf(span)), span, timeSlot);
+	public Map<LocalDateTime, Object> format() {
+		return entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toMap(e -> e.getKey().atZone(ZoneId.systemDefault()).toLocalDateTime(),
+				e -> e.getValue(), (oldVal, newVal) -> oldVal, LinkedHashMap::new));
 	}
 
 }
