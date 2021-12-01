@@ -18,40 +18,47 @@ package com.github.paganini2008.devtools.collection;
 import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
+import java.util.NavigableSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.function.BiFunction;
 
 /**
  * 
- * SimpleBoundedMap
+ * ConcurrentSortedBoundedMap
  * 
  * @author Fred Feng
  *
  * @since 2.0.1
  */
-public class SimpleBoundedMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Serializable, BoundedMap<K, V> {
+public class ConcurrentSortedBoundedMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Serializable, BoundedMap<K, V> {
 
-	private static final long serialVersionUID = -4746340195536492722L;
+	private static final long serialVersionUID = -2786447946165755013L;
 
-	private final Queue<K> keys;
+	private final NavigableSet<K> keys;
 	private final int maxSize;
 	private final Map<K, V> delegate;
 
-	public SimpleBoundedMap(int maxSize) {
-		this(new LinkedHashMap<K, V>(), maxSize);
+	public ConcurrentSortedBoundedMap(int maxSize) {
+		this(new ConcurrentHashMap<K, V>(), maxSize);
 	}
 
-	public SimpleBoundedMap(Map<K, V> delegate, int maxSize) {
-		this(delegate, maxSize, new LinkedList<K>());
+	public ConcurrentSortedBoundedMap(Map<K, V> delegate, int maxSize) {
+		this(delegate, maxSize, new ConcurrentSkipListSet<K>());
 	}
 
-	public SimpleBoundedMap(Map<K, V> delegate, int maxSize, Queue<K> keys) {
+	protected ConcurrentSortedBoundedMap(Map<K, V> delegate, int maxSize, NavigableSet<K> keys) {
 		this.delegate = delegate;
 		this.maxSize = maxSize;
 		this.keys = keys;
+	}
+
+	private boolean asc = true;
+
+	public void setAsc(boolean asc) {
+		this.asc = asc;
 	}
 
 	@Override
@@ -67,6 +74,11 @@ public class SimpleBoundedMap<K, V> extends AbstractMap<K, V> implements Map<K, 
 	@Override
 	public boolean containsKey(Object key) {
 		return delegate.containsKey(key);
+	}
+
+	@Override
+	public V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
+		return delegate.merge(key, value, remappingFunction);
 	}
 
 	@Override
@@ -90,13 +102,11 @@ public class SimpleBoundedMap<K, V> extends AbstractMap<K, V> implements Map<K, 
 
 	@Override
 	public V remove(Object key) {
-		keys.remove(key);
 		return delegate.remove(key);
 	}
 
 	@Override
 	public void clear() {
-		keys.clear();
 		delegate.clear();
 	}
 
@@ -116,13 +126,13 @@ public class SimpleBoundedMap<K, V> extends AbstractMap<K, V> implements Map<K, 
 	}
 
 	@Override
-	public Set<Entry<K, V>> entrySet() {
-		return delegate.entrySet();
+	public int getMaxSize() {
+		return maxSize;
 	}
 
 	@Override
-	public int getMaxSize() {
-		return maxSize;
+	public Set<Entry<K, V>> entrySet() {
+		return delegate.entrySet();
 	}
 
 	private void ensureCapacity(K key) {
@@ -134,7 +144,7 @@ public class SimpleBoundedMap<K, V> extends AbstractMap<K, V> implements Map<K, 
 				keys.add(key);
 			}
 			if (reached = (keys.size() > maxSize)) {
-				eldestKey = keys.poll();
+				eldestKey = asc ? keys.pollFirst() : keys.pollLast();
 				eldestValue = delegate.remove(eldestKey);
 			}
 		}

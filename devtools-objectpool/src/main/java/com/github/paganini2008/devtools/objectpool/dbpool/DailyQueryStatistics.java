@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import com.github.paganini2008.devtools.collection.LruMap;
-import com.github.paganini2008.devtools.date.DateUtils;
+import com.github.paganini2008.devtools.time.DateUtils;
 
 /**
  * Query statistics recent seven-day

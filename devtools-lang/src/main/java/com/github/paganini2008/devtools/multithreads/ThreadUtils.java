@@ -15,7 +15,7 @@
 */
 package com.github.paganini2008.devtools.multithreads;
 
-import static com.github.paganini2008.devtools.date.DateUtils.convertToMillis;
+import static com.github.paganini2008.devtools.time.DateUtils.convertToMillis;
 
 import java.util.ArrayList;
 import java.util.Date;

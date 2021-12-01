@@ -31,11 +31,11 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
-import com.github.paganini2008.devtools.date.DateUtils;
-import com.github.paganini2008.devtools.date.LocalDateTimeUtils;
-import com.github.paganini2008.devtools.date.LocalDateUtils;
-import com.github.paganini2008.devtools.date.LocalTimeUtils;
-import com.github.paganini2008.devtools.date.YearUtils;
+import com.github.paganini2008.devtools.time.DateUtils;
+import com.github.paganini2008.devtools.time.LocalDateTimeUtils;
+import com.github.paganini2008.devtools.time.LocalDateUtils;
+import com.github.paganini2008.devtools.time.LocalTimeUtils;
+import com.github.paganini2008.devtools.time.YearUtils;
 
 /**
  * 

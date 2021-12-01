@@ -18,7 +18,7 @@ package com.github.paganini2008.devtools.objectpool.dbpool;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import com.github.paganini2008.devtools.date.Duration;
+import com.github.paganini2008.devtools.time.Duration;
 
 /**
  * QueryTraceImpl

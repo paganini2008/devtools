@@ -31,7 +31,7 @@ import com.github.paganini2008.devtools.RandomStringUtils;
 import com.github.paganini2008.devtools.RandomUtils;
 import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.beans.Example;
-import com.github.paganini2008.devtools.date.DateUtils;
+import com.github.paganini2008.devtools.time.DateUtils;
 
 /**
  * 

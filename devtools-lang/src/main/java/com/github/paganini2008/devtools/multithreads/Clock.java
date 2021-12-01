@@ -23,10 +23,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.github.paganini2008.devtools.date.DateUtils;
 import com.github.paganini2008.devtools.event.Event;
 import com.github.paganini2008.devtools.event.EventBus;
 import com.github.paganini2008.devtools.event.EventSubscriber;
+import com.github.paganini2008.devtools.time.DateUtils;
 
 /**
  * 

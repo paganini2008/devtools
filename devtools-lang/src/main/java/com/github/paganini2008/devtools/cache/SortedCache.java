@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.github.paganini2008.devtools.collection.SortedBoundedMap;
+import com.github.paganini2008.devtools.collection.ConcurrentSortedBoundedMap;
 
 /**
  * 
@@ -32,10 +32,10 @@ import com.github.paganini2008.devtools.collection.SortedBoundedMap;
  */
 public class SortedCache extends BoundedCache {
 
-	private final SortedBoundedMap<Object, Object> boundedMap;
+	private final ConcurrentSortedBoundedMap<Object, Object> boundedMap;
 
 	public SortedCache(int maxSize) {
-		this.boundedMap = new SortedBoundedMap<Object, Object>(new ConcurrentHashMap<Object, Object>(), maxSize) {
+		this.boundedMap = new ConcurrentSortedBoundedMap<Object, Object>(new ConcurrentHashMap<Object, Object>(), maxSize) {
 
 			private static final long serialVersionUID = 1L;
 

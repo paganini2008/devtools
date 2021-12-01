@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.github.paganini2008.devtools.collection.SimpleBoundedMap;
+import com.github.paganini2008.devtools.collection.ConcurrentBoundedMap;
 
 /**
  * 
@@ -31,10 +31,10 @@ import com.github.paganini2008.devtools.collection.SimpleBoundedMap;
  */
 public class FifoCache extends BoundedCache {
 
-	private final SimpleBoundedMap<Object, Object> boundedMap;
+	private final ConcurrentBoundedMap<Object, Object> boundedMap;
 
 	public FifoCache(int maxSize) {
-		this.boundedMap = new SimpleBoundedMap<Object, Object>(new ConcurrentHashMap<Object, Object>(), maxSize) {
+		this.boundedMap = new ConcurrentBoundedMap<Object, Object>(new ConcurrentHashMap<Object, Object>(), maxSize) {
 			private static final long serialVersionUID = 1L;
 
 			@Override

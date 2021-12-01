@@ -38,8 +38,6 @@ import com.github.paganini2008.devtools.CharsetUtils;
 import com.github.paganini2008.devtools.NumberUtils;
 import com.github.paganini2008.devtools.collection.CollectionUtils;
 import com.github.paganini2008.devtools.collection.MapUtils;
-import com.github.paganini2008.devtools.date.CalendarUtils;
-import com.github.paganini2008.devtools.date.DateUtils;
 import com.github.paganini2008.devtools.io.IOUtils;
 import com.github.paganini2008.devtools.net.Urls;
 import com.github.paganini2008.devtools.primitives.Booleans;
@@ -48,6 +46,8 @@ import com.github.paganini2008.devtools.primitives.Floats;
 import com.github.paganini2008.devtools.primitives.Ints;
 import com.github.paganini2008.devtools.primitives.Longs;
 import com.github.paganini2008.devtools.primitives.Shorts;
+import com.github.paganini2008.devtools.time.CalendarUtils;
+import com.github.paganini2008.devtools.time.DateUtils;
 
 /**
  * StringConverter

@@ -18,7 +18,7 @@ package com.github.paganini2008.devtools.cron4j;
 import java.util.concurrent.TimeUnit;
 
 import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
-import com.github.paganini2008.devtools.date.DateUtils;
+import com.github.paganini2008.devtools.time.DateUtils;
 
 /**
  * 

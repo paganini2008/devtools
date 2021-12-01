@@ -13,9 +13,9 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.github.paganini2008.devtools.date;
+package com.github.paganini2008.devtools.time;
 
-import static com.github.paganini2008.devtools.date.DateUtils.DEFAULT_DATE_PATTERN;
+import static com.github.paganini2008.devtools.time.DateUtils.DEFAULT_DATE_PATTERN;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

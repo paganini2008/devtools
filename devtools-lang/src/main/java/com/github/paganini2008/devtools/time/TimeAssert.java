@@ -13,10 +13,10 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.github.paganini2008.devtools.date;
+package com.github.paganini2008.devtools.time;
 
-import static com.github.paganini2008.devtools.date.DateUtils.MAX_YEAR;
-import static com.github.paganini2008.devtools.date.DateUtils.MIN_YEAR;
+import static com.github.paganini2008.devtools.time.DateUtils.MAX_YEAR;
+import static com.github.paganini2008.devtools.time.DateUtils.MIN_YEAR;
 
 import java.time.Year;
 import java.time.YearMonth;

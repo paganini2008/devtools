@@ -21,8 +21,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import com.github.paganini2008.devtools.date.CalendarUtils;
-import com.github.paganini2008.devtools.date.DateUtils;
+import com.github.paganini2008.devtools.time.CalendarUtils;
+import com.github.paganini2008.devtools.time.DateUtils;
 
 /**
  * CalendarConverter

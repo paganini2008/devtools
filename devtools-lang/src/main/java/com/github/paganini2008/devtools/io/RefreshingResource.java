@@ -25,7 +25,7 @@ import java.util.Properties;
 
 import com.github.paganini2008.devtools.MatchMode;
 import com.github.paganini2008.devtools.collection.MapUtils;
-import com.github.paganini2008.devtools.date.DateUtils;
+import com.github.paganini2008.devtools.time.DateUtils;
 
 /**
  * 

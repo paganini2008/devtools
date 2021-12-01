@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.github.paganini2008.devtools.cron4j.TaskExecutor.TaskDetail;
-import com.github.paganini2008.devtools.date.DateUtils;
+import com.github.paganini2008.devtools.time.DateUtils;
 
 /**
  * 

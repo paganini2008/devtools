@@ -13,26 +13,25 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.github.paganini2008.devtools.date;
-
-import java.time.Year;
+package com.github.paganini2008.devtools.time;
 
 /**
  * 
- * TimeAssert
+ * PatternNotFoundException
  *
  * @author Fred Feng
- *
- * @since 2.0.4
+ * @since 2.0.1
  */
-public abstract class YearUtils {
+public class PatternNotFoundException extends RuntimeException {
 
-	public static final Year MIN_YEAR = Year.of(DateUtils.MIN_YEAR);
-	public static final Year MAX_YEAR = Year.of(DateUtils.MAX_YEAR);
+	private static final long serialVersionUID = 2775088227811223383L;
 
-	public static Year of(int year) {
-		TimeAssert.validateYear(year);
-		return Year.of(year);
+	public PatternNotFoundException(String msg) {
+		super(msg);
+	}
+
+	public PatternNotFoundException(String msg, Throwable e) {
+		super(msg, e);
 	}
 
 }

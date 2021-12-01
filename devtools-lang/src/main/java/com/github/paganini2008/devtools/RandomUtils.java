@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-import com.github.paganini2008.devtools.date.TimeAssert;
 import com.github.paganini2008.devtools.math.BigDecimalUtils;
 import com.github.paganini2008.devtools.primitives.Doubles;
 import com.github.paganini2008.devtools.primitives.Floats;
@@ -32,6 +31,7 @@ import com.github.paganini2008.devtools.primitives.Ints;
 import com.github.paganini2008.devtools.primitives.Longs;
 import com.github.paganini2008.devtools.primitives.Shorts;
 import com.github.paganini2008.devtools.reflection.MethodUtils;
+import com.github.paganini2008.devtools.time.TimeAssert;
 
 /**
  * RandomUtils

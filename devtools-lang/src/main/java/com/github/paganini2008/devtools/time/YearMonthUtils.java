@@ -13,25 +13,33 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.github.paganini2008.devtools.date;
+package com.github.paganini2008.devtools.time;
+
+import java.time.Month;
+import java.time.Year;
+import java.time.YearMonth;
+
+import com.github.paganini2008.devtools.Assert;
 
 /**
  * 
- * PatternNotFoundException
+ * YearMonthUtils
  *
  * @author Fred Feng
- * @since 2.0.1
+ *
+ * @since 2.0.4
  */
-public class PatternNotFoundException extends RuntimeException {
+public abstract class YearMonthUtils {
 
-	private static final long serialVersionUID = 2775088227811223383L;
-
-	public PatternNotFoundException(String msg) {
-		super(msg);
+	public static YearMonth toYearMonth(Year year, Month month) {
+		Assert.outOfRange(year, YearUtils.MIN_YEAR, YearUtils.MAX_YEAR, "Out of year range. Input: " + year);
+		return year.atMonth(month);
 	}
 
-	public PatternNotFoundException(String msg, Throwable e) {
-		super(msg, e);
+	public static YearMonth of(int year, int month) {
+		TimeAssert.validateYear(year);
+		TimeAssert.validateMonth(month);
+		return YearMonth.of(year, month);
 	}
 
 }

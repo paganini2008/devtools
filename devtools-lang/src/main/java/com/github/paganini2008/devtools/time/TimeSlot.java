@@ -13,7 +13,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.github.paganini2008.devtools.date;
+package com.github.paganini2008.devtools.time;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -41,7 +41,7 @@ public enum TimeSlot {
 
 		@Override
 		public int sizeOf(int span, int days) {
-			return (24 / span + 1) * days;
+			return (24 % span == 0 ? (24 / span) : (24 / span + 1)) * days;
 		}
 
 	},
@@ -57,7 +57,7 @@ public enum TimeSlot {
 
 		@Override
 		public int sizeOf(int span, int days) {
-			return (60 / span + 1) * 24 * days;
+			return (60 % span == 0 ? (60 / span) : (60 / span + 1)) * 24 * days;
 		}
 
 	},
@@ -74,7 +74,7 @@ public enum TimeSlot {
 
 		@Override
 		public int sizeOf(int span, int days) {
-			return (60 / span + 1) * 60 * 24 * days;
+			return (60 % span == 0 ? (60 / span) : (60 / span + 1)) * 60 * 24 * days;
 		}
 
 	};

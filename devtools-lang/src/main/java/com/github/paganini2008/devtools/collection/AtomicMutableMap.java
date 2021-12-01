@@ -25,6 +25,8 @@ import java.util.concurrent.atomic.AtomicStampedReference;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
+import com.github.paganini2008.devtools.ObjectUtils;
+
 /**
  * 
  * AtomicMutableMap
@@ -60,7 +62,12 @@ public abstract class AtomicMutableMap<K, V> extends AbstractMap<K, V> implement
 
 	@Override
 	public boolean containsValue(Object value) {
-		return delegate.containsValue(value);
+		for (AtomicStampedReference<V> ref : delegate.values()) {
+			if (ObjectUtils.equals(ref.getReference(), value)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -76,7 +83,7 @@ public abstract class AtomicMutableMap<K, V> extends AbstractMap<K, V> implement
 
 	@Override
 	public Collection<V> values() {
-		return delegate.values().stream().map(ref -> ref.getReference()).collect(Collectors.toUnmodifiableList());
+		return delegate.values().stream().map(ref -> ref.getReference()).collect(Collectors.toList());
 	}
 
 	@Override
@@ -89,10 +96,14 @@ public abstract class AtomicMutableMap<K, V> extends AbstractMap<K, V> implement
 		delegate.clear();
 	}
 
+	public Map<K, V> toMap() {
+		return delegate.entrySet().stream()
+				.collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().getReference(), (o, n) -> o, LinkedHashMap::new));
+	}
+
 	@Override
 	public Set<Entry<K, V>> entrySet() {
-		return delegate.entrySet().stream()
-				.collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().getReference(), (o, n) -> o, LinkedHashMap::new)).entrySet();
+		return toMap().entrySet();
 	}
 
 	@Override

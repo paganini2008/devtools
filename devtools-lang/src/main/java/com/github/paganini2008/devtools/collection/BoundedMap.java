@@ -29,7 +29,6 @@ public interface BoundedMap<K, V> extends Map<K, V> {
 	int getMaxSize();
 
 	default void onEviction(K eldestKey, V eldestValue) {
-		System.out.println("taotai: " + eldestKey + ", val: " + eldestValue);
 	}
 
 }

@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import com.github.paganini2008.devtools.date.DateUtils;
 import com.github.paganini2008.devtools.mock.MockTypeHandlers.BigDecimalTypeHandler;
 import com.github.paganini2008.devtools.mock.MockTypeHandlers.BigIntegerTypeHandler;
 import com.github.paganini2008.devtools.mock.MockTypeHandlers.BooleanTypeHandler;
@@ -45,6 +44,7 @@ import com.github.paganini2008.devtools.mock.MockTypeHandlers.LocalTimeTypeHandl
 import com.github.paganini2008.devtools.mock.MockTypeHandlers.LongTypeHandler;
 import com.github.paganini2008.devtools.mock.MockTypeHandlers.ShortTypeHandler;
 import com.github.paganini2008.devtools.mock.MockTypeHandlers.StringTypeHandler;
+import com.github.paganini2008.devtools.time.DateUtils;
 
 /**
  * 

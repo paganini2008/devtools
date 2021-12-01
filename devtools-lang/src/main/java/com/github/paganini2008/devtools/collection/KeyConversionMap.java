@@ -17,8 +17,6 @@ package com.github.paganini2008.devtools.collection;
 
 import java.io.Serializable;
 import java.util.AbstractMap;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,7 +37,7 @@ public abstract class KeyConversionMap<T, K, V> extends AbstractMap<K, V> implem
 
 	protected KeyConversionMap(Map<K, V> delegate) {
 		this.delegate = delegate;
-		this.keys = Collections.synchronizedMap(new HashMap<T, K>());
+		this.keys = MapUtils.synchronizedHashMap();
 	}
 
 	public boolean containsKey(Object key) {
@@ -48,8 +46,7 @@ public abstract class KeyConversionMap<T, K, V> extends AbstractMap<K, V> implem
 	}
 
 	public V get(Object key) {
-		Object str = convertKey(key);
-		Object realKey = keys.get(str);
+		Object realKey = keys.get(convertKey(key));
 		return realKey != null ? delegate.get(realKey) : null;
 	}
 

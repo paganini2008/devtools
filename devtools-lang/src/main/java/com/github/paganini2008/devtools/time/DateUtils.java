@@ -13,7 +13,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.github.paganini2008.devtools.date;
+package com.github.paganini2008.devtools.time;
 
 import java.text.DateFormat;
 import java.text.ParseException;

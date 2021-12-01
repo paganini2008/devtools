@@ -22,7 +22,7 @@ import com.github.paganini2008.devtools.cron4j.cron.EveryYear;
 import com.github.paganini2008.devtools.cron4j.cron.TheYear;
 import com.github.paganini2008.devtools.cron4j.cron.ThisYear;
 import com.github.paganini2008.devtools.cron4j.cron.Year;
-import com.github.paganini2008.devtools.date.DateUtils;
+import com.github.paganini2008.devtools.time.DateUtils;
 
 /**
  * 

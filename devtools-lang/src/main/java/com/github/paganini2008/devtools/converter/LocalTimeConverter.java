@@ -21,7 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
-import com.github.paganini2008.devtools.date.LocalTimeUtils;
+import com.github.paganini2008.devtools.time.LocalTimeUtils;
 
 /**
  * 

@@ -26,7 +26,7 @@ import com.github.paganini2008.devtools.cron4j.ThreadPoolTaskExecutor;
 import com.github.paganini2008.devtools.cron4j.TimerTaskExecutor;
 import com.github.paganini2008.devtools.cron4j.cron.CronExpression;
 import com.github.paganini2008.devtools.cron4j.cron.CronExpressionBuilder;
-import com.github.paganini2008.devtools.date.DateUtils;
+import com.github.paganini2008.devtools.time.DateUtils;
 
 /**
  * 

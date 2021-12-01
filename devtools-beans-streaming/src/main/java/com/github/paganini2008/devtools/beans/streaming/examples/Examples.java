@@ -33,7 +33,7 @@ import com.github.paganini2008.devtools.beans.streaming.Sorter;
 import com.github.paganini2008.devtools.beans.streaming.View;
 import com.github.paganini2008.devtools.beans.streaming.examples.Product.Style;
 import com.github.paganini2008.devtools.collection.Tuple;
-import com.github.paganini2008.devtools.date.DateUtils;
+import com.github.paganini2008.devtools.time.DateUtils;
 
 /**
  * 
