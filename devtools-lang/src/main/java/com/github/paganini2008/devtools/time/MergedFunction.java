@@ -16,30 +16,17 @@
 package com.github.paganini2008.devtools.time;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 
- * TimeSlotTable
+ * MergeFunction
  *
  * @author Fred Feng
- *
  * @since 2.0.4
  */
-public interface TimeSlotTable<V> extends Map<Instant, V> {
+@FunctionalInterface
+public interface MergedFunction<V> {
 
-	default V merge(Instant ins, V newValue, MergedFunction<V> fun) {
-		return merge(ins, newValue, (left, right) -> fun.merge(ins, left, right));
-	}
-
-	default Map<LocalDateTime, V> output() {
-		return entrySet().stream().sorted(Map.Entry.comparingByKey())
-				.collect(Collectors.toMap(e -> e.getKey().atZone(ZoneId.systemDefault()).toLocalDateTime(), e -> e.getValue(),
-						(oldVal, newVal) -> oldVal, LinkedHashMap::new));
-	}
+	V merge(Instant key, V current, V value);
 
 }

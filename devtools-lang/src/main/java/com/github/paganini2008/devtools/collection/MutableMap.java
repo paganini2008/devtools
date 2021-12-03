@@ -47,6 +47,11 @@ public abstract class MutableMap<K, V> extends AbstractMap<K, V> implements Map<
 	public V put(K key, V value) {
 		return delegate.put(mutate(key), value);
 	}
+	
+	@Override
+	public V remove(Object key) {
+		return delegate.remove(mutate(key));
+	}
 
 	@Override
 	public boolean containsKey(Object key) {
@@ -56,11 +61,6 @@ public abstract class MutableMap<K, V> extends AbstractMap<K, V> implements Map<
 	@Override
 	public boolean containsValue(Object value) {
 		return delegate.containsValue(value);
-	}
-
-	@Override
-	public V remove(Object key) {
-		return delegate.remove(mutate(key));
 	}
 
 	@Override

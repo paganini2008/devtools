@@ -21,9 +21,7 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.github.paganini2008.devtools.collection.MapUtils;
 import com.github.paganini2008.devtools.collection.MutableMap;
 
 /**
@@ -49,19 +47,6 @@ public class AccTimeSlotTable<V> extends MutableMap<Instant, List<V>> implements
 		super(delegate);
 		this.span = span;
 		this.timeSlot = timeSlot;
-	}
-
-	public List<V> put(Instant ins, V value) {
-		List<V> list = MapUtils.get(this, ins, () -> new CopyOnWriteArrayList<>());
-		list.add(value);
-		return list;
-	}
-
-	@Override
-	public List<V> put(Instant ins, List<V> values) {
-		List<V> list = MapUtils.get(this, ins, () -> new CopyOnWriteArrayList<>());
-		list.addAll(values);
-		return list;
 	}
 
 	@Override
