@@ -50,7 +50,7 @@ public class AccumulationTimeSlotTable<V> extends MutableMap<Instant, List<V>> i
 	}
 
 	@Override
-	protected Instant mutate(Object inputKey) {
+	public Instant mutate(Object inputKey) {
 		LocalDateTime ldt = timeSlot.locate((Instant) inputKey, span);
 		return ldt.atZone(ZoneId.systemDefault()).toInstant();
 	}

@@ -31,6 +31,8 @@ import java.util.stream.Collectors;
  * @since 2.0.4
  */
 public interface TimeSlotTable<V> extends Map<Instant, V> {
+	
+	Instant mutate(Object inputKey);
 
 	default V merge(Instant ins, V newValue, MergedFunction<V> fun) {
 		return merge(ins, newValue, (left, right) -> fun.merge(ins, left, right));

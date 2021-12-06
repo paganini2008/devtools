@@ -143,6 +143,16 @@ public abstract class ThreadUtils {
 		}
 	}
 
+	public static void test(Object monitor, Supplier<Boolean> condition, Runnable operation) {
+		if (condition.get()) {
+			synchronized (monitor) {
+				if (condition.get()) {
+					operation.run();
+				}
+			}
+		}
+	}
+
 	public static Thread runAsThread(Runnable runnable) {
 		return runAsThread(runnable, (t, e) -> {
 			e.printStackTrace();
