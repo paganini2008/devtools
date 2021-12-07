@@ -74,17 +74,22 @@ public class Observable {
 		}
 
 		public void update(Observable ob, Object arg) {
-			final Queue<Observer> q = new ArrayDeque<Observer>(observers);
-			Observer o;
-			while (!q.isEmpty()) {
-				o = q.poll();
+			if (observers.size() == 1) {
+				Observer o = repeated ? observers.peek() : observers.poll();
 				o.update(ob, arg);
-				if (!repeated) {
-					observers.remove(o);
-					if (observers.isEmpty()) {
-						ob.deleteObservers(topic);
+			} else if (observers.size() > 1) {
+				Queue<Observer> q = new ArrayDeque<Observer>(observers);
+				Observer o;
+				while (q.size() > 0) {
+					o = q.poll();
+					o.update(ob, arg);
+					if (!repeated) {
+						observers.remove(o);
 					}
 				}
+			}
+			if (observers.isEmpty()) {
+				ob.deleteObservers(topic);
 			}
 		}
 
