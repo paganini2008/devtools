@@ -26,7 +26,7 @@ import com.github.paganini2008.devtools.io.filter.MatchNameFileFilter.MatchMode;
  * 
  * @since 2.0.1
  */
-public class Filters {
+public abstract class Filters {
 
 	public static LogicalFileFilter findByName(String name, boolean ignoreCase) {
 		return new NameFileFilter(name, ignoreCase);
@@ -58,9 +58,6 @@ public class Filters {
 
 	public static LogicalFileFilter isDirectory() {
 		return new DirectoryFileFilter();
-	}
-
-	private Filters() {
 	}
 
 }
