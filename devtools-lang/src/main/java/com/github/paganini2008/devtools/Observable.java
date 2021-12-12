@@ -17,6 +17,7 @@ package com.github.paganini2008.devtools;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.PriorityBlockingQueue;
@@ -42,7 +43,7 @@ public class Observable {
 
 	static class ObserverGroup implements Observer {
 
-		private final Queue<Observer> observers = new PriorityBlockingQueue<Observer>();
+		private final BlockingQueue<Observer> observers = new PriorityBlockingQueue<Observer>();
 		private final String topic;
 		private final boolean repeated;
 
@@ -78,14 +79,17 @@ public class Observable {
 				Observer o = repeated ? observers.peek() : observers.poll();
 				o.update(ob, arg);
 			} else if (observers.size() > 1) {
-				Queue<Observer> q = new ArrayDeque<Observer>(observers);
+				Queue<Observer> q;
+				if (repeated) {
+					q = new ArrayDeque<Observer>(observers);
+				} else {
+					q = new ArrayDeque<Observer>();
+					observers.drainTo(q);
+				}
 				Observer o;
 				while (q.size() > 0) {
 					o = q.poll();
 					o.update(ob, arg);
-					if (!repeated) {
-						observers.remove(o);
-					}
 				}
 			}
 			if (observers.isEmpty()) {

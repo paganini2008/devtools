@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.RandomUtils;
 import com.github.paganini2008.devtools.Sequence;
 
@@ -64,6 +65,7 @@ public abstract class ThreadUtils {
 
 	public static boolean wait(Object monitor, Supplier<Boolean> condition) {
 		if (monitor != null) {
+			Assert.isNull(condition, "NonNull condition");
 			while (true) {
 				synchronized (monitor) {
 					if (condition.get()) {
@@ -83,6 +85,7 @@ public abstract class ThreadUtils {
 
 	public static boolean wait(Object monitor, Supplier<Boolean> condition, long timeout) {
 		if (monitor != null) {
+			Assert.isNull(condition, "NonNull condition");
 			final long begin = System.nanoTime();
 			long elapsed;
 			long m = timeout;
@@ -119,6 +122,7 @@ public abstract class ThreadUtils {
 
 	public static void notify(Object monitor, Supplier<Boolean> condition) {
 		if (monitor != null) {
+			Assert.isNull(condition, "NonNull condition");
 			if (condition.get()) {
 				synchronized (monitor) {
 					monitor.notify();
@@ -135,6 +139,7 @@ public abstract class ThreadUtils {
 
 	public static void notifyAll(Object monitor, Supplier<Boolean> condition) {
 		if (monitor != null) {
+			Assert.isNull(condition, "NonNull condition");
 			if (condition.get()) {
 				synchronized (monitor) {
 					monitor.notifyAll();
@@ -143,7 +148,12 @@ public abstract class ThreadUtils {
 		}
 	}
 
-	public static void test(Object monitor, Supplier<Boolean> condition, Runnable operation) {
+	public static void forUpdate(Object monitor, Supplier<Boolean> condition, Runnable operation) {
+		if (monitor == null) {
+			monitor = ThreadUtils.class;
+		}
+		Assert.isNull(condition, "NonNull condition");
+		Assert.isNull(operation, "NonNull operation");
 		if (condition.get()) {
 			synchronized (monitor) {
 				if (condition.get()) {

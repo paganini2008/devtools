@@ -180,7 +180,12 @@ public abstract class MapUtils {
 		if (map != null) {
 			V value = map.get(key);
 			if (value == null) {
-				map.putIfAbsent(key, supplier.get());
+				synchronized (supplier) {
+					value = map.get(key);
+					if (value == null) {
+						map.putIfAbsent(key, supplier.get());
+					}
+				}
 				value = map.get(key);
 			}
 			return value;
@@ -826,7 +831,7 @@ public abstract class MapUtils {
 		}
 		return data;
 	}
-	
+
 	private static class SingletonEntry implements Map.Entry {
 
 		private SingletonEntry(Object key, Object value) {

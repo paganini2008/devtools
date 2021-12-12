@@ -140,9 +140,7 @@ public class ConcurrentSortedBoundedMap<K, V> extends AbstractMap<K, V> implemen
 		K eldestKey = null;
 		V eldestValue = null;
 		synchronized (keys) {
-			if (!keys.contains(key)) {
-				keys.add(key);
-			}
+			keys.add(key);
 			if (reached = (keys.size() > maxSize)) {
 				eldestKey = asc ? keys.pollFirst() : keys.pollLast();
 				eldestValue = delegate.remove(eldestKey);

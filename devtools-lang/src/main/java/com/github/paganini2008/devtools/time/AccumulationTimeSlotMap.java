@@ -18,34 +18,35 @@ package com.github.paganini2008.devtools.time;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicStampedReference;
 
-import com.github.paganini2008.devtools.collection.AtomicMutableMap;
+import com.github.paganini2008.devtools.collection.MutableMap;
 
 /**
  * 
- * AggregationTimeSlotTable
+ * AccumulationTimeSlotMap
  *
  * @author Fred Feng
+ *
  * @since 2.0.4
  */
-public class AggregationTimeSlotTable<V> extends AtomicMutableMap<Instant, V> implements TimeSlotTable<V> {
+public class AccumulationTimeSlotMap<V> extends MutableMap<Instant, List<V>> implements TimeSlotMap<List<V>> {
 
-	private static final long serialVersionUID = -1609264341186593908L;
+	private static final long serialVersionUID = 8180993603631297273L;
 
-	private final TimeSlot timeSlot;
 	private final int span;
+	private final TimeSlot timeSlot;
 
-	public AggregationTimeSlotTable(int span, TimeSlot timeSlot) {
+	public AccumulationTimeSlotMap(int span, TimeSlot timeSlot) {
 		this(new ConcurrentHashMap<>(), span, timeSlot);
 	}
 
-	public AggregationTimeSlotTable(Map<Instant, AtomicStampedReference<V>> delegate, int span, TimeSlot timeSlot) {
+	public AccumulationTimeSlotMap(Map<Instant, List<V>> delegate, int span, TimeSlot timeSlot) {
 		super(delegate);
-		this.timeSlot = timeSlot;
 		this.span = span;
+		this.timeSlot = timeSlot;
 	}
 
 	@Override
