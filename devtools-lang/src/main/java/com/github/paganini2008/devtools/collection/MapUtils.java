@@ -197,7 +197,12 @@ public abstract class MapUtils {
 		if (map != null) {
 			V value = map.get(key);
 			if (value == null) {
-				map.putIfAbsent(key, function.apply(key));
+				synchronized (function) {
+					value = map.get(key);
+					if (value == null) {
+						map.putIfAbsent(key, function.apply(key));
+					}
+				}
 				value = map.get(key);
 			}
 			return value;
