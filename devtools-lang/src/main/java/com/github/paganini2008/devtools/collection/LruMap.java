@@ -135,7 +135,8 @@ public class LruMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Serial
 		return delegate.entrySet();
 	}
 
-	protected Map<K, V> getDelegate() {
+	@Override
+	public Map<K, V> getDelegate() {
 		return delegate;
 	}
 

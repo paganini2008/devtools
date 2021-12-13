@@ -125,6 +125,11 @@ public class ConcurrentBoundedMap<K, V> extends AbstractMap<K, V> implements Map
 		return maxSize;
 	}
 
+	@Override
+	public Map<K, V> getDelegate() {
+		return delegate;
+	}
+
 	private void ensureCapacity(K key) {
 		boolean reached;
 		K eldestKey = null;

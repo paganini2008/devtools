@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 /**
  * 
- * TimeSlotTable
+ * TimeSlotMap
  *
  * @author Fred Feng
  *

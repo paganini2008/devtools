@@ -129,6 +129,11 @@ public class ConcurrentSortedBoundedMap<K, V> extends AbstractMap<K, V> implemen
 	public int getMaxSize() {
 		return maxSize;
 	}
+	
+	@Override
+	public Map<K, V> getDelegate() {
+		return delegate;
+	}
 
 	@Override
 	public Set<Entry<K, V>> entrySet() {

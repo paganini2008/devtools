@@ -28,6 +28,10 @@ public interface BoundedMap<K, V> extends Map<K, V> {
 
 	int getMaxSize();
 
+	default Map<K, V> getDelegate() {
+		return null;
+	}
+
 	default void onEviction(K eldestKey, V eldestValue) {
 	}
 
