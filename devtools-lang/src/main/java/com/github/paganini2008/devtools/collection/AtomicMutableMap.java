@@ -126,6 +126,9 @@ public abstract class AtomicMutableMap<K, V> extends AbstractMap<K, V> implement
 		return null;
 	}
 
-	protected abstract K mutate(Object key);
+	@SuppressWarnings("unchecked")
+	protected K mutate(Object key) {
+		return (K) key;
+	}
 
 }
