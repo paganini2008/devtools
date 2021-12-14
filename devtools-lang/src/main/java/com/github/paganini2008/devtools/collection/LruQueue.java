@@ -17,6 +17,7 @@ package com.github.paganini2008.devtools.collection;
 
 import java.io.Serializable;
 import java.util.AbstractQueue;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
@@ -115,13 +116,15 @@ public class LruQueue<E> extends AbstractQueue<E> implements Queue<E>, Serializa
 		}
 		return -1;
 	}
+	
+	@Override
+	public Collection<E> getDelegate() {
+		return delegate;
+	}
 
 	@Override
 	public String toString() {
 		return delegate.toString();
-	}
-
-	public static void main(String[] args) {
 	}
 
 }

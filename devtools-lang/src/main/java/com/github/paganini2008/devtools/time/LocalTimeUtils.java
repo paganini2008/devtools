@@ -46,11 +46,22 @@ public abstract class LocalTimeUtils {
 	}
 
 	public static LocalTime toLocalTime(Long ms, ZoneId zoneId, LocalTime defaultValue) {
+		if (ms == null) {
+			return defaultValue;
+		}
+		return toLocalTime(Instant.ofEpochMilli(ms), zoneId, defaultValue);
+	}
+
+	public static LocalTime toLocalTime(Instant instant, ZoneId zoneId) {
+		return toLocalTime(instant, zoneId, null);
+	}
+
+	public static LocalTime toLocalTime(Instant instant, ZoneId zoneId, LocalTime defaultValue) {
 		if (zoneId == null) {
 			zoneId = ZoneId.systemDefault();
 		}
 		try {
-			return ms != null ? Instant.ofEpochMilli(ms).atZone(zoneId).toLocalTime() : defaultValue;
+			return instant != null ? instant.atZone(zoneId).toLocalTime() : defaultValue;
 		} catch (RuntimeException e) {
 			return defaultValue;
 		}
@@ -61,14 +72,10 @@ public abstract class LocalTimeUtils {
 	}
 
 	public static LocalTime toLocalTime(Date date, ZoneId zoneId, LocalTime defaultValue) {
-		if (zoneId == null) {
-			zoneId = ZoneId.systemDefault();
-		}
-		try {
-			return date != null ? date.toInstant().atZone(zoneId).toLocalTime() : defaultValue;
-		} catch (RuntimeException e) {
+		if (date == null) {
 			return defaultValue;
 		}
+		return toLocalTime(date.toInstant(), zoneId, defaultValue);
 	}
 
 	public static LocalTime toLocalTime(Calendar calendar, ZoneId zoneId) {
@@ -76,14 +83,10 @@ public abstract class LocalTimeUtils {
 	}
 
 	public static LocalTime toLocalTime(Calendar calendar, ZoneId zoneId, LocalTime defaultValue) {
-		if (zoneId == null) {
-			zoneId = ZoneId.systemDefault();
-		}
-		try {
-			return calendar != null ? calendar.toInstant().atZone(zoneId).toLocalTime() : defaultValue;
-		} catch (RuntimeException e) {
+		if (calendar == null) {
 			return defaultValue;
 		}
+		return toLocalTime(calendar.toInstant(), zoneId, defaultValue);
 	}
 
 	public static LocalTime parseLocalTime(String text) {
@@ -123,7 +126,7 @@ public abstract class LocalTimeUtils {
 		Assert.hasNoText(datePattern, "DatePattern can not be blank.");
 		DateTimeFormatter sdf = dfCache.get(datePattern);
 		if (sdf == null) {
-			dfCache.put(datePattern, DateTimeFormatter.ofPattern(datePattern, Locale.ENGLISH));
+			dfCache.putIfAbsent(datePattern, DateTimeFormatter.ofPattern(datePattern, Locale.ENGLISH));
 			sdf = dfCache.get(datePattern);
 		}
 		return sdf;

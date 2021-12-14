@@ -15,7 +15,9 @@
 */
 package com.github.paganini2008.devtools.converter;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -38,6 +40,12 @@ public class LocalDateConverter extends BasicConverter<LocalDate> {
 		}
 	};
 
+	private final Converter<Instant, LocalDate> instantConverter = new Converter<Instant, LocalDate>() {
+		public LocalDate convertValue(Instant source, LocalDate defaultValue) {
+			return LocalDateUtils.toLocalDate(source, zoneId, defaultValue);
+		}
+	};
+
 	private final Converter<String, LocalDate> stringConverter = new Converter<String, LocalDate>() {
 		public LocalDate convertValue(String source, LocalDate defaultValue) {
 			return LocalDateUtils.parseLocalDate(source, dateFormatter, defaultValue);
@@ -56,11 +64,19 @@ public class LocalDateConverter extends BasicConverter<LocalDate> {
 		}
 	};
 
+	private final Converter<LocalDateTime, LocalDate> localDateTimeConverter = new Converter<LocalDateTime, LocalDate>() {
+		public LocalDate convertValue(LocalDateTime source, LocalDate defaultValue) {
+			return LocalDateUtils.toLocalDate(source, defaultValue);
+		}
+	};
+
 	public LocalDateConverter() {
 		registerType(Long.class, longConverter);
+		registerType(Instant.class, instantConverter);
 		registerType(String.class, stringConverter);
 		registerType(Date.class, dateConverter);
 		registerType(Calendar.class, calendarConverter);
+		registerType(LocalDateTime.class, localDateTimeConverter);
 	}
 
 	private ZoneId zoneId = ZoneId.systemDefault();

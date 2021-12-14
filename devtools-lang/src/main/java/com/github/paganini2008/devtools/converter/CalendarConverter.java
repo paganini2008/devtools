@@ -15,6 +15,7 @@
 */
 package com.github.paganini2008.devtools.converter;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Calendar;
@@ -34,6 +35,12 @@ public class CalendarConverter extends BasicConverter<Calendar> {
 
 	private final Converter<Long, Calendar> longConverter = new Converter<Long, Calendar>() {
 		public Calendar convertValue(Long source, Calendar defaultValue) {
+			return CalendarUtils.toCalendar(source, timeZone, defaultValue);
+		}
+	};
+
+	private final Converter<Instant, Calendar> instantConverter = new Converter<Instant, Calendar>() {
+		public Calendar convertValue(Instant source, Calendar defaultValue) {
 			return CalendarUtils.toCalendar(source, timeZone, defaultValue);
 		}
 	};
@@ -64,6 +71,7 @@ public class CalendarConverter extends BasicConverter<Calendar> {
 
 	public CalendarConverter() {
 		registerType(Long.class, longConverter);
+		registerType(Instant.class, instantConverter);
 		registerType(String.class, stringConverter);
 		registerType(Date.class, dateConverter);
 		registerType(LocalDate.class, localDateConverter);

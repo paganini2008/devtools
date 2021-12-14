@@ -24,8 +24,6 @@ import java.util.Map;
  * FileEntry
  * 
  * @author Fred Feng
- * 
- * 
  * @since 2.0.1
  */
 public class FileEntry implements Serializable {

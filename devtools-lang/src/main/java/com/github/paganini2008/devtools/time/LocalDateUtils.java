@@ -17,6 +17,7 @@ package com.github.paganini2008.devtools.time;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.Year;
 import java.time.YearMonth;
@@ -172,11 +173,22 @@ public abstract class LocalDateUtils {
 	}
 
 	public static LocalDate toLocalDate(Long ms, ZoneId zoneId, LocalDate defaultValue) {
+		if (ms == null) {
+			return defaultValue;
+		}
+		return toLocalDate(Instant.ofEpochMilli(ms), zoneId, defaultValue);
+	}
+
+	public static LocalDate toLocalDate(Instant instant, ZoneId zoneId) {
+		return toLocalDate(instant, zoneId, null);
+	}
+
+	public static LocalDate toLocalDate(Instant instant, ZoneId zoneId, LocalDate defaultValue) {
 		if (zoneId == null) {
 			zoneId = ZoneId.systemDefault();
 		}
 		try {
-			return ms != null ? Instant.ofEpochMilli(ms).atZone(zoneId).toLocalDate() : defaultValue;
+			return instant != null ? instant.atZone(zoneId).toLocalDate() : defaultValue;
 		} catch (RuntimeException e) {
 			return defaultValue;
 		}
@@ -187,14 +199,10 @@ public abstract class LocalDateUtils {
 	}
 
 	public static LocalDate toLocalDate(Date date, ZoneId zoneId, LocalDate defaultValue) {
-		if (zoneId == null) {
-			zoneId = ZoneId.systemDefault();
-		}
-		try {
-			return date != null ? date.toInstant().atZone(zoneId).toLocalDate() : defaultValue;
-		} catch (RuntimeException e) {
+		if (date == null) {
 			return defaultValue;
 		}
+		return toLocalDate(date.toInstant(), zoneId, defaultValue);
 	}
 
 	public static LocalDate toLocalDate(Calendar calendar, ZoneId zoneId) {
@@ -202,14 +210,17 @@ public abstract class LocalDateUtils {
 	}
 
 	public static LocalDate toLocalDate(Calendar calendar, ZoneId zoneId, LocalDate defaultValue) {
-		if (zoneId == null) {
-			zoneId = ZoneId.systemDefault();
-		}
-		try {
-			return calendar != null ? calendar.toInstant().atZone(zoneId).toLocalDate() : defaultValue;
-		} catch (RuntimeException e) {
+		if (calendar == null) {
 			return defaultValue;
 		}
+		return toLocalDate(calendar.toInstant(), zoneId, defaultValue);
+	}
+
+	public static LocalDate toLocalDate(LocalDateTime ldt, LocalDate defaultValue) {
+		if (ldt == null) {
+			return defaultValue;
+		}
+		return ldt.toLocalDate();
 	}
 
 	public static String format(LocalDate localDate) {
@@ -282,7 +293,7 @@ public abstract class LocalDateUtils {
 		Assert.hasNoText(datePattern, "DatePattern can not be blank.");
 		DateTimeFormatter sdf = dfCache.get(datePattern);
 		if (sdf == null) {
-			dfCache.put(datePattern, DateTimeFormatter.ofPattern(datePattern, Locale.ENGLISH));
+			dfCache.putIfAbsent(datePattern, DateTimeFormatter.ofPattern(datePattern, Locale.ENGLISH));
 			sdf = dfCache.get(datePattern);
 		}
 		return sdf;

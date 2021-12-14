@@ -17,6 +17,7 @@ package com.github.paganini2008.devtools.collection;
 
 import java.io.Serializable;
 import java.util.AbstractSet;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -86,6 +87,11 @@ public class LruSet<E> extends AbstractSet<E> implements Set<E>, Serializable, B
 	public void clear() {
 		keys.clear();
 		delegate.clear();
+	}
+	
+	@Override
+	public Collection<E> getDelegate() {
+		return delegate;
 	}
 
 	public String toString() {

@@ -17,6 +17,7 @@ package com.github.paganini2008.devtools.collection;
 
 import java.io.Serializable;
 import java.util.AbstractList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -108,6 +109,11 @@ public class LruList<E> extends AbstractList<E> implements List<E>, Serializable
 
 	public ListIterator<E> listIterator(int index) {
 		return delegate.listIterator(index);
+	}
+
+	@Override
+	public Collection<E> getDelegate() {
+		return delegate;
 	}
 
 	public String toString() {

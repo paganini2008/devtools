@@ -15,6 +15,7 @@
 */
 package com.github.paganini2008.devtools.converter;
 
+import java.time.Instant;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -34,6 +35,12 @@ public class LocalTimeConverter extends BasicConverter<LocalTime> {
 
 	private final Converter<Long, LocalTime> longConverter = new Converter<Long, LocalTime>() {
 		public LocalTime convertValue(Long source, LocalTime defaultValue) {
+			return LocalTimeUtils.toLocalTime(source, zoneId, defaultValue);
+		}
+	};
+	
+	private final Converter<Instant, LocalTime> instantConverter = new Converter<Instant, LocalTime>() {
+		public LocalTime convertValue(Instant source, LocalTime defaultValue) {
 			return LocalTimeUtils.toLocalTime(source, zoneId, defaultValue);
 		}
 	};
@@ -58,6 +65,7 @@ public class LocalTimeConverter extends BasicConverter<LocalTime> {
 
 	public LocalTimeConverter() {
 		registerType(Long.class, longConverter);
+		registerType(Instant.class, instantConverter);
 		registerType(String.class, stringConverter);
 		registerType(Date.class, dateConverter);
 		registerType(Calendar.class, calendarConverter);

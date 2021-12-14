@@ -17,6 +17,7 @@ package com.github.paganini2008.devtools.collection;
 
 import java.util.Properties;
 
+import com.github.paganini2008.devtools.MissingKeyException;
 import com.github.paganini2008.devtools.primitives.Booleans;
 import com.github.paganini2008.devtools.primitives.Bytes;
 import com.github.paganini2008.devtools.primitives.Chars;
@@ -26,9 +27,62 @@ import com.github.paganini2008.devtools.primitives.Ints;
 import com.github.paganini2008.devtools.primitives.Longs;
 import com.github.paganini2008.devtools.primitives.Shorts;
 
-public class Config extends Properties {
+/**
+ * 
+ * DataConverterProperties
+ *
+ * @author Fred Feng
+ * @since 2.0.1
+ */
+public class DataConverterProperties extends Properties {
 
 	private static final long serialVersionUID = -891559340734908695L;
+
+	public Boolean getRequiredBoolean(String name) {
+		assertKeyExisted(name);
+		return Booleans.valueOf(getProperty(name));
+	}
+
+	public Character getRequiredCharacter(String name) {
+		assertKeyExisted(name);
+		return Chars.valueOf(getProperty(name));
+	}
+
+	public Byte getRequiredByte(String name) {
+		assertKeyExisted(name);
+		return Bytes.valueOf(getProperty(name));
+	}
+
+	public Short getRequiredShort(String name) {
+		assertKeyExisted(name);
+		return Shorts.valueOf(getProperty(name));
+	}
+
+	public Integer getRequiredInteger(String name) {
+		assertKeyExisted(name);
+		return Ints.valueOf(getProperty(name));
+	}
+
+	public Float getRequiredFloat(String name) {
+		assertKeyExisted(name);
+		return Floats.valueOf(getProperty(name));
+	}
+
+	public Double getRequiredDouble(String name) {
+		assertKeyExisted(name);
+		return Doubles.valueOf(getProperty(name));
+	}
+
+	public Long getRequiredLong(String name) {
+		assertKeyExisted(name);
+		return Longs.valueOf(getProperty(name));
+	}
+
+	private void assertKeyExisted(String name) {
+		if (!containsKey(name)) {
+			throw new MissingKeyException(name);
+		}
+	}
 
 	public Boolean getBoolean(String name, Boolean defaultValue) {
 		return Booleans.valueOf(getProperty(name), defaultValue);

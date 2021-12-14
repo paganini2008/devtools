@@ -19,6 +19,7 @@ import static com.github.paganini2008.devtools.time.DateUtils.DEFAULT_DATE_PATTE
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Calendar;
@@ -161,6 +162,19 @@ public abstract class CalendarUtils {
 		}
 		Calendar c = getCalendar(timeZone);
 		c.setTime(date);
+		return c;
+	}
+
+	public static Calendar toCalendar(Instant instant, TimeZone timeZone) {
+		return toCalendar(instant, timeZone, null);
+	}
+
+	public static Calendar toCalendar(Instant instant, TimeZone timeZone, Calendar defaultValue) {
+		if (instant == null) {
+			return defaultValue;
+		}
+		Calendar c = getCalendar(timeZone);
+		c.setTime(Date.from(instant));
 		return c;
 	}
 

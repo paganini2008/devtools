@@ -30,8 +30,6 @@ import com.github.paganini2008.devtools.multithreads.ThreadUtils;
  * FileMonitor
  * 
  * @author Fred Feng
- * 
- * 
  * @since 2.0.1
  */
 public class FileMonitor implements Executable {

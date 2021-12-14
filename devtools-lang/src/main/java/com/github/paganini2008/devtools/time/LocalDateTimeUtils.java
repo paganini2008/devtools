@@ -253,11 +253,22 @@ public abstract class LocalDateTimeUtils {
 	}
 
 	public static LocalDateTime toLocalDateTime(Long ms, ZoneId zoneId, LocalDateTime defaultValue) {
+		if (ms == null) {
+			return defaultValue;
+		}
+		return toLocalDateTime(Instant.ofEpochMilli(ms), zoneId, defaultValue);
+	}
+
+	public static LocalDateTime toLocalDateTime(Instant instant, ZoneId zoneId) {
+		return toLocalDateTime(instant, zoneId, null);
+	}
+
+	public static LocalDateTime toLocalDateTime(Instant instant, ZoneId zoneId, LocalDateTime defaultValue) {
 		if (zoneId == null) {
 			zoneId = ZoneId.systemDefault();
 		}
 		try {
-			return ms != null ? Instant.ofEpochMilli(ms).atZone(zoneId).toLocalDateTime() : defaultValue;
+			return instant != null ? instant.atZone(zoneId).toLocalDateTime() : defaultValue;
 		} catch (RuntimeException e) {
 			return defaultValue;
 		}
@@ -268,14 +279,10 @@ public abstract class LocalDateTimeUtils {
 	}
 
 	public static LocalDateTime toLocalDateTime(Date date, ZoneId zoneId, LocalDateTime defaultValue) {
-		if (zoneId == null) {
-			zoneId = ZoneId.systemDefault();
-		}
-		try {
-			return date != null ? date.toInstant().atZone(zoneId).toLocalDateTime() : defaultValue;
-		} catch (RuntimeException e) {
+		if (date == null) {
 			return defaultValue;
 		}
+		return toLocalDateTime(date.toInstant(), zoneId, defaultValue);
 	}
 
 	public static LocalDateTime toLocalDateTime(Calendar calendar, ZoneId zoneId) {
@@ -283,11 +290,22 @@ public abstract class LocalDateTimeUtils {
 	}
 
 	public static LocalDateTime toLocalDateTime(Calendar calendar, ZoneId zoneId, LocalDateTime defaultValue) {
-		if (zoneId == null) {
-			zoneId = ZoneId.systemDefault();
+		if (calendar == null) {
+			return defaultValue;
+		}
+		return toLocalDateTime(calendar.toInstant(), zoneId, defaultValue);
+	}
+
+	public static LocalDateTime toLocalDateTime(LocalDate ld) {
+		return toLocalDateTime(ld, null);
+	}
+
+	public static LocalDateTime toLocalDateTime(LocalDate ld, LocalDateTime defaultValue) {
+		if (ld == null) {
+			return defaultValue;
 		}
 		try {
-			return calendar != null ? calendar.toInstant().atZone(zoneId).toLocalDateTime() : defaultValue;
+			return ld.atTime(0, 0, 0);
 		} catch (RuntimeException e) {
 			return defaultValue;
 		}
@@ -379,7 +397,7 @@ public abstract class LocalDateTimeUtils {
 		Assert.hasNoText(datePattern, "DatePattern can not be blank.");
 		DateTimeFormatter sdf = dfCache.get(datePattern);
 		if (sdf == null) {
-			dfCache.put(datePattern, DateTimeFormatter.ofPattern(datePattern, Locale.ENGLISH));
+			dfCache.putIfAbsent(datePattern, DateTimeFormatter.ofPattern(datePattern, Locale.ENGLISH));
 			sdf = dfCache.get(datePattern);
 		}
 		return sdf;

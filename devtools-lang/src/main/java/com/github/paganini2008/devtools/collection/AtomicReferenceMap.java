@@ -40,7 +40,7 @@ public class AtomicReferenceMap<K, V> extends AbstractMap<K, V> implements Map<K
 
 	private static final long serialVersionUID = 4925536519828538578L;
 
-	private final Map<K, AtomicStampedReference<V>> real;
+	private final Map<K, AtomicStampedReference<V>> delegate;
 
 	public AtomicReferenceMap() {
 		this(false);
@@ -50,16 +50,16 @@ public class AtomicReferenceMap<K, V> extends AbstractMap<K, V> implements Map<K
 		this(ordered ? new ConcurrentSkipListMap<K, AtomicStampedReference<V>>() : new ConcurrentHashMap<K, AtomicStampedReference<V>>());
 	}
 
-	public AtomicReferenceMap(Map<K, AtomicStampedReference<V>> real) {
-		this.real = real;
+	public AtomicReferenceMap(Map<K, AtomicStampedReference<V>> delegate) {
+		this.delegate = delegate;
 	}
 
 	@Override
 	public V putIfAbsent(K key, V value) {
-		AtomicStampedReference<V> ref = real.get(key);
+		AtomicStampedReference<V> ref = delegate.get(key);
 		if (ref == null) {
-			real.putIfAbsent(key, new AtomicStampedReference<V>(null, 0));
-			ref = real.get(key);
+			delegate.putIfAbsent(key, new AtomicStampedReference<V>(null, 0));
+			ref = delegate.get(key);
 		}
 		V current;
 		V update;
@@ -72,7 +72,7 @@ public class AtomicReferenceMap<K, V> extends AbstractMap<K, V> implements Map<K
 
 	@Override
 	public V put(K key, V value) {
-		AtomicStampedReference<V> eldest = real.put(key, new AtomicStampedReference<V>(value, 0));
+		AtomicStampedReference<V> eldest = delegate.put(key, new AtomicStampedReference<V>(value, 0));
 		return eldest != null ? eldest.getReference() : null;
 	}
 
@@ -82,29 +82,29 @@ public class AtomicReferenceMap<K, V> extends AbstractMap<K, V> implements Map<K
 
 	@Override
 	public V get(Object key) {
-		AtomicStampedReference<V> ref = real.get(key);
+		AtomicStampedReference<V> ref = delegate.get(key);
 		return ref != null ? ref.getReference() : null;
 	}
 
 	@Override
 	public int size() {
-		return real.size();
+		return delegate.size();
 	}
 
 	@Override
 	public void clear() {
-		real.clear();
+		delegate.clear();
 	}
 
 	@Override
 	public Set<K> keySet() {
-		return real.keySet();
+		return delegate.keySet();
 	}
 
 	@Override
 	public Collection<V> values() {
 		List<V> values = new ArrayList<V>();
-		for (AtomicStampedReference<V> ref : real.values()) {
+		for (AtomicStampedReference<V> ref : delegate.values()) {
 			values.add(ref.getReference());
 		}
 		return values;
@@ -112,13 +112,13 @@ public class AtomicReferenceMap<K, V> extends AbstractMap<K, V> implements Map<K
 
 	@Override
 	public V remove(Object key) {
-		AtomicStampedReference<V> ref = real.remove(key);
+		AtomicStampedReference<V> ref = delegate.remove(key);
 		return ref != null ? ref.getReference() : null;
 	}
 
 	@Override
 	public boolean containsValue(Object value) {
-		for (AtomicStampedReference<V> ref : real.values()) {
+		for (AtomicStampedReference<V> ref : delegate.values()) {
 			if (ObjectUtils.equals(ref.getReference(), value)) {
 				return true;
 			}
@@ -128,12 +128,12 @@ public class AtomicReferenceMap<K, V> extends AbstractMap<K, V> implements Map<K
 
 	@Override
 	public boolean containsKey(Object key) {
-		return real.containsKey(key);
+		return delegate.containsKey(key);
 	}
 
 	public Map<K, V> toMap() {
 		Map<K, V> map = new HashMap<K, V>();
-		for (Map.Entry<K, AtomicStampedReference<V>> entry : real.entrySet()) {
+		for (Map.Entry<K, AtomicStampedReference<V>> entry : delegate.entrySet()) {
 			map.put(entry.getKey(), entry.getValue().getReference());
 		}
 		return map;

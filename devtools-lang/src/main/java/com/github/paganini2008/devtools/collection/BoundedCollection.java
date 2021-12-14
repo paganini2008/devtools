@@ -15,6 +15,8 @@
 */
 package com.github.paganini2008.devtools.collection;
 
+import java.util.Collection;
+
 /**
  * 
  * BoundedCollection
@@ -23,6 +25,10 @@ package com.github.paganini2008.devtools.collection;
  * @since 2.0.1
  */
 public interface BoundedCollection<E> {
+	
+	default Collection<E> getDelegate(){
+		return null;
+	}
 
 	default void onEviction(E element) {
 	}

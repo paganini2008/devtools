@@ -1,8 +1,20 @@
+/**
+* Copyright 2017-2021 Fred Feng (paganini.fy@gmail.com)
+
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package com.github.paganini2008.devtools.time;
 
-import java.time.Instant;
-
-import com.github.paganini2008.devtools.RandomDateUtils;
 import com.github.paganini2008.devtools.collection.ConcurrentSortedBoundedMap;
 
 /**
@@ -22,20 +34,6 @@ public class DailyAggregationTimeSlotTable<V> extends AggregationTimeSlotMap<V> 
 
 	public DailyAggregationTimeSlotTable(int span, TimeSlot timeSlot, int days) {
 		super(new ConcurrentSortedBoundedMap<>(timeSlot.sizeOf(span, days)), span, timeSlot);
-	}
-
-	public static void main(String[] args) {
-		DailyAggregationTimeSlotTable<Integer> tst = new DailyAggregationTimeSlotTable<Integer>(5, TimeSlot.MINUTE, 1);
-		for (int i = 0; i < 100000; i++) {
-			tst.merge(randomInstant(), 1, (o, n) -> o != null ? (Integer) o + 1 : 1);
-		}
-		tst.output().entrySet().forEach(e -> {
-			System.out.println(e);
-		});
-	}
-
-	private static Instant randomInstant() {
-		return RandomDateUtils.randomDateTime(2021, 12).toInstant();
 	}
 
 }

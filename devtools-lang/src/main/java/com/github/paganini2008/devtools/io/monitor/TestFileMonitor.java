@@ -18,6 +18,13 @@ package com.github.paganini2008.devtools.io.monitor;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 
+ * TestFileMonitor
+ *
+ * @author Fred Feng
+ * @since 2.0.1
+ */
 public class TestFileMonitor {
 
 	public static void main(String[] args) throws Exception {

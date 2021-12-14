@@ -18,10 +18,8 @@ package com.github.paganini2008.devtools.io.monitor;
 /**
  * 
  * FileChangeListener
- * 
+ *
  * @author Fred Feng
- * 
- * 
  * @since 2.0.1
  */
 public interface FileChangeListener {
