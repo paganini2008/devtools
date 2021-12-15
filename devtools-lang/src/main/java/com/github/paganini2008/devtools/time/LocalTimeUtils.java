@@ -16,6 +16,7 @@
 package com.github.paganini2008.devtools.time;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -87,6 +88,13 @@ public abstract class LocalTimeUtils {
 			return defaultValue;
 		}
 		return toLocalTime(calendar.toInstant(), zoneId, defaultValue);
+	}
+
+	public static LocalTime toLocalTime(LocalDateTime ldt, LocalTime defaultValue) {
+		if (ldt == null) {
+			return defaultValue;
+		}
+		return ldt.toLocalTime();
 	}
 
 	public static LocalTime parseLocalTime(String text) {
