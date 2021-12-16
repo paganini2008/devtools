@@ -24,9 +24,9 @@ import java.util.Collection;
  * @author Fred Feng
  * @since 2.0.1
  */
-public interface BoundedCollection<E> {
-	
-	default Collection<E> getDelegate(){
+public interface BoundedCollection<E> extends Collection<E> {
+
+	default Collection<E> getDelegate() {
 		return null;
 	}
 

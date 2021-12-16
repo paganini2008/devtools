@@ -19,43 +19,37 @@ import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Collection;
 import java.util.List;
-import java.util.NavigableSet;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 
- * ConcurrentSortedBoundedList
+ * ConcurrentBoundedList
  *
  * @author Fred Feng
- *
  * @since 2.0.4
  */
-public class ConcurrentSortedBoundedList<E> extends AbstractList<E> implements Serializable, BoundedCollection<E> {
+public class ConcurrentBoundedList<E> extends AbstractList<E> implements Serializable, BoundedCollection<E> {
 
-	private static final long serialVersionUID = -4261600807536071807L;
+	private static final long serialVersionUID = 4364094168351330996L;
+
 	private final List<E> delegate;
 	private final int maxSize;
-	private final NavigableSet<E> keys;
+	private final Queue<E> keys;
 
-	public ConcurrentSortedBoundedList(int maxSize) {
+	public ConcurrentBoundedList(int maxSize) {
 		this(new CopyOnWriteArrayList<E>(), maxSize);
 	}
 
-	public ConcurrentSortedBoundedList(List<E> delegate, int maxSize) {
-		this(delegate, maxSize, new ConcurrentSkipListSet<E>());
+	public ConcurrentBoundedList(List<E> delegate, int maxSize) {
+		this(delegate, maxSize, new ConcurrentLinkedQueue<E>());
 	}
 
-	protected ConcurrentSortedBoundedList(List<E> delegate, int maxSize, NavigableSet<E> keys) {
+	public ConcurrentBoundedList(List<E> delegate, int maxSize, Queue<E> keys) {
 		this.delegate = delegate;
 		this.maxSize = maxSize;
 		this.keys = keys;
-	}
-
-	private boolean asc = true;
-
-	public void setAsc(boolean asc) {
-		this.asc = asc;
 	}
 
 	@Override
@@ -166,7 +160,7 @@ public class ConcurrentSortedBoundedList<E> extends AbstractList<E> implements S
 		synchronized (keys) {
 			keys.add(e);
 			if (reached = (keys.size() > maxSize)) {
-				eldestElement = asc ? keys.pollFirst() : keys.pollLast();
+				eldestElement = keys.poll();
 				delegate.remove(eldestElement);
 			}
 		}

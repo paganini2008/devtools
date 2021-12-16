@@ -21,7 +21,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import com.github.paganini2008.devtools.RandomUtils;
 
 /**
  * LruSet
@@ -61,6 +65,30 @@ public class LruSet<E> extends AbstractSet<E> implements Set<E>, Serializable, B
 	private final Set<E> delegate;
 	private final Map<E, Object> keys;
 
+	public boolean contains(Object o) {
+		if (delegate.contains(o)) {
+			keys.get(o);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean add(E e) {
+		if (delegate.add(e)) {
+			keys.put(e, e);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean remove(Object o) {
+		if (delegate.remove(o)) {
+			keys.remove(o);
+			return true;
+		}
+		return false;
+	}
+
 	public Iterator<E> iterator() {
 		return delegate.iterator();
 	}
@@ -69,26 +97,11 @@ public class LruSet<E> extends AbstractSet<E> implements Set<E>, Serializable, B
 		return delegate.size();
 	}
 
-	public boolean contains(Object o) {
-		keys.get(o);
-		return delegate.contains(o);
-	}
-
-	public boolean add(E e) {
-		keys.put(e, e);
-		return delegate.add(e);
-	}
-
-	public boolean remove(Object o) {
-		keys.remove(o);
-		return delegate.remove(o);
-	}
-
 	public void clear() {
-		keys.clear();
 		delegate.clear();
+		keys.clear();
 	}
-	
+
 	@Override
 	public Collection<E> getDelegate() {
 		return delegate;
@@ -96,6 +109,22 @@ public class LruSet<E> extends AbstractSet<E> implements Set<E>, Serializable, B
 
 	public String toString() {
 		return delegate.toString();
+	}
+
+	private static final Map<Integer, AtomicInteger> counter = new ConcurrentHashMap<>();
+
+	public static void main(String[] args) {
+		LruSet<Integer> list = new LruSet<Integer>(20);
+		for (int i = 0; i < 10000; i++) {
+			int value = RandomUtils.randomInt(1,20);
+			list.add(value);
+			MapUtils.get(counter, value, () -> {
+				return new AtomicInteger(0);
+			}).incrementAndGet();
+		}
+		System.out.println(list);
+		System.out.println("-------------------------------------");
+		System.out.println(counter);
 	}
 
 }
