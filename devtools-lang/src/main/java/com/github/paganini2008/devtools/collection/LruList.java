@@ -64,22 +64,27 @@ public class LruList<E> extends AbstractList<E> implements List<E>, Serializable
 	}
 
 	private final List<E> delegate;
-	private final AtomicInteger index = new AtomicInteger(0);
 	private final Map<Integer, E> keys;
+	private int index = 0;
 
 	public boolean add(E e) {
-		keys.put(index.getAndIncrement(), e);
-		return delegate.add(e);
+		synchronized (keys) {
+			keys.put(index++, e);
+			return delegate.add(e);
+		}
 	}
 
 	public boolean contains(Object o) {
-		keys.get(delegate.indexOf(o));
-		return delegate.contains(o);
+		if (delegate.contains(o)) {
+			keys.get(delegate.indexOf(o));
+			return true;
+		}
+		return false;
 	}
 
 	public void clear() {
-		keys.clear();
 		delegate.clear();
+		keys.clear();
 	}
 
 	public Iterator<E> iterator() {
@@ -87,8 +92,11 @@ public class LruList<E> extends AbstractList<E> implements List<E>, Serializable
 	}
 
 	public boolean remove(Object o) {
-		keys.remove(delegate.indexOf(o));
-		return delegate.remove(o);
+		if (delegate.remove(o)) {
+			keys.remove(delegate.indexOf(o));
+			return true;
+		}
+		return false;
 	}
 
 	public int size() {
@@ -96,18 +104,22 @@ public class LruList<E> extends AbstractList<E> implements List<E>, Serializable
 	}
 
 	public E get(int index) {
-		keys.get(index);
-		return delegate.get(index);
+		E e = delegate.get(index);
+		if (e != null) {
+			keys.get(index);
+		}
+		return e;
 	}
 
 	public void add(int index, E e) {
-		keys.put(index, e);
 		delegate.add(index, e);
+		keys.put(index, e);
 	}
 
 	public E set(int index, E e) {
+		E previous = delegate.set(index, e);
 		keys.put(index, e);
-		return delegate.set(index, e);
+		return previous;
 	}
 
 	public ListIterator<E> listIterator(int index) {
@@ -123,13 +135,13 @@ public class LruList<E> extends AbstractList<E> implements List<E>, Serializable
 	public String toString() {
 		return delegate.toString();
 	}
-	
+
 	private static final Map<Integer, AtomicInteger> counter = new ConcurrentHashMap<>();
 
 	public static void main(String[] args) {
 		LruList<Integer> list = new LruList<Integer>(20);
 		for (int i = 0; i < 10000; i++) {
-			int value = RandomUtils.randomInt(1,20);
+			int value = RandomUtils.randomInt(1, 20);
 			list.add(value);
 			MapUtils.get(counter, value, () -> {
 				return new AtomicInteger(0);
