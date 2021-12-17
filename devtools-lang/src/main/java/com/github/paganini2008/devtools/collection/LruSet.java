@@ -65,6 +65,7 @@ public class LruSet<E> extends AbstractSet<E> implements Set<E>, Serializable, B
 	private final Set<E> delegate;
 	private final Map<E, Object> keys;
 
+	@Override
 	public boolean contains(Object o) {
 		if (delegate.contains(o)) {
 			keys.get(o);
@@ -73,6 +74,7 @@ public class LruSet<E> extends AbstractSet<E> implements Set<E>, Serializable, B
 		return false;
 	}
 
+	@Override
 	public boolean add(E e) {
 		if (delegate.add(e)) {
 			keys.put(e, e);
@@ -81,6 +83,7 @@ public class LruSet<E> extends AbstractSet<E> implements Set<E>, Serializable, B
 		return false;
 	}
 
+	@Override
 	public boolean remove(Object o) {
 		if (delegate.remove(o)) {
 			keys.remove(o);
@@ -89,14 +92,17 @@ public class LruSet<E> extends AbstractSet<E> implements Set<E>, Serializable, B
 		return false;
 	}
 
+	@Override
 	public Iterator<E> iterator() {
 		return delegate.iterator();
 	}
 
+	@Override
 	public int size() {
 		return delegate.size();
 	}
 
+	@Override
 	public void clear() {
 		delegate.clear();
 		keys.clear();
@@ -107,6 +113,7 @@ public class LruSet<E> extends AbstractSet<E> implements Set<E>, Serializable, B
 		return delegate;
 	}
 
+	@Override
 	public String toString() {
 		return delegate.toString();
 	}

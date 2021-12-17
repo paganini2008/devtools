@@ -22,8 +22,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import com.github.paganini2008.devtools.RandomUtils;
 
 /**
  * LruList
@@ -116,8 +119,25 @@ public class LruList<E> extends AbstractList<E> implements List<E>, Serializable
 		return delegate;
 	}
 
+	@Override
 	public String toString() {
 		return delegate.toString();
+	}
+	
+	private static final Map<Integer, AtomicInteger> counter = new ConcurrentHashMap<>();
+
+	public static void main(String[] args) {
+		LruList<Integer> list = new LruList<Integer>(20);
+		for (int i = 0; i < 10000; i++) {
+			int value = RandomUtils.randomInt(1,20);
+			list.add(value);
+			MapUtils.get(counter, value, () -> {
+				return new AtomicInteger(0);
+			}).incrementAndGet();
+		}
+		System.out.println(list);
+		System.out.println("-------------------------------------");
+		System.out.println(counter);
 	}
 
 }
