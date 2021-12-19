@@ -44,7 +44,7 @@ public abstract class AbstractComparator<T> implements Comparator<T> {
 	}
 
 	public Comparator<T> reverse() {
-		return new ReverseComparator<T>(this);
+		return this.reversed();
 	}
 
 	public String toString() {

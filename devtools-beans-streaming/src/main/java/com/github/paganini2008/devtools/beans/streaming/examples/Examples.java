@@ -16,14 +16,10 @@
 package com.github.paganini2008.devtools.beans.streaming.examples;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Predicate;
 
-import com.github.paganini2008.devtools.RandomDateUtils;
 import com.github.paganini2008.devtools.RandomUtils;
 import com.github.paganini2008.devtools.beans.streaming.Group;
 import com.github.paganini2008.devtools.beans.streaming.Orders;
@@ -31,9 +27,9 @@ import com.github.paganini2008.devtools.beans.streaming.Restrictions;
 import com.github.paganini2008.devtools.beans.streaming.Selector;
 import com.github.paganini2008.devtools.beans.streaming.Sorter;
 import com.github.paganini2008.devtools.beans.streaming.View;
-import com.github.paganini2008.devtools.beans.streaming.examples.Product.Style;
 import com.github.paganini2008.devtools.collection.Tuple;
-import com.github.paganini2008.devtools.time.DateUtils;
+import com.github.paganini2008.devtools.mock.BeanMocker;
+import com.github.paganini2008.devtools.mock.MockContext;
 
 /**
  * 
@@ -45,27 +41,22 @@ import com.github.paganini2008.devtools.time.DateUtils;
  */
 public abstract class Examples {
 
-	private static final List<Product> products = new ArrayList<Product>();
+	private static final List<Product> products;
 
 	static {
 		String[] users = new String[] { "Petter", "Jack", "Tony" };
 		String[] locations = new String[] { "London", "NewYork", "Tokyo", "HongKong", "Paris" };
-		for (int i = 0; i < 10000; i++) {
-			Product product = new Product();
-			product.setCreated(RandomDateUtils.randomDate(2021));
-			product.setExpired(DateUtils.addDayOfMonth(product.getCreated(), 90));
-			product.setExport(RandomUtils.randomBoolean());
-			product.setFreight(BigDecimal.valueOf(RandomUtils.randomFloat(10, 100)).setScale(2, RoundingMode.HALF_UP));
-			product.setId(i + 1);
-			product.setLocation(RandomUtils.randomChoice(locations));
-			product.setName("Product-" + product.getId());
-			product.setNumber(RandomUtils.randomLong(1, 1000));
-			product.setPrice(RandomUtils.randomFloat(10, 1000));
-			product.setSales(BigInteger.valueOf(RandomUtils.randomLong(10000, 100000)));
-			product.setStyle(Style.values()[RandomUtils.randomInt(0, 2)]);
-			product.setSalesman(new Product.Salesman(RandomUtils.randomChoice(users), "123456"));
-			products.add(product);
-		}
+		MockContext mc = new MockContext();
+		mc.setStringSupplier("name", () -> {
+			return "Product_" + RandomUtils.randomInt(1, 100000);
+		});
+		mc.setStringSupplier("location", () -> {
+			return RandomUtils.randomChoice(locations);
+		});
+		mc.setStringSupplier("username", () -> {
+			return RandomUtils.randomChoice(users);
+		});
+		products = BeanMocker.mockBeans(10000, Product.class, mc);
 	}
 
 	/**
@@ -139,7 +130,7 @@ public abstract class Examples {
 	public static void test4() {
 		Sorter<Product> sorter = Orders.descending("price", BigDecimal.class);
 		Selector.from(products).orderBy(sorter).list(100).forEach(product -> {
-			System.out.println("Name: " + product.getName() + ", Price: " + product.getPrice() + ", Freight: " + product.getFreight());
+			System.out.println(product);
 		});
 	}
 
