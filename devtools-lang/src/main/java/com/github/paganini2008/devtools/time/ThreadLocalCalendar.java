@@ -19,7 +19,7 @@ import java.util.Calendar;
 import java.util.function.Supplier;
 
 /**
- * CalendarUtils
+ * ThreadLocalCalendar
  * 
  * @author Fred Feng
  * @since 2.0.1

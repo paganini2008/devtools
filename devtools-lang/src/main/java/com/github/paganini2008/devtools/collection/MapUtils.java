@@ -258,6 +258,15 @@ public abstract class MapUtils {
 		return ListUtils.get(list, index);
 	}
 
+	public static <K, V> K getKey(Map<K, V> map, Object value) {
+		for (Map.Entry<K, V> entry : map.entrySet()) {
+			if (value != null && value.equals(entry.getValue())) {
+				return entry.getKey();
+			}
+		}
+		return null;
+	}
+
 	public static <T> T get(Map<String, ?> map, String key, Class<T> requiredType, T defaultValue) {
 		Object object = map.get(key);
 		try {
@@ -285,7 +294,17 @@ public abstract class MapUtils {
 		}
 	}
 
-	public static <K, V> void removeKeys(Map<K, V> map, Collection<K> keys) {
+	public static <K, V> void removeFirstEntry(Map<K, V> map) {
+		Map.Entry<K, V> firstEntry = getFirstEntry(map);
+		map.remove(firstEntry.getKey());
+	}
+
+	public static <K, V> void removeLastEntry(Map<K, V> map) {
+		Map.Entry<K, V> lastEntry = getLastEntry(map);
+		map.remove(lastEntry.getKey());
+	}
+
+	public static <K, V> void removeKeys(Map<K, V> map, Collection<?> keys) {
 		Assert.isNull(map, "Map must not be null.");
 		if (CollectionUtils.isNotEmpty(keys)) {
 			for (Object key : keys) {
@@ -294,7 +313,7 @@ public abstract class MapUtils {
 		}
 	}
 
-	public static <K, V> void removeKeys(Map<K, V> map, K[] keys) {
+	public static <K, V> void removeKeys(Map<K, V> map, Object[] keys) {
 		Assert.isNull(map, "Map must not be null.");
 		if (ArrayUtils.isNotEmpty(keys)) {
 			for (Object key : keys) {
@@ -303,7 +322,7 @@ public abstract class MapUtils {
 		}
 	}
 
-	public static <K, V> void retainKeys(Map<K, V> map, Collection<K> keys) {
+	public static <K, V> void retainKeys(Map<K, V> map, Collection<?> keys) {
 		Assert.isNull(map, "Map must not be null.");
 		if (CollectionUtils.isNotEmpty(keys)) {
 			Iterator<Map.Entry<K, V>> it = map.entrySet().iterator();
@@ -317,7 +336,7 @@ public abstract class MapUtils {
 		}
 	}
 
-	public static <K, V> void retainKeys(Map<K, V> map, K[] keys) {
+	public static <K, V> void retainKeys(Map<K, V> map, Object[] keys) {
 		Assert.isNull(map, "Map must not be null.");
 		if (ArrayUtils.isNotEmpty(keys)) {
 			Iterator<Map.Entry<K, V>> it = map.entrySet().iterator();
@@ -331,7 +350,7 @@ public abstract class MapUtils {
 		}
 	}
 
-	public static <K, V> void retainValues(Map<K, V> map, Collection<K> values) {
+	public static <K, V> void retainValues(Map<K, V> map, Collection<?> values) {
 		Assert.isNull(map, "Map must not be null.");
 		if (CollectionUtils.isNotEmpty(values)) {
 			Iterator<Map.Entry<K, V>> it = map.entrySet().iterator();
@@ -345,7 +364,7 @@ public abstract class MapUtils {
 		}
 	}
 
-	public static <K, V> void retainValues(Map<K, V> map, K[] values) {
+	public static <K, V> void retainValues(Map<K, V> map, Object[] values) {
 		Assert.isNull(map, "Map must not be null.");
 		if (ArrayUtils.isNotEmpty(values)) {
 			Iterator<Map.Entry<K, V>> it = map.entrySet().iterator();
