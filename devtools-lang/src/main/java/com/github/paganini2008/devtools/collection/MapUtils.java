@@ -29,9 +29,11 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import com.github.paganini2008.devtools.ArrayUtils;
 import com.github.paganini2008.devtools.Assert;
+import com.github.paganini2008.devtools.Comparables;
 import com.github.paganini2008.devtools.MatchMode;
 import com.github.paganini2008.devtools.MissingKeyException;
 import com.github.paganini2008.devtools.ObjectUtils;
@@ -241,13 +243,13 @@ public abstract class MapUtils {
 
 	public static void main(String[] args) {
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("a12", "123");
+		map.put("a12", "120");
 		map.put("a", "123");
-		map.put("a1", "123");
+		map.put("a1", "923");
 		map.put("a9", "123");
 		map.put("b", "234");
 		map.put("c", "345");
-		System.out.println(getFirstEntry(map));
+		System.out.println(sortByValue(map, true));
 	}
 
 	public static <K, V> Map.Entry<K, V> getEntry(Map<K, V> map, int index) {
@@ -668,15 +670,73 @@ public abstract class MapUtils {
 		return results;
 	}
 
+	private static class KeyComparator<K, V> implements Comparator<Map.Entry<K, V>> {
+
+		@Override
+		public int compare(Map.Entry<K, V> left, Map.Entry<K, V> right) {
+			K leftKey = left.getKey();
+			K rightKey = right.getKey();
+			if (leftKey instanceof Comparable && rightKey instanceof Comparable) {
+				return Comparables.compareTo((Comparable) leftKey, (Comparable) rightKey);
+			}
+			return 0;
+		}
+
+	}
+
+	private static class ValueComparator<K, V> implements Comparator<Map.Entry<K, V>> {
+
+		@Override
+		public int compare(Map.Entry<K, V> left, Map.Entry<K, V> right) {
+			V leftValue = left.getValue();
+			V rightValue = right.getValue();
+			if (leftValue instanceof Comparable && rightValue instanceof Comparable) {
+				return Comparables.compareTo((Comparable) leftValue, (Comparable) rightValue);
+			}
+			return 0;
+		}
+
+	}
+
+	public static <K, V> Comparator<Map.Entry<K, V>> keyComparator() {
+		return new KeyComparator();
+	}
+
+	public static <K, V> Comparator<Map.Entry<K, V>> valueComparator() {
+		return new ValueComparator();
+	}
+
+	public static <K, V> Map<K, V> sortByKey(Map<K, V> map) {
+		return sortByKey(map, false);
+	}
+
+	public static <K, V> Map<K, V> sortByKey(Map<K, V> map, boolean reversed) {
+		Comparator<Map.Entry<K, V>> c = keyComparator();
+		if (reversed) {
+			c = c.reversed();
+		}
+		return sort(map, c);
+	}
+
+	public static <K, V> Map<K, V> sortByValue(Map<K, V> map) {
+		return sortByValue(map, false);
+	}
+
+	public static <K, V> Map<K, V> sortByValue(Map<K, V> map, boolean reversed) {
+		Comparator<Map.Entry<K, V>> c = valueComparator();
+		if (reversed) {
+			c = c.reversed();
+		}
+		return sort(map, c);
+	}
+
 	public static <K, V> Map<K, V> sort(Map<K, V> map, Comparator<Map.Entry<K, V>> c) {
 		Assert.isNull(map, "Map must not be null.");
-		Map<K, V> result = new LinkedHashMap<K, V>();
 		if (map.size() > 0) {
-			List<Map.Entry<K, V>> list = new ArrayList<Map.Entry<K, V>>(map.entrySet());
-			ListUtils.sort(list, c);
-			putAll(result, list);
+			return map.entrySet().stream().sorted(c)
+					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new));
 		}
-		return result;
+		return map;
 	}
 
 	public static Map<String, String> mergeProperties(Properties left, Properties right, Map<String, String> output) {

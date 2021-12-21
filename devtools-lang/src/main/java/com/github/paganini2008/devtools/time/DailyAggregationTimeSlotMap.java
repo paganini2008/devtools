@@ -24,15 +24,15 @@ import com.github.paganini2008.devtools.collection.ConcurrentSortedBoundedMap;
  * @author Fred Feng
  * @since 2.0.4
  */
-public class DailyAggregationTimeSlotTable<V> extends AggregationTimeSlotMap<V> {
+public class DailyAggregationTimeSlotMap<V> extends AggregationTimeSlotMap<V> {
 
 	private static final long serialVersionUID = 1020741898314951406L;
 
-	public DailyAggregationTimeSlotTable(int span, TimeSlot timeSlot) {
+	public DailyAggregationTimeSlotMap(int span, TimeSlot timeSlot) {
 		this(span, timeSlot, 1);
 	}
 
-	public DailyAggregationTimeSlotTable(int span, TimeSlot timeSlot, int days) {
+	public DailyAggregationTimeSlotMap(int span, TimeSlot timeSlot, int days) {
 		super(new ConcurrentSortedBoundedMap<>(timeSlot.sizeOf(span, days)), span, timeSlot);
 	}
 
