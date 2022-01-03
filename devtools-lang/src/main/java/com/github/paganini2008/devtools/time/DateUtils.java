@@ -773,7 +773,7 @@ public abstract class DateUtils {
 		return sdf;
 	}
 
-	public static void main2(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
 		Map<Date, Object> result = populate(addDayOfMonth(new Date(), 10), new Date(), 1, Calendar.DAY_OF_MONTH, c -> new HashMap<>());
 		Console.log(new TreeMap<Date, Object>(result));
 	}
