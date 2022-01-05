@@ -263,16 +263,6 @@ public abstract class FileUtils {
 		return new FileOutputStream(file, append);
 	}
 
-	private static void writeBOM(FileOutputStream fos, Charset charset) throws IOException {
-		if (CharsetUtils.UTF_8.equals(charset)) {
-			fos.write(CharsetUtils.BOM_UTF_8);
-		} else if (CharsetUtils.UTF_16BE.equals(charset)) {
-			fos.write(CharsetUtils.BOM_UTF_16BE);
-		} else if (CharsetUtils.UTF_16LE.equals(charset)) {
-			fos.write(CharsetUtils.BOM_UTF_16LE);
-		}
-	}
-
 	public static BufferedWriter getBufferedWriter(String filePath, Charset charset) throws IOException {
 		return getBufferedWriter(new File(filePath), charset);
 	}
@@ -283,7 +273,6 @@ public abstract class FileUtils {
 
 	public static BufferedWriter getBufferedWriter(File file, boolean append, Charset charset) throws IOException {
 		FileOutputStream fos = openOutputStream(file, append);
-		writeBOM(fos, charset);
 		return IOUtils.getBufferedWriter(fos, charset);
 	}
 
@@ -586,7 +575,6 @@ public abstract class FileUtils {
 		Assert.isNull(file, "Destination file must not be null.");
 		FileOutputStream fos = openOutputStream(file, append);
 		try {
-			writeBOM(fos, charset);
 			IOUtils.copy(reader, fos, charset);
 		} finally {
 			closeQuietly(fos);
@@ -598,7 +586,6 @@ public abstract class FileUtils {
 		Assert.isNull(file, "Destination file must not be null.");
 		FileOutputStream fos = openOutputStream(file, append);
 		try {
-			writeBOM(fos, charset);
 			IOUtils.copy(content, fos, charset);
 		} finally {
 			closeQuietly(fos);
@@ -610,7 +597,6 @@ public abstract class FileUtils {
 		Assert.isNull(file, "Destination file must not be null.");
 		FileOutputStream fos = openOutputStream(file, append);
 		try {
-			writeBOM(fos, charset);
 			IOUtils.copy(content, fos, charset);
 		} finally {
 			closeQuietly(fos);
@@ -622,7 +608,6 @@ public abstract class FileUtils {
 		Assert.isNull(file, "Destination file must not be null.");
 		FileOutputStream fos = openOutputStream(file, append);
 		try {
-			writeBOM(fos, charset);
 			IOUtils.writeLines(collection, fos, charset);
 		} finally {
 			closeQuietly(fos);
