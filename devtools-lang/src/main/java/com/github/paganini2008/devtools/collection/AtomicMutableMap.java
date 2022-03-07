@@ -46,7 +46,8 @@ public abstract class AtomicMutableMap<K, V> extends AbstractMap<K, V> implement
 
 	@Override
 	public V get(Object key) {
-		return delegate.get(mutate(key)).getReference();
+		AtomicStampedReference<V> ref = delegate.get(mutate(key));
+		return ref != null ? ref.getReference() : null;
 	}
 
 	@Override

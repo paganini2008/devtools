@@ -56,8 +56,10 @@ public enum JdbcType {
 	NCHAR(Types.NCHAR), 
 	NCLOB(Types.NCLOB), 
 	STRUCT(Types.STRUCT), 
-	ENUM(Integer.MIN_VALUE + 1001), 
-	OBJECT(Integer.MIN_VALUE + 1002);
+	ENUM(10001), 
+	OBJECT(10002),
+	
+	AUTO(99999);
 
 	private final int typeCode;
 

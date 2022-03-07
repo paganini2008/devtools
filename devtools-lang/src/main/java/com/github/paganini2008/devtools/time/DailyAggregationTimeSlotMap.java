@@ -19,7 +19,7 @@ import com.github.paganini2008.devtools.collection.ConcurrentSortedBoundedMap;
 
 /**
  * 
- * DailyAggregationTimeSlotTable
+ * DailyAggregationTimeSlotMap
  *
  * @author Fred Feng
  * @since 2.0.4
