@@ -79,7 +79,7 @@ public abstract class RandomDateUtils {
 
 	public static YearMonth randomYearMonth(int year, int fromMonth, int toMonth) {
 		Year isoYear = Year.of(year);
-		Month month = Month.values()[randomMonth(fromMonth, toMonth)];
+		Month month = Month.values()[randomMonth(fromMonth, toMonth) - 1];
 		return isoYear.atMonth(month);
 	}
 

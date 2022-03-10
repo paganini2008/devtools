@@ -17,6 +17,9 @@ package com.github.paganini2008.devtools.beans.streaming.examples;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 
 import com.github.paganini2008.devtools.beans.ToStringBuilder;
@@ -40,34 +43,40 @@ public class Product {
 
 	@IntRange(from = 100000000, to = 1000000000)
 	private int id;
-	
+
 	@Example("name")
 	private String name;
-	
+
 	@Example("location")
 	private String location;
-	
+
 	@DateRange(from = "2020-01-01", to = "2021-06-30")
 	private Date created;
-	
+
 	@DateRange(from = "2020-07-01", to = "2021-12-31")
 	private Date expired;
-	
+
 	@FloatRange(from = 100, to = 1000)
 	private Float price;
-	
+
 	@LongRange(from = 0, to = 10)
 	private BigInteger sales;
-	
+
 	private boolean export;
-	
+
 	@LongRange(from = 1, to = 1000l)
 	private Long number;
-	
+
 	@DoubleRange(from = 50, to = 200, scale = 2)
 	private BigDecimal freight;
-	
+
 	private Style style;
+
+	private LocalDateTime startTime;
+
+	private LocalDate createDate;
+
+	private LocalTime nowTime;
 
 	@Recur
 	private Salesman salesman;
@@ -203,6 +212,30 @@ public class Product {
 
 	public void setStyle(Style style) {
 		this.style = style;
+	}
+
+	public LocalDateTime getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(LocalDateTime startTime) {
+		this.startTime = startTime;
+	}
+
+	public LocalDate getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(LocalDate createDate) {
+		this.createDate = createDate;
+	}
+
+	public LocalTime getNowTime() {
+		return nowTime;
+	}
+
+	public void setNowTime(LocalTime nowTime) {
+		this.nowTime = nowTime;
 	}
 
 	public static enum Style {
