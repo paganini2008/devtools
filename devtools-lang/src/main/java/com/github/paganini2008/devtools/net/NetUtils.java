@@ -16,16 +16,20 @@
 package com.github.paganini2008.devtools.net;
 
 import java.io.IOException;
+import java.net.HttpCookie;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import com.github.paganini2008.devtools.RandomUtils;
+import com.github.paganini2008.devtools.StringUtils;
 import com.github.paganini2008.devtools.regex.RegexUtils;
 
 /**
@@ -40,7 +44,7 @@ public abstract class NetUtils {
 
 	public static final String ANYHOST = "0.0.0.0";
 
-	public static final int MIN_PORT = 5001;
+	public static final int MIN_PORT = 1024;
 
 	public static final int MAX_PORT = 65535;
 
@@ -215,8 +219,22 @@ public abstract class NetUtils {
 		return port;
 	}
 
+	public static boolean ping(String ip, int timeout) {
+		try {
+			return InetAddress.getByName(ip).isReachable(timeout);
+		} catch (Exception ex) {
+			return false;
+		}
+	}
+
+	public static List<HttpCookie> parseCookies(String cookieStr) {
+		if (StringUtils.isBlank(cookieStr)) {
+			return Collections.emptyList();
+		}
+		return HttpCookie.parse(cookieStr);
+	}
+
 	public static void main(String[] args) {
-		System.out.println(getLocalHost());
 	}
 
 }
