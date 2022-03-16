@@ -49,13 +49,13 @@ public abstract class Orders {
 
 	public static <E, T extends Comparable<T>> Sorter<Group<E>> groupAscending(final String attributeName, final Class<T> requiredType) {
 		return groupAscending(group -> {
-			return MappedBy.forName(attributeName, requiredType).apply(group.getAttributes());
+			return Mapping.forName(attributeName, requiredType).apply(group.getAttributes());
 		});
 	}
 
 	public static <E, T extends Comparable<T>> Sorter<Group<E>> groupDescending(final String attributeName, final Class<T> requiredType) {
 		return groupDescending(group -> {
-			return MappedBy.forName(attributeName, requiredType).apply(group.getAttributes());
+			return Mapping.forName(attributeName, requiredType).apply(group.getAttributes());
 		});
 	}
 

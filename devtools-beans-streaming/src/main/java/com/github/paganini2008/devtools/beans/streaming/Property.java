@@ -28,7 +28,7 @@ import com.github.paganini2008.devtools.beans.BeanUtils;
  * 
  * @since 2.0.1
  */
-public final class Property<E, T> implements Function<E, T> {
+public class Property<E, T> implements Function<E, T> {
 
 	private final String propertyName;
 	private final Class<T> requiredType;

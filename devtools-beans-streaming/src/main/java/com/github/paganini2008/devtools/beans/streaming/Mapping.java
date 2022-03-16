@@ -22,18 +22,18 @@ import com.github.paganini2008.devtools.converter.ConvertUtils;
 
 /**
  * 
- * MappedBy
+ * Mapping
  * 
  * @author Fred Feng
  * 
  * @since 2.0.1
  */
-public class MappedBy<T> implements Function<Map<String, Object>, T> {
+public class Mapping<T> implements Function<Map<String, Object>, T> {
 
 	private final String name;
 	private final Class<T> requiredType;
 
-	MappedBy(String name, Class<T> requiredType) {
+	Mapping(String name, Class<T> requiredType) {
 		this.name = name;
 		this.requiredType = requiredType;
 	}
@@ -47,8 +47,8 @@ public class MappedBy<T> implements Function<Map<String, Object>, T> {
 		}
 	}
 
-	public static <T> MappedBy<T> forName(String name, Class<T> requiredType) {
-		return new MappedBy<T>(name, requiredType);
+	public static <T> Mapping<T> forName(String name, Class<T> requiredType) {
+		return new Mapping<T>(name, requiredType);
 	}
 
 }

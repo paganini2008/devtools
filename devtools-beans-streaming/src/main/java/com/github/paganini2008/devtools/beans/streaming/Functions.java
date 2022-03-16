@@ -18,6 +18,7 @@ package com.github.paganini2008.devtools.beans.streaming;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.function.Function;
 
 import com.github.paganini2008.devtools.Comparables;
 import com.github.paganini2008.devtools.beans.BeanUtils;
@@ -33,36 +34,50 @@ import com.github.paganini2008.devtools.beans.BeanUtils;
 public abstract class Functions {
 
 	public static <E, T extends Comparable<T>> Aggregation<E, T> min(String attributeName, Class<T> requiredType) {
-		return new Min<E, T>(attributeName, requiredType);
+		return min(e -> BeanUtils.getProperty(e, attributeName, requiredType));
+	}
+
+	public static <E, T extends Comparable<T>> Aggregation<E, T> min(Function<E, T> supplier) {
+		return new Min<E, T>(supplier);
 	}
 
 	public static <E, T extends Comparable<T>> Aggregation<E, T> max(String attributeName, Class<T> requiredType) {
-		return new Max<E, T>(attributeName, requiredType);
+		return max(e -> BeanUtils.getProperty(e, attributeName, requiredType));
+	}
+
+	public static <E, T extends Comparable<T>> Aggregation<E, T> max(Function<E, T> supplier) {
+		return new Max<E, T>(supplier);
 	}
 
 	public static <E> Aggregation<E, BigDecimal> sum(String attributeName) {
-		return new Sum<E>(attributeName);
+		return sum(e -> BeanUtils.getProperty(e, attributeName, BigDecimal.class));
+	}
+
+	public static <E> Aggregation<E, BigDecimal> sum(Function<E, BigDecimal> supplier) {
+		return new Sum<E>(supplier);
 	}
 
 	public static <E> Aggregation<E, BigDecimal> avg(String attributeName, int scale, RoundingMode roundingMode) {
-		return new Avg<E>(attributeName, scale, roundingMode);
+		return avg(e -> BeanUtils.getProperty(e, attributeName, BigDecimal.class), scale, roundingMode);
+	}
+
+	public static <E> Aggregation<E, BigDecimal> avg(Function<E, BigDecimal> supplier, int scale, RoundingMode roundingMode) {
+		return new Avg<E>(supplier, scale, roundingMode);
 	}
 
 	public static class Min<E, T extends Comparable<T>> implements Aggregation<E, T> {
 
-		private final String attributeName;
-		private final Class<T> requiredType;
+		private final Function<E, T> supplier;
 
-		Min(String attributeName, Class<T> requiredType) {
-			this.attributeName = attributeName;
-			this.requiredType = requiredType;
+		Min(Function<E, T> supplier) {
+			this.supplier = supplier;
 		}
 
 		public T getResult(List<E> elements) {
-			T identity = BeanUtils.getProperty(elements.get(0), attributeName, requiredType);
+			T minValue = supplier.apply(elements.get(0));
 			return elements.stream().map(e -> {
-				return BeanUtils.getProperty(e, attributeName, requiredType);
-			}).reduce(identity, (left, right) -> {
+				return supplier.apply(e);
+			}).reduce(minValue, (left, right) -> {
 				return Comparables.min(left, right);
 			});
 		}
@@ -70,17 +85,15 @@ public abstract class Functions {
 
 	public static class Max<E, T extends Comparable<T>> implements Aggregation<E, T> {
 
-		private final String attributeName;
-		private final Class<T> requiredType;
-
-		Max(String attributeName, Class<T> requiredType) {
-			this.attributeName = attributeName;
-			this.requiredType = requiredType;
+		Max(Function<E, T> supplier) {
+			this.supplier = supplier;
 		}
+
+		private final Function<E, T> supplier;
 
 		public T getResult(List<E> elements) {
 			return elements.stream().map(e -> {
-				return BeanUtils.getProperty(e, attributeName, requiredType);
+				return supplier.apply(e);
 			}).reduce(null, (left, right) -> {
 				return Comparables.max(left, right);
 			});
@@ -89,15 +102,15 @@ public abstract class Functions {
 
 	public static class Sum<E> implements Aggregation<E, BigDecimal> {
 
-		private final String attributeName;
+		private final Function<E, BigDecimal> supplier;
 
-		Sum(String attributeName) {
-			this.attributeName = attributeName;
+		Sum(Function<E, BigDecimal> supplier) {
+			this.supplier = supplier;
 		}
 
 		public BigDecimal getResult(List<E> elements) {
 			return elements.stream().map(e -> {
-				return BeanUtils.getProperty(e, attributeName, BigDecimal.class);
+				return supplier.apply(e);
 			}).reduce(BigDecimal.ZERO, (left, right) -> {
 				return left.add(right);
 			});
@@ -106,19 +119,19 @@ public abstract class Functions {
 
 	public static class Avg<E> implements Aggregation<E, BigDecimal> {
 
-		private final String attributeName;
+		private final Function<E, BigDecimal> supplier;
 		private final int scale;
 		private final RoundingMode roundingMode;
 
-		Avg(String attributeName, int scale, RoundingMode roundingMode) {
-			this.attributeName = attributeName;
+		Avg(Function<E, BigDecimal> supplier, int scale, RoundingMode roundingMode) {
+			this.supplier = supplier;
 			this.scale = scale;
 			this.roundingMode = roundingMode;
 		}
 
 		public BigDecimal getResult(List<E> elements) {
 			return elements.stream().map(e -> {
-				return BeanUtils.getProperty(e, attributeName, BigDecimal.class);
+				return supplier.apply(e);
 			}).reduce(BigDecimal.ZERO, (left, right) -> {
 				return left.add(right);
 			}).divide(BigDecimal.valueOf(elements.size()), scale, roundingMode);
