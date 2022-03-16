@@ -32,23 +32,23 @@ import com.github.paganini2008.devtools.beans.BeanUtils;
  */
 public abstract class Functions {
 
-	public static <E, T extends Comparable<T>> Calculation<E, T> min(String attributeName, Class<T> requiredType) {
+	public static <E, T extends Comparable<T>> Aggregation<E, T> min(String attributeName, Class<T> requiredType) {
 		return new Min<E, T>(attributeName, requiredType);
 	}
 
-	public static <E, T extends Comparable<T>> Calculation<E, T> max(String attributeName, Class<T> requiredType) {
+	public static <E, T extends Comparable<T>> Aggregation<E, T> max(String attributeName, Class<T> requiredType) {
 		return new Max<E, T>(attributeName, requiredType);
 	}
 
-	public static <E> Calculation<E, BigDecimal> sum(String attributeName) {
+	public static <E> Aggregation<E, BigDecimal> sum(String attributeName) {
 		return new Sum<E>(attributeName);
 	}
 
-	public static <E> Calculation<E, BigDecimal> avg(String attributeName, int scale, RoundingMode roundingMode) {
+	public static <E> Aggregation<E, BigDecimal> avg(String attributeName, int scale, RoundingMode roundingMode) {
 		return new Avg<E>(attributeName, scale, roundingMode);
 	}
 
-	public static class Min<E, T extends Comparable<T>> implements Calculation<E, T> {
+	public static class Min<E, T extends Comparable<T>> implements Aggregation<E, T> {
 
 		private final String attributeName;
 		private final Class<T> requiredType;
@@ -68,7 +68,7 @@ public abstract class Functions {
 		}
 	}
 
-	public static class Max<E, T extends Comparable<T>> implements Calculation<E, T> {
+	public static class Max<E, T extends Comparable<T>> implements Aggregation<E, T> {
 
 		private final String attributeName;
 		private final Class<T> requiredType;
@@ -87,7 +87,7 @@ public abstract class Functions {
 		}
 	}
 
-	public static class Sum<E> implements Calculation<E, BigDecimal> {
+	public static class Sum<E> implements Aggregation<E, BigDecimal> {
 
 		private final String attributeName;
 
@@ -104,7 +104,7 @@ public abstract class Functions {
 		}
 	}
 
-	public static class Avg<E> implements Calculation<E, BigDecimal> {
+	public static class Avg<E> implements Aggregation<E, BigDecimal> {
 
 		private final String attributeName;
 		private final int scale;

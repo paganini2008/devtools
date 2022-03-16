@@ -97,8 +97,8 @@ public class Grouper<E> implements Groupable<E> {
 			this.rollup = rollup;
 		}
 
-		public <T> T summarize(Calculation<E, T> calculation) {
-			return calculation.getResult(elements);
+		public <T> T summarize(Aggregation<E, T> aggregation) {
+			return aggregation.getResult(elements);
 		}
 
 		public Map<String, Object> getAttributes() {

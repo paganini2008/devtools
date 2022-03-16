@@ -19,13 +19,13 @@ import java.util.List;
 
 /**
  * 
- * Calculation
- * 
+ * Aggregation
+ *
  * @author Fred Feng
- * 
- * @since 2.0.1
+ *
+ * @version 2.0.5
  */
-public interface Calculation<E, T> {
+public interface Aggregation<E, T> {
 
 	T getResult(List<E> elements);
 

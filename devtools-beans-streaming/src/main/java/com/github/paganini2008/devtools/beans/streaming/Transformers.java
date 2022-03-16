@@ -41,9 +41,8 @@ public abstract class Transformers {
 	}
 
 	public static <E> Transformer<E, Map<String, Object>> asMap(PropertyFilter propertyFilter) {
-		return e -> {
-			return PropertyUtils.convertToMap(e, null, propertyFilter);
-		};
+		return e -> PropertyUtils.convertToMap(e, null, propertyFilter);
+
 	}
 
 	public static <E, T> Transformer<E, T> asBean(Class<T> requiredType, String[] propertyNames) {
@@ -55,9 +54,8 @@ public abstract class Transformers {
 	}
 
 	public static <E, T> Transformer<E, T> asBean(Class<T> requiredType, PropertyFilter propertyFilter) {
-		return e -> {
-			return BeanUtils.copy(e, requiredType, propertyFilter);
-		};
+		return e -> BeanUtils.copy(e, requiredType, propertyFilter);
+
 	}
 
 }

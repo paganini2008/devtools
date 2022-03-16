@@ -29,51 +29,51 @@ import com.github.paganini2008.devtools.Comparables;
  */
 public abstract class Having {
 
-	public static <E, T extends Comparable<T>> Predicate<Group<E>> eq(Calculation<E, T> calculation, T value) {
+	public static <E, T extends Comparable<T>> Predicate<Group<E>> eq(Aggregation<E, T> aggregation, T value) {
 		return group -> {
-			T result = group.summarize(calculation);
+			T result = group.summarize(aggregation);
 			return Comparables.eq(result, value);
 		};
 	}
 
-	public static <E, T extends Comparable<T>> Predicate<Group<E>> ne(Calculation<E, T> calculation, T value) {
+	public static <E, T extends Comparable<T>> Predicate<Group<E>> ne(Aggregation<E, T> aggregation, T value) {
 		return group -> {
-			T result = group.summarize(calculation);
+			T result = group.summarize(aggregation);
 			return Comparables.ne(result, value);
 		};
 	}
 
-	public static <E, T extends Comparable<T>> Predicate<Group<E>> between(Calculation<E, T> calculation, T minValue, T maxValue) {
+	public static <E, T extends Comparable<T>> Predicate<Group<E>> between(Aggregation<E, T> aggregation, T minValue, T maxValue) {
 		return group -> {
-			T result = group.summarize(calculation);
+			T result = group.summarize(aggregation);
 			return Comparables.gte(result, minValue) && Comparables.lte(result, maxValue);
 		};
 	}
 
-	public static <E, T extends Comparable<T>> Predicate<Group<E>> lt(Calculation<E, T> calculation, T value) {
+	public static <E, T extends Comparable<T>> Predicate<Group<E>> lt(Aggregation<E, T> aggregation, T value) {
 		return group -> {
-			T result = group.summarize(calculation);
+			T result = group.summarize(aggregation);
 			return Comparables.lt(result, value);
 		};
 	}
 
-	public static <E, T extends Comparable<T>> Predicate<Group<E>> lte(Calculation<E, T> calculation, T value) {
+	public static <E, T extends Comparable<T>> Predicate<Group<E>> lte(Aggregation<E, T> aggregation, T value) {
 		return group -> {
-			T result = group.summarize(calculation);
+			T result = group.summarize(aggregation);
 			return Comparables.lte(result, value);
 		};
 	}
 
-	public static <E, T extends Comparable<T>> Predicate<Group<E>> gt(Calculation<E, T> calculation, T value) {
+	public static <E, T extends Comparable<T>> Predicate<Group<E>> gt(Aggregation<E, T> aggregation, T value) {
 		return group -> {
-			T result = group.summarize(calculation);
+			T result = group.summarize(aggregation);
 			return Comparables.gt(result, value);
 		};
 	}
 
-	public static <E, T extends Comparable<T>> Predicate<Group<E>> gte(Calculation<E, T> calculation, T value) {
+	public static <E, T extends Comparable<T>> Predicate<Group<E>> gte(Aggregation<E, T> aggregation, T value) {
 		return group -> {
-			T result = group.summarize(calculation);
+			T result = group.summarize(aggregation);
 			return Comparables.gte(result, value);
 		};
 	}

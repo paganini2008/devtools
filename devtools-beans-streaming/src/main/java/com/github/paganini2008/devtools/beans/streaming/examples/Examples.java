@@ -135,7 +135,7 @@ public abstract class Examples {
 	}
 
 	public static void main(String[] args) {
-		test4();
+		test();
 	}
 
 }

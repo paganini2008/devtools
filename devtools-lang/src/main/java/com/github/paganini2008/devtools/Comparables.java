@@ -15,6 +15,10 @@
 */
 package com.github.paganini2008.devtools;
 
+import java.util.Collection;
+
+import com.github.paganini2008.devtools.collection.CollectionUtils;
+
 /**
  * 
  * Comparables
@@ -88,7 +92,134 @@ public abstract class Comparables {
 		return compareTo(a, b) <= 0 ? a : b;
 	}
 
+	public static <T extends Comparable<T>> boolean eqAny(T value, Collection<T> c) {
+		if (CollectionUtils.isEmpty(c)) {
+			return false;
+		}
+		for (T t : c) {
+			if (eq(value, t)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static <T extends Comparable<T>> boolean eqAll(T value, Collection<T> c) {
+		if (CollectionUtils.isEmpty(c)) {
+			return false;
+		}
+		for (T t : c) {
+			if (ne(value, t)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public static <T extends Comparable<T>> boolean ltAny(T value, Collection<T> c) {
+		if (CollectionUtils.isEmpty(c)) {
+			return false;
+		}
+		for (T t : c) {
+			if (lt(value, t)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static <T extends Comparable<T>> boolean ltAll(T value, Collection<T> c) {
+		if (CollectionUtils.isEmpty(c)) {
+			return false;
+		}
+		for (T t : c) {
+			if (gte(value, t)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public static <T extends Comparable<T>> boolean gtAny(T value, Collection<T> c) {
+		if (CollectionUtils.isEmpty(c)) {
+			return false;
+		}
+		for (T t : c) {
+			if (gt(value, t)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static <T extends Comparable<T>> boolean gtAll(T value, Collection<T> c) {
+		if (CollectionUtils.isEmpty(c)) {
+			return false;
+		}
+		for (T t : c) {
+			if (lte(value, t)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public static <T extends Comparable<T>> boolean lteAny(T value, Collection<T> c) {
+		if (CollectionUtils.isEmpty(c)) {
+			return false;
+		}
+		for (T t : c) {
+			if (lte(value, t)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static <T extends Comparable<T>> boolean lteAll(T value, Collection<T> c) {
+		if (CollectionUtils.isEmpty(c)) {
+			return false;
+		}
+		for (T t : c) {
+			if (gt(value, t)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public static <T extends Comparable<T>> boolean gteAny(T value, Collection<T> c) {
+		if (CollectionUtils.isEmpty(c)) {
+			return false;
+		}
+		for (T t : c) {
+			if (gte(value, t)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static <T extends Comparable<T>> boolean gteAll(T value, Collection<T> c) {
+		if (CollectionUtils.isEmpty(c)) {
+			return false;
+		}
+		for (T t : c) {
+			if (lt(value, t)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public static <T extends Comparable<T>> boolean between(T value, T minValue, T maxValue) {
+		return between(value, minValue, maxValue, false);
+	}
+
+	public static <T extends Comparable<T>> boolean between(T value, T minValue, T maxValue, boolean exclusive) {
+		if (exclusive) {
+			return gt(value, minValue) && lt(value, maxValue);
+		}
 		return gte(value, minValue) && lte(value, maxValue);
 	}
 

@@ -55,10 +55,10 @@ public class BeanSorter<E> extends AbstractComparator<E> implements Sorter<E> {
 
 	}
 
-	private Comparator<E> comparator = ComparatorHelper.empty();
+	private Comparator<E> comparator = ComparatorHelper.identity();
 
 	public BeanSorter<E> reset() {
-		this.comparator = ComparatorHelper.empty();
+		this.comparator = ComparatorHelper.identity();
 		return this;
 	}
 

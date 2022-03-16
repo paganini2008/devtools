@@ -28,7 +28,7 @@ import java.math.RoundingMode;
  */
 public interface Summary<E> {
 
-	<T> T summarize(Calculation<E, T> calculation);
+	<T> T summarize(Aggregation<E, T> aggregation);
 
 	default <T extends Comparable<T>> T min(String attributeName, Class<T> requiredType) {
 		return summarize(Functions.min(attributeName, requiredType));
