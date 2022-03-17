@@ -24,6 +24,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.github.paganini2008.devtools.primitives.Booleans;
 import com.github.paganini2008.devtools.primitives.Chars;
 import com.github.paganini2008.devtools.primitives.Doubles;
 import com.github.paganini2008.devtools.primitives.Floats;
@@ -729,6 +730,26 @@ public abstract class ArrayUtils {
 
 	public static int indexOf(short[] a, short b, int start, int end) {
 		return Shorts.indexOf(a, b, start, end);
+	}
+
+	public static boolean notContains(boolean[] a, boolean b) {
+		return !contains(a, b);
+	}
+
+	public static boolean contains(boolean[] a, boolean b) {
+		return indexOf(a, b) != INDEX_NOT_FOUND;
+	}
+
+	public static int indexOf(boolean[] a, boolean b) {
+		return indexOf(a, b, 0);
+	}
+
+	public static int indexOf(boolean[] a, boolean b, int start) {
+		return indexOf(a, b, start, a.length);
+	}
+
+	public static int indexOf(boolean[] a, boolean b, int start, int end) {
+		return Booleans.indexOf(a, b, start, end);
 	}
 
 	public static Object getFirst(Object[] array) {

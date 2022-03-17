@@ -16,13 +16,16 @@
 package com.github.paganini2008.devtools.time;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Locale;
 
 import com.github.paganini2008.devtools.Assert;
@@ -106,6 +109,9 @@ public abstract class LocalTimeUtils {
 	}
 
 	public static LocalTime parseLocalTime(String text, DateTimeFormatter formatter, LocalTime defaultValue) {
+		if (formatter == null) {
+			formatter = DateTimeFormatter.ISO_LOCAL_TIME;
+		}
 		try {
 			return StringUtils.isNotBlank(text) ? LocalTime.parse(text, formatter) : defaultValue;
 		} catch (DateTimeParseException e) {
@@ -138,6 +144,62 @@ public abstract class LocalTimeUtils {
 			sdf = dfCache.get(datePattern);
 		}
 		return sdf;
+	}
+
+	public static LocalTime copy(LocalTime lt, ZoneId zoneId) {
+		if (zoneId == null) {
+			zoneId = ZoneId.systemDefault();
+		}
+		if (lt == null) {
+			lt = LocalTime.now(zoneId);
+		}
+		LocalDateTime ldt = LocalDateTime.of(LocalDate.now(zoneId), lt);
+		Instant ins = InstantUtils.toInstant(ldt, zoneId);
+		return LocalTime.ofInstant(ins, zoneId);
+	}
+
+	public static Iterator<LocalTime> toIterator(String startTime, String endTime, DateTimeFormatter dtf, ZoneId zoneId, int interval,
+			ChronoUnit chronoUnit) {
+		return new LocalTimeIterator(parseLocalTime(startTime, dtf), parseLocalTime(endTime, dtf), zoneId, interval, chronoUnit);
+	}
+
+	public static Iterator<LocalTime> toIterator(Date startTime, Date endTime, ZoneId zoneId, int interval, ChronoUnit chronoUnit) {
+		return new LocalTimeIterator(toLocalTime(startTime, zoneId), toLocalTime(endTime, zoneId), zoneId, interval, chronoUnit);
+	}
+
+	public static Iterator<LocalTime> toIterator(LocalTime startTime, LocalTime endTime, ZoneId zoneId, int interval,
+			ChronoUnit chronoUnit) {
+		return new LocalTimeIterator(startTime, endTime, zoneId, interval, chronoUnit);
+	}
+
+	static class LocalTimeIterator implements Iterator<LocalTime> {
+
+		LocalTimeIterator(LocalTime startTime, LocalTime endTime, ZoneId zoneId, int interval, ChronoUnit chronoUnit) {
+			this.startTime = startTime;
+			this.endTime = endTime;
+			this.zoneId = zoneId;
+			this.interval = interval;
+			this.chronoUnit = chronoUnit;
+		}
+
+		private LocalTime startTime;
+		private LocalTime endTime;
+		private ZoneId zoneId;
+		private int interval;
+		private ChronoUnit chronoUnit;
+
+		@Override
+		public boolean hasNext() {
+			return startTime.isBefore(endTime);
+		}
+
+		@Override
+		public LocalTime next() {
+			LocalTime copy = copy(startTime, zoneId);
+			startTime = startTime.plus(interval, chronoUnit);
+			return copy;
+		}
+
 	}
 
 }

@@ -19,6 +19,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -64,26 +65,32 @@ public abstract class InstantUtils {
 		return calendar.toInstant();
 	}
 
-	public static Instant toInstant(LocalDateTime ldt) {
-		return toInstant(ldt, null);
+	public static Instant toInstant(LocalDateTime ldt, ZoneId zoneId) {
+		return toInstant(ldt, zoneId, null);
 	}
 
-	public static Instant toInstant(LocalDateTime ldt, Instant defaultValue) {
+	public static Instant toInstant(LocalDateTime ldt, ZoneId zoneId, Instant defaultValue) {
 		if (ldt == null) {
 			return defaultValue;
 		}
-		return ldt.toInstant(OffsetDateTime.now().getOffset());
+		if (zoneId == null) {
+			zoneId = ZoneId.systemDefault();
+		}
+		return ldt.toInstant(OffsetDateTime.now(zoneId).getOffset());
 	}
 
-	public static Instant toInstant(LocalDate ld) {
-		return toInstant(ld, null);
+	public static Instant toInstant(LocalDate ld, ZoneId zoneId) {
+		return toInstant(ld, zoneId, null);
 	}
 
-	public static Instant toInstant(LocalDate ld, Instant defaultValue) {
+	public static Instant toInstant(LocalDate ld, ZoneId zoneId, Instant defaultValue) {
 		if (ld == null) {
 			return defaultValue;
 		}
-		return ld.atTime(0, 0, 0).toInstant(OffsetDateTime.now().getOffset());
+		if (zoneId == null) {
+			zoneId = ZoneId.systemDefault();
+		}
+		return ld.atTime(0, 0, 0).toInstant(OffsetDateTime.now(zoneId).getOffset());
 	}
 
 }

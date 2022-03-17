@@ -25,6 +25,7 @@ import java.util.List;
  *
  * @version 2.0.5
  */
+@FunctionalInterface
 public interface Aggregation<E, T> {
 
 	T getResult(List<E> elements);
