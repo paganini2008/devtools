@@ -73,8 +73,9 @@ public abstract class NetUtils {
 	}
 
 	private static boolean isValidAddress(InetAddress address) {
-		if (address == null || address.isLoopbackAddress())
+		if (address == null || address.isLoopbackAddress()) {
 			return false;
+		}
 		String name = address.getHostAddress();
 		return (name != null && !ANYHOST.equals(name) && !LOCALHOST.equals(name) && IP_PATTERN.matcher(name).matches());
 	}
@@ -86,6 +87,51 @@ public abstract class NetUtils {
 	public static String getLocalHost() {
 		InetAddress address = getLocalAddress();
 		return address == null ? LOCALHOST : address.getHostAddress();
+	}
+
+	public static String getMacAddressString() {
+		byte[] mac = getMacAddress();
+		if (mac == null) {
+			return "";
+		}
+		StringBuilder content = new StringBuilder();
+		String s;
+		for (int i = 0; i < mac.length; i++) {
+			if (i != 0) {
+				content.append("-");
+			}
+			s = Integer.toHexString(mac[i] & 0xFF);
+			content.append(s.length() == 1 ? 0 + s : s);
+		}
+		return content.toString();
+	}
+
+	public static byte[] getMacAddress() {
+		byte[] mac = null;
+		try {
+			final InetAddress localHost = InetAddress.getLocalHost();
+			try {
+				NetworkInterface localInterface = NetworkInterface.getByInetAddress(localHost);
+				if (localInterface != null && !localInterface.isLoopback() && localInterface.isUp()) {
+					mac = localInterface.getHardwareAddress();
+				}
+				if (mac == null) {
+					final Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+					if (networkInterfaces != null) {
+						while (networkInterfaces.hasMoreElements() && mac == null) {
+							final NetworkInterface nic = networkInterfaces.nextElement();
+							if (nic != null && !nic.isLoopback() && nic.isUp()) {
+								mac = nic.getHardwareAddress();
+							}
+						}
+					}
+				}
+			} catch (final SocketException e) {
+				throw new IllegalStateException(e.getMessage(), e);
+			}
+		} catch (final UnknownHostException ignored) {
+		}
+		return mac;
 	}
 
 	public static InetAddress getLocalAddress() {
@@ -235,6 +281,7 @@ public abstract class NetUtils {
 	}
 
 	public static void main(String[] args) {
+
 	}
 
 }
