@@ -412,7 +412,7 @@ public abstract class LocalDateTimeUtils {
 			zoneId = ZoneId.systemDefault();
 		}
 		if (ldt == null) {
-			ldt = LocalDateTime.now(zoneId);
+			return LocalDateTime.now(zoneId);
 		}
 		Instant ins = InstantUtils.toInstant(ldt, zoneId);
 		return LocalDateTime.ofInstant(ins, zoneId);

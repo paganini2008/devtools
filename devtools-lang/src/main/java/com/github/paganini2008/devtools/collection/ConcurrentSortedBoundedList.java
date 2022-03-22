@@ -61,8 +61,7 @@ public class ConcurrentSortedBoundedList<E> extends AbstractList<E> implements S
 	@Override
 	public boolean add(E e) {
 		boolean result = delegate.add(e);
-		ensureCapacity(e);
-		return result;
+		return result && ensureCapacity(e);
 	}
 
 	@Override
@@ -160,19 +159,24 @@ public class ConcurrentSortedBoundedList<E> extends AbstractList<E> implements S
 		return delegate;
 	}
 
-	private void ensureCapacity(E e) {
-		boolean reached;
+	private boolean ensureCapacity(E e) {
+		boolean reached = false;
 		E eldestElement = null;
 		synchronized (keys) {
-			keys.add(e);
-			if (reached = (keys.size() > maxSize)) {
-				eldestElement = asc ? keys.pollFirst() : keys.pollLast();
-				delegate.remove(eldestElement);
+			boolean a = keys.add(e);
+			if (a) {
+				if (reached = (keys.size() > maxSize)) {
+					eldestElement = asc ? keys.pollFirst() : keys.pollLast();
+					delegate.remove(eldestElement);
+				}
+			} else {
+				delegate.remove(e);
 			}
 		}
 		if (reached) {
 			onEviction(eldestElement);
 		}
+		return reached;
 	}
 
 }

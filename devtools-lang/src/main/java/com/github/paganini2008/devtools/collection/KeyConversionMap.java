@@ -57,7 +57,7 @@ public abstract class KeyConversionMap<T, K, V> extends AbstractMap<K, V> implem
 
 	public V remove(Object key) {
 		Object realKey = keys.remove(convertKey(key));
-		return delegate.remove(realKey);
+		return realKey != null ? delegate.remove(realKey) : null;
 	}
 
 	public void clear() {

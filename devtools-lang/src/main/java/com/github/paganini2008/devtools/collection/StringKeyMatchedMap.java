@@ -15,7 +15,7 @@
 */
 package com.github.paganini2008.devtools.collection;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import com.github.paganini2008.devtools.MatchMode;
 
@@ -36,7 +36,7 @@ public class StringKeyMatchedMap<V> extends KeyMatchedMap<String, V> {
 	}
 
 	public StringKeyMatchedMap(MatchMode matchMode, boolean matchFirst) {
-		super(new HashMap<String, V>(), matchFirst);
+		super(new LinkedHashMap<String, V>(), matchFirst);
 		this.matchMode = matchMode;
 	}
 

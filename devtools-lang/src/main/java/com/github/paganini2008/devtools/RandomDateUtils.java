@@ -291,6 +291,20 @@ public abstract class RandomDateUtils {
 		return randomLocalDateTime(localDate, fromTime, toTime);
 	}
 
+	public static LocalDateTime randomLocalDateTime(LocalDateTime startTime, LocalDateTime endTime) {
+		return randomLocalDateTime(startTime.toLocalDate(), endTime.toLocalDate(), startTime.toLocalTime(), endTime.toLocalTime());
+	}
+
+	public static LocalDateTime randomLocalDateTime(String from, String to) {
+		return randomLocalDateTime(from, to, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+	}
+
+	public static LocalDateTime randomLocalDateTime(String from, String to, DateTimeFormatter dtf) {
+		LocalDateTime startTime = LocalDateTime.parse(from, dtf);
+		LocalDateTime endTime = LocalDateTime.parse(to, dtf);
+		return randomLocalDateTime(startTime, endTime);
+	}
+
 	public static LocalDateTime randomLocalDateTime(LocalDate localDate) {
 		return randomLocalDateTime(localDate, 0, 23, 0, 59, 0, 59);
 	}

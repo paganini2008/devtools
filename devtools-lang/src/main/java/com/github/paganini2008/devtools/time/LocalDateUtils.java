@@ -18,6 +18,7 @@ package com.github.paganini2008.devtools.time;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Month;
 import java.time.Year;
 import java.time.YearMonth;
@@ -308,10 +309,10 @@ public abstract class LocalDateUtils {
 			zoneId = ZoneId.systemDefault();
 		}
 		if (ld == null) {
-			ld = LocalDate.now(zoneId);
+			return LocalDate.now(zoneId);
 		}
-		Instant ins = InstantUtils.toInstant(ld, zoneId);
-		return LocalDate.ofInstant(ins, zoneId);
+		LocalDateTime ldt = LocalDateTime.of(ld, LocalTime.now(zoneId));
+		return LocalDateTimeUtils.copy(ldt, zoneId).toLocalDate();
 	}
 
 	public static Iterator<LocalDate> toIterator(String startTime, String endTime, DateTimeFormatter dtf, ZoneId zoneId, int interval,

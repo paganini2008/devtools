@@ -41,7 +41,7 @@ public class TimeWindowMap<V> extends ConcurrentSortedBoundedMap<Instant, List<V
 
 	public TimeWindowMap(int span, TimeSlot timeSlot, int batchSize, TimeWindowListener<V> timeWindowListener) {
 		super(new ConcurrentHashMap<>(), 1);
-		this.timeSlotMap = new AccumulationTimeSlotMap<>(this, span, timeSlot);
+		this.timeSlotMap = new ListableTimeSlotMap<>(this, span, timeSlot);
 		this.batchSize = batchSize;
 		this.timeWindowListener = timeWindowListener;
 	}

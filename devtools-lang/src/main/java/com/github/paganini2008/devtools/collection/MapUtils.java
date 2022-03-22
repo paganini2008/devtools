@@ -408,6 +408,24 @@ public abstract class MapUtils {
 		return results;
 	}
 
+	public static <K, V> Map<K, V> toMap(K key, V value) {
+		Map<K, V> m = new LinkedHashMap<>();
+		m.put(key, value);
+		return m;
+	}
+
+	public static <K, V> Map<K, V> toMap(K key, V value, K key2, V value2) {
+		Map<K, V> m = toMap(key, value);
+		m.put(key2, value2);
+		return m;
+	}
+
+	public static <K, V> Map<K, V> toMap(K key, V value, K key2, V value2, K key3, V value3) {
+		Map<K, V> m = toMap(key, value, key2, value2);
+		m.put(key3, value3);
+		return m;
+	}
+
 	public static <T> Map<T, T> toMap(T... args) {
 		LinkedHashMap<T, T> results = new LinkedHashMap<T, T>();
 		T prev = null;

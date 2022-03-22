@@ -129,7 +129,7 @@ public class ConcurrentSortedBoundedMap<K, V> extends AbstractMap<K, V> implemen
 	public int getMaxSize() {
 		return maxSize;
 	}
-	
+
 	@Override
 	public Map<K, V> getDelegate() {
 		return delegate;
@@ -140,8 +140,8 @@ public class ConcurrentSortedBoundedMap<K, V> extends AbstractMap<K, V> implemen
 		return delegate.entrySet();
 	}
 
-	private void ensureCapacity(K key) {
-		boolean reached;
+	private boolean ensureCapacity(K key) {
+		boolean reached = false;
 		K eldestKey = null;
 		V eldestValue = null;
 		synchronized (keys) {
@@ -154,6 +154,7 @@ public class ConcurrentSortedBoundedMap<K, V> extends AbstractMap<K, V> implemen
 		if (reached) {
 			onEviction(eldestKey, eldestValue);
 		}
+		return reached;
 	}
 
 }

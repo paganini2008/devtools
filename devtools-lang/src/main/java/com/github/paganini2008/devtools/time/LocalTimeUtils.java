@@ -151,11 +151,10 @@ public abstract class LocalTimeUtils {
 			zoneId = ZoneId.systemDefault();
 		}
 		if (lt == null) {
-			lt = LocalTime.now(zoneId);
+			return LocalTime.now(zoneId);
 		}
 		LocalDateTime ldt = LocalDateTime.of(LocalDate.now(zoneId), lt);
-		Instant ins = InstantUtils.toInstant(ldt, zoneId);
-		return LocalTime.ofInstant(ins, zoneId);
+		return LocalDateTimeUtils.copy(ldt, zoneId).toLocalTime();
 	}
 
 	public static Iterator<LocalTime> toIterator(String startTime, String endTime, DateTimeFormatter dtf, ZoneId zoneId, int interval,
