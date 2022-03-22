@@ -19,20 +19,20 @@ import com.github.paganini2008.devtools.collection.ConcurrentSortedBoundedMap;
 
 /**
  * 
- * DailyAggregationTimeSlotMap
+ * DailyAggregatedTimeSlotMap
  *
  * @author Fred Feng
  * @since 2.0.4
  */
-public class DailyAggregationTimeSlotMap<V> extends AggregationTimeSlotMap<V> {
+public class DailyAggregatedTimeSlotMap<V> extends AggregatedTimeSlotMap<V> {
 
 	private static final long serialVersionUID = 1020741898314951406L;
 
-	public DailyAggregationTimeSlotMap(int span, TimeSlot timeSlot) {
+	public DailyAggregatedTimeSlotMap(int span, TimeSlot timeSlot) {
 		this(span, timeSlot, 1);
 	}
 
-	public DailyAggregationTimeSlotMap(int span, TimeSlot timeSlot, int days) {
+	public DailyAggregatedTimeSlotMap(int span, TimeSlot timeSlot, int days) {
 		super(new ConcurrentSortedBoundedMap<>(timeSlot.sizeOf(span, days)), span, timeSlot);
 	}
 

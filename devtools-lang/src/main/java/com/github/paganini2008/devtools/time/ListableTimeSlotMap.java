@@ -36,7 +36,7 @@ import com.github.paganini2008.devtools.collection.MutableMap;
  *
  * @author Fred Feng
  *
- * @since 2.0.4
+ * @since 2.0.5
  */
 public class ListableTimeSlotMap<V> extends MutableMap<Instant, List<V>> implements TimeSlotMap<List<V>> {
 
@@ -87,6 +87,14 @@ public class ListableTimeSlotMap<V> extends MutableMap<Instant, List<V>> impleme
 	public Instant mutate(Object inputKey) {
 		LocalDateTime ldt = timeSlot.locate((Instant) inputKey, span);
 		return ldt.atZone(ZoneId.systemDefault()).toInstant();
+	}
+	
+	public TimeSlot getTimeSlot() {
+		return timeSlot;
+	}
+
+	public int getSpan() {
+		return span;
 	}
 
 	public static void main(String[] args) {

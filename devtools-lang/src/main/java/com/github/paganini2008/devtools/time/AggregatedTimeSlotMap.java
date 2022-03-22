@@ -26,23 +26,23 @@ import com.github.paganini2008.devtools.collection.AtomicMutableMap;
 
 /**
  * 
- * AggregationTimeSlotMap
+ * AggregatedTimeSlotMap
  *
  * @author Fred Feng
- * @since 2.0.4
+ * @since 2.0.5
  */
-public class AggregationTimeSlotMap<V> extends AtomicMutableMap<Instant, V> implements TimeSlotMap<V> {
+public class AggregatedTimeSlotMap<V> extends AtomicMutableMap<Instant, V> implements TimeSlotMap<V> {
 
 	private static final long serialVersionUID = -1609264341186593908L;
 
 	private final TimeSlot timeSlot;
 	private final int span;
 
-	public AggregationTimeSlotMap(int span, TimeSlot timeSlot) {
+	public AggregatedTimeSlotMap(int span, TimeSlot timeSlot) {
 		this(new ConcurrentHashMap<>(), span, timeSlot);
 	}
 
-	public AggregationTimeSlotMap(Map<Instant, AtomicStampedReference<V>> delegate, int span, TimeSlot timeSlot) {
+	public AggregatedTimeSlotMap(Map<Instant, AtomicStampedReference<V>> delegate, int span, TimeSlot timeSlot) {
 		super(delegate);
 		this.timeSlot = timeSlot;
 		this.span = span;
@@ -52,6 +52,14 @@ public class AggregationTimeSlotMap<V> extends AtomicMutableMap<Instant, V> impl
 	public Instant mutate(Object inputKey) {
 		LocalDateTime ldt = timeSlot.locate((Instant) inputKey, span);
 		return ldt.atZone(ZoneId.systemDefault()).toInstant();
+	}
+
+	public TimeSlot getTimeSlot() {
+		return timeSlot;
+	}
+
+	public int getSpan() {
+		return span;
 	}
 
 }
