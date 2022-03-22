@@ -29,6 +29,7 @@ import java.time.Month;
 import java.time.Year;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 import com.github.paganini2008.devtools.time.DateUtils;
@@ -64,7 +65,7 @@ public abstract class RandomDateUtils {
 	}
 
 	public static YearMonth randomYearMonth(Year year, Month fromMonth, Month toMonth) {
-		Month month = Month.values()[randomInt(fromMonth.ordinal(), toMonth.ordinal())];
+		Month month = randomMonth(fromMonth, toMonth);
 		return year.atMonth(month);
 	}
 
@@ -160,13 +161,8 @@ public abstract class RandomDateUtils {
 	}
 
 	public static LocalDate randomLocalDate(LocalDate from, LocalDate to) {
-		Year fromYear = Year.of(from.getYear());
-		Year toYear = Year.of(to.getYear());
-		Month fromMonth = from.getMonth();
-		Month toMonth = to.getMonth();
-		int fromDayOfMonth = from.getDayOfMonth();
-		int toDayOfMonth = to.getDayOfMonth();
-		return randomLocalDate(fromYear, toYear, fromMonth, toMonth, fromDayOfMonth, toDayOfMonth);
+		long days = from.until(to, ChronoUnit.DAYS);
+		return from.plusDays(randomInt(0, (int) days));
 	}
 
 	public static LocalDateTime randomLocalDateTime() {
@@ -292,7 +288,8 @@ public abstract class RandomDateUtils {
 	}
 
 	public static LocalDateTime randomLocalDateTime(LocalDateTime startTime, LocalDateTime endTime) {
-		return randomLocalDateTime(startTime.toLocalDate(), endTime.toLocalDate(), startTime.toLocalTime(), endTime.toLocalTime());
+		long seconds = startTime.until(endTime, ChronoUnit.SECONDS);
+		return startTime.plusSeconds(randomInt(0, (int) seconds));
 	}
 
 	public static LocalDateTime randomLocalDateTime(String from, String to) {
@@ -305,14 +302,20 @@ public abstract class RandomDateUtils {
 		return randomLocalDateTime(startTime, endTime);
 	}
 
+	public static void main(String[] args) {
+		System.out.println(
+				randomLocalDateTime("2022-03-22 12:00:00", "2022-03-22 22:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+	}
+
 	public static LocalDateTime randomLocalDateTime(LocalDate localDate) {
 		return randomLocalDateTime(localDate, 0, 23, 0, 59, 0, 59);
 	}
 
 	public static LocalDateTime randomLocalDateTime(LocalDate localDate, int fromHourOfDay, int toHourOfDay, int fromMinute, int toMinute,
 			int fromSecond, int toSecond) {
-		LocalTime localTime = randomLocalTime(fromHourOfDay, toHourOfDay, fromMinute, toMinute, fromSecond, toSecond);
-		return localDate.atTime(localTime);
+		LocalTime startTime = LocalTimeUtils.of(fromHourOfDay, fromMinute, fromSecond);
+		LocalTime endTime = LocalTimeUtils.of(toHourOfDay, toMinute, toSecond);
+		return randomLocalDateTime(LocalDateTime.of(localDate, startTime), LocalDateTime.of(localDate, endTime));
 	}
 
 	public static LocalDateTime randomLocalDateTime(int year, int month, int dayOfMonth, int fromHourOfDay, int toHourOfDay, int fromMinute,
@@ -323,8 +326,9 @@ public abstract class RandomDateUtils {
 
 	public static LocalDateTime randomLocalDateTime(int fromYear, int toYear, int fromMonth, int toMonth, int fromDayOfMonth,
 			int toDayOfMonth, int fromHourOfDay, int toHourOfDay, int fromMinute, int toMinute, int fromSecond, int toSecond) {
-		LocalDate localDate = randomLocalDate(fromYear, toYear, fromMonth, toMonth, fromDayOfMonth, toDayOfMonth);
-		return randomLocalDateTime(localDate, fromHourOfDay, toHourOfDay, fromMinute, toMinute, fromSecond, toSecond);
+		LocalDateTime startTime = LocalDateTimeUtils.of(fromYear, fromMonth, fromDayOfMonth, fromHourOfDay, fromMinute, fromSecond);
+		LocalDateTime endTime = LocalDateTimeUtils.of(toYear, toMonth, toDayOfMonth, toHourOfDay, toMinute, toSecond);
+		return randomLocalDateTime(startTime, endTime);
 	}
 
 	public static LocalTime randomLocalTime() {
@@ -337,8 +341,9 @@ public abstract class RandomDateUtils {
 
 	public static LocalTime randomLocalTime(int fromHourOfDay, int toHourOfDay, int fromMinute, int toMinute, int fromSecond,
 			int toSecond) {
-		return LocalTimeUtils.of(randomHourOfDay(fromHourOfDay, toHourOfDay), randomMinuteOrSecond(fromMinute, toMinute),
-				randomMinuteOrSecond(fromSecond, toSecond));
+		LocalTime startTime = LocalTimeUtils.of(fromHourOfDay, fromMinute, fromSecond);
+		LocalTime endTime = LocalTimeUtils.of(toHourOfDay, toMinute, toSecond);
+		return randomLocalTime(startTime, endTime);
 	}
 
 	public static LocalTime randomLocalTime(String from, String to) {
@@ -350,13 +355,8 @@ public abstract class RandomDateUtils {
 	}
 
 	public static LocalTime randomLocalTime(LocalTime from, LocalTime to) {
-		int fh = from.getHour();
-		int fm = from.getMinute();
-		int fs = from.getSecond();
-		int th = to.getHour();
-		int tm = to.getMinute();
-		int ts = to.getSecond();
-		return LocalTime.of(randomInt(fh, th + 1), randomInt(fm, tm + 1), randomInt(fs, ts + 1));
+		long seconds = from.until(to, ChronoUnit.SECONDS);
+		return from.plusSeconds(randomInt(0, (int) seconds));
 	}
 
 	public static Date randomDate() {

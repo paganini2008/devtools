@@ -18,6 +18,7 @@ package com.github.paganini2008.devtools;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.time.Month;
 import java.time.Year;
 import java.time.YearMonth;
 import java.util.List;
@@ -384,14 +385,6 @@ public abstract class RandomUtils {
 		return new BigDecimal(m, scale);
 	}
 
-	public static void main(String[] args) {
-		// System.out.println(defineBigInteger(10));
-		// System.out.println(BigDecimal.valueOf(randomFloat(100,
-		// 1200)).toPlainString());
-		// System.out.println(randomBigDecimal(BigDecimal.ONE, new BigDecimal("100")));
-		// System.out.println(randomDouble(10, 1000));
-	}
-
 	public static BigDecimal defineBigDecimal(int precision, int scale) {
 		BigDecimal from = BigDecimal.TEN.pow(precision - 1);
 		BigDecimal to = BigDecimal.TEN.pow(precision);
@@ -452,6 +445,10 @@ public abstract class RandomUtils {
 		TimeAssert.validateMonth(fromMonth);
 		TimeAssert.validateMonth(toMonth);
 		return randomInt(fromMonth, toMonth + 1);
+	}
+
+	public static Month randomMonth(Month start, Month end) {
+		return Month.values()[randomMonth(start.ordinal() + 1, end.ordinal() + 1) - 1];
 	}
 
 	public static int randomDayOfYear(Year year, int fromDayOfYear, int toDayOfYear) {
