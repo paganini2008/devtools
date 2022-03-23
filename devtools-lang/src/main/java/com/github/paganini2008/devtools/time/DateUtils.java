@@ -691,6 +691,10 @@ public abstract class DateUtils {
 				: new ReverseDateIterator(from, to, interval, calendarField);
 	}
 
+	public static long until(Date from, Date to, TimeUnit timeUnit) {
+		return timeUnit.convert(to.getTime() - from.getTime(), TimeUnit.MILLISECONDS);
+	}
+
 	/**
 	 * 
 	 * DateIterator

@@ -31,6 +31,7 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import com.github.paganini2008.devtools.time.DateUtils;
 import com.github.paganini2008.devtools.time.LocalDateTimeUtils;
@@ -378,13 +379,26 @@ public abstract class RandomDateUtils {
 	}
 
 	public static Date randomDate(int year, int fromMonth, int toMonth, int fromDayOfMonth, int toDayOfMonth) {
-		int month = randomMonth(fromMonth, toMonth);
-		return randomDate(year, month, fromDayOfMonth, toDayOfMonth);
+		Date fromDate = DateUtils.of(year, fromMonth, fromDayOfMonth);
+		Date toDate = DateUtils.of(year, toMonth, toDayOfMonth);
+		return randomDate(fromDate, toDate);
 	}
 
 	public static Date randomDate(int fromYear, int toYear, int fromMonth, int toMonth, int fromDayOfMonth, int toDayOfMonth) {
-		int year = RandomUtils.randomYear(fromYear, toYear);
-		return randomDate(year, fromMonth, toMonth, fromDayOfMonth, toDayOfMonth);
+		Date fromDate = DateUtils.of(fromYear, fromMonth, fromDayOfMonth);
+		Date toDate = DateUtils.of(toYear, toMonth, toDayOfMonth);
+		return randomDate(fromDate, toDate);
+	}
+
+	public static Date randomDate(String from, String to, String datePattern) {
+		Date fromDate = DateUtils.parse(from, datePattern);
+		Date toDate = DateUtils.parse(to, datePattern);
+		return randomDate(fromDate, toDate);
+	}
+
+	public static Date randomDate(Date from, Date to) {
+		long days = DateUtils.until(from, to, TimeUnit.DAYS);
+		return DateUtils.addDayOfMonth(from, randomInt(0, (int) days));
 	}
 
 	public static Date randomDateTime() {
@@ -419,61 +433,49 @@ public abstract class RandomDateUtils {
 
 	public static Date randomDateTime(int year, int month, int fromDayOfMonth, int toDayOfMonth, int fromHourOfDay, int toHourOfDay,
 			int fromMinute, int toMinute, int fromSecond, int toSecond) {
-		Date date = randomDate(year, month, fromDayOfMonth, toDayOfMonth);
-		return randomDateTime(date, fromHourOfDay, toHourOfDay, fromMinute, toMinute, fromSecond, toSecond);
+		Date from = DateUtils.of(year, month, fromDayOfMonth, fromHourOfDay, fromMinute, fromSecond);
+		Date to = DateUtils.of(year, month, toDayOfMonth, toHourOfDay, toMinute, toSecond);
+		return randomDateTime(from, to);
 	}
 
 	public static Date randomDateTime(int year, int fromMonth, int toMonth, int fromDayOfMonth, int toDayOfMonth, int fromHourOfDay,
 			int toHourOfDay, int fromMinute, int toMinute, int fromSecond, int toSecond) {
-		Date date = randomDate(year, fromMonth, toMonth, fromDayOfMonth, toDayOfMonth);
-		return randomDateTime(date, fromHourOfDay, toHourOfDay, fromMinute, toMinute, fromSecond, toSecond);
+		Date from = DateUtils.of(year, fromMonth, fromDayOfMonth, fromHourOfDay, fromMinute, fromSecond);
+		Date to = DateUtils.of(year, toMonth, toDayOfMonth, toHourOfDay, toMinute, toSecond);
+		return randomDateTime(from, to);
 	}
 
 	public static Date randomDateTime(int fromYear, int toYear, int fromMonth, int toMonth, int fromDayOfMonth, int toDayOfMonth,
 			int fromHourOfDay, int toHourOfDay, int fromMinute, int toMinute, int fromSecond, int toSecond) {
-		Date date = randomDate(fromYear, toYear, fromMonth, toMonth, fromDayOfMonth, toDayOfMonth);
-		return randomDateTime(date, fromHourOfDay, toHourOfDay, fromMinute, toMinute, fromSecond, toSecond);
+		Date from = DateUtils.of(fromYear, fromMonth, fromDayOfMonth, fromHourOfDay, fromMinute, fromSecond);
+		Date to = DateUtils.of(toYear, toMonth, toDayOfMonth, toHourOfDay, toMinute, toSecond);
+		return randomDateTime(from, to);
 	}
 
 	public static Date randomDateTime(Date date, int fromHourOfDay, int toHourOfDay, int fromMinute, int toMinute, int fromSecond,
 			int toSecond) {
-		int hourOfDay = randomHourOfDay(fromHourOfDay, toHourOfDay);
-		int minute = randomMinuteOrSecond(fromMinute, toMinute);
-		int second = randomMinuteOrSecond(fromSecond, toSecond);
-		return DateUtils.setTime(date, hourOfDay, minute, second);
-	}
-
-	public static Date randomDateTime(String from, String to, String datePattern) {
-		Date fromDate = DateUtils.parse(from, datePattern);
-		Date toDate = StringUtils.isNotBlank(to) ? DateUtils.parse(to, datePattern) : new Date();
-		return randomDateTime(fromDate, toDate);
+		Date from = DateUtils.setTime(date, fromHourOfDay, fromMinute, fromSecond);
+		Date to = DateUtils.setTime(date, toHourOfDay, toMinute, toSecond);
+		return randomDateTime(from, to);
 	}
 
 	public static Date randomDateTime(Date date, String from, String to, String datePattern) {
 		Date fromTime = DateUtils.parse(from, datePattern);
 		Date toTime = StringUtils.isNotBlank(to) ? DateUtils.parse(to, datePattern) : new Date();
-		Date fromDate = DateUtils.setTime(date, fromTime);
-		Date toDate = DateUtils.setTime(date, toTime);
-		return randomDateTime(fromDate, toDate);
+		Date fromDateTime = DateUtils.setTime(date, fromTime);
+		Date toDateTime = DateUtils.setTime(date, toTime);
+		return randomDateTime(fromDateTime, toDateTime);
 	}
 
-	public static Date randomDateTime(Date fromDate, Date toDate) {
-		LocalDateTime ldt = LocalDateTimeUtils.toLocalDateTime(fromDate, null);
-		int fromYear = ldt.getYear();
-		int fromMonth = ldt.getMonthValue();
-		int fromDayOfMonth = ldt.getDayOfMonth();
-		int fromHourOfDay = ldt.getHour();
-		int fromMinute = ldt.getMinute();
-		int fromSecond = ldt.getSecond();
-		ldt = LocalDateTimeUtils.toLocalDateTime(toDate, null);
-		int toYear = ldt.getYear();
-		int toMonth = ldt.getMonthValue();
-		int toDayOfMonth = ldt.getDayOfMonth();
-		int toHourOfDay = ldt.getHour();
-		int toMinute = ldt.getMinute();
-		int toSecond = ldt.getSecond();
-		return randomDateTime(fromYear, toYear, fromMonth, toMonth, fromDayOfMonth, toDayOfMonth, fromHourOfDay, toHourOfDay, fromMinute,
-				toMinute, fromSecond, toSecond);
+	public static Date randomDateTime(String from, String to, String datePattern) {
+		Date fromDateTime = DateUtils.parse(from, datePattern);
+		Date toDateTime = StringUtils.isNotBlank(to) ? DateUtils.parse(to, datePattern) : new Date();
+		return randomDateTime(fromDateTime, toDateTime);
+	}
+
+	public static Date randomDateTime(Date from, Date to) {
+		long seconds = DateUtils.until(from, to, TimeUnit.SECONDS);
+		return DateUtils.addSeconds(from, randomInt(0, (int) seconds));
 	}
 
 }
