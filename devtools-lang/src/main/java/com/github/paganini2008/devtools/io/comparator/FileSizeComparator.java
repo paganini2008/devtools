@@ -34,6 +34,10 @@ import com.github.paganini2008.devtools.io.FileUtils;
 public class FileSizeComparator extends FileComparator {
 
 	private final FileFilter fileFilter;
+	
+	public FileSizeComparator() {
+		this(null);
+	}
 
 	public FileSizeComparator(FileFilter fileFilter) {
 		this.fileFilter = fileFilter;

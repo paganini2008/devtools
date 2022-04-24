@@ -13,22 +13,26 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.github.paganini2008.devtools.io;
+package com.github.paganini2008.devtools.io.comparator;
 
 import java.io.File;
-import java.io.IOException;
+
+import com.github.paganini2008.devtools.comparator.ComparatorHelper;
 
 /**
- * 
- * ScanHandler
+ * FileChildrenCountComparator
  * 
  * @author Fred Feng
- *
  * @since 2.0.1
  */
-@FunctionalInterface
-public interface ScanHandler {
+public class FileChildrenCountComparator extends FileComparator {
 
-	void handleFile(File directory, File file) throws IOException;
+	protected int continueCompare(File left, File right) {
+		String[] names = left.list();
+		int leftLen = names != null ? names.length : 0;
+		names = right.list();
+		int rightLen = names != null ? names.length : 0;
+		return ComparatorHelper.valueOf(leftLen - rightLen);
+	}
 
 }

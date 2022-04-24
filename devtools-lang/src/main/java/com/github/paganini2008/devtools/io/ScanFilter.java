@@ -13,26 +13,26 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.github.paganini2008.devtools.io.comparator;
+package com.github.paganini2008.devtools.io;
 
 import java.io.File;
-
-import com.github.paganini2008.devtools.comparator.ComparatorHelper;
+import java.io.IOException;
 
 /**
- * FileChildrenComparator
+ * 
+ * ScanFilter
  * 
  * @author Fred Feng
+ *
  * @since 2.0.1
  */
-public class FileChildrenComparator extends FileComparator {
+@FunctionalInterface
+public interface ScanFilter {
 
-	protected int continueCompare(File left, File right) {
-		String[] names = left.list();
-		int leftLen = names != null ? names.length : 0;
-		names = right.list();
-		int rightLen = names != null ? names.length : 0;
-		return ComparatorHelper.valueOf(leftLen - rightLen);
+	default boolean filterDirectory(File directory, int depth) throws IOException {
+		return true;
 	}
+
+	void filterFile(File directory, int depth, File file) throws IOException;
 
 }

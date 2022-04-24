@@ -47,6 +47,7 @@ import com.github.paganini2008.devtools.ArrayUtils;
 import com.github.paganini2008.devtools.Assert;
 import com.github.paganini2008.devtools.CharsetUtils;
 import com.github.paganini2008.devtools.StringUtils;
+import com.github.paganini2008.devtools.io.comparator.FileSorter;
 import com.github.paganini2008.devtools.math.BigDecimalUtils;
 
 /**
@@ -842,22 +843,29 @@ public abstract class FileUtils {
 
 	public static long sizeOfDirectory(File directory, FileFilter filter) throws IOException {
 		final AtomicLong total = new AtomicLong();
-		scan(directory, filter, (dir, file) -> {
+		scan(directory, filter, (dir, depth, file) -> {
 			total.addAndGet(file.length());
 		});
 		return total.get();
 	}
 
-	public static void scan(File directory, FileFilter filter, ScanHandler handler) throws IOException {
+	public static void scan(File directory, FileFilter filter, ScanFilter scanFilter) throws IOException {
+		scan(directory, filter, 0, scanFilter);
+	}
+
+	private static void scan(File directory, FileFilter filter, int depth, ScanFilter scanFilter) throws IOException {
 		FileAssert.isNotDirectory(directory);
 		File[] files = filter != null ? directory.listFiles(filter) : directory.listFiles();
 		if (ArrayUtils.isNotEmpty(files)) {
+			files = FileSorter.sort(files);
 			for (File file : files) {
 				if (!isSymlink(file)) {
 					if (file.isDirectory()) {
-						scan(file, filter, handler);
+						if (scanFilter.filterDirectory(file, depth)) {
+							scan(file, filter, depth + 1, scanFilter);
+						}
 					} else {
-						handler.handleFile(directory, file);
+						scanFilter.filterFile(directory, depth, file);
 					}
 				}
 			}

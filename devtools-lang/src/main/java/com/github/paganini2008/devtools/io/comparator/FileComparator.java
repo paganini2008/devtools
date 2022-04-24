@@ -27,9 +27,6 @@ import com.github.paganini2008.devtools.comparator.AbstractComparator;
  */
 public class FileComparator extends AbstractComparator<File> {
 
-	public FileComparator() {
-	}
-
 	public int compare(File left, File right) {
 		int a = left.isDirectory() ? 1 : 2;
 		int b = right.isDirectory() ? 1 : 2;
