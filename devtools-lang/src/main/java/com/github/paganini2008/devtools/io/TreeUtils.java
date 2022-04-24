@@ -1,3 +1,18 @@
+/**
+* Copyright 2017-2021 Fred Feng (paganini.fy@gmail.com)
+
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package com.github.paganini2008.devtools.io;
 
 import java.io.File;
@@ -6,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.paganini2008.devtools.Console;
-import com.github.paganini2008.devtools.StringUtils;
+import com.github.paganini2008.devtools.MatchMode;
 
 /**
  * 
@@ -27,7 +42,7 @@ public abstract class TreeUtils {
 
 			@Override
 			public boolean filterDirectory(File directory, int depth) throws IOException {
-				if (depth <= maxDepth && treeFilter.filterDirectory(directory, depth)) {
+				if (depth <= maxDepth && treeFilter.matchDirectory(directory, depth)) {
 					list.add(treeFilter.getText(directory, depth));
 					return true;
 				}
@@ -36,7 +51,7 @@ public abstract class TreeUtils {
 
 			@Override
 			public void filterFile(File directory, int depth, File file) throws IOException {
-				if (treeFilter.filterFile(directory, depth, file)) {
+				if (treeFilter.matchFile(directory, depth, file)) {
 					list.add(treeFilter.getText(directory, depth, file));
 				}
 			}
@@ -44,44 +59,8 @@ public abstract class TreeUtils {
 		return list.toArray(new String[0]);
 	}
 
-	public static class DefaultTreeFilter implements TreeFilter {
-
-		@Override
-		public String getText(File directory, int depth) {
-			int n = depth + 1;
-			StringBuilder str = new StringBuilder();
-			for (int i = 0; i < n; i++) {
-				str.append("|");
-				if (i != n - 1) {
-					str.append(StringUtils.repeat(' ', 4));
-				} else {
-					str.append("--- ");
-				}
-			}
-			str.append(directory.getName());
-			return str.toString();
-		}
-
-		@Override
-		public String getText(File directory, int depth, File file) {
-			int n = depth + 1;
-			StringBuilder str = new StringBuilder();
-			for (int i = 0; i < n; i++) {
-				str.append("|");
-				if (i != n - 1) {
-					str.append(StringUtils.repeat(' ', 4));
-				} else {
-					str.append("--- ");
-				}
-			}
-			str.append(file.getName());
-			return str.toString();
-		}
-
-	}
-
 	public static void main(String[] args) throws IOException {
-		String[] lines = TreeUtils.scan(new File("D:\\fabu"),2);
+		String[] lines = TreeUtils.scan(new File("D:\\fabu"), 3, new DirectoryTreeFilter("emoji", null, MatchMode.ANY_WHERE));
 		Console.log(lines);
 		System.out.println();
 

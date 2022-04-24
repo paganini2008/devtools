@@ -15,8 +15,8 @@
 */
 package com.github.paganini2008.devtools.io.filter;
 
+import com.github.paganini2008.devtools.MatchMode;
 import com.github.paganini2008.devtools.io.SizeUnit;
-import com.github.paganini2008.devtools.io.filter.MatchNameFileFilter.MatchMode;
 
 /**
  * 

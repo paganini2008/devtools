@@ -640,4 +640,40 @@ public abstract class StringUtils {
 		return mf;
 	}
 
+	public static void main(String[] args) {
+		System.out.println(matchesWildcard("*mapper*com.*", "com.yourcompany.io.mapper"));
+	}
+
+	public static boolean matchesWildcard(String pattern, String str) {
+		if (pattern.equals("*")) {
+			return true;
+		}
+		if (pattern.contains("*")) {
+			List<String> args = split(pattern, "*", false, false);
+			if (args.isEmpty()) {
+				return true;
+			}
+			int lastIndex = -1;
+			int index;
+			for (String arg : args) {
+				if ((index = str.indexOf(arg)) < 0 || index < lastIndex) {
+					return false;
+				}
+				lastIndex = index;
+			}
+			return true;
+		}
+		return pattern.equals(str);
+	}
+
+	public static String[] matchMany(String[] array, String pattern, MatchMode matchMode) {
+		List<String> list = new ArrayList<>();
+		for (String str : array) {
+			if (matchMode.matches(pattern, str)) {
+				list.add(str);
+			}
+		}
+		return list.toArray(new String[0]);
+	}
+
 }

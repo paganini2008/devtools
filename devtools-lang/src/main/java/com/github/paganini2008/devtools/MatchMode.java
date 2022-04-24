@@ -28,13 +28,13 @@ public enum MatchMode {
 			return StringUtils.isNotBlank(pattern) && pattern.startsWith(substr);
 		}
 	},
-	
+
 	END {
 		public boolean matches(String pattern, String substr) {
 			return StringUtils.isNotBlank(pattern) && pattern.endsWith(substr);
 		}
 	},
-	
+
 	ANY_WHERE {
 		public boolean matches(String pattern, String substr) {
 			return StringUtils.isNotBlank(pattern) && pattern.contains(substr);
@@ -44,6 +44,12 @@ public enum MatchMode {
 	REGEX {
 		public boolean matches(String pattern, String substr) {
 			return StringUtils.isNotBlank(pattern) && pattern.matches(substr);
+		}
+	},
+
+	WILDCARD {
+		public boolean matches(String pattern, String substr) {
+			return StringUtils.isNotBlank(pattern) && StringUtils.matchesWildcard(pattern, substr);
 		}
 	};
 
