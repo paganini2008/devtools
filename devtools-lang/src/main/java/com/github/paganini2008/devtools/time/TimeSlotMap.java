@@ -31,12 +31,8 @@ import java.util.stream.Collectors;
  * @since 2.0.4
  */
 public interface TimeSlotMap<V> extends Map<Instant, V> {
-	
-	Instant mutate(Object inputKey);
 
-	default V merge(Instant ins, V newValue, MergedFunction<V> fun) {
-		return merge(ins, newValue, (left, right) -> fun.merge(ins, left, right));
-	}
+	Instant mutate(Object inputKey);
 
 	default Map<LocalDateTime, V> output() {
 		return entrySet().stream().sorted(Map.Entry.comparingByKey())

@@ -32,24 +32,24 @@ import com.github.paganini2008.devtools.collection.MutableMap;
 
 /**
  * 
- * ListableTimeSlotMap
+ * AppendableTimeSlotMap
  *
  * @author Fred Feng
  *
  * @since 2.0.5
  */
-public class ListableTimeSlotMap<V> extends MutableMap<Instant, List<V>> implements TimeSlotMap<List<V>> {
+public class AppendableTimeSlotMap<V> extends MutableMap<Instant, List<V>> implements TimeSlotMap<List<V>> {
 
 	private static final long serialVersionUID = 8180993603631297273L;
 
 	private final int span;
 	private final TimeSlot timeSlot;
 
-	public ListableTimeSlotMap(int span, TimeSlot timeSlot) {
+	public AppendableTimeSlotMap(int span, TimeSlot timeSlot) {
 		this(new ConcurrentHashMap<>(), span, timeSlot);
 	}
 
-	public ListableTimeSlotMap(Map<Instant, List<V>> delegate, int span, TimeSlot timeSlot) {
+	public AppendableTimeSlotMap(Map<Instant, List<V>> delegate, int span, TimeSlot timeSlot) {
 		super(delegate);
 		this.span = span;
 		this.timeSlot = timeSlot;
@@ -98,9 +98,9 @@ public class ListableTimeSlotMap<V> extends MutableMap<Instant, List<V>> impleme
 	}
 
 	public static void main(String[] args) {
-		ListableTimeSlotMap<String> map = new ListableTimeSlotMap<>(5, TimeSlot.MINUTE);
+		AppendableTimeSlotMap<String> map = new AppendableTimeSlotMap<>(5, TimeSlot.MINUTE);
 		for (int i : Sequence.forEach(1, 10000)) {
-			LocalDateTime ldt = RandomDateUtils.randomLocalDateTime("2022-03-22 00:00:00", "2022-03-22 15:59:59",
+			LocalDateTime ldt = RandomDateUtils.randomLocalDateTime("2022-03-21 23:00:00", "2022-03-22 02:59:59",
 					DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 			map.append(InstantUtils.toInstant(ldt, null, null), "Val_" + i);
 		}

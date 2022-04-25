@@ -26,26 +26,30 @@ import com.github.paganini2008.devtools.collection.AtomicMutableMap;
 
 /**
  * 
- * AggregatedTimeSlotMap
+ * MergeableTimeSlotMap
  *
  * @author Fred Feng
  * @since 2.0.5
  */
-public class AggregatedTimeSlotMap<V> extends AtomicMutableMap<Instant, V> implements TimeSlotMap<V> {
+public class MergeableTimeSlotMap<V extends MergeableFunction<V>> extends AtomicMutableMap<Instant, V> implements TimeSlotMap<V> {
 
 	private static final long serialVersionUID = -1609264341186593908L;
 
 	private final TimeSlot timeSlot;
 	private final int span;
 
-	public AggregatedTimeSlotMap(int span, TimeSlot timeSlot) {
+	public MergeableTimeSlotMap(int span, TimeSlot timeSlot) {
 		this(new ConcurrentHashMap<>(), span, timeSlot);
 	}
 
-	public AggregatedTimeSlotMap(Map<Instant, AtomicStampedReference<V>> delegate, int span, TimeSlot timeSlot) {
+	public MergeableTimeSlotMap(Map<Instant, AtomicStampedReference<V>> delegate, int span, TimeSlot timeSlot) {
 		super(delegate);
 		this.timeSlot = timeSlot;
 		this.span = span;
+	}
+
+	public V merge(Instant ins, V newValue) {
+		return merge(ins, newValue, (current, update) -> (current != null) ? current.merge(update) : update);
 	}
 
 	@Override

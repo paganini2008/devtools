@@ -15,18 +15,16 @@
 */
 package com.github.paganini2008.devtools.time;
 
-import java.time.Instant;
-
 /**
  * 
- * MergeFunction
+ * MergeableFunction
  *
  * @author Fred Feng
  * @since 2.0.4
  */
 @FunctionalInterface
-public interface MergedFunction<V> {
+public interface MergeableFunction<V> {
 
-	V merge(Instant key, V current, V value);
+	V merge(V update);
 
 }

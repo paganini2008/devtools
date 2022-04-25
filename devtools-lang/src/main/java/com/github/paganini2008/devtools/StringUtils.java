@@ -641,10 +641,11 @@ public abstract class StringUtils {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(matchesWildcard("com*mapper", "com.yourcompany.io.mapper"));
+		System.out.println(matchesWildcard("com.*.io.*.mapper", "com.io.mapper"));
 	}
 
 	public static boolean matchesWildcard(String pattern, String str) {
+		Assert.hasNoText(pattern, "Empty pattern");
 		if (pattern.equals("*")) {
 			return true;
 		}
