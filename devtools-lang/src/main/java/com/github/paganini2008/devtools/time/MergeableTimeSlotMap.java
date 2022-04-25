@@ -29,7 +29,7 @@ import com.github.paganini2008.devtools.collection.AtomicMutableMap;
  * MergeableTimeSlotMap
  *
  * @author Fred Feng
- * @since 2.0.5
+ * @since 2.0.4
  */
 public class MergeableTimeSlotMap<V extends MergeableFunction<V>> extends AtomicMutableMap<Instant, V> implements TimeSlotMap<V> {
 

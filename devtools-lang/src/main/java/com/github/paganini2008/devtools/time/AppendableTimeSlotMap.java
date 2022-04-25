@@ -36,7 +36,7 @@ import com.github.paganini2008.devtools.collection.MutableMap;
  *
  * @author Fred Feng
  *
- * @since 2.0.5
+ * @since 2.0.4
  */
 public class AppendableTimeSlotMap<V> extends MutableMap<Instant, List<V>> implements TimeSlotMap<List<V>> {
 
