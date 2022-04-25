@@ -25,27 +25,27 @@ import com.github.paganini2008.devtools.StringUtils;
 
 /**
  * 
- * DirectoryTreeFilter
+ * DirectoryTreeMatcher
  *
  * @author Fred Feng
  * @version 1.0.0
  */
-public class DirectoryTreeFilter extends DefaultTreeFilter {
+public class DirectoryTreeMatcher extends DefaultTreeMatcher {
 
 	private final String[] includedFiles;
 	private final String[] excludedFiles;
 	private final MatchMode matchMode;
 
-	public DirectoryTreeFilter() {
+	public DirectoryTreeMatcher() {
 		this(EMPTY_ARRAY, EMPTY_ARRAY, MatchMode.ANY_WHERE);
 	}
 
-	public DirectoryTreeFilter(String includedFile, String excludedFile, MatchMode matchMode) {
+	public DirectoryTreeMatcher(String includedFile, String excludedFile, MatchMode matchMode) {
 		this(StringUtils.isNotBlank(includedFile) ? new String[] { includedFile } : EMPTY_ARRAY,
 				StringUtils.isNotBlank(excludedFile) ? new String[] { excludedFile } : EMPTY_ARRAY, matchMode);
 	}
 
-	public DirectoryTreeFilter(String[] includedFiles, String[] excludedFiles, MatchMode matchMode) {
+	public DirectoryTreeMatcher(String[] includedFiles, String[] excludedFiles, MatchMode matchMode) {
 		this.includedFiles = includedFiles;
 		this.excludedFiles = excludedFiles;
 		this.matchMode = matchMode;

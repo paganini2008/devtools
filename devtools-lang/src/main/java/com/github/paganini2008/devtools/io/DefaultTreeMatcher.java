@@ -6,12 +6,12 @@ import com.github.paganini2008.devtools.StringUtils;
 
 /**
  * 
- * DefaultTreeFilter
+ * DefaultTreeMatcher
  *
  * @author Fred Feng
  * @version 1.0.0
  */
-public class DefaultTreeFilter implements TreeMatcher {
+public class DefaultTreeMatcher implements TreeMatcher {
 
 	@Override
 	public String getText(File directory, int depth) {

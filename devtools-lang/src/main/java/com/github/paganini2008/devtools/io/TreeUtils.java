@@ -34,7 +34,7 @@ public abstract class TreeUtils {
 	}
 
 	public static String[] scan(File directory, int maxDepth, boolean directoryOnly) throws IOException {
-		return scan(directory, maxDepth, directoryOnly ? new DirectoryTreeFilter() : new DefaultTreeFilter());
+		return scan(directory, maxDepth, directoryOnly ? new DirectoryTreeMatcher() : new DefaultTreeMatcher());
 	}
 
 	private static String[] scan(File directory, int maxDepth, TreeMatcher treeMatcher) throws IOException {

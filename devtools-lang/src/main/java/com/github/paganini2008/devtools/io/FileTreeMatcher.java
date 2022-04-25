@@ -25,27 +25,27 @@ import com.github.paganini2008.devtools.StringUtils;
 
 /**
  * 
- * FileTreeFilter
+ * FileTreeMatcher
  *
  * @author Fred Feng
  * @version 2.0.5
  */
-public class FileTreeFilter extends DefaultTreeFilter {
+public class FileTreeMatcher extends DefaultTreeMatcher {
 
 	private final String[] includedFiles;
 	private final String[] excludedFiles;
 	private final MatchMode matchMode;
 
-	public FileTreeFilter() {
+	public FileTreeMatcher() {
 		this(EMPTY_ARRAY, EMPTY_ARRAY, MatchMode.ANY_WHERE);
 	}
 
-	public FileTreeFilter(String includedFile, String excludedFile, MatchMode matchMode) {
+	public FileTreeMatcher(String includedFile, String excludedFile, MatchMode matchMode) {
 		this(StringUtils.isNotBlank(includedFile) ? new String[] { includedFile } : EMPTY_ARRAY,
 				StringUtils.isNotBlank(excludedFile) ? new String[] { excludedFile } : EMPTY_ARRAY, matchMode);
 	}
 
-	public FileTreeFilter(String[] includedFiles, String[] excludedFiles, MatchMode matchMode) {
+	public FileTreeMatcher(String[] includedFiles, String[] excludedFiles, MatchMode matchMode) {
 		this.includedFiles = includedFiles;
 		this.excludedFiles = excludedFiles;
 		this.matchMode = matchMode;
