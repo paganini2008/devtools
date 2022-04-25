@@ -43,7 +43,7 @@ public enum MatchMode {
 
 	REGEX {
 		public boolean matches(String pattern, String substr) {
-			return StringUtils.isNotBlank(pattern) && pattern.matches(substr);
+			return StringUtils.isNotBlank(pattern) && (pattern.equals(substr) || pattern.matches(substr));
 		}
 	},
 

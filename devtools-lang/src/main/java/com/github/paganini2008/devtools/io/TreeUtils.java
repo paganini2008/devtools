@@ -20,9 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.paganini2008.devtools.Console;
-import com.github.paganini2008.devtools.MatchMode;
-
 /**
  * 
  * TreeUtils
@@ -33,17 +30,21 @@ import com.github.paganini2008.devtools.MatchMode;
 public abstract class TreeUtils {
 
 	public static String[] scan(File directory, int maxDepth) throws IOException {
-		return scan(directory, maxDepth, new DefaultTreeFilter());
+		return scan(directory, maxDepth, true);
 	}
 
-	private static String[] scan(File directory, int maxDepth, TreeFilter treeFilter) throws IOException {
+	public static String[] scan(File directory, int maxDepth, boolean directoryOnly) throws IOException {
+		return scan(directory, maxDepth, directoryOnly ? new DirectoryTreeFilter() : new DefaultTreeFilter());
+	}
+
+	private static String[] scan(File directory, int maxDepth, TreeMatcher treeMatcher) throws IOException {
 		List<String> list = new ArrayList<String>();
 		FileUtils.scan(directory, null, new ScanFilter() {
 
 			@Override
 			public boolean filterDirectory(File directory, int depth) throws IOException {
-				if (depth <= maxDepth && treeFilter.matchDirectory(directory, depth)) {
-					list.add(treeFilter.getText(directory, depth));
+				if (depth <= maxDepth && treeMatcher.matchDirectory(directory, depth)) {
+					list.add(treeMatcher.getText(directory, depth));
 					return true;
 				}
 				return false;
@@ -51,19 +52,12 @@ public abstract class TreeUtils {
 
 			@Override
 			public void filterFile(File directory, int depth, File file) throws IOException {
-				if (treeFilter.matchFile(directory, depth, file)) {
-					list.add(treeFilter.getText(directory, depth, file));
+				if (depth <= maxDepth && treeMatcher.matchFile(directory, depth, file)) {
+					list.add(treeMatcher.getText(directory, depth, file));
 				}
 			}
 		});
 		return list.toArray(new String[0]);
-	}
-
-	public static void main(String[] args) throws IOException {
-		String[] lines = TreeUtils.scan(new File("D:\\fabu"), 3, new DirectoryTreeFilter("emoji", null, MatchMode.ANY_WHERE));
-		Console.log(lines);
-		System.out.println();
-
 	}
 
 }

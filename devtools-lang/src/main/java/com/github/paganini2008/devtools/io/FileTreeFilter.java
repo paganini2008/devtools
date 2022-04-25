@@ -25,39 +25,39 @@ import com.github.paganini2008.devtools.StringUtils;
 
 /**
  * 
- * DirectoryTreeFilter
+ * FileTreeFilter
  *
  * @author Fred Feng
- * @version 1.0.0
+ * @version 2.0.5
  */
-public class DirectoryTreeFilter extends DefaultTreeFilter {
+public class FileTreeFilter extends DefaultTreeFilter {
 
 	private final String[] includedFiles;
 	private final String[] excludedFiles;
 	private final MatchMode matchMode;
 
-	public DirectoryTreeFilter() {
+	public FileTreeFilter() {
 		this(EMPTY_ARRAY, EMPTY_ARRAY, MatchMode.ANY_WHERE);
 	}
 
-	public DirectoryTreeFilter(String includedFile, String excludedFile, MatchMode matchMode) {
+	public FileTreeFilter(String includedFile, String excludedFile, MatchMode matchMode) {
 		this(StringUtils.isNotBlank(includedFile) ? new String[] { includedFile } : EMPTY_ARRAY,
 				StringUtils.isNotBlank(excludedFile) ? new String[] { excludedFile } : EMPTY_ARRAY, matchMode);
 	}
 
-	public DirectoryTreeFilter(String[] includedFiles, String[] excludedFiles, MatchMode matchMode) {
+	public FileTreeFilter(String[] includedFiles, String[] excludedFiles, MatchMode matchMode) {
 		this.includedFiles = includedFiles;
 		this.excludedFiles = excludedFiles;
 		this.matchMode = matchMode;
 	}
 
 	@Override
-	public boolean matchDirectory(File directory, int depth) {
+	public boolean matchFile(File directory, int depth, File file) {
 		boolean match = true;
 		if (ArrayUtils.isNotEmpty(includedFiles)) {
 			match = false;
 			for (String pattern : includedFiles) {
-				if (matchMode.matches(pattern, directory.getAbsolutePath())) {
+				if (matchMode.matches(pattern, file.getName())) {
 					match = true;
 					break;
 				}
@@ -65,18 +65,13 @@ public class DirectoryTreeFilter extends DefaultTreeFilter {
 		}
 		if (ArrayUtils.isNotEmpty(excludedFiles)) {
 			for (String pattern : excludedFiles) {
-				if (matchMode.matches(pattern, directory.getAbsolutePath())) {
+				if (matchMode.matches(pattern, file.getName())) {
 					match = false;
 					break;
 				}
 			}
 		}
 		return match;
-	}
-
-	@Override
-	public boolean matchFile(File directory, int depth, File file) {
-		return false;
 	}
 
 }

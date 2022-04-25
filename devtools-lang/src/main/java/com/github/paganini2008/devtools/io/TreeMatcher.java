@@ -19,12 +19,12 @@ import java.io.File;
 
 /**
  * 
- * TreeFilter
+ * TreeMatcher
  *
  * @author Fred Feng
  * @version 2.0.5
  */
-public interface TreeFilter {
+public interface TreeMatcher {
 
 	default boolean matchDirectory(File directory, int depth) {
 		return true;

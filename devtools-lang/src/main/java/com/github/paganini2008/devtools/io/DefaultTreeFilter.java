@@ -11,7 +11,7 @@ import com.github.paganini2008.devtools.StringUtils;
  * @author Fred Feng
  * @version 1.0.0
  */
-public class DefaultTreeFilter implements TreeFilter {
+public class DefaultTreeFilter implements TreeMatcher {
 
 	@Override
 	public String getText(File directory, int depth) {
