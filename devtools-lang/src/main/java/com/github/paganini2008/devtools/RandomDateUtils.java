@@ -303,11 +303,6 @@ public abstract class RandomDateUtils {
 		return randomLocalDateTime(startTime, endTime);
 	}
 
-	public static void main(String[] args) {
-		System.out.println(
-				randomLocalDateTime("2022-03-22 23:50:00", "2022-03-23 01:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-	}
-
 	public static LocalDateTime randomLocalDateTime(LocalDate localDate) {
 		return randomLocalDateTime(localDate, 0, 23, 0, 59, 0, 59);
 	}

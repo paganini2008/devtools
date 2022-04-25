@@ -18,9 +18,11 @@ package com.github.paganini2008.devtools.time;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicStampedReference;
+import java.util.stream.Collectors;
 
 import com.github.paganini2008.devtools.collection.AtomicMutableMap;
 
@@ -56,6 +58,12 @@ public class MergeableTimeSlotMap<V extends MergeableFunction<V>> extends Atomic
 	public Instant mutate(Object inputKey) {
 		LocalDateTime ldt = timeSlot.locate((Instant) inputKey, span);
 		return ldt.atZone(ZoneId.systemDefault()).toInstant();
+	}
+
+	@Override
+	public Map<Instant, V> toMap() {
+		return delegate.entrySet().stream().sorted(Map.Entry.comparingByKey())
+				.collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().getReference(), (o, n) -> o, LinkedHashMap::new));
 	}
 
 	public TimeSlot getTimeSlot() {

@@ -65,6 +65,10 @@ public abstract class InstantUtils {
 		return calendar.toInstant();
 	}
 
+	public static Instant toInstant(LocalDateTime ldt) {
+		return toInstant(ldt, null);
+	}
+
 	public static Instant toInstant(LocalDateTime ldt, ZoneId zoneId) {
 		return toInstant(ldt, zoneId, null);
 	}
@@ -77,6 +81,10 @@ public abstract class InstantUtils {
 			zoneId = ZoneId.systemDefault();
 		}
 		return ldt.toInstant(OffsetDateTime.now(zoneId).getOffset());
+	}
+
+	public static Instant toInstant(LocalDate ld) {
+		return toInstant(ld, null);
 	}
 
 	public static Instant toInstant(LocalDate ld, ZoneId zoneId) {

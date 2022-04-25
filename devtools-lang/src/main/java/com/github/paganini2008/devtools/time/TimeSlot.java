@@ -30,6 +30,19 @@ import java.time.ZonedDateTime;
  */
 public enum TimeSlot {
 
+	DAY {
+		@Override
+		public int sizeOf(int span, int days) {
+			return span * days;
+		}
+
+		@Override
+		public LocalDateTime locate(Instant timestamp, int span) {
+			LocalDateTime ldt = timestamp.atZone(ZoneId.systemDefault()).toLocalDate().atTime(0, 0);
+			return ldt;
+		}
+	},
+
 	HOUR {
 
 		@Override

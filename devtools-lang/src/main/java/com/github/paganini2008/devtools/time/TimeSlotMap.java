@@ -34,10 +34,9 @@ public interface TimeSlotMap<V> extends Map<Instant, V> {
 
 	Instant mutate(Object inputKey);
 
-	default Map<LocalDateTime, V> output() {
-		return entrySet().stream().sorted(Map.Entry.comparingByKey())
-				.collect(Collectors.toMap(e -> e.getKey().atZone(ZoneId.systemDefault()).toLocalDateTime(), e -> e.getValue(),
-						(oldVal, newVal) -> oldVal, LinkedHashMap::new));
+	default Map<LocalDateTime, V> output(ZoneId zoneId) {
+		return entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toMap(
+				e -> e.getKey().atZone(zoneId).toLocalDateTime(), e -> e.getValue(), (oldVal, newVal) -> oldVal, LinkedHashMap::new));
 	}
 
 }
