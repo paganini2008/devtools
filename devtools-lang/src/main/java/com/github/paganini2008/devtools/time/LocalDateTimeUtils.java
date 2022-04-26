@@ -418,6 +418,18 @@ public abstract class LocalDateTimeUtils {
 		return LocalDateTime.ofInstant(ins, zoneId);
 	}
 
+	public static long until(LocalDateTime endTime) {
+		return until(null, endTime);
+	}
+
+	public static long until(LocalDateTime startTime, LocalDateTime endTime) {
+		Assert.isNull(endTime, "EndTime must not be null");
+		if (startTime == null) {
+			startTime = LocalDateTime.now();
+		}
+		return startTime.until(endTime, ChronoUnit.MILLIS);
+	}
+
 	public static Iterator<LocalDateTime> toIterator(String startTime, String endTime, DateTimeFormatter dtf, ZoneId zoneId, int interval,
 			ChronoUnit chronoUnit) {
 		return new LocalDateTimeIterator(parseLocalDateTime(startTime, dtf), parseLocalDateTime(endTime, dtf), zoneId, interval,
