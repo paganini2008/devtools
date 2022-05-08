@@ -52,7 +52,7 @@ public class FileTreeMatcher extends DefaultTreeMatcher {
 	}
 
 	@Override
-	public boolean matchFile(File directory, int depth, File file) {
+	public boolean matchFile(File directory, int depth, File file, boolean hasLast) {
 		boolean match = true;
 		if (ArrayUtils.isNotEmpty(includedFiles)) {
 			match = false;

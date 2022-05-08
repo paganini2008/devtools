@@ -56,6 +56,54 @@ public abstract class StringUtils {
 		return isNotBlank(str) ? str.toString() : defaultValue;
 	}
 
+	public static StringBuilder toStringBuilder(char[] array) {
+		StringBuilder content = new StringBuilder();
+		for (char c : array) {
+			content.append(c);
+		}
+		return content;
+	}
+
+	public static StringBuilder toStringBuilder(int[] array) {
+		StringBuilder content = new StringBuilder();
+		for (int i : array) {
+			content.append(i);
+		}
+		return content;
+	}
+
+	public static StringBuilder toStringBuilder(float[] array) {
+		StringBuilder content = new StringBuilder();
+		for (float f : array) {
+			content.append(f);
+		}
+		return content;
+	}
+
+	public static StringBuilder toStringBuilder(double[] array) {
+		StringBuilder content = new StringBuilder();
+		for (double d : array) {
+			content.append(d);
+		}
+		return content;
+	}
+
+	public static StringBuilder toStringBuilder(long[] array) {
+		StringBuilder content = new StringBuilder();
+		for (long l : array) {
+			content.append(l);
+		}
+		return content;
+	}
+
+	public static StringBuilder toStringBuilder(Object[] array) {
+		StringBuilder content = new StringBuilder();
+		for (Object obj : array) {
+			content.append(obj);
+		}
+		return content;
+	}
+
 	public static String toLetter(int value) {
 		StringBuilder str = new StringBuilder();
 		while (value >= 0) {

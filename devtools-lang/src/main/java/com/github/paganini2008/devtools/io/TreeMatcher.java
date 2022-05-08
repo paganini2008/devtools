@@ -26,16 +26,16 @@ import java.io.File;
  */
 public interface TreeMatcher {
 
-	default boolean matchDirectory(File directory, int depth) {
+	default boolean matchDirectory(File directory, int depth, boolean hasLast) {
 		return true;
 	}
 
-	default boolean matchFile(File directory, int depth, File file) {
+	default boolean matchFile(File directory, int depth, File file, boolean hasLast) {
 		return true;
 	}
 
-	String getText(File directory, int depth);
+	String getText(File directory, int depth, boolean hasLast);
 
-	String getText(File directory, int depth, File file);
+	String getText(File directory, int depth, File file, boolean hasLast);
 
 }

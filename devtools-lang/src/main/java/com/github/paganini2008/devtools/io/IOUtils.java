@@ -346,6 +346,15 @@ public abstract class IOUtils {
 		copy(input, output, CharsetUtils.toCharset(charset));
 	}
 
+	public static void copy(String[] array, OutputStream output, Charset charset) throws IOException {
+		StringBuilder content = StringUtils.toStringBuilder(array);
+		copy(content, output, charset);
+	}
+
+	public static void copy(String[] array, OutputStream output, String charset) throws IOException {
+		copy(array, output, CharsetUtils.toCharset(charset));
+	}
+
 	public static void copy(Reader reader, OutputStream output, Charset charset) throws IOException {
 		copy(reader, output, charset, -1);
 	}

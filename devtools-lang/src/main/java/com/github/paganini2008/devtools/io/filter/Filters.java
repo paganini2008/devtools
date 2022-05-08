@@ -60,4 +60,8 @@ public abstract class Filters {
 		return new DirectoryFileFilter();
 	}
 
+	public static LogicalFileFilter isHidden() {
+		return new HiddenFileFilter();
+	}
+
 }
