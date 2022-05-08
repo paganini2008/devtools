@@ -34,7 +34,7 @@ import com.github.paganini2008.devtools.primitives.Chars;
  */
 public abstract class StringUtils {
 
-	public static final String lineSeparator = System.getProperty("line.separator");
+	public static final String NEWLINE = System.getProperty("line.separator");
 
 	public static final String BLANK = " ";
 
@@ -56,50 +56,107 @@ public abstract class StringUtils {
 		return isNotBlank(str) ? str.toString() : defaultValue;
 	}
 
+	public static StringBuilder toStringBuilder(boolean[] array) {
+		return toStringBuilder(array, false);
+	}
+
+	public static StringBuilder toStringBuilder(boolean[] array, boolean newline) {
+		StringBuilder content = new StringBuilder();
+		for (boolean b : array) {
+			content.append(b);
+			if (newline) {
+				content.append(NEWLINE);
+			}
+		}
+		return content;
+	}
+
 	public static StringBuilder toStringBuilder(char[] array) {
+		return toStringBuilder(array, false);
+	}
+
+	public static StringBuilder toStringBuilder(char[] array, boolean newline) {
 		StringBuilder content = new StringBuilder();
 		for (char c : array) {
 			content.append(c);
+			if (newline) {
+				content.append(NEWLINE);
+			}
 		}
 		return content;
 	}
 
 	public static StringBuilder toStringBuilder(int[] array) {
+		return toStringBuilder(array, false);
+	}
+
+	public static StringBuilder toStringBuilder(int[] array, boolean newline) {
 		StringBuilder content = new StringBuilder();
 		for (int i : array) {
 			content.append(i);
+			if (newline) {
+				content.append(NEWLINE);
+			}
 		}
 		return content;
 	}
 
 	public static StringBuilder toStringBuilder(float[] array) {
+		return toStringBuilder(array, false);
+	}
+
+	public static StringBuilder toStringBuilder(float[] array, boolean newline) {
 		StringBuilder content = new StringBuilder();
 		for (float f : array) {
 			content.append(f);
+			if (newline) {
+				content.append(NEWLINE);
+			}
 		}
 		return content;
 	}
 
 	public static StringBuilder toStringBuilder(double[] array) {
+		return toStringBuilder(array, false);
+	}
+
+	public static StringBuilder toStringBuilder(double[] array, boolean newline) {
 		StringBuilder content = new StringBuilder();
 		for (double d : array) {
 			content.append(d);
+			if (newline) {
+				content.append(NEWLINE);
+			}
 		}
 		return content;
 	}
 
 	public static StringBuilder toStringBuilder(long[] array) {
+		return toStringBuilder(array, false);
+	}
+
+	public static StringBuilder toStringBuilder(long[] array, boolean newline) {
 		StringBuilder content = new StringBuilder();
 		for (long l : array) {
 			content.append(l);
+			if (newline) {
+				content.append(NEWLINE);
+			}
 		}
 		return content;
 	}
 
 	public static StringBuilder toStringBuilder(Object[] array) {
+		return toStringBuilder(array, false);
+	}
+
+	public static StringBuilder toStringBuilder(Object[] array, boolean newline) {
 		StringBuilder content = new StringBuilder();
 		for (Object obj : array) {
 			content.append(obj);
+			if (newline) {
+				content.append(NEWLINE);
+			}
 		}
 		return content;
 	}
@@ -113,7 +170,7 @@ public abstract class StringUtils {
 		return str.reverse().toString();
 	}
 
-	public static String reverse(String str) {
+	public static String reverse(CharSequence str) {
 		return isNotBlank(str) ? new StringBuilder(str).reverse().toString() : "";
 	}
 

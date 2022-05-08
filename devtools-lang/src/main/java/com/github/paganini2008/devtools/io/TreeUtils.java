@@ -100,8 +100,4 @@ public abstract class TreeUtils {
 		}
 	}
 
-	public static void main(String[] args) throws Exception {
-		scanAndSave(new File("F:\\github_store\\springplayer"), 2, new File("d:/test/123.txt"));
-	}
-
 }
