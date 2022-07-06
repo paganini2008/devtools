@@ -26,10 +26,6 @@ import java.util.Comparator;
 public abstract class ComparatorHelper {
 
 	public static <T> Comparator<T> identity() {
-		return (a, b) -> 1;
-	}
-
-	public static <T> Comparator<T> first() {
 		return (a, b) -> 0;
 	}
 

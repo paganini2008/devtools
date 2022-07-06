@@ -240,7 +240,7 @@ public class Product {
 
 	public static enum Style {
 
-		HARD, SOFT;
+		HARD, SOFT, RANDOM;
 
 	}
 

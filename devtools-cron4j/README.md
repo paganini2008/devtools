@@ -26,6 +26,7 @@
 #### How to generate cron expression?
 
 ``` java
+
     // */5 * * * * ?
 	public static CronExpression getCron1() {
 		return CronExpressionBuilder.everySecond(5);
@@ -105,6 +106,7 @@
 #### How to parse cron expressions?
 
 ``` java
+
         System.out.println(CRON.parse("*/5 * * * * ?"));
 		System.out.println(CRON.parse("0 */2 * * * ?"));
 		System.out.println(CRON.parse("0 15 10 LW * ?"));
@@ -119,6 +121,7 @@
 ####  How to test cron expressions?
 
 ``` java
+
 		CRON.parse("0 30 23 L * ?").forEach(date -> {
 			System.out.println(DateUtils.format(date));
 		}, 20);
@@ -133,24 +136,24 @@
 #### How to run the scheduler?
 
 ``` java
-        CronExpression expression = CronExpressionBuilder.everySecond(5);
+        CronExpression expression = CronExpressionBuilder.everySecond(5);  // */5 * * * * ?
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 		executor.schedule(new Task() {
 
 			@Override
 			public boolean execute() {
-				System.out.println("Run at: " + DateUtils.format(System.currentTimeMillis()));
+				System.out.println("Run Task at: " + DateUtils.format(System.currentTimeMillis()));
 				return true;
 			}
 
 			@Override
 			public Cancellable cancellable() {
-				return Cancellables.cancelIfRuns(-1);
+				return Cancellables.cancelIfRuns(-1); // if run forever set '-1'
 			}
 
 			@Override
 			public void onCancellation(Throwable e) {
-				System.out.println("Cancelled.");
+				System.out.println("To do something if the task has cancelled.");
 			}
 
 		}, expression);

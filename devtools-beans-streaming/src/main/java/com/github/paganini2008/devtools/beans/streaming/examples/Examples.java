@@ -60,8 +60,12 @@ public abstract class Examples {
 	}
 
 	/**
+	 * Equivalent to:
+	 * 
 	 * <pre>
-	 * Equivalent to: select * from Product where location='London'
+	 *   select * 
+	 *     from Product 
+	 *   where location='London'
 	 * </pre>
 	 */
 	public static void test() {
@@ -72,8 +76,13 @@ public abstract class Examples {
 	}
 
 	/**
+	 * Equivalent to: 
+	 * 
 	 * <pre>
-	 *Equivalent to: select * from Product where created<= now() and salesman.name='Petter'
+	 *   select * 
+	 *     from Product 
+	 *   where created<= now() 
+	 *     and salesman.name='Petter'
 	 * </pre>
 	 */
 	public static void test1() {
@@ -85,8 +94,18 @@ public abstract class Examples {
 	}
 
 	/**
+	 * Equivalent to:
+	 * 
 	 * <pre>
-	 *Equivalent to: select location,max(price) as maxPrice, min(price) as minPrice,avg(freight) as avgFreight,sum(sales) as sumSales from Product group by location
+	 *    select 
+	 *      location,
+	 *      max(price) as maxPrice, 
+	 *      min(price) as minPrice,
+	 *      avg(freight) as avgFreight,
+	 *      sum(sales) as sumSales 
+	 *    from Product 
+	 *      group by 
+	 *        location
 	 * </pre>
 	 */
 	public static void test2() {
@@ -103,8 +122,19 @@ public abstract class Examples {
 	}
 
 	/**
+	 * Equivalent to:
+	 * 
 	 * <pre>
-	 *Equivalent to: select location,style,max(price) as maxPrice, min(price) as minPrice,avg(freight) as avgFreight,sum(sales) as sumSales from Product group by location,style having avg(freight) > 55
+	 *    select location,
+	 *           style,max(price) as maxPrice, 
+	 *           min(price) as minPrice,
+	 *           avg(freight) as avgFreight,
+	 *           sum(sales) as sumSales 
+	 *    from Product 
+	 *           group by 
+	 *             location,
+	 *             style
+	 *    having avg(freight) > 55
 	 * </pre>
 	 */
 	public static void test3() {
@@ -123,19 +153,30 @@ public abstract class Examples {
 	}
 
 	/**
+	 * Equivalent to:
+	 * 
 	 * <pre>
-	 *Equivalent to: select name,price from Product order by price desc limit 100
+	 *   select 
+	 *      name,
+	 *      price,
+	 *      freight
+	 *   from Product 
+	 *      order by 
+	 *        price desc,
+	 *        freight asc
+	 *   limit 100
 	 * </pre>
 	 */
 	public static void test4() {
-		Sorter<Product> sorter = Orders.descending("price", BigDecimal.class);
+		Sorter<Product> sorter = Orders.descending("price", Float.class);
+		sorter = sorter.ascending("freight", BigDecimal.class);
 		Selector.from(products).orderBy(sorter).list(100).forEach(product -> {
-			System.out.println(product);
+			System.out.printf("Name: %s, Price: %f, Freight: %f \n", product.getName(), product.getPrice(), product.getFreight());
 		});
 	}
 
 	public static void main(String[] args) {
-		test3();
+		test1();
 	}
 
 }
