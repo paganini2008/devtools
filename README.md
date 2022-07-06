@@ -38,7 +38,7 @@ Jdk1.8  (or later)
 
 #### Core API
 
-**Utility class for <code>java.lang.*</code> **
+Utility class for <code>java.lang.*</code>
 
 * StringUtils
 * ObjectUtils
@@ -47,7 +47,7 @@ Jdk1.8  (or later)
 * CharsetUtils
 * ClassUtils
 
-**Utility class  for primitive data types **
+Utility class  for primitive data types
 
 * Booleans
 * Chars
@@ -58,18 +58,18 @@ Jdk1.8  (or later)
 * Floats
 * Doubles
 
-**Utility class for mathematics**
+Utility class for mathematics
 
 * BigDecimalUtils
 * BigIntegerUtils
 
-**Utility class for <code>java.lang.Random</code> **
+Utility class for <code>java.lang.Random</code>
 
 * RandomUtils
 * RandomStringUtils
 * RandomDateUtils
 
-**Utility class for <code>java.util.Date</code> **
+Utility class for <code>java.util.Date</code>
 
 * CalendarUtils
 * DateUtils
@@ -77,7 +77,7 @@ Jdk1.8  (or later)
 * LocalDateTimeUtils
 * LocalTimeUtils
 
-**Utility class for <code>java.util.collection</code> **
+Utility class for <code>java.util.collection</code>
 
 * CollectionUtils
 * ListUtils
@@ -94,7 +94,7 @@ Jdk1.8  (or later)
 * CaseInsensitiveMap
 * CamelCaseInsensitiveMap
 
-**Utility class for <code>java.io.*</code>  **
+Utility class for <code>java.io.*</code>
 
 * IOUtils
 * FileUtils
@@ -110,7 +110,7 @@ Jdk1.8  (or later)
 * FileComparator
 * LogicalFileFilter
 
-**Utility class for <code>java.lang.Thread</code> **
+Utility class for <code>java.lang.Thread</code>
 
 * ExecutorUtils
 * ThreadsUtils
@@ -123,7 +123,7 @@ Jdk1.8  (or later)
 * AtomicLongSequence
 * Latch
 
-**Utility class for <code>java.lang.reflect.*</code> **
+Utility class for <code>java.lang.reflect.*</code>
 
 * ConstructorUtils
 * FieldUtils
@@ -134,12 +134,12 @@ Jdk1.8  (or later)
 * HashCodeBuilder
 * ToStringBuilder
 
-**Utility class for data type conversion operations **
+Utility class for data type conversion operations
 
 * ConvertUtils
 * StandardTypeConverter
 
-**Utility class for <code>java.sql.*</code> **
+Utility class for <code>java.sql.*</code>
 
 * JdbcUtils
 * ResultSetSlice
@@ -149,7 +149,7 @@ Jdk1.8  (or later)
 * Cursor
 * JdbcDumpTemplate
 
-**Utility class for <code> java.util.logging.*</code> **
+Utility class for <code> java.util.logging.*</code>
 
 * Log
 * LogFactory
