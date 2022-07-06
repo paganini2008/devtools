@@ -205,6 +205,7 @@ Utility class for <code> java.util.logging.*</code>
 #### Core API
 
 * CronExpression
+* TaskExecutor
 * ThreadPoolTaskExecutor
 * TimerTaskExecutor
 * ClockTaskExecutor

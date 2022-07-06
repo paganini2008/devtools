@@ -50,6 +50,9 @@ public class Product {
 	private BigDecimal freight;
 	private Style style;
 	private Salesman salesman;
+    private LocalDateTime startTime;
+	private LocalDate createDate;
+	private LocalTime nowTime;
 
 	public static enum Style {
 		HARD, SOFT, Random;
