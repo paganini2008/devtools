@@ -124,7 +124,7 @@ private static Connection getConnection() throws SQLException {
 	public static void test1() throws SQLException {
 		ParsedSqlRunner sqlRunner = new ParsedSqlRunner();
 		Connection connection = getConnection();
-		List<Tuple> list = sqlRunner.queryForList(connection, "select * from ccms_param limit 100",
+		List<Tuple> list = sqlRunner.queryForList(connection, "select * from tb_demo limit 100",
 				new Object[] { RandomUtils.randomInt(1, 4) });
 		for (Tuple tuple : list) {
 			System.out.println(tuple);
@@ -136,7 +136,7 @@ private static Connection getConnection() throws SQLException {
 	public static void test2() throws SQLException {
 		ParsedSqlRunner sqlRunner = new ParsedSqlRunner();
 		Connection connection = getConnection();
-		Cursor<Tuple> cursor = sqlRunner.queryForCursor(connection, "select * from crawler_resources limit 1000");
+		Cursor<Tuple> cursor = sqlRunner.queryForCursor(connection, "select * from tb_demo limit 1000");
 		while (cursor.hasNext()) {
 			Tuple tuple = cursor.next();
 			System.out.println(cursor.getRownum() + ": " + tuple.get("title") + "\t" + tuple.get("url"));
@@ -148,7 +148,7 @@ private static Connection getConnection() throws SQLException {
 	public static void test3() throws SQLException {
 		ParsedSqlRunner sqlRunner = new ParsedSqlRunner();
 		Connection connection = getConnection();
-		Cursor<Tuple> cursor = sqlRunner.queryForCachedCursor(connection, "select * from crawler_resources limit 100");
+		Cursor<Tuple> cursor = sqlRunner.queryForCachedCursor(connection, "select * from tb_demo limit 100");
 		while (cursor.hasNext()) {
 			Tuple tuple = cursor.next();
 			System.out.println(tuple.get("title") + "\t" + tuple.get("url"));
