@@ -38,7 +38,7 @@ Jdk1.8  (or later)
 
 #### Core API
 
-**Utility class for java.lang.* **
+**Utility class for <code>java.lang.*</code> **
 
 * StringUtils
 * ObjectUtils
@@ -63,13 +63,13 @@ Jdk1.8  (or later)
 * BigDecimalUtils
 * BigIntegerUtils
 
-**Utility class for java.lang.Random**
+**Utility class for <code>java.lang.Random</code> **
 
 * RandomUtils
 * RandomStringUtils
 * RandomDateUtils
 
-**Utility class for java.util.Date**
+**Utility class for <code>java.util.Date</code> **
 
 * CalendarUtils
 * DateUtils
@@ -77,7 +77,7 @@ Jdk1.8  (or later)
 * LocalDateTimeUtils
 * LocalTimeUtils
 
-**Utility class for java.util.collection**
+**Utility class for <code>java.util.collection</code> **
 
 * CollectionUtils
 * ListUtils
@@ -94,7 +94,7 @@ Jdk1.8  (or later)
 * CaseInsensitiveMap
 * CamelCaseInsensitiveMap
 
-**Utility class for java.io.*  **
+**Utility class for <code>java.io.*</code>  **
 
 * IOUtils
 * FileUtils
@@ -110,7 +110,7 @@ Jdk1.8  (or later)
 * FileComparator
 * LogicalFileFilter
 
-**Utility class for java.lang.Thread**
+**Utility class for <code>java.lang.Thread</code> **
 
 * ExecutorUtils
 * ThreadsUtils
@@ -123,7 +123,7 @@ Jdk1.8  (or later)
 * AtomicLongSequence
 * Latch
 
-**Utility class for java.lang.reflect.* **
+**Utility class for <code>java.lang.reflect.*</code> **
 
 * ConstructorUtils
 * FieldUtils
@@ -139,7 +139,7 @@ Jdk1.8  (or later)
 * ConvertUtils
 * StandardTypeConverter
 
-**Utility class for java.sql.* **
+**Utility class for <code>java.sql.*</code> **
 
 * JdbcUtils
 * ResultSetSlice
@@ -149,7 +149,7 @@ Jdk1.8  (or later)
 * Cursor
 * JdbcDumpTemplate
 
-**Utility class for java.util.logging.* **
+**Utility class for <code> java.util.logging.*</code> **
 
 * Log
 * LogFactory
