@@ -1,26 +1,32 @@
 # devtools-cron4j
 
-<code>devtools-cron4j</code> is a small and practical Java scheduling toolkit from the [devtools](https://github.com/paganini2008/devtools.git) series, which provides:
+<code>devtools-cron4j</code> is a small and practical Java scheduling toolkit that provides:
 
-1. API-oriented way to customize <code>cron</code> expressions, and can parse <code>cron</code> expressions into the form of API
-2. Built-in multiple schedulers can execute target content regularly
-3. Without relying on other components, you can customize your own system lightly
+* Defining cron expressions by object-oriented way 
+* Providing strong cron expression parser
+* Executing job class at a certain time by multiple provided <code>TaskExecutor</code>
+* Easily embedding any system in a lightweight way without relying on external components
 
-###  Compatibility
+##  Compatibility
+
 1. JDK 1.8 (or later)
 
-### Install
+## Install
+
 ``` xml
 <dependency>
 	<groupId>com.github.paganini2008</groupId>
 	<artifactId>devtools-cron4j</artifactId>
-	<version>2.0.1</version>
+	<version>2.0.5</version>
 </dependency>
 ```
 
-### How to generate cron expression?
+## Quick Start
+
+#### How to generate cron expression?
+
 ``` java
-       // */5 * * * * ?
+    // */5 * * * * ?
 	public static CronExpression getCron1() {
 		return CronExpressionBuilder.everySecond(5);
 	}
@@ -96,7 +102,8 @@
 	}
 ```
 
-### How to parse cron expressions?
+#### How to parse cron expressions?
+
 ``` java
         System.out.println(CRON.parse("*/5 * * * * ?"));
 		System.out.println(CRON.parse("0 */2 * * * ?"));
@@ -109,7 +116,8 @@
 		System.out.println(CRON.parse("0 10,20,30 12 ? 7-11 6L 2021-2025"));
 ```
 
-### How to test cron expressions?
+####  How to test cron expressions?
+
 ``` java
 		CRON.parse("0 30 23 L * ?").forEach(date -> {
 			System.out.println(DateUtils.format(date));
@@ -121,7 +129,9 @@
 			System.out.println(DateUtils.format(date));
 		}, 20);
 ```
-### How to run the scheduler?
+
+#### How to run the scheduler?
+
 ``` java
         CronExpression expression = CronExpressionBuilder.everySecond(5);
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
