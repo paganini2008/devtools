@@ -1,5 +1,5 @@
 # Devtools Series
-*A Java language basic tool library, which provides a large amounts of useful and cool utility methods and APIs to optimize your code, making your code more efficient and elegant.*
+*A Java basic tool library, which provides a large amounts of useful and cool utility methods and APIs to optimize your code, making your code more efficient and elegant.*
 
 ### Install
 

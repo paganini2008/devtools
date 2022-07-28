@@ -14,7 +14,7 @@
 
 	<name>devtools-lang</name>
 	<url>https://github.com/paganini2008/devtools</url>
-	<description>Java Basic Tools</description>
+	<description>Java Core Basic Tools</description>
 
 	<dependencies>
 	</dependencies>

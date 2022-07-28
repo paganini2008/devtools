@@ -46,7 +46,7 @@ public class TestDataSource {
 		GenericDataSource dataSource = new GenericDataSource();
 		dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
 		dataSource.setJdbcUrl(
-				"jdbc:mysql://localhost:3306/db_mec_hlsh_v2?userUnicode=true&characterEncoding=UTF8&useSSL=false&serverTimezone=UTC&autoReconnect=true&zeroDateTimeBehavior=convertToNull");
+				"jdbc:mysql://localhost:3306/test?userUnicode=true&characterEncoding=UTF8&useSSL=false&serverTimezone=UTC&autoReconnect=true&zeroDateTimeBehavior=convertToNull");
 		dataSource.setUser("fengy");
 		dataSource.setPassword("123456");
 		Executor executor = Executors.newFixedThreadPool(10);
@@ -56,7 +56,7 @@ public class TestDataSource {
 				Tuple tuple = null;
 				try {
 					connection = dataSource.getConnection();
-					tuple = JdbcUtils.fetchOne(connection, "select * from mec_area where level=? limit 1",
+					tuple = JdbcUtils.fetchOne(connection, "select * from tb_demo where level=? limit 1",
 							new Object[] { RandomUtils.randomInt(1, 4) });
 					System.out.println(tuple);
 				} catch (SQLException e) {
