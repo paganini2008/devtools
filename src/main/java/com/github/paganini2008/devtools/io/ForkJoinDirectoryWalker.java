@@ -1,0 +1,150 @@
+/**
+* Copyright 2017-2026 Fred Feng (paganini.fy@gmail.com)
+
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+package com.github.paganini2008.devtools.io;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
+import java.util.concurrent.RecursiveTask;
+
+
+/**
+ * 
+ * {@link DirectoryWalker} based on a {@link ForkJoinPool}. Handler callbacks for files are called with the depth of the
+ * containing directory (the root directory has depth 0).
+ *
+ * @author Fred Feng
+ * @date 2020-05-09
+ * @since 2.0.1
+ */
+public class ForkJoinDirectoryWalker extends AbstractDirectoryWalker {
+
+	public ForkJoinDirectoryWalker(File directory, DirectoryWalkerHandler handler) {
+		super(directory);
+		this.handler = handler;
+	}
+
+	private int maxDepth = -1;
+	private FileFilter fileFilter;
+	private final DirectoryWalkerHandler handler;
+
+	/**
+	 * Limits the depth of directories whose children are listed; negative for unlimited.
+	 */
+	public void setMaxDepth(int maxDepth) {
+		this.maxDepth = maxDepth;
+	}
+
+	/**
+	 * Sets a filter applied when listing directories; {@code null} accepts everything.
+	 */
+	public void setFileFilter(FileFilter fileFilter) {
+		this.fileFilter = fileFilter;
+	}
+
+	/**
+	 * 
+	 * Task walking one directory; sub directories are walked by forked sub tasks.
+	 * 
+	 * @author Fred Feng
+	 * @since 2.0.1
+	 */
+	private class DirectoryWalkTask extends RecursiveTask<FileInfo> {
+
+		private static final long serialVersionUID = -1911846799071310358L;
+		private final File directory;
+		private final FileInfo directoryInfo;
+		private final int depth;
+		private final ProgressBar progressBar;
+
+		DirectoryWalkTask(File directory, FileInfo directoryInfo, int depth, ProgressBar progressBar) {
+			this.directory = directory;
+			this.directoryInfo = directoryInfo;
+			this.depth = depth;
+			this.progressBar = progressBar;
+		}
+
+		protected FileInfo compute() {
+			try {
+				if (handler.shouldHandleDirectory(directory, depth)) {
+					handler.handleDirectoryStart(directory, depth);
+					if (maxDepth < 0 || depth <= maxDepth) {
+						File[] childFiles = fileFilter != null ? directory.listFiles(fileFilter) : directory.listFiles();
+						if (childFiles != null) {
+							for (File childFile : childFiles) {
+								if (progressBar.isCancelled()) {
+									throw new CancellationException();
+								}
+								progressBar.processBegin(childFile);
+								try {
+									directoryInfo.process(childFile);
+									if (childFile.isDirectory()) {
+										FileInfo childFileInfo = directoryInfo.newChildFileInfo(childFile);
+										DirectoryWalkTask task = new DirectoryWalkTask(childFile, childFileInfo, depth + 1, progressBar);
+										task.fork();
+										task.join();
+									} else {
+										try {
+											if (handler.shouldHandleFile(childFile, depth)) {
+												handler.handleFile(childFile, depth);
+											}
+										} catch (Exception e) {
+											if (!handler.handleFileOnError(childFile, depth, e)) {
+												progressBar.cancel();
+											}
+										}
+									}
+								} finally {
+									progressBar.processEnd(childFile);
+								}
+							}
+						}
+					}
+					handler.handleDirectoryEnd(directory, directoryInfo, depth);
+				}
+			} catch (IOException e) {
+				if (!handler.handleDirectoryOnError(directory, depth, e)) {
+					progressBar.cancel();
+				}
+			} catch (CancellationException ignored) {
+			} finally {
+				directoryInfo.done();
+			}
+			return directoryInfo;
+		}
+	}
+
+	@Override
+	protected final void walk(Executor threadPool, File root, FileInfo rootInfo, int depth, ProgressBar progressBar) {
+		DirectoryWalkTask task = new DirectoryWalkTask(root, rootInfo, depth, progressBar);
+		try {
+			Future<FileInfo> future = ((ForkJoinPool) threadPool).submit(task);
+			future.get();
+		} catch (Exception e) {
+			handler.handleDirectoryOnError(root, depth, e);
+		} finally {
+			progressBar.processEnd(root);
+		}
+	}
+
+	protected ForkJoinPool getThreadPool(int nThreads) {
+		return new ForkJoinPool(nThreads);
+	}
+}

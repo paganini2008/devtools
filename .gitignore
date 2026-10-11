@@ -1,11 +1,67 @@
-#Maven Build
-/target/
-#Eclipse
+# ---- Maven ----
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+.flattened-pom.xml
+
+# ---- Java ----
+*.class
+*.log
+*.ctxt
+.mtj.tmp/
+hs_err_pid*
+replay_pid*
+
+# ---- IntelliJ IDEA ----
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# ---- Eclipse ----
 .classpath
 .project
-/.metadata/
-/.settings/
-#Other If Exists
+.settings/
+.metadata/
+.factorypath
+.apt_generated/
+.apt_generated_tests/
+.springBeans
+.sts4-cache/
+bin/
+
+# ---- NetBeans ----
+nbproject/private/
+nbbuild/
+nbdist/
+dist/
+.nb-gradle/
+
+# ---- VS Code ----
+.vscode/
+
+# ---- OS ----
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ---- Misc ----
 /tmp/
 /logs/
-/bin/
+*.swp
+*~
+
+# Other
+CHANGELOG.md
