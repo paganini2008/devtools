@@ -47,7 +47,7 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <junit.version>5.10.3</junit.version>
-        <h2.version>2.1.214</h2.version>
+        <h2.version>2.2.220</h2.version>
         <jacoco.version>0.8.12</jacoco.version>
         <jacoco.minimum.coverage>0.90</jacoco.minimum.coverage>
     </properties>
