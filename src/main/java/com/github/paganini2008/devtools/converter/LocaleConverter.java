@@ -1,0 +1,45 @@
+/**
+* Copyright 2017-2026 Fred Feng (paganini.fy@gmail.com)
+
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+package com.github.paganini2008.devtools.converter;
+
+import java.util.Locale;
+
+import com.github.paganini2008.devtools.LocaleUtils;
+
+/**
+ * Converts {@code String} values to {@code Locale}. Returns the default value when the source is null or has no
+ * matching converter.
+ * 
+ * @author Fred Feng
+ * @date 2019-05-29
+ * @since 2.0.1
+ */
+public class LocaleConverter extends BasicConverter<Locale> {
+
+	private final Converter<String, Locale> stringConverter = new Converter<String, Locale>() {
+		public Locale convertValue(String source, Locale defaultValue) {
+			if (source == null) {
+				return defaultValue;
+			}
+			return LocaleUtils.getLocale(source);
+		}
+	};
+
+	public LocaleConverter() {
+		registerType(String.class, stringConverter);
+	}
+
+}

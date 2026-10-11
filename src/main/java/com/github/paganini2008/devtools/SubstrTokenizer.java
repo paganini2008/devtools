@@ -1,0 +1,150 @@
+/**
+* Copyright 2017-2026 Fred Feng (paganini.fy@gmail.com)
+
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+package com.github.paganini2008.devtools;
+
+import java.util.Enumeration;
+
+/**
+ * The SubstrTokenizer can break a string into tokens by some words. Unlike
+ * {@link java.util.StringTokenizer}, each delimiter is a whole string rather
+ * than a single char; empty tokens are skipped.
+ * 
+ * @author Fred Feng
+ * @date 2019-05-29
+ * 
+ * 
+ * @since 2.0.1
+ */
+public class SubstrTokenizer implements Enumeration<String> {
+
+	/**
+	 * Creates a tokenizer. Null or empty delimiters are ignored.
+	 *
+	 * <pre>
+	 * "a,b;;c" with [",", ";"]       = a, b, c
+	 * "a,b;;c" with [",", ";"], true = a, ",", b, ";", ";", c
+	 * </pre>
+	 *
+	 * @param returnDelims whether the delimiters are also returned as tokens
+	 * @throws IllegalArgumentException if the content is null or empty
+	 */
+	public SubstrTokenizer(CharSequence content, String[] delimeters, boolean returnDelims) {
+		Assert.hasNoText(content, "Content must not be null or empty.");
+		this.value = content.toString();
+		this.maxPosition = content.length();
+		this.delimeters = delimeters != null ? delimeters : new String[0];
+		this.returnDelims = returnDelims;
+	}
+
+	private final String value;
+	private final int maxPosition;
+	private final String[] delimeters;
+	private final boolean returnDelims;
+	private int startPosition = 0;
+	private int endPosition = -1;
+	private int offset;
+	private String last;
+	private String delim;
+	private boolean empty;
+	private boolean even;
+
+	private int locate(int fromIndex) {
+		int i;
+		int j = -1;
+		for (String delim : delimeters) {
+			if (delim == null || delim.isEmpty()) {
+				continue;
+			}
+			if ((i = value.indexOf(delim, fromIndex)) != -1) {
+				if (j == -1 || i < j) {
+					this.delim = delim;
+					j = i;
+				}
+			}
+		}
+		offset = this.delim != null ? this.delim.length() : 0;
+		if (j == -1) {
+			j = maxPosition;
+		}
+		return j;
+	}
+
+	private boolean test() {
+		endPosition = locate(startPosition);
+		empty = startPosition == endPosition;
+		if (empty && returnDelims) {
+			even = true;
+		} else {
+			even = false;
+		}
+		return empty;
+	}
+
+	public boolean hasMoreElements() {
+		return hasMoreTokens();
+	}
+
+	/**
+	 * Checks whether more tokens are available.
+	 */
+	public boolean hasMoreTokens() {
+		if (startPosition >= maxPosition) {
+			if (returnDelims) {
+				return even && offset > 0;
+			} else {
+				return false;
+			}
+		}
+		if (returnDelims && even) {
+			return true;
+		}
+		while (test() && !even) {
+			startPosition = endPosition + offset;
+		}
+		return startPosition < maxPosition;
+	}
+
+	/**
+	 * Returns the next token. Call {@link #hasMoreTokens()} first.
+	 */
+	public String nextToken() {
+		return nextElement();
+	}
+
+	public String nextElement() {
+		if (returnDelims && even) {
+			last = delim;
+			delim = null;
+			even = false;
+			if (empty) {
+				startPosition = endPosition + offset;
+			}
+		} else {
+			last = value.substring(startPosition, endPosition);
+			startPosition = endPosition + offset;
+			even = true;
+		}
+		return last;
+	}
+
+	/**
+	 * Returns the token returned last, or null if none has been returned yet.
+	 */
+	public String getLastElement() {
+		return last;
+	}
+
+}

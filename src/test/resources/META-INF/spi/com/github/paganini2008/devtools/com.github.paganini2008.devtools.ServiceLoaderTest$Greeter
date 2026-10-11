@@ -1,0 +1,2 @@
+default=com.github.paganini2008.devtools.ServiceLoaderTest$HelloGreeter
+named=com.github.paganini2008.devtools.ServiceLoaderTest$NamedGreeter

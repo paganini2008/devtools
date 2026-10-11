@@ -1,0 +1,220 @@
+/**
+* Copyright 2017-2026 Fred Feng (paganini.fy@gmail.com)
+
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+package com.github.paganini2008.devtools.io;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+/**
+ * Polls a set of files at a fixed interval and notifies {@link FileWatcher}s when a file is created, updated or deleted.
+ * 
+ * @author Fred Feng
+ * @date 2019-05-29
+ * @since 2.0.1
+ */
+public class FileWatchdog extends TimerTask {
+
+	private static final int STATE_NONE = 0;
+
+	private static final int STATE_CREATE = 1;
+	private static final int STATE_DELETE = 2;
+	private static final int STATE_UPDATE = 3;
+	private static final long DEFAULT_CHECKED_INTERVAL = 3L * 1000;
+
+	public FileWatchdog(File... files) {
+		addFiles(files);
+	}
+
+	private final List<FileWatcher> watchers = new CopyOnWriteArrayList<FileWatcher>();
+	private final List<FileEntry> fileEntries = new CopyOnWriteArrayList<FileEntry>();
+	private Timer timer;
+	private long interval = DEFAULT_CHECKED_INTERVAL;
+	private volatile boolean running = false;
+
+	/**
+	 * Last known state of a watched file.
+	 * 
+	 * @author Fred Feng
+	 * @since 2.0.1
+	 */
+	static class FileEntry {
+
+		final File file;
+		boolean exists;
+		long length;
+		long lastModified;
+
+		FileEntry(File file) {
+			exists = file.exists();
+			length = exists ? file.length() : 0;
+			lastModified = exists ? file.lastModified() : 0;
+			this.file = file;
+		}
+
+		public int changed() {
+			boolean otherExists = this.exists;
+			this.exists = file.exists();
+			long otherLastModified = this.lastModified;
+			this.lastModified = file.lastModified();
+			long otherLength = this.length;
+			this.length = file.length();
+			if (!otherExists && exists) {
+				return STATE_CREATE;
+			} else if (otherExists && !exists) {
+				return STATE_DELETE;
+			} else {
+				return (otherLength != length) || (lastModified > otherLastModified) ? STATE_UPDATE : STATE_NONE;
+			}
+		}
+
+		public File getFile() {
+			return file;
+		}
+
+		public boolean isExists() {
+			return exists;
+		}
+
+		public long getLastModified() {
+			return lastModified;
+		}
+
+		public String toString() {
+			return "FileEntry [file=" + file + ", exists=" + exists + ", length=" + length + ", lastModified=" + lastModified + "]";
+		}
+
+	}
+
+	public boolean isRunning() {
+		return running;
+	}
+
+	/**
+	 * Sets the polling interval in milliseconds; values not greater than the default of 3000 ms are ignored.
+	 */
+	public void setInterval(long interval) {
+		if (interval > DEFAULT_CHECKED_INTERVAL) {
+			this.interval = interval;
+		}
+	}
+
+	public long getInterval() {
+		return interval;
+	}
+
+	/**
+	 * Adds files to watch; {@code null} elements are ignored.
+	 */
+	public void addFiles(File... files) {
+		if (files != null) {
+			for (int i = 0; i < files.length; i++) {
+				if (files[i] != null) {
+					fileEntries.add(new FileEntry(files[i]));
+				}
+			}
+		}
+	}
+
+	public void addWatcher(FileWatcher fileWatcher) {
+		if (fileWatcher != null) {
+			watchers.add(fileWatcher);
+		}
+	}
+
+	/**
+	 * Starts polling in a background timer thread. A stopped watchdog can be started again.
+	 *
+	 * @throws IllegalStateException if the watchdog is already running
+	 */
+	public synchronized void start() {
+		if (running) {
+			throw new IllegalStateException("FileWatchdog is running now.");
+		}
+		timer = new Timer("FileWatchdog@" + System.currentTimeMillis(), false);
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				FileWatchdog.this.run();
+			}
+		}, interval, interval);
+		running = true;
+	}
+
+	/**
+	 * Stops polling.
+	 *
+	 * @throws IllegalStateException if the watchdog is not running
+	 */
+	public synchronized void stop() {
+		if (!running) {
+			throw new IllegalStateException("FileWatchdog is not running.");
+		}
+		if (timer != null) {
+			timer.cancel();
+			timer = null;
+		}
+		running = false;
+	}
+
+	/**
+	 * Checks every watched file once and notifies the watchers about changes.
+	 */
+	public void run() {
+		for (FileEntry fileEntry : fileEntries) {
+			try {
+				switch (fileEntry.changed()) {
+				case STATE_CREATE:
+					for (FileWatcher watcher : watchers) {
+						watcher.onCreate(fileEntry.getFile());
+					}
+					break;
+				case STATE_DELETE:
+					for (FileWatcher watcher : watchers) {
+						watcher.onDelete(fileEntry.getFile());
+					}
+					break;
+				case STATE_UPDATE:
+					for (FileWatcher watcher : watchers) {
+						watcher.onUpdate(fileEntry.getFile());
+					}
+					break;
+				}
+			} catch (IOException e) {
+				if (!onError(fileEntry.getFile(), e)) {
+					break;
+				}
+			} catch (RuntimeException e) {
+				if (!onError(fileEntry.getFile(), new IOException(e.getMessage(), e))) {
+					break;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Called when a watcher fails for a file; a {@link RuntimeException} is wrapped in an {@link IOException}.
+	 *
+	 * @return {@code true} to continue with the next file, {@code false} to stop this check
+	 */
+	protected boolean onError(File file, IOException e) {
+		return true;
+	}
+
+}
